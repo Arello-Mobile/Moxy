@@ -11,19 +11,17 @@ import android.text.TextUtils;
 public class DefaultPresenterFactory implements PresenterFactory<MvpPresenter<?>, DefaultPresenterFactory.Params>
 {
 	@Override
-	public MvpPresenter createPresenter(Class<MvpPresenter<?>> presenterClazz, Params params)
+	public MvpPresenter createPresenter(MvpPresenter<?> defaultInstance, Class<MvpPresenter<?>> presenterClazz, Params params)
 	{
-		try
-		{
-			return presenterClazz.newInstance();
-		}
-		catch (Exception e)
+		if (defaultInstance == null)
 		{
 			throw new IllegalStateException("Unable to instantiate " + presenterClazz + ": " +
 					"make sure class name exists, " +
 					"is public, and " +
-					"has an empty constructor that is public", e);
+					"has an empty constructor that is public");
 		}
+
+		return defaultInstance;
 	}
 
 	@Override

@@ -14,9 +14,12 @@ import com.arellomobile.mvp.presenter.PresenterType;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
 
 /**
  * 18.12.2015
@@ -116,13 +119,13 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 			{
 				if (annotationMirror.getAnnotationType().asElement().toString().equals(PRESENTER_FIELD_ANNOTATION))
 				{
-					String value = null;
+					String type = null;
 					String tag = null;
 					String factory = null;
 					String presenterId = null;
 
 					final String name = element.toString();
-					String clazz = element.asType().toString();
+					DeclaredType clazz = (DeclaredType) element.asType();
 
 					final Map<? extends ExecutableElement, ? extends AnnotationValue> elementValues = annotationMirror.getElementValues();
 
@@ -133,7 +136,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 
 						if ("type()".equals(executableElement.toString()))
 						{
-							value = elementValues.get(executableElement).getValue().toString();
+							type = elementValues.get(executableElement).getValue().toString();
 						}
 
 						if ("tag()".equals(executableElement.toString()))
@@ -151,7 +154,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 							presenterId = elementValues.get(executableElement).toString();
 						}
 					}
-					Field field = new Field(clazz, name, value, tag, factory, presenterId);
+					Field field = new Field(clazz, name, type, tag, factory, presenterId);
 					fields.add(field);
 					continue outer;
 				}
@@ -196,6 +199,29 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 
 	private static String generatePresenterBinderClass(final String builder, final Field field)
 	{
+		boolean hasEmptyConstructor = false;
+
+		for (Element element : ((TypeElement) field.getClazz().asElement()).getEnclosedElements())
+		{
+			if (element.getKind() != ElementKind.CONSTRUCTOR)
+			{
+				continue;
+			}
+
+			final ExecutableElement constructor = (ExecutableElement) element;
+
+			if (!constructor.getModifiers().contains(Modifier.PUBLIC))
+			{
+				continue;
+			}
+
+			hasEmptyConstructor = constructor.getParameters().size() == 0;
+			if (hasEmptyConstructor)
+			{
+				break;
+			}
+		}
+
 		final String s = "\tpublic class " + field.getGeneratedClassName() + " implements PresenterField\n" +
 				"\t{\n" +
 				"\t\t@Override\n" +
@@ -219,7 +245,17 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 				"\t\t@Override\n" +
 				"\t\tpublic Class<? extends MvpPresenter> getPresenterClass()\n" +
 				"\t\t{\n" +
-				"\t\t\treturn " + field.getClazz() + ".class;\n" +
+				"\t\t\treturn " + field.getClazz().asElement() + ".class;\n" +
+				"\t\t}\n" +
+				"\n" +
+				"\t\t@Override\n" +
+				"\t\tpublic " + field.getClazz() + " getDefaultInstance()\n" +
+				"\t\t{\n" +
+				"\t\t\treturn " + (hasEmptyConstructor ?
+					("new " + field.getClazz() + "()" )
+						:
+					"null") +
+						";\n" +
 				"\t\t}\n" +
 				"\n" +
 				"\t\t@Override\n" +
@@ -246,7 +282,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 
 	private static class Field
 	{
-		private final String mClazz;
+		private final DeclaredType mClazz;
 		private final String mName;
 		private final String mFactory;
 		private final String mFactoryParamsHolder;
@@ -255,7 +291,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		String mTag;
 		PresenterType mType;
 
-		public Field(final String clazz, final String name, final String type, final String tag, String factory, String presenterId)
+		public Field(final DeclaredType clazz, final String name, final String type, final String tag, String factory, String presenterId)
 		{
 			mClazz = clazz;
 			mName = name;
@@ -286,7 +322,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 
 		}
 
-		public String getClazz()
+		public DeclaredType getClazz()
 		{
 			return mClazz;
 		}

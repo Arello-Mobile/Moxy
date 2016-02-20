@@ -14,9 +14,11 @@ public interface PresenterField<View extends MvpView>
 
 	PresenterType getPresenterType();
 
-	void setValue(com.arellomobile.mvp.MvpPresenter presenter);
+	void setValue(MvpPresenter presenter);
 
-	Class<? extends com.arellomobile.mvp.MvpPresenter<View>> getPresenterClass();
+	Class<? extends MvpPresenter<View>> getPresenterClass();
+
+	MvpPresenter<View> getDefaultInstance();
 
 	Class<? extends PresenterFactory<?, ?>> getFactory();
 

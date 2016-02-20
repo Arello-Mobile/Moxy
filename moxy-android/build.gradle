@@ -201,7 +201,7 @@ task createPomXml << {
 
     //creating global pom
 
-    getBasePom('moxy-dev').withXml {
+    getBasePom('moxy').withXml {
 
         asNode().appendNode('build')
                 .appendNode('plugins')
@@ -226,7 +226,7 @@ task createPomXml << {
 
     }.writeTo(publishMavenDir + "/" + targetArtefactId + ".pom")
 
-    getBasePom('moxy-dev').withXml {
+    getBasePom('moxy').withXml {
 
         asNode().appendNode('build')
                 .appendNode('plugins')

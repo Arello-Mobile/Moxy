@@ -128,7 +128,7 @@ public class MvpProcessor
 		}
 
 		//noinspection unchecked
-		presenter = presenterFactory.createPresenter(presenterClass, params);
+		presenter = presenterFactory.createPresenter(presenterField.getDefaultInstance(), presenterClass, params);
 		presenter.setPresenterType(presenterField.getPresenterType());
 		presenter.setTag(tag);
 		presenterStore.add(tag, presenter);
