@@ -32,21 +32,21 @@ public class MvpProcessor
 	 * @param <Delegated> type of delegated
 	 * @return PresenterBinder instance
 	 */
-	private <Delegated> PresenterBinder<Delegated> getPresenterBinder(Delegated delegated)
+	private <Delegated> PresenterBinder<? super Delegated> getPresenterBinder(Class<? super Delegated> delegated)
 	{
 		PresenterBinder<Delegated> binder;
 		try
 		{
 			//noinspection unchecked
-			binder = (PresenterBinder<Delegated>) findPresenterBinderForClass(delegated.getClass());
+			binder = (PresenterBinder<Delegated>) findPresenterBinderForClass(delegated);
 		}
 		catch (InstantiationException e)
 		{
-			throw new IllegalStateException("can not instantiate binder for " + delegated.getClass().getName(), e);
+			throw new IllegalStateException("can not instantiate binder for " + delegated.getName(), e);
 		}
 		catch (IllegalAccessException e)
 		{
-			throw new IllegalStateException("have no access to binder for " + delegated.getClass().getName(), e);
+			throw new IllegalStateException("have no access to binder for " + delegated.getName(), e);
 		}
 
 		return binder;
@@ -79,11 +79,7 @@ public class MvpProcessor
 		{
 			Log.d(TAG, "Not found " + className + ". Trying superclass " + (clazz.getSuperclass().getName()));
 
-			if (clazz.getSuperclass() == Object.class)
-			{
-				return null;
-			}
-			presenterBinder = findPresenterBinderForClass(clazz.getSuperclass());
+			return null;
 		}
 		//TODO add to binders array
 
@@ -151,28 +147,47 @@ public class MvpProcessor
 	 */
 	<Delegated> List<MvpPresenter<? super Delegated>> getMvpPresenters(Delegated delegated, String delegateTag)
 	{
-		PresenterBinder<Delegated> binder = MvpFacade.getInstance().getMvpProcessor().getPresenterBinder(delegated);
+		@SuppressWarnings("unchecked")
+		Class<? super Delegated> aClass = (Class<Delegated>) delegated.getClass();
+		List<PresenterBinder<? super Delegated>> presenterBinders = new ArrayList<>();
 
-		if (binder == null)
+		while (aClass != Object.class)
+		{
+			PresenterBinder<? super Delegated> presenterBinder = MvpFacade.getInstance().getMvpProcessor().getPresenterBinder(aClass);
+
+			aClass = aClass.getSuperclass();
+
+			if (presenterBinder == null)
+			{
+				continue;
+			}
+
+			presenterBinder.setTarget(delegated);
+			presenterBinders.add(presenterBinder);
+		}
+
+		if (presenterBinders.isEmpty())
 		{
 			return Collections.emptyList();
 		}
 
-		binder.setTarget(delegated);
-
-		List<PresenterField<? super Delegated>> presenterFields = binder.getPresenterFields();
-		List<MvpPresenter<? super Delegated>> presenters = new ArrayList<>(presenterFields.size());
-
-		for (PresenterField<? super Delegated> presenterField : presenterFields)
+		List<MvpPresenter<? super Delegated>> presenters = new ArrayList<>();
+		for (PresenterBinder<? super Delegated> presenterBinder : presenterBinders)
 		{
-			MvpPresenter<? super Delegated> presenter = getMvpPresenter(presenterField, delegated, delegateTag);
+			List<? extends PresenterField<? super Delegated>> presenterFields = presenterBinder.getPresenterFields();
 
-			if (presenter != null)
+			for (PresenterField<? super Delegated> presenterField : presenterFields)
 			{
-				presenters.add(presenter);
-				presenterField.setValue(presenter);
+				MvpPresenter<? super Delegated> presenter = getMvpPresenter(presenterField, delegated, delegateTag);
+
+				if (presenter != null)
+				{
+					presenters.add(presenter);
+					presenterField.setValue(presenter);
+				}
 			}
 		}
+
 		return presenters;
 	}
 }
