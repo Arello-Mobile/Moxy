@@ -18,10 +18,44 @@ What's happened here:
 11. _ViewState_ sends queue of saved commands to new/recreate _View_
 12. New/recreated _View_ brings itself into a state specified in the commands ![red circle](https://habrastorage.org/files/b0c/d57/199/b0cd57199d4f4bcea465aefb21061461.png), ![green circle](https://habrastorage.org/files/9bd/23f/e0c/9bd23fe0c88c4d8f8b4a498474a6ad09.png) and ![blue circle](https://habrastorage.org/files/70c/231/d6b/70c231d6bf6b432ba83d5ecf2e97aafd.png)
 
-# Sample
+## Sample
 You can find the sample project [here](https://github.com/Arello-Mobile/MoxySample)
 
-# License
+## Integration
+
+Maven integration:
+```
+<dependencies>
+  <dependency>
+    <groupId>com.arello-mobile</groupId>
+    <artifactId>moxy</artifactId>
+    <version>0.4.0</version>
+  </dependency>
+  <dependency>
+    <groupId>com.arello-mobile</groupId>
+    <artifactId>moxy-android</artifactId>
+    <version>0.4.0</version>
+  </dependency>
+  <dependency>
+    <groupId>com.arello-mobile</groupId>
+    <artifactId>moxy-compiler</artifactId>
+    <version>0.4.0</version>
+    <optional>true</optional>
+  </dependency>
+</dependencies>
+```
+
+Gradle integration:
+```
+dependencies {
+  ...
+  compile 'com.arello-mobile:moxy:0.4.0'
+  compile 'com.arello-mobile:moxy-android:0.4.0'
+  apt 'com.arello-mobile:moxy-compiler:0.4.0'
+}
+```
+
+## License
 ```
 The MIT License (MIT)
 
