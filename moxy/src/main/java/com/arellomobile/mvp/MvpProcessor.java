@@ -7,6 +7,7 @@ import java.util.List;
 import android.util.Log;
 
 import com.arellomobile.mvp.presenter.PresenterField;
+import com.arellomobile.mvp.presenter.PresenterType;
 
 /**
  * Date: 18-Dec-15
@@ -119,9 +120,10 @@ public class MvpProcessor
 		//TODO throw exception
 		//noinspection unchecked
 		String tag = presenterFactory.createTag(presenterClass, params);
+		PresenterType type = presenterField.getPresenterType();
 
 		//noinspection unchecked
-		MvpPresenter<? super Delegated> presenter = presenterStore.get(tag, presenterClass);
+		MvpPresenter<? super Delegated> presenter = presenterStore.get(type, tag, presenterClass);
 		if (presenter != null)
 		{
 			return presenter;
@@ -129,9 +131,9 @@ public class MvpProcessor
 
 		//noinspection unchecked
 		presenter = presenterFactory.createPresenter(presenterField.getDefaultInstance(), presenterClass, params);
-		presenter.setPresenterType(presenterField.getPresenterType());
+		presenter.setPresenterType(type);
 		presenter.setTag(tag);
-		presenterStore.add(tag, presenter);
+		presenterStore.add(type, tag, presenter);
 
 		return presenter;
 	}

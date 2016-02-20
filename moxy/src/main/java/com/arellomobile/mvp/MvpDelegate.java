@@ -198,7 +198,7 @@ public class MvpDelegate<Delegated>
 			if (presenter.getPresenterType() == PresenterType.LOCAL)
 			{
 				presenter.onDestroy();
-				presenterStore.remove(presenter.getTag(), presenter.getClass());
+				presenterStore.remove(PresenterType.LOCAL, presenter.getTag(), presenter.getClass());
 			}
 		}
 	}

@@ -8,5 +8,5 @@ package com.arellomobile.mvp.presenter;
  */
 public enum PresenterType
 {
-	GLOBAL, LOCAL
+	LOCAL, WEAK, GLOBAL
 }
