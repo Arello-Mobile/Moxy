@@ -34,7 +34,7 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement>
 	public static final String REGEX = ".*<(.*)>.*";
 
 	@Override
-	public boolean generate(TypeElement typeElement, ClassGeneratingParams classGeneratingParams)
+	public boolean generate(TypeElement typeElement, List<ClassGeneratingParams> classGeneratingParamsList)
 	{
 		String parentClassName = typeElement.toString();
 
@@ -63,8 +63,10 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement>
 		builder += "\t}\n" +
 				"}";
 
+		ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
 		classGeneratingParams.setName(parentClassName + MvpProcessor.VIEW_STATE_CLASS_NAME_PROVIDER_SUFFIX);
 		classGeneratingParams.setBody(builder);
+		classGeneratingParamsList.add(classGeneratingParams);
 
 		return true;
 	}

@@ -10,7 +10,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.MirroredTypeException;
+import javax.lang.model.type.MirroredTypesException;
 import javax.lang.model.type.TypeMirror;
 
 /**
@@ -22,7 +22,7 @@ import javax.lang.model.type.TypeMirror;
 final class ParamsHolderClassGenerator extends ClassGenerator<TypeElement>
 {
 	@Override
-	public boolean generate(TypeElement typeElement, ClassGeneratingParams classGeneratingParams)
+	public boolean generate(TypeElement typeElement, List<ClassGeneratingParams> classGeneratingParamsList)
 	{
 		ParamsProvider annotation = typeElement.getAnnotation(ParamsProvider.class);
 
@@ -49,49 +49,58 @@ final class ParamsHolderClassGenerator extends ClassGenerator<TypeElement>
 				throwError();
 			}
 
-
 			String defaultFactoryName = DefaultPresenterFactory.class.getCanonicalName();
 			String parentClassName = defaultFactoryName.substring(defaultFactoryName.lastIndexOf(".") + 1);
 			if (annotation != null)
 			{
-				TypeMirror value;
+				List<? extends TypeMirror> values;
 				try
 				{
 					annotation.value();
 				}
-				catch (MirroredTypeException mte)
+				catch (MirroredTypesException mte)
 				{
-					value = mte.getTypeMirror();
-					parentClassName = value.toString();
+					values = mte.getTypeMirrors();
+					for (TypeMirror typeMirror : values)
+					{
+						ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
+						parentClassName = typeMirror.toString();
+						generateForClass(typeElement, classGeneratingParams, parentClassName, methodName, returnType);
+						classGeneratingParamsList.add(classGeneratingParams);
+					}
 				}
 			}
 
-			classGeneratingParams.setName(parentClassName + MvpProcessor.FACTORY_PARAMS_HOLDER_SUFFIX);
-
-			final String className = typeElement.getQualifiedName().toString();
-			final String viewClassName = parentClassName.substring(parentClassName.lastIndexOf(".") + 1);
-
-			String builder = "package " + parentClassName.substring(0, parentClassName.lastIndexOf(".")) + ";\n" +
-					"\n" +
-					"import com.arellomobile.mvp.ParamsHolder;\n" +
-					"import com.arellomobile.mvp.presenter.PresenterField;\n" +
-					"\n" +
-					"public class " + viewClassName + MvpProcessor.FACTORY_PARAMS_HOLDER_SUFFIX + " implements ParamsHolder<" + returnType + ">" +//" implements PresenterBinder<" + parentClassName + ">" +
-					"\n" +
-					"{\n" +
-					"\t@Override\n" +
-					"\tpublic " + returnType + " getParams(PresenterField<?> presenterField, Object delegated, String delegateTag)\n" +
-					"\t{\n" +
-					"\t\treturn ((" + className + ") delegated)." + methodName + "(presenterField.getPresenterId());\n" +
-					"\t}\n" +
-					"}\n";
-
-
-			classGeneratingParams.setBody(builder);
 			return true;
 		}
 
 		return false;
+	}
+
+	private void generateForClass(TypeElement typeElement, ClassGeneratingParams classGeneratingParams, String parentClassName, String methodName, String returnType)
+	{
+		classGeneratingParams.setName(parentClassName + MvpProcessor.FACTORY_PARAMS_HOLDER_SUFFIX);
+
+		final String className = typeElement.getQualifiedName().toString();
+		final String viewClassName = parentClassName.substring(parentClassName.lastIndexOf(".") + 1);
+
+		String builder = "package " + parentClassName.substring(0, parentClassName.lastIndexOf(".")) + ";\n" +
+				"\n" +
+				"import com.arellomobile.mvp.ParamsHolder;\n" +
+				"import com.arellomobile.mvp.presenter.PresenterField;\n" +
+				"\n" +
+				"public class " + viewClassName + MvpProcessor.FACTORY_PARAMS_HOLDER_SUFFIX + " implements ParamsHolder<" + returnType + ">" +//" implements PresenterBinder<" + parentClassName + ">" +
+				"\n" +
+				"{\n" +
+				"\t@Override\n" +
+				"\tpublic " + returnType + " getParams(PresenterField<?> presenterField, Object delegated, String delegateTag)\n" +
+				"\t{\n" +
+				"\t\treturn ((" + className + ") delegated)." + methodName + "(presenterField.getPresenterId());\n" +
+				"\t}\n" +
+				"}\n";
+
+
+		classGeneratingParams.setBody(builder);
 	}
 
 	private boolean containsManyMethods(TypeElement typeElement)

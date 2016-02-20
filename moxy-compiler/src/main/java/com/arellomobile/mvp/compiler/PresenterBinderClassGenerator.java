@@ -57,7 +57,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		mPresentersContainers = new ArrayList<>();
 	}
 
-	public boolean generate(VariableElement variableElement, ClassGeneratingParams classGeneratingParams)
+	public boolean generate(VariableElement variableElement, List<ClassGeneratingParams> classGeneratingParamsList)
 	{
 		final Element presentersContainer = variableElement.getEnclosingElement();
 
@@ -74,6 +74,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 
 		mPresentersContainers.add(presentersContainer.toString());
 
+		ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
 		classGeneratingParams.setName(presentersContainer + MvpProcessor.PRESENTER_BINDER_SUFFIX);
 
 		String parentClassName = presentersContainer.toString();
@@ -173,6 +174,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		builder += "}\n";
 
 		classGeneratingParams.setBody(builder);
+		classGeneratingParamsList.add(classGeneratingParams);
 
 		return true;
 	}

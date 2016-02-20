@@ -9,8 +9,10 @@ import com.google.auto.service.AutoService;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -96,17 +98,20 @@ public class MvpCompiler extends AbstractProcessor
 				throw new RuntimeException(annotatedElements + " must be " + kind.name() + ", or not mark it as @" + clazz.getSimpleName());
 			}
 
-			ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
+			List<ClassGeneratingParams> classGeneratingParamsList = new ArrayList<>();
 
 			//noinspection unchecked
-			final boolean generated = classGenerator.generate(annotatedElements, classGeneratingParams);
+			final boolean generated = classGenerator.generate(annotatedElements, classGeneratingParamsList);
 
 			if (!generated)
 			{
 				continue;
 			}
 
-			createSourceFile(classGeneratingParams);
+			for (ClassGeneratingParams classGeneratingParams : classGeneratingParamsList)
+			{
+				createSourceFile(classGeneratingParams);
+			}
 		}
 	}
 

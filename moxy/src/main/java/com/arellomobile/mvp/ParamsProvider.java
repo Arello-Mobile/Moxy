@@ -15,5 +15,5 @@ import java.lang.annotation.Target;
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface ParamsProvider
 {
-	Class<? extends PresenterFactory<? extends MvpPresenter<?>, ?>> value();
+	Class<? extends PresenterFactory<? extends MvpPresenter<?>, ?>>[] value();
 }

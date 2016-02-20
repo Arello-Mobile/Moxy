@@ -39,13 +39,14 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 
 	private String mViewClassName;
 
-	public boolean generate(TypeElement typeElement, ClassGeneratingParams classGeneratingParams)
+	public boolean generate(TypeElement typeElement, List<ClassGeneratingParams> classGeneratingParamsList)
 	{
 		if (!typeElement.getTypeParameters().isEmpty())
 		{
 			throw new IllegalStateException("Code generation can't be applied to generic interface " + typeElement.getSimpleName());
 		}
 
+		ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
 		classGeneratingParams.setName(typeElement + MvpProcessor.VIEW_STATE_SUFFIX);
 
 		mViewClassName = getClassName(typeElement);
@@ -160,6 +161,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 		builder += "}\n";
 
 		classGeneratingParams.setBody(builder);
+		classGeneratingParamsList.add(classGeneratingParams);
 
 		return true;
 	}
