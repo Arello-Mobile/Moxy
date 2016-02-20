@@ -17,6 +17,8 @@ public class PresenterStore
 	private Map<Class<? extends MvpPresenter>, Map<String, MvpPresenter>> mWeakPresenters = new WeakValueHashMap<>();
 
 	/**
+	 *
+	 * @param type     Type is presenter local, global or weak
 	 * @param tag      Object to store presenter
 	 * @param instance Instance of MvpPresenter implementation to store
 	 * @param <T>      type of presenter

@@ -25,14 +25,14 @@ public class PresenterInjectorRules extends AnnotationRule
 	{
 		if (annotatedField.getKind() != mValidKind)
 		{
-			mErrorBuilder.append(annotatedField + " must be " + mValidKind.name() + ", or not mark it as @" + InjectPresenter.class.getSimpleName()).append("\n");
+			mErrorBuilder.append("Field " + annotatedField + " of " + annotatedField.getEnclosingElement().getSimpleName() + " should be " + mValidKind.name() + ", or not mark it as @" + InjectPresenter.class.getSimpleName()).append("\n");
 		}
 
 		for (Modifier modifier : annotatedField.getModifiers())
 		{
 			if (!mValidModifiers.contains(modifier))
 			{
-				mErrorBuilder.append(annotatedField + " can't be a " + modifier).append(". Use ").append(validModifiersToString()).append("\n");
+				mErrorBuilder.append("Field " + annotatedField + " of " + annotatedField.getEnclosingElement().getSimpleName() + " can't be a " + modifier).append(". Use ").append(validModifiersToString()).append("\n");
 			}
 		}
 	}

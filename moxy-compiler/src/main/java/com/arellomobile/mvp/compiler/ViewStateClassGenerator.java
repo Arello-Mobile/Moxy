@@ -280,7 +280,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 					}
 
 					final String filledGeneric = fillGenerics(methodTypes, upperBound);
-					generics += filledGeneric.substring(1);
+					generics += " extends " + filledGeneric;
 				}
 				generics += "> ";
 			}

@@ -1,11 +1,5 @@
 package com.arellomobile.mvp.compiler;
 
-import com.arellomobile.mvp.GenerateViewState;
-import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.ParamsProvider;
-import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.google.auto.service.AutoService;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.annotation.Annotation;
@@ -14,6 +8,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.arellomobile.mvp.GenerateViewState;
+import com.arellomobile.mvp.InjectViewState;
+import com.arellomobile.mvp.ParamsProvider;
+import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.google.auto.service.AutoService;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Messager;
@@ -26,6 +26,7 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
+
 
 import static javax.lang.model.SourceVersion.latestSupported;
 
@@ -65,7 +66,7 @@ public class MvpCompiler extends AbstractProcessor
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv)
 	{
-		checkInjectors(roundEnv, InjectPresenter.class, new PresenterInjectorRules(ElementKind.FIELD, Modifier.PUBLIC));
+		checkInjectors(roundEnv, InjectPresenter.class, new PresenterInjectorRules(ElementKind.FIELD, Modifier.PUBLIC, Modifier.DEFAULT));
 
 		processInjectors(roundEnv, InjectViewState.class, ElementKind.CLASS, new ViewStateProviderClassGenerator());
 		processInjectors(roundEnv, InjectPresenter.class, ElementKind.FIELD, new PresenterBinderClassGenerator());

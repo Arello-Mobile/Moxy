@@ -47,10 +47,16 @@ public abstract class AnnotationRule
 	{
 		if (mValidModifiers.size() > 1)
 		{
-			StringBuilder result = new StringBuilder("one of [ ");
+			StringBuilder result = new StringBuilder("one of [");
+			boolean addSeparator = false;
 			for (Modifier validModifier : mValidModifiers)
 			{
-				result.append(validModifier.toString()).append(" ");
+				if (addSeparator)
+				{
+					result.append(", ");
+				}
+				addSeparator = true;
+				result.append(validModifier.toString());
 			}
 			result.append("]");
 			return result.toString();
