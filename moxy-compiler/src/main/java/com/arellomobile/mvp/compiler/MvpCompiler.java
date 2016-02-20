@@ -1,17 +1,17 @@
 package com.arellomobile.mvp.compiler;
 
+import com.arellomobile.mvp.GenerateViewState;
+import com.arellomobile.mvp.InjectViewState;
+import com.arellomobile.mvp.ParamsProvider;
+import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.google.auto.service.AutoService;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.arellomobile.mvp.GenerateViewState;
-import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.ParamsProvider;
-import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.google.auto.service.AutoService;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Messager;
@@ -21,9 +21,9 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
-
 
 import static javax.lang.model.SourceVersion.latestSupported;
 
@@ -63,6 +63,8 @@ public class MvpCompiler extends AbstractProcessor
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv)
 	{
+		checkInjectors(roundEnv, InjectPresenter.class, new PresenterInjectorRules(ElementKind.FIELD, Modifier.PUBLIC));
+
 		processInjectors(roundEnv, InjectViewState.class, ElementKind.CLASS, new ViewStateProviderClassGenerator());
 		processInjectors(roundEnv, InjectPresenter.class, ElementKind.FIELD, new PresenterBinderClassGenerator());
 		processInjectors(roundEnv, ParamsProvider.class, ElementKind.INTERFACE, new ParamsHolderClassGenerator());
@@ -71,6 +73,19 @@ public class MvpCompiler extends AbstractProcessor
 		return true;
 	}
 
+
+	private void checkInjectors(final RoundEnvironment roundEnv, Class<? extends Annotation> clazz, AnnotationRule annotationRule)
+	{
+		for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(clazz))
+		{
+			annotationRule.checkAnnotation(annotatedElement);
+		}
+
+		if (!annotationRule.getErrorStack().isEmpty())
+		{
+			throw new RuntimeException("\n" + annotationRule.getErrorStack());
+		}
+	}
 
 	private void processInjectors(final RoundEnvironment roundEnv, Class<? extends Annotation> clazz, ElementKind kind, ClassGenerator classGenerator)
 	{

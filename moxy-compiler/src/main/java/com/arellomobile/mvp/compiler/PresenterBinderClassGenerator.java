@@ -1,15 +1,15 @@
 package com.arellomobile.mvp.compiler;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.arellomobile.mvp.DefaultParamsHolder;
 import com.arellomobile.mvp.DefaultPresenterFactory;
 import com.arellomobile.mvp.MvpProcessor;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
@@ -69,6 +69,8 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		{
 			return false;
 		}
+
+		System.out.println(presentersContainer + " " + presentersContainer.getModifiers().iterator().next().name());
 
 		mPresentersContainers.add(presentersContainer.toString());
 
