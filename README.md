@@ -18,6 +18,13 @@ What's happened here:
 11. _ViewState_ sends queue of saved commands to new/recreate _View_
 12. New/recreated _View_ brings itself into a state specified in the commands ![red circle](https://habrastorage.org/files/b0c/d57/199/b0cd57199d4f4bcea465aefb21061461.png), ![green circle](https://habrastorage.org/files/9bd/23f/e0c/9bd23fe0c88c4d8f8b4a498474a6ad09.png) and ![blue circle](https://habrastorage.org/files/70c/231/d6b/70c231d6bf6b432ba83d5ecf2e97aafd.png)
 
+## Capabilities
+
+Moxy has a few killer features on other ways:
+- _Presenter_ stay alive when _Activity_ recreated(it simplify work with multithreading)
+- Automatically restore all what user see when _Activity_ recreated(including dynamic content is added)
+- Capability to changes of many _Views_ from one _Presenter_
+
 ## Sample
 You can find the sample project [here](https://github.com/Arello-Mobile/MoxySample)
 
