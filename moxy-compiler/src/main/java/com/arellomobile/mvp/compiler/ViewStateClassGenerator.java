@@ -114,14 +114,22 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 				throwTypesString = " throws " + throwTypesString;
 			}
 
+			String fieldName = "params";
 			String argumentsString = "";
+			int index = 0;
 			for (Argument argument : method.arguments)
 			{
+				if (argument.name.equals(fieldName))
+				{
+					fieldName = "params" + index;
+				}
+
 				if (argumentsString.length() > 0)
 				{
 					argumentsString += ", ";
 				}
 				argumentsString += argument.name;
+				index++;
 			}
 
 			String argumentClassName = "Void";
@@ -135,8 +143,8 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 			builder += "\t@Override\n" +
 					"\tpublic " + method.genericType + method.resultType + " " + method.name + "(" + join(", ", method.arguments) + ")" + throwTypesString + "\n" +
 					"\t{\n" +
-					"\t\t" + argumentClassName + " params = " + argumentsWrapperNewInstance +
-					"\t\tmViewCommands.beforeApply(LocalViewCommand." + method.uniqueName + ", params);\n" +
+					"\t\t" + argumentClassName + " " + fieldName + " = " + argumentsWrapperNewInstance +
+					"\t\tmViewCommands.beforeApply(LocalViewCommand." + method.uniqueName + ", " + fieldName + ");\n" +
 					"\n" +
 					"\t\tif (mViews == null || mViews.isEmpty())\n" +
 					"\t\t{\n" +
@@ -148,7 +156,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 					"\t\t\tview." + method.name + "(" + argumentsString + ");\n" +
 					"\t\t}\n" +
 					"\n" +
-					"\t\tmViewCommands.afterApply(LocalViewCommand." + method.uniqueName + ", params);\n" +
+					"\t\tmViewCommands.afterApply(LocalViewCommand." + method.uniqueName + ", " + fieldName + ");\n" +
 					"\t}\n" +
 					"\n";
 		}
