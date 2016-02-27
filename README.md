@@ -28,6 +28,9 @@ Moxy has a few killer features on other ways:
 ## Sample
 You can find the sample project [here](https://github.com/Arello-Mobile/MoxySample)
 
+## References
+[_RU_] [Moxy — реализация MVP под Android с щепоткой магии](https://github.com/Arello-Mobile/MoxySample)
+
 ## Integration
 
 Maven integration:
