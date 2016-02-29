@@ -2,8 +2,10 @@ package com.arellomobile.mvp.compiler;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.arellomobile.mvp.DefaultView;
 import com.arellomobile.mvp.DefaultViewState;
@@ -31,7 +33,13 @@ import static com.arellomobile.mvp.compiler.Util.fillGenerics;
 final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement>
 {
 	public static final String MVP_PRESENTER_CLASS = MvpPresenter.class.getCanonicalName();
-	public static final String REGEX = ".*<(.*)>.*";
+
+	private Set<TypeElement> mUsedViews;
+
+	public ViewStateProviderClassGenerator()
+	{
+		mUsedViews = new HashSet<>();
+	}
 
 	@Override
 	public boolean generate(TypeElement typeElement, List<ClassGeneratingParams> classGeneratingParamsList)
@@ -40,9 +48,27 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement>
 
 		final String viewClassName = parentClassName.substring(parentClassName.lastIndexOf(".") + 1);
 
-		String view = getViewClassFromGeneric(typeElement);
-		view = getViewClassFromAnnotationParams(typeElement, view);
-		String viewState = getViewStateClassFromAnnotationParams(typeElement, view);
+		String viewState = getViewStateClassFromAnnotationParams(typeElement);
+		if (viewState == null)
+		{
+			String view = getViewClassFromAnnotationParams(typeElement);
+			if (view == null)
+			{
+				view = getViewClassFromGeneric(typeElement);
+			}
+
+			if (view != null)
+			{
+				TypeElement viewTypeElement = MvpCompiler.getElementUtils().getTypeElement(view);
+				if (viewTypeElement == null)
+				{
+					throw new IllegalArgumentException("View \"" + view + "\" for " + typeElement + " cannot be found");
+				}
+
+				mUsedViews.add(viewTypeElement);
+				viewState = Util.getFullClassName(viewTypeElement) + MvpProcessor.VIEW_STATE_SUFFIX;
+			}
+		}
 
 		String builder = "package " + parentClassName.substring(0, parentClassName.lastIndexOf(".")) + ";\n" +
 				"\n" +
@@ -71,7 +97,7 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement>
 		return true;
 	}
 
-	private String getViewClassFromAnnotationParams(TypeElement typeElement, String viewClassName)
+	private String getViewClassFromAnnotationParams(TypeElement typeElement)
 	{
 		InjectViewState annotation = typeElement.getAnnotation(InjectViewState.class);
 		String mvpViewClassName = "";
@@ -91,22 +117,22 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement>
 			mvpViewClassName = Util.getFullClassName(value);
 		}
 
-		if (!mvpViewClassName.isEmpty() && !DefaultView.class.getName().equals(mvpViewClassName))
+		if (mvpViewClassName.isEmpty() || DefaultView.class.getName().equals(mvpViewClassName))
 		{
-			return mvpViewClassName;
+			return null;
 		}
 
-		return viewClassName;
+		return mvpViewClassName;
 	}
 
-	private String getViewStateClassFromAnnotationParams(TypeElement typeElement, String viewClassName)
+	private String getViewStateClassFromAnnotationParams(TypeElement typeElement)
 	{
 		InjectViewState annotation = typeElement.getAnnotation(InjectViewState.class);
 		String mvpViewStateClassName = "";
 
 		if (annotation != null)
 		{
-			TypeMirror value = null;
+			TypeMirror value;
 			try
 			{
 				annotation.value();
@@ -114,22 +140,16 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement>
 			catch (MirroredTypeException mte)
 			{
 				value = mte.getTypeMirror();
+				mvpViewStateClassName = value.toString();
 			}
-
-			mvpViewStateClassName = Util.getFullClassName(value);
 		}
 
-		if (!mvpViewStateClassName.isEmpty() && !DefaultViewState.class.getName().equals(mvpViewStateClassName))
+		if (mvpViewStateClassName.isEmpty() || DefaultViewState.class.getName().equals(mvpViewStateClassName))
 		{
-			return mvpViewStateClassName;
+			return null;
 		}
 
-		if (viewClassName.length() == 0)
-		{
-			throw new IllegalArgumentException("MvpPresenter(superclass for " + typeElement.getSimpleName() + ") doesn't know, what is target MvpView type of this presenter.");
-		}
-
-		return viewClassName + MvpProcessor.VIEW_STATE_SUFFIX;
+		return mvpViewStateClassName;
 	}
 
 	private String getViewClassFromGeneric(TypeElement typeElement)
@@ -140,7 +160,7 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement>
 
 		if (!typeElement.getTypeParameters().isEmpty())
 		{
-			MvpCompiler.getMessager().printMessage(Diagnostic.Kind.WARNING, "Your " + typeElement.getSimpleName() + " is typed. @InjectViewState may generate wrong code. Your can set view class manually.");
+			MvpCompiler.getMessager().printMessage(Diagnostic.Kind.WARNING, "Your " + typeElement.getSimpleName() + " is typed. @InjectViewState may generate wrong code. Your can set view/view state class manually.");
 		}
 
 		while (superclass.getKind() != TypeKind.NONE)
@@ -164,10 +184,7 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement>
 			if (superclassElement.toString().equals(MVP_PRESENTER_CLASS))
 			{
 				// MvpPresenter is typed only on View class
-				// Here we detect this view and return full name of its view state
-				String name = fillGenerics(parentTypes, typeArguments);
-				TypeElement viewElement = MvpCompiler.getElementUtils().getTypeElement(name);
-				return Util.getFullClassName(viewElement);
+				return fillGenerics(parentTypes, typeArguments);
 			}
 
 			parentTypes = types;
@@ -176,5 +193,10 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement>
 		}
 
 		return "";
+	}
+
+	public Set<TypeElement> getUsedViews()
+	{
+		return mUsedViews;
 	}
 }

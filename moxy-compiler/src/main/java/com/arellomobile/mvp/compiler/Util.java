@@ -26,7 +26,6 @@ import javax.lang.model.type.IntersectionType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
 import javax.lang.model.type.WildcardType;
-import javax.tools.Diagnostic;
 
 /**
  * Utilities for handling types in annotation processors
@@ -49,8 +48,6 @@ final class Util
 
 		for (TypeMirror param : params)
 		{
-			MvpCompiler.getMessager().printMessage(Diagnostic.Kind.NOTE, "Param: " + param + ", type: " + param.getKind());
-
 			if (result.length() > 0)
 			{
 				result += separator;

@@ -84,10 +84,18 @@ public class MvpCompiler extends AbstractProcessor
 	{
 		checkInjectors(roundEnv, InjectPresenter.class, new PresenterInjectorRules(ElementKind.FIELD, Modifier.PUBLIC, Modifier.DEFAULT));
 
-		processInjectors(roundEnv, InjectViewState.class, ElementKind.CLASS, new ViewStateProviderClassGenerator());
+		ViewStateProviderClassGenerator viewStateProviderClassGenerator = new ViewStateProviderClassGenerator();
+		processInjectors(roundEnv, InjectViewState.class, ElementKind.CLASS, viewStateProviderClassGenerator);
 		processInjectors(roundEnv, InjectPresenter.class, ElementKind.FIELD, new PresenterBinderClassGenerator());
 		processInjectors(roundEnv, ParamsProvider.class, ElementKind.INTERFACE, new ParamsHolderClassGenerator());
-		processInjectors(roundEnv, GenerateViewState.class, ElementKind.INTERFACE, new ViewStateClassGenerator());
+
+		ViewStateClassGenerator viewStateClassGenerator = new ViewStateClassGenerator();
+		Set<TypeElement> usedViews = viewStateProviderClassGenerator.getUsedViews();
+
+		for (TypeElement usedView : usedViews)
+		{
+			generateCode(ElementKind.INTERFACE, viewStateClassGenerator, usedView);
+		}
 
 		return true;
 	}
@@ -100,9 +108,10 @@ public class MvpCompiler extends AbstractProcessor
 			annotationRule.checkAnnotation(annotatedElement);
 		}
 
-		if (!annotationRule.getErrorStack().isEmpty())
+		String errorStack = annotationRule.getErrorStack();
+		if (errorStack != null && errorStack.length() > 0)
 		{
-			throw new RuntimeException("\n" + annotationRule.getErrorStack());
+			throw new RuntimeException("\n" + errorStack);
 		}
 	}
 
@@ -115,20 +124,30 @@ public class MvpCompiler extends AbstractProcessor
 				throw new RuntimeException(annotatedElements + " must be " + kind.name() + ", or not mark it as @" + clazz.getSimpleName());
 			}
 
-			List<ClassGeneratingParams> classGeneratingParamsList = new ArrayList<>();
+			generateCode(kind, classGenerator, annotatedElements);
+		}
+	}
 
-			//noinspection unchecked
-			final boolean generated = classGenerator.generate(annotatedElements, classGeneratingParamsList);
+	private void generateCode(ElementKind kind, ClassGenerator classGenerator, Element element)
+	{
+		if (element.getKind() != kind)
+		{
+			throw new RuntimeException(element + " must be " + kind.name());
+		}
 
-			if (!generated)
-			{
-				continue;
-			}
+		List<ClassGeneratingParams> classGeneratingParamsList = new ArrayList<>();
 
-			for (ClassGeneratingParams classGeneratingParams : classGeneratingParamsList)
-			{
-				createSourceFile(classGeneratingParams);
-			}
+		//noinspection unchecked
+		final boolean generated = classGenerator.generate(element, classGeneratingParamsList);
+
+		if (!generated)
+		{
+			return;
+		}
+
+		for (ClassGeneratingParams classGeneratingParams : classGeneratingParamsList)
+		{
+			createSourceFile(classGeneratingParams);
 		}
 	}
 
