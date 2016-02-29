@@ -78,11 +78,13 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 
 		List<Method> methods = new ArrayList<>();
 
+		String stateStrategyType = getStateStrategyType(typeElement);
+
 		// Get methods for input class
-		getMethods(Collections.<String, String>emptyMap(), typeElement, new ArrayList<Method>(), methods);
+		getMethods(Collections.<String, String>emptyMap(), typeElement, stateStrategyType, new ArrayList<Method>(), methods);
 
 		// Add methods from super intefaces
-		methods.addAll(iterateInterfaces(0, typeElement, Collections.<String, String>emptyMap(), methods, new ArrayList<Method>()));
+		methods.addAll(iterateInterfaces(0, typeElement, stateStrategyType, Collections.<String, String>emptyMap(), methods, new ArrayList<Method>()));
 
 		// Allow methods be with same names
 		Map<String, Integer> methodsCounter = new HashMap<>();
@@ -174,7 +176,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 		return true;
 	}
 
-	private List<Method> iterateInterfaces(int level, TypeElement parentElement, Map<String, String> parentTypes, List<Method> rootMethods, List<Method> superinterfacesMethods)
+	private List<Method> iterateInterfaces(int level, TypeElement parentElement, String parentDefaultStrategy, Map<String, String> parentTypes, List<Method> rootMethods, List<Method> superinterfacesMethods)
 	{
 		for (TypeMirror typeMirror : parentElement.getInterfaces())
 		{
@@ -201,15 +203,17 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 
 			}
 
-			getMethods(totalInterfaceTypes, anInterface, rootMethods, superinterfacesMethods);
+			String defaultStrategy = parentDefaultStrategy != null ? parentDefaultStrategy : getStateStrategyType(anInterface);
 
-			iterateInterfaces(level + 1, anInterface, types, rootMethods, superinterfacesMethods);
+			getMethods(totalInterfaceTypes, anInterface, defaultStrategy, rootMethods, superinterfacesMethods);
+
+			iterateInterfaces(level + 1, anInterface, defaultStrategy, types, rootMethods, superinterfacesMethods);
 		}
 
 		return superinterfacesMethods;
 	}
 
-	private List<Method> getMethods(Map<String, String> types, TypeElement typeElement, List<Method> rootMethods, List<Method> superinterfacesMethods)
+	private List<Method> getMethods(Map<String, String> types, TypeElement typeElement, String defaultStrategy, List<Method> rootMethods, List<Method> superinterfacesMethods)
 	{
 		for (Element element : typeElement.getEnclosedElements())
 		{
@@ -220,7 +224,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 
 			final ExecutableElement methodElement = (ExecutableElement) element;
 
-			String strategyClass = getStateStrategyType(typeElement);
+			String strategyClass = defaultStrategy != null ? defaultStrategy : DEFAULT_STATE_STRATEGY;
 			String methodTag = "\"" + methodElement.getSimpleName() + "\"";
 			for (AnnotationMirror annotationMirror : methodElement.getAnnotationMirrors())
 			{
@@ -443,7 +447,6 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 
 	public String getStateStrategyType(TypeElement typeElement)
 	{
-		String strategyClass = DEFAULT_STATE_STRATEGY;
 		for (AnnotationMirror annotationMirror : typeElement.getAnnotationMirrors())
 		{
 			if (!annotationMirror.getAnnotationType().asElement().toString().equals(STATE_STRATEGY_TYPE_ANNOTATION))
@@ -458,12 +461,12 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 			{
 				if ("value()".equals(key.toString()))
 				{
-					strategyClass = elementValues.get(key).toString();
+					return elementValues.get(key).toString();
 				}
 			}
 		}
 
-		return strategyClass;
+		return null;
 	}
 
 	private static class Method
