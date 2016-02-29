@@ -25,6 +25,8 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 import javax.tools.JavaFileObject;
 
 
@@ -35,6 +37,8 @@ import static javax.lang.model.SourceVersion.latestSupported;
 public class MvpCompiler extends AbstractProcessor
 {
 	private static Messager sMessager;
+	private static Types sTypeUtils;
+	private static Elements sElementUtils;
 
 	@Override
 	public synchronized void init(ProcessingEnvironment processingEnv)
@@ -42,11 +46,23 @@ public class MvpCompiler extends AbstractProcessor
 		super.init(processingEnv);
 
 		sMessager = processingEnv.getMessager();
+		sTypeUtils = processingEnv.getTypeUtils();
+		sElementUtils = processingEnv.getElementUtils();
 	}
 
 	public static Messager getMessager()
 	{
 		return sMessager;
+	}
+
+	public static Types getTypeUtils()
+	{
+		return sTypeUtils;
+	}
+
+	public static Elements getElementUtils()
+	{
+		return sElementUtils;
 	}
 
 	@Override

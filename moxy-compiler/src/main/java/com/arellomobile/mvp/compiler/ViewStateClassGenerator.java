@@ -14,6 +14,7 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
@@ -46,12 +47,14 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 			throw new IllegalStateException("Code generation can't be applied to generic interface " + typeElement.getSimpleName());
 		}
 
+		String fullClassName = Util.getFullClassName(typeElement);
+
 		ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
-		classGeneratingParams.setName(typeElement + MvpProcessor.VIEW_STATE_SUFFIX);
+		classGeneratingParams.setName(fullClassName + MvpProcessor.VIEW_STATE_SUFFIX);
 
 		mViewClassName = getClassName(typeElement);
 
-		String builder = "package " + typeElement.toString().substring(0, typeElement.toString().lastIndexOf(".")) + ";\n" +
+		String builder = "package " + fullClassName.substring(0, fullClassName.lastIndexOf(".")) + ";\n" +
 				"\n" +
 				"import com.arellomobile.mvp.viewstate.MvpViewState;\n" +
 				"import com.arellomobile.mvp.viewstate.ViewCommand;\n" +
@@ -60,7 +63,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 				"import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy;\n" +
 				"import com.arellomobile.mvp.viewstate.strategy.StateStrategy;\n" +
 				"\n" +
-				"public class " + mViewClassName + "$$State extends MvpViewState<" + mViewClassName + "> implements " + mViewClassName + "\n" +
+				"public class " + fullClassName.substring(fullClassName.lastIndexOf(".") + 1) + "$$State extends MvpViewState<" + mViewClassName + "> implements " + mViewClassName + "\n" +
 				"{\n" +
 				"\tprivate ViewCommands<" + mViewClassName + "> mViewCommands = new ViewCommands<>();\n" +
 				"\n" +
@@ -334,7 +337,16 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 
 	private String getClassName(TypeElement typeElement)
 	{
-		return typeElement.toString().substring(typeElement.toString().lastIndexOf(".") + 1);
+		String name = typeElement.getSimpleName().toString();
+
+		Element enclosingElement = typeElement.getEnclosingElement();
+		while (enclosingElement != null && enclosingElement.getKind() == ElementKind.CLASS)
+		{
+			name = enclosingElement.getSimpleName() + "." + name;
+			enclosingElement = enclosingElement.getEnclosingElement();
+		}
+
+		return name;
 	}
 
 	private String generateLocalViewCommand(String viewClassName, String builder, List<Method> methods)

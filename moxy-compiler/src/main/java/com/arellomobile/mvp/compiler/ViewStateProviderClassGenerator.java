@@ -88,9 +88,7 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement>
 				value = mte.getTypeMirror();
 			}
 
-			//noinspection ConstantConditions
-			final TypeElement mvpViewStateClass = (TypeElement) ((DeclaredType) value).asElement();
-			mvpViewClassName = mvpViewStateClass.toString();
+			mvpViewClassName = Util.getFullClassName(value);
 		}
 
 		if (!mvpViewClassName.isEmpty() && !DefaultView.class.getName().equals(mvpViewClassName))
@@ -118,9 +116,7 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement>
 				value = mte.getTypeMirror();
 			}
 
-			//noinspection ConstantConditions
-			final TypeElement mvpViewStateClass = (TypeElement) ((DeclaredType) value).asElement();
-			mvpViewStateClassName = mvpViewStateClass.toString();
+			mvpViewStateClassName = Util.getFullClassName(value);
 		}
 
 		if (!mvpViewStateClassName.isEmpty() && !DefaultViewState.class.getName().equals(mvpViewStateClassName))
@@ -167,7 +163,11 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement>
 
 			if (superclassElement.toString().equals(MVP_PRESENTER_CLASS))
 			{
-				return fillGenerics(parentTypes, typeArguments);
+				// MvpPresenter is typed only on View class
+				// Here we detect this view and return full name of its view state
+				String name = fillGenerics(parentTypes, typeArguments);
+				TypeElement viewElement = MvpCompiler.getElementUtils().getTypeElement(name);
+				return Util.getFullClassName(viewElement);
 			}
 
 			parentTypes = types;

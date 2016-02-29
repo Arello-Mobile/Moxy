@@ -64,7 +64,7 @@ final class ParamsHolderClassGenerator extends ClassGenerator<TypeElement>
 					for (TypeMirror typeMirror : values)
 					{
 						ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
-						parentClassName = typeMirror.toString();
+						parentClassName = Util.getFullClassName(typeMirror);
 						generateForClass(typeElement, classGeneratingParams, parentClassName, methodName, returnType);
 						classGeneratingParamsList.add(classGeneratingParams);
 					}

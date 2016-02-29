@@ -20,11 +20,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.IntersectionType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
 import javax.lang.model.type.WildcardType;
+import javax.tools.Diagnostic;
 
 /**
  * Utilities for handling types in annotation processors
@@ -47,6 +49,8 @@ final class Util
 
 		for (TypeMirror param : params)
 		{
+			MvpCompiler.getMessager().printMessage(Diagnostic.Kind.NOTE, "Param: " + param + ", type: " + param.getKind());
+
 			if (result.length() > 0)
 			{
 				result += separator;
@@ -102,5 +106,27 @@ final class Util
 		}
 
 		return result;
+	}
+
+	public static String getFullClassName(TypeMirror typeMirror)
+	{
+		if (!(typeMirror instanceof DeclaredType))
+		{
+			return "";
+		}
+
+		TypeElement typeElement = (TypeElement) ((DeclaredType) typeMirror).asElement();
+		return getFullClassName(typeElement);
+	}
+
+	public static String getFullClassName(TypeElement typeElement)
+	{
+		String packageName = MvpCompiler.getElementUtils().getPackageOf(typeElement).toString();
+		if (packageName.length() > 0)
+		{
+			packageName += ".";
+		}
+		String className = typeElement.toString().substring(packageName.length());
+		return packageName + className.replaceAll("\\.", "\\$");
 	}
 }
