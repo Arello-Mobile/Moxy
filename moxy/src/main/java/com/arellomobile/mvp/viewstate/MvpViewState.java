@@ -44,7 +44,12 @@ public abstract class MvpViewState<View extends MvpView>
 			throw new IllegalArgumentException("Mvp view must be not null");
 		}
 
-		mViews.add(view);
+		boolean isViewAdded = mViews.add(view);
+
+		if (!isViewAdded)
+		{
+			return;
+		}
 
 		mInRestoreState.add(view);
 
