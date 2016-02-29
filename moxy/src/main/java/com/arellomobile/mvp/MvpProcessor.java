@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import android.util.Log;
-
 import com.arellomobile.mvp.presenter.PresenterField;
 import com.arellomobile.mvp.presenter.PresenterType;
 
@@ -77,8 +75,6 @@ public class MvpProcessor
 		}
 		catch (ClassNotFoundException e)
 		{
-			Log.d(TAG, "Not found " + className + ". Trying superclass " + (clazz.getSuperclass().getName()));
-
 			return null;
 		}
 		//TODO add to binders array
