@@ -178,7 +178,7 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement>
 			Map<String, String> types = new HashMap<>();
 			for (int i = 0; i < typeArguments.size(); i++)
 			{
-				types.put(typeParameters.get(i).toString(), typeArguments.get(i).toString());
+				types.put(typeParameters.get(i).toString(), fillGenerics(parentTypes, typeArguments.get(i)));
 			}
 
 			if (superclassElement.toString().equals(MVP_PRESENTER_CLASS))
