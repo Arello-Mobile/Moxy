@@ -1,11 +1,11 @@
 package com.arellomobile.mvp;
 
+import com.arellomobile.mvp.presenter.PresenterField;
+import com.arellomobile.mvp.presenter.PresenterType;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import com.arellomobile.mvp.presenter.PresenterField;
-import com.arellomobile.mvp.presenter.PresenterType;
 
 /**
  * Date: 18-Dec-15

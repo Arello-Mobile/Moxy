@@ -1,10 +1,10 @@
 package com.arellomobile.mvp.compiler;
 
-import java.util.List;
-
 import com.arellomobile.mvp.DefaultPresenterFactory;
 import com.arellomobile.mvp.MvpProcessor;
 import com.arellomobile.mvp.ParamsProvider;
+
+import java.util.List;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;

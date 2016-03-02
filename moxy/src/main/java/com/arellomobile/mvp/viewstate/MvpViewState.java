@@ -1,12 +1,12 @@
 package com.arellomobile.mvp.viewstate;
 
+import com.arellomobile.mvp.MvpView;
+import com.arellomobile.mvp.Pair;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
-
-import com.arellomobile.mvp.MvpView;
-import com.arellomobile.mvp.Pair;
 
 /**
  * Date: 15.12.2015
