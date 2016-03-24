@@ -106,6 +106,10 @@ final class ParamsHolderClassGenerator extends ClassGenerator<TypeElement>
 	private boolean containsManyMethods(TypeElement typeElement)
 	{
 		boolean hasExecutable = false;
+		if (typeElement.getEnclosedElements().isEmpty())
+		{
+			return true;
+		}
 
 		for (Element element : typeElement.getEnclosedElements())
 		{

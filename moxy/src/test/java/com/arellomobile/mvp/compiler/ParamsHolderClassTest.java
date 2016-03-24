@@ -38,12 +38,19 @@ public class ParamsHolderClassTest extends CompilerTest
 		}
 	}
 
-	//Uncomment this when [MOXY-20] will be fixed
-	//	@Test
+	@Test
 	public void checkEmptyParams_throw()
 	{
-		getThat(JavaFileObjects.forResource("view/EmptyParams.java"), JavaFileObjects.forResource("view/EmptyParamsView.java"))
-				.compilesWithoutError();
+		try
+		{
+			getThat(JavaFileObjects.forResource("view/EmptyParams.java"), JavaFileObjects.forResource("view/EmptyParamsView.java"))
+					.compilesWithoutError();
+			Assert.fail();
+		}
+		catch (RuntimeException e)
+		{
+			Truth.assertThat(e.getLocalizedMessage().startsWith("Your params provider interface should contains only one methods, annotated as "));
+		}
 	}
 
 	@Test
