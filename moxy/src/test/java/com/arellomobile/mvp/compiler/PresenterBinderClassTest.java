@@ -49,13 +49,17 @@ public class PresenterBinderClassTest extends CompilerTest
 		}
 	}
 
+	@Test
+	public void injectPresenterWithGeneric()
+	{
+		getThat(JavaFileObjects.forResource("presenter/WithViewGenericPresenter.java"), JavaFileObjects.forResource("view/InjectPresenterWithGenericView.java")).compilesWithoutError();
+	}
 
-	//TODO change to correct text;
 	@Test
 	public void injectPresenterWithIncorrectView_throw()
 	{
 		getThat(JavaFileObjects.forResource("view/InjectPresenterWithIncorrectViewView.java"))
-				.failsToCompile().withErrorContaining("You can't use @InjectPresenter for class").in(JavaFileObjects.forResource("view/InjectPresenterWithIncorrectViewView.java")).onLine(16);
+				.failsToCompile().withErrorContaining("You can not use @InjectPresenter in classes that are not View, which is typified target Presenter").in(JavaFileObjects.forResource("view/InjectPresenterWithIncorrectViewView.java")).onLine(16);
 	}
 
 	//Uncomment this when [MOXY-28] will be fixed

@@ -3,12 +3,11 @@ package com.arellomobile.mvp.view;
 import com.arellomobile.mvp.MvpView;
 
 /**
- * Date: 08.02.2016
- * Time: 16:29
+ * Date: 04.03.2016
+ * Time: 14:48
  *
  * @author Savin Mikhail
  */
-public interface TestView extends MvpView
+public abstract class TestViewChild<T extends MvpView> implements TestView
 {
-	void testEvent();
 }

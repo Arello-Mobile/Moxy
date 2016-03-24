@@ -1,11 +1,14 @@
 package com.arellomobile.mvp.compiler;
 
 import com.arellomobile.mvp.MvpPresenter;
+import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +20,7 @@ import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.type.TypeVariable;
 import javax.tools.Diagnostic;
 
 import static com.arellomobile.mvp.compiler.Util.fillGenerics;
@@ -64,7 +68,9 @@ public class PresenterInjectorRules extends AnnotationRule
 
 		TypeElement typeElement = (TypeElement) ((DeclaredType) annotatedField.asType()).asElement();
 		String viewClassFromGeneric = getViewClassFromGeneric(typeElement);
-		List<TypeMirror> viewsType = getViewsType((TypeElement) ((DeclaredType) annotatedField.getEnclosingElement().asType()).asElement());
+
+		Collection<TypeMirror> viewsType = getViewsType((TypeElement) ((DeclaredType) annotatedField.getEnclosingElement().asType()).asElement());
+
 		boolean result = false;
 		for (TypeMirror typeMirror : viewsType)
 		{
@@ -76,27 +82,28 @@ public class PresenterInjectorRules extends AnnotationRule
 		}
 		if (!result)
 		{
-			MvpCompiler.getMessager().printMessage(Diagnostic.Kind.ERROR, "You can't use @InjectPresenter for class which not extends from presenter view.", annotatedField);
+			MvpCompiler.getMessager().printMessage(Diagnostic.Kind.ERROR, "You can not use @InjectPresenter in classes that are not View, which is typified target Presenter", annotatedField);
 		}
 	}
 
 	private String getViewClassFromGeneric(TypeElement typeElement)
 	{
 		TypeMirror superclass = typeElement.asType();
-
-		Map<String, String> parentTypes = Collections.emptyMap();
+		Map<TypeParameterElement, TypeMirror> mTypedMap = Collections.emptyMap();
 
 		if (!typeElement.getTypeParameters().isEmpty())
 		{
-			//TODO change to correct text;
-			MvpCompiler.getMessager().printMessage(Diagnostic.Kind.ERROR, "Your " + typeElement.getSimpleName() + " is typed. @InjectPresenter can't be used for typed presenter.");
+			mTypedMap = getChildInstanceOfClassFromGeneric(typeElement, MvpView.class);
 		}
 
+
+		Map<String, String> parentTypes = Collections.emptyMap();
+		List<? extends TypeMirror> totalTypeArguments = new ArrayList<>(((DeclaredType) superclass).getTypeArguments());
 		while (superclass.getKind() != TypeKind.NONE)
 		{
 			TypeElement superclassElement = (TypeElement) ((DeclaredType) superclass).asElement();
-
-			final List<? extends TypeMirror> typeArguments = ((DeclaredType) superclass).getTypeArguments();
+			List<? extends TypeMirror> typeArguments = ((DeclaredType) superclass).getTypeArguments();
+			totalTypeArguments.retainAll(typeArguments);
 			final List<? extends TypeParameterElement> typeParameters = superclassElement.getTypeParameters();
 
 			Map<String, String> types = new HashMap<>();
@@ -107,6 +114,15 @@ public class PresenterInjectorRules extends AnnotationRule
 
 			if (superclassElement.toString().equals(MvpPresenter.class.getCanonicalName()))
 			{
+				if (!mTypedMap.isEmpty())
+				{
+					return mTypedMap.get(((TypeVariable) totalTypeArguments.get(0)).asElement()).toString();
+				}
+
+				if (typeArguments.isEmpty() && typeParameters.isEmpty())
+				{
+					return ((DeclaredType) superclass).asElement().getSimpleName().toString();
+				}
 				// MvpPresenter is typed only on View class
 				return fillGenerics(parentTypes, typeArguments);
 			}
@@ -119,21 +135,61 @@ public class PresenterInjectorRules extends AnnotationRule
 		return "";
 	}
 
-	private List<TypeMirror> getViewsType(TypeElement typeElement)
+	private void print(String s)
+	{
+		MvpCompiler.getMessager().printMessage(Diagnostic.Kind.ERROR, s);
+	}
+
+	private Map<TypeParameterElement, TypeMirror> getChildInstanceOfClassFromGeneric(final TypeElement typeElement, final Class<?> aClass)
+	{
+		Map<TypeParameterElement, TypeMirror> result = new HashMap<>();
+		for (TypeParameterElement element : typeElement.getTypeParameters())
+		{
+			List<? extends TypeMirror> bounds = element.getBounds();
+			for (TypeMirror bound : bounds)
+			{
+				if (bound instanceof DeclaredType && ((DeclaredType) bound).asElement() instanceof TypeElement)
+				{
+					Collection<TypeMirror> viewsType = getViewsType((TypeElement) ((DeclaredType) bound).asElement());
+					boolean isViewType = false;
+					for (TypeMirror viewType : viewsType)
+					{
+						if (((DeclaredType) viewType).asElement().toString().equals(aClass.getCanonicalName()))
+						{
+							isViewType = true;
+						}
+					}
+
+					if (isViewType)
+					{
+						result.put(element, bound);
+						break;
+					}
+				}
+			}
+		}
+
+		return result;
+	}
+
+	private Collection<TypeMirror> getViewsType(TypeElement typeElement)
 	{
 		TypeMirror superclass = typeElement.asType();
 
 		List<TypeMirror> result = new ArrayList<>();
 
-		if (!typeElement.getTypeParameters().isEmpty())
-		{
-			MvpCompiler.getMessager().printMessage(Diagnostic.Kind.ERROR, "Your " + typeElement.getSimpleName() + " is typed. @InjectPresenter can't be used for typed presenter.");
-		}
-
 		while (superclass.getKind() != TypeKind.NONE)
 		{
 			TypeElement superclassElement = (TypeElement) ((DeclaredType) superclass).asElement();
-			result.addAll(superclassElement.getInterfaces());
+			Collection<? extends TypeMirror> interfaces = new HashSet<>(superclassElement.getInterfaces());
+			for (TypeMirror typeMirror : interfaces)
+			{
+				if (typeMirror instanceof DeclaredType)
+				{
+					result.addAll(getViewsType((TypeElement) ((DeclaredType) typeMirror).asElement()));
+				}
+			}
+			result.addAll(interfaces);
 			result.add(superclass);
 
 			superclass = superclassElement.getSuperclass();
