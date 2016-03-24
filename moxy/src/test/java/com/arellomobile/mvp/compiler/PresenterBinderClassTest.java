@@ -50,12 +50,12 @@ public class PresenterBinderClassTest extends CompilerTest
 	}
 
 
-	//Uncomment this when [MOXY-27] will be fixed
-	// @Test
+	//TODO change to correct text;
+	@Test
 	public void injectPresenterWithIncorrectView_throw()
 	{
 		getThat(JavaFileObjects.forResource("view/InjectPresenterWithIncorrectViewView.java"))
-				.failsToCompile();
+				.failsToCompile().withErrorContaining("You can't use @InjectPresenter for class").in(JavaFileObjects.forResource("view/InjectPresenterWithIncorrectViewView.java")).onLine(16);
 	}
 
 	//Uncomment this when [MOXY-28] will be fixed
@@ -72,6 +72,7 @@ public class PresenterBinderClassTest extends CompilerTest
 		getThat(JavaFileObjects.forResource("view/InjectPresenterWithIncorrectParamsView.java"))
 				.failsToCompile();
 	}
+
 	//Uncomment this when [MOXY-29] will be fixed
 	//TODO change message text to correct
 	//	@Test
