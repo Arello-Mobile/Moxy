@@ -20,9 +20,10 @@ allprojects {
 }
 
 ext {
-    targetVersionCode = 14
-    targetVersionName = "0.4.2"
+    targetVersionCode = 15
+    targetVersionName = "0.4.3"
 }
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
