@@ -50,6 +50,12 @@ public class PresenterBinderClassTest extends CompilerTest
 	}
 
 	@Test
+	public void injectPresenterWithGeneric_throw()
+	{
+		getThat(JavaFileObjects.forResource("presenter/WithViewGenericPresenter.java"), JavaFileObjects.forResource("view/InjectPresenterWithGenericViewIncorrect.java")).failsToCompile().withErrorContaining("You can not use @InjectPresenter in classes that are not View, which is typified target Presenter").in(JavaFileObjects.forResource("view/InjectPresenterWithGenericViewIncorrect.java")).onLine(19);
+	}
+
+	@Test
 	public void injectPresenterWithGeneric()
 	{
 		getThat(JavaFileObjects.forResource("presenter/WithViewGenericPresenter.java"), JavaFileObjects.forResource("view/InjectPresenterWithGenericView.java")).compilesWithoutError();

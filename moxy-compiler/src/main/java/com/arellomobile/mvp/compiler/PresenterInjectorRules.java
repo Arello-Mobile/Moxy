@@ -114,9 +114,21 @@ public class PresenterInjectorRules extends AnnotationRule
 
 			if (superclassElement.toString().equals(MvpPresenter.class.getCanonicalName()))
 			{
-				if (!mTypedMap.isEmpty())
+				if (!typeArguments.isEmpty())
 				{
-					return mTypedMap.get(((TypeVariable) totalTypeArguments.get(0)).asElement()).toString();
+					TypeMirror typeMirror = typeArguments.get(0);
+					if (typeMirror instanceof TypeVariable)
+					{
+						Element key = ((TypeVariable) typeMirror).asElement();
+
+						for (Map.Entry<TypeParameterElement, TypeMirror> entry : mTypedMap.entrySet())
+						{
+							if (entry.getKey().toString().equals(key.toString()))
+							{
+								return Util.getFullClassName(entry.getValue());
+							}
+						}
+					}
 				}
 
 				if (typeArguments.isEmpty() && typeParameters.isEmpty())

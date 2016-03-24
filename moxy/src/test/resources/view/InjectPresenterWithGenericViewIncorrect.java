@@ -3,7 +3,6 @@ package view;
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.view.CounterTestView;
-import com.arellomobile.mvp.view.TestView;
 import com.arellomobile.mvp.view.TestViewChild2;
 
 import presenter.WithViewGenericPresenter;
@@ -14,10 +13,10 @@ import presenter.WithViewGenericPresenter;
  *
  * @author Savin Mikhail
  */
-public class InjectPresenterWithGenericView extends CounterTestView
+public class InjectPresenterWithGenericViewIncorrect extends TestViewChild2<MvpView>
 {
 	@InjectPresenter
-	WithViewGenericPresenter<InjectPresenterWithGenericView, CounterTestView>  mPresenter;
+	WithViewGenericPresenter<CounterTestView, InjectPresenterWithGenericViewIncorrect>  mPresenter;
 
 	public void testEvent(){
 
