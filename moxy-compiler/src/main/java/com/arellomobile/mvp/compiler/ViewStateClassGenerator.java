@@ -277,17 +277,23 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 						generics += ", ";
 					}
 
-					generics += typeVariable.asElement();
-
 					final TypeMirror upperBound = typeVariable.getUpperBound();
 
 					if (upperBound.toString().equals(Object.class.getCanonicalName()))
 					{
+						generics += typeVariable.asElement();
 						continue;
 					}
 
 					final String filledGeneric = fillGenerics(methodTypes, upperBound);
-					generics += " extends " + filledGeneric;
+					if (filledGeneric.startsWith("?"))
+					{
+						generics += filledGeneric.replaceFirst("\\?", typeVariable.asElement().toString());
+					}
+					else
+					{
+						generics += typeVariable.asElement() + " extends " + filledGeneric;
+					}
 				}
 				generics += "> ";
 			}

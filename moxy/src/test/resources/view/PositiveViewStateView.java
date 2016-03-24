@@ -1,6 +1,5 @@
 package view;
 
-import com.arellomobile.mvp.GenerateViewState;
 import com.arellomobile.mvp.MvpView;
 
 /**
@@ -9,7 +8,6 @@ import com.arellomobile.mvp.MvpView;
  *
  * @author Savin Mikhail
  */
-@GenerateViewState
 public interface PositiveViewStateView extends MvpView
 {
 	void method();
