@@ -23,18 +23,13 @@ import static org.junit.Assert.fail;
  */
 public class ViewStateClassTest extends CompilerTest
 {
-	@Test
-	public void viewStateForNotView_throw()
-	{
-		getThat(JavaFileObjects.forResource("view/ViewStateForNotView.java")).failsToCompile();
-	}
 
 	@Test
 	public void viewStateForClassView_throw()
 	{
 		try
 		{
-			getThat(JavaFileObjects.forResource("view/ViewStateForClassView.java")).failsToCompile();
+			getThat(JavaFileObjects.forResource("view/CounterTestView.java"), JavaFileObjects.forResource("presenter/InjectViewStateForClassPresenter.java")).failsToCompile();
 			fail();
 		}
 		catch (RuntimeException e)
@@ -48,7 +43,7 @@ public class ViewStateClassTest extends CompilerTest
 	{
 		try
 		{
-			assertCompilationResultIs(ImmutableTable.<Diagnostic.Kind, Integer, Pattern>of(), ImmutableList.of(getString("view/PositiveViewStateView.java")));
+			assertCompilationResultIs(ImmutableTable.<Diagnostic.Kind, Integer, Pattern>of(), ImmutableList.of(getString("com/arellomobile/mvp/view/PositiveViewStateView$$State.java")));
 		}
 		catch (IOException e)
 		{
@@ -61,7 +56,7 @@ public class ViewStateClassTest extends CompilerTest
 	{
 		try
 		{
-			getThat(JavaFileObjects.forResource("view/ViewStateForGenericView.java")).failsToCompile();
+			getThat(JavaFileObjects.forResource("presenter/InjectViewStateForGenericViewPresenter.java"), JavaFileObjects.forResource("view/ViewStateForGenericView.java")).failsToCompile();
 			fail();
 		}
 		catch (RuntimeException e)
@@ -75,7 +70,7 @@ public class ViewStateClassTest extends CompilerTest
 	{
 		try
 		{
-			getThat(JavaFileObjects.forResource("view/ViewStateParentStrategyClassView.java"), JavaFileObjects.forResource("view/ViewStateParentView.java"), JavaFileObjects.forResource("view/ViewStateChildWithIncorrectStrategyClassView.java")).failsToCompile();
+			getThat(JavaFileObjects.forResource("view/ViewStateParentStrategyClassView.java"), JavaFileObjects.forResource("view/ViewStateParentView.java"), JavaFileObjects.forResource("view/ViewStateChildWithIncorrectStrategyClassView.java"), JavaFileObjects.forResource("presenter/ViewStateChildWithIncorrectStrategyClassPresenter.java")).failsToCompile();
 			fail();
 		}
 		catch (RuntimeException e)
@@ -86,7 +81,7 @@ public class ViewStateClassTest extends CompilerTest
 
 		try
 		{
-			getThat(JavaFileObjects.forResource("view/ViewStateParentStrategyTagView.java"), JavaFileObjects.forResource("view/ViewStateParentView.java"), JavaFileObjects.forResource("view/ViewStateChildWithIncorrectStrategyTagView.java")).failsToCompile();
+			getThat(JavaFileObjects.forResource("view/ViewStateParentStrategyTagView.java"), JavaFileObjects.forResource("view/ViewStateParentView.java"), JavaFileObjects.forResource("view/ViewStateChildWithIncorrectStrategyTagView.java"), JavaFileObjects.forResource("presenter/ViewStateChildWithIncorrectStrategyClassPresenter.java")).failsToCompile();
 			fail();
 		}
 		catch (RuntimeException e)

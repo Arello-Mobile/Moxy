@@ -27,7 +27,7 @@ public class ViewStateProviderClassTest extends CompilerTest
 	{
 		try
 		{
-			assertCompilationResultIs(ImmutableTable.<Diagnostic.Kind, Integer, Pattern>of(), ImmutableList.of(getString("view/PositiveViewStateView.java"), getString("presenter/PositiveViewStateProviderPresenter.java")));
+			assertCompilationResultIs(ImmutableTable.<Diagnostic.Kind, Integer, Pattern>of(), ImmutableList.of(getString("com/arellomobile/mvp/presenter/PositiveViewStateProviderPresenter$$ViewStateClassNameProvider.java")));
 		}
 		catch (IOException e)
 		{

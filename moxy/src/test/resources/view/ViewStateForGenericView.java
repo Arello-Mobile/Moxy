@@ -9,7 +9,7 @@ import com.arellomobile.mvp.MvpView;
  *
  * @author Savin Mikhail
  */
-@GenerateViewState
 public interface ViewStateForGenericView<T> extends MvpView
 {
+	void testEvent(T ter);
 }
