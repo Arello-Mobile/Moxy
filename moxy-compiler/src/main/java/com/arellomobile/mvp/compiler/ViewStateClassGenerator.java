@@ -226,7 +226,6 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 			if (!methodElement.getReturnType().toString().equals("void"))
 			{
 				MvpCompiler.getMessager().printMessage(Diagnostic.Kind.ERROR, "You are trying generate ViewState for " + typeElement.getSimpleName() + ". But " + typeElement.getSimpleName() + " contains non-void method \"" + methodElement.getSimpleName() + "\" that return type is " + methodElement.getReturnType() + ". See more here: https://github.com/Arello-Mobile/Moxy/issues/2");
-				//throw new RuntimeException("Should be void. Is " + methodElement.getReturnType());
 			}
 
 			String strategyClass = defaultStrategy != null ? defaultStrategy : DEFAULT_STATE_STRATEGY;
@@ -267,7 +266,6 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 			}
 
 			String generics = "";
-			int genericsCount = typeVariables.size();
 
 			if (!typeVariables.isEmpty())
 			{
@@ -314,7 +312,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 				throwTypes.add(fillGenerics(methodTypes, typeMirror));
 			}
 
-			final Method method = new Method(genericsCount, generics, methodElement.getSimpleName().toString(), arguments, throwTypes, strategyClass, methodTag, getClassName(typeElement));
+			final Method method = new Method(generics, methodElement.getSimpleName().toString(), arguments, throwTypes, strategyClass, methodTag, getClassName(typeElement));
 
 			if (rootMethods.contains(method))
 			{
@@ -372,21 +370,6 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 				argumentsString += argument.name;
 			}
 
-			String generics = "";
-			if (method.genericsCount > 0)
-			{
-				generics += '<';
-				for (int i = 0; i < method.genericsCount; i++)
-				{
-					if (generics.length() > 1)
-					{
-						generics += ", ";
-					}
-					generics += '?';
-				}
-				generics += '>';
-			}
-
 			String argumentsInit = "";
 			String argumentsBind = "";
 			for (Argument argument : method.arguments)
@@ -413,18 +396,6 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 					"\t\t{\n" +
 					"\t\t\tmvpView." + method.name + "(" + argumentsString + ");\n" +
 					"\t\t}\n" +
-					/*"\n" +
-					"\t\t@Override\n" +
-					"\t\tpublic Class<? extends StateStrategy> getStrategyType()\n" +
-					"\t\t{\n" +
-					"\t\t\treturn " + method.stateStrategyType + ";\n" +
-					"\t\t}\n" +
-					"\n" +
-					"\t\t@Override\n" +
-					"\t\tpublic String getTag()\n" +
-					"\t\t{\n" +
-					"\t\t\treturn " + method.tag + ";\n" +
-					"\t\t}\n" +*/
 					"\t}\n";
 		}
 		return builder;
@@ -456,7 +427,6 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 
 	private static class Method
 	{
-		private int genericsCount; // add <?> to instance declaration
 		String genericType;
 		String name;
 		String uniqueName; // required for methods with same name but difference params
@@ -467,9 +437,8 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 		String tag;
 		String enclosedClass;
 
-		Method(int genericsCount, String genericType, String name, List<Argument> arguments, List<String> thrownTypes, String stateStrategy, String methodTag, String enclosedClass)
+		Method(String genericType, String name, List<Argument> arguments, List<String> thrownTypes, String stateStrategy, String methodTag, String enclosedClass)
 		{
-			this.genericsCount = genericsCount;
 			this.genericType = genericType;
 			this.name = name;
 			this.arguments = arguments;

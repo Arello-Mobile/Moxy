@@ -3,7 +3,6 @@ package com.arellomobile.mvp.viewstate.strategy;
 import java.util.List;
 
 import com.arellomobile.mvp.MvpView;
-import com.arellomobile.mvp.Pair;
 import com.arellomobile.mvp.viewstate.ViewCommand;
 
 /**
@@ -21,24 +20,24 @@ public interface StateStrategy
 	 * {@link MvpView}
 	 *
 	 * @param currentState current state of
-	 * {@link com.arellomobile.mvp.viewstate.MvpViewState}. Each {@link Pair}
-	 * contains commands to execute and params of this command.
-	 * @param incomingState command for apply to {@link MvpView} This
-	 * {@link Pair} contains commands to execute and params of this command.
+	 * {@link com.arellomobile.mvp.viewstate.MvpViewState}. Each {@link ViewCommand}
+	 * contains self parameters.
+	 * @param incomingCommand command for apply to {@link MvpView} This
+	 * {@link ViewCommand} contains params of this command.
 	 * @param <View> type of incoming view
 	 */
-	<View extends MvpView> void beforeApply(List<ViewCommand<View>> currentState, ViewCommand<View> incomingState);
+	<View extends MvpView> void beforeApply(List<ViewCommand<View>> currentState, ViewCommand<View> incomingCommand);
 
 	/**
 	 * Called immediately after command applied to {@link MvpView}. Also called
 	 * after re-apply to other views.
 	 *
 	 * @param currentState current state of
-	 * {@link com.arellomobile.mvp.viewstate.MvpViewState}. Each {@link Pair}
-	 * contains commad to execute and params of this command.
-	 * @param incomingState applied command to {@link MvpView} This
-	 * {@link Pair} contains executed command and params of this command.
+	 * {@link com.arellomobile.mvp.viewstate.MvpViewState}. Each {@link ViewCommand}
+	 * contains self parameters.
+	 * @param incomingCommand applied command to {@link MvpView} This
+	 * {@link ViewCommand} contains params of this command.
 	 * @param <View> type of incoming view
 	 */
-	<View extends MvpView> void afterApply(List<ViewCommand<View>> currentState, ViewCommand<View> incomingState);
+	<View extends MvpView> void afterApply(List<ViewCommand<View>> currentState, ViewCommand<View> incomingCommand);
 }

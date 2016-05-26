@@ -16,21 +16,21 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategy;
  */
 public class ViewCommands<View extends MvpView>
 {
-	private List<ViewCommand<View>> mStatesPairList = new ArrayList<>();
+	private List<ViewCommand<View>> mState = new ArrayList<>();
 	private Map<Class<? extends StateStrategy>, StateStrategy> mStrategies = new HashMap<>();
 
 	public void beforeApply(ViewCommand<View> viewCommand)
 	{
 		StateStrategy stateStrategy = getStateStrategy(viewCommand);
 
-		stateStrategy.beforeApply(mStatesPairList, viewCommand);
+		stateStrategy.beforeApply(mState, viewCommand);
 	}
 
 	public void afterApply(ViewCommand<View> viewCommand)
 	{
 		StateStrategy stateStrategy = getStateStrategy(viewCommand);
 
-		stateStrategy.afterApply(mStatesPairList, viewCommand);
+		stateStrategy.afterApply(mState, viewCommand);
 	}
 
 	private StateStrategy getStateStrategy(ViewCommand<View> viewCommand)
@@ -60,18 +60,18 @@ public class ViewCommands<View extends MvpView>
 
 	public boolean isEmpty()
 	{
-		return mStatesPairList.isEmpty();
+		return mState.isEmpty();
 	}
 
 	public void reapply(View view)
 	{
-		final ArrayList<ViewCommand<View>> statePairsList = new ArrayList<>(mStatesPairList);
+		final ArrayList<ViewCommand<View>> commands = new ArrayList<>(mState);
 
-		for (ViewCommand<View> entry : statePairsList)
+		for (ViewCommand<View> command : commands)
 		{
-			entry.apply(view);
+			command.apply(view);
 
-			afterApply(entry);
+			afterApply(command);
 		}
 	}
 }
