@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.arellomobile.mvp.MvpView;
-import com.arellomobile.mvp.Pair;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategy;
 
 /**
@@ -17,31 +16,21 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategy;
  */
 public class ViewCommands<View extends MvpView>
 {
-	private List<Pair<ViewCommand<View>, Object>> mStatesPairList = new ArrayList<>();
+	private List<ViewCommand<View>> mStatesPairList = new ArrayList<>();
 	private Map<Class<? extends StateStrategy>, StateStrategy> mStrategies = new HashMap<>();
 
 	public void beforeApply(ViewCommand<View> viewCommand)
 	{
-		beforeApply(viewCommand, null);
-	}
-
-	public void beforeApply(ViewCommand<View> viewCommand, Object params)
-	{
 		StateStrategy stateStrategy = getStateStrategy(viewCommand);
 
-		stateStrategy.beforeApply(mStatesPairList, Pair.create(viewCommand, params));
+		stateStrategy.beforeApply(mStatesPairList, viewCommand);
 	}
 
 	public void afterApply(ViewCommand<View> viewCommand)
 	{
-		afterApply(viewCommand, null);
-	}
-
-	public void afterApply(ViewCommand<View> viewCommand, Object params)
-	{
 		StateStrategy stateStrategy = getStateStrategy(viewCommand);
 
-		stateStrategy.afterApply(mStatesPairList, Pair.create(viewCommand, params));
+		stateStrategy.afterApply(mStatesPairList, viewCommand);
 	}
 
 	private StateStrategy getStateStrategy(ViewCommand<View> viewCommand)
@@ -76,13 +65,13 @@ public class ViewCommands<View extends MvpView>
 
 	public void reapply(View view)
 	{
-		final ArrayList<Pair<ViewCommand<View>, Object>> statePairsList = new ArrayList<>(mStatesPairList);
+		final ArrayList<ViewCommand<View>> statePairsList = new ArrayList<>(mStatesPairList);
 
-		for (Pair<ViewCommand<View>, Object> entry : statePairsList)
+		for (ViewCommand<View> entry : statePairsList)
 		{
-			entry.first.apply(view, entry.second);
+			entry.apply(view);
 
-			afterApply(entry.first, entry.second);
+			afterApply(entry);
 		}
 	}
 }

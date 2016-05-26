@@ -23,6 +23,7 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.ExecutableType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
+import javax.tools.Diagnostic;
 
 
 import static com.arellomobile.mvp.compiler.Util.fillGenerics;
@@ -105,7 +106,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 				method.uniqueName = method.name + counter;
 			}
 
-			method.paramsClassName = method.uniqueName.substring(0, 1).toUpperCase() + method.uniqueName.substring(1) + "Params";
+			method.commandClassName = method.uniqueName.substring(0, 1).toUpperCase() + method.uniqueName.substring(1) + "Command";
 
 			counter++;
 			methodsCounter.put(method.name, counter);
@@ -137,19 +138,14 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 				index++;
 			}
 
-			String argumentClassName = "Void";
-			String argumentsWrapperNewInstance = "null;\n";
-			if (argumentsString.length() > 0)
-			{
-				argumentClassName = method.paramsClassName;
-				argumentsWrapperNewInstance = "new " + method.paramsClassName + "(" + argumentsString + ");\n";
-			}
+			String argumentClassName = method.commandClassName;
+			String argumentsWrapperNewInstance = "new " + method.commandClassName + "(" + argumentsString + ");\n";
 
 			builder += "\t@Override\n" +
-					"\tpublic " + method.genericType + method.resultType + " " + method.name + "(" + join(", ", method.arguments) + ")" + throwTypesString + "\n" +
+					"\tpublic " + method.genericType + " void " + method.name + "(" + join(", ", method.arguments) + ")" + throwTypesString + "\n" +
 					"\t{\n" +
-					"\t\t" + argumentClassName + " " + fieldName + " = " + argumentsWrapperNewInstance +
-					"\t\tmViewCommands.beforeApply(LocalViewCommand." + method.uniqueName + ", " + fieldName + ");\n" +
+					"\t\t" + argumentClassName + " command = " + argumentsWrapperNewInstance +
+					"\t\tmViewCommands.beforeApply(command);\n" +
 					"\n" +
 					"\t\tif (mViews == null || mViews.isEmpty())\n" +
 					"\t\t{\n" +
@@ -161,7 +157,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 					"\t\t\tview." + method.name + "(" + argumentsString + ");\n" +
 					"\t\t}\n" +
 					"\n" +
-					"\t\tmViewCommands.afterApply(LocalViewCommand." + method.uniqueName + ", " + fieldName + ");\n" +
+					"\t\tmViewCommands.afterApply(command);\n" +
 					"\t}\n" +
 					"\n";
 		}
@@ -226,6 +222,12 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 			}
 
 			final ExecutableElement methodElement = (ExecutableElement) element;
+
+			if (!methodElement.getReturnType().toString().equals("void"))
+			{
+				MvpCompiler.getMessager().printMessage(Diagnostic.Kind.ERROR, "You are trying generate ViewState for " + typeElement.getSimpleName() + ". But " + typeElement.getSimpleName() + " contains non-void method \"" + methodElement.getSimpleName() + "\" that return type is " + methodElement.getReturnType() + ". See more here: https://github.com/Arello-Mobile/Moxy/issues/2");
+				//throw new RuntimeException("Should be void. Is " + methodElement.getReturnType());
+			}
 
 			String strategyClass = defaultStrategy != null ? defaultStrategy : DEFAULT_STATE_STRATEGY;
 			String methodTag = "\"" + methodElement.getSimpleName() + "\"";
@@ -312,7 +314,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 				throwTypes.add(fillGenerics(methodTypes, typeMirror));
 			}
 
-			final Method method = new Method(genericsCount, generics, fillGenerics(methodTypes, methodElement.getReturnType()), methodElement.getSimpleName().toString(), arguments, throwTypes, strategyClass, methodTag, getClassName(typeElement));
+			final Method method = new Method(genericsCount, generics, methodElement.getSimpleName().toString(), arguments, throwTypes, strategyClass, methodTag, getClassName(typeElement));
 
 			if (rootMethods.contains(method))
 			{
@@ -357,10 +359,6 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 
 	private String generateLocalViewCommand(String viewClassName, String builder, List<Method> methods)
 	{
-		builder += "\tprivate enum LocalViewCommand implements ViewCommand<" + viewClassName + ">\n" +
-				"\t{\n";
-
-		boolean isFirstEnum = true;
 		for (Method method : methods)
 		{
 			String argumentsString = "";
@@ -371,7 +369,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 					argumentsString += ", ";
 				}
 
-				argumentsString += "params." + argument.name;
+				argumentsString += argument.name;
 			}
 
 			String generics = "";
@@ -389,75 +387,44 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 				generics += '>';
 			}
 
-			if (!isFirstEnum)
-			{
-				builder += ",\n";
-			}
-			isFirstEnum = false;
-
-			builder += "\t\t" + method.uniqueName + "(" + method.stateStrategy + ", " + method.tag + ")\n" +
-					"\t\t\t\t{\n" +
-					"\t\t\t\t\t@Override\n" +
-					"\t\t\t\t\tpublic void apply(" + viewClassName + " mvpView, Object paramsObject)\n" +
-					"\t\t\t\t\t{\n" +
-					(
-							method.arguments.isEmpty() ?
-									""
-									:
-									"\t\t\t\t\t\tfinal " + method.paramsClassName + generics + " params = (" + method.paramsClassName + ") paramsObject;\n"
-					) +
-					"\t\t\t\t\t\tmvpView." + method.name + "(" + argumentsString + ");\n" +
-					"\t\t\t\t\t}\n" +
-					"\t\t\t\t}";
-		}
-
-		builder += ";\n" +
-				"\n" +
-				"\t\tprivate Class<? extends StateStrategy> mStateStrategyType;\n" +
-				"\t\tprivate String mTag;\n" +
-				"\n" +
-				"\t\tLocalViewCommand(Class<? extends StateStrategy> stateStrategyType, String tag)\n" +
-				"\t\t{\n" +
-				"\t\t\tmStateStrategyType = stateStrategyType;\n" +
-				"\t\t\tmTag = tag;\n" +
-				"\t\t}\n" +
-				"\n" +
-				"\t\t@Override\n" +
-				"\t\tpublic Class<? extends StateStrategy> getStrategyType()\n" +
-				"\t\t{\n" +
-				"\t\t\treturn mStateStrategyType;\n" +
-				"\t\t}\n" +
-				"\n" +
-				"\t\t@Override\n" +
-				"\t\tpublic String getTag()\n" +
-				"\t\t{\n" +
-				"\t\t\treturn mTag;\n" +
-				"\t\t}\n" +
-				"\t}\n";
-
-		for (Method method : methods)
-		{
-			if (method.arguments.isEmpty())
-			{
-				continue;
-			}
-
 			String argumentsInit = "";
 			String argumentsBind = "";
 			for (Argument argument : method.arguments)
 			{
-				argumentsInit += "\t\t" + argument.type + " " + argument.name + ";\n";
+				argumentsInit += "\t\tpublic final " + argument.type + " " + argument.name + ";\n";
 				argumentsBind += "\t\t\tthis." + argument.name + " = " + argument.name + ";\n";
 			}
+			if (!argumentsInit.isEmpty())
+			{
+				argumentsInit += "\n";
+			}
 
-			builder += "\n\tprivate class " + method.paramsClassName + method.genericType + "\n" +
+			builder += "\n\tprivate class " + method.commandClassName + method.genericType + " extends ViewCommand<" + viewClassName + ">\n" +
 					"\t{\n" +
 					argumentsInit +
-					"\n" +
-					"\t\t" + method.paramsClassName + "(" + join(", ", method.arguments) + ")\n" +
+					"\t\t" + method.commandClassName + "(" + join(", ", method.arguments) + ")\n" +
 					"\t\t{\n" +
+					"\t\t\tsuper(" + method.tag + ", " + method.stateStrategy + ");\n" +
 					argumentsBind +
 					"\t\t}\n" +
+					"\n" +
+					"\t\t@Override\n" +
+					"\t\tpublic void apply(" + viewClassName + " mvpView)\n" +
+					"\t\t{\n" +
+					"\t\t\tmvpView." + method.name + "(" + argumentsString + ");\n" +
+					"\t\t}\n" +
+					/*"\n" +
+					"\t\t@Override\n" +
+					"\t\tpublic Class<? extends StateStrategy> getStrategyType()\n" +
+					"\t\t{\n" +
+					"\t\t\treturn " + method.stateStrategyType + ";\n" +
+					"\t\t}\n" +
+					"\n" +
+					"\t\t@Override\n" +
+					"\t\tpublic String getTag()\n" +
+					"\t\t{\n" +
+					"\t\t\treturn " + method.tag + ";\n" +
+					"\t\t}\n" +*/
 					"\t}\n";
 		}
 		return builder;
@@ -491,21 +458,19 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 	{
 		private int genericsCount; // add <?> to instance declaration
 		String genericType;
-		String resultType;
 		String name;
 		String uniqueName; // required for methods with same name but difference params
-		String paramsClassName;
+		String commandClassName;
 		List<Argument> arguments;
 		List<String> thrownTypes;
 		String stateStrategy;
 		String tag;
 		String enclosedClass;
 
-		Method(int genericsCount, String genericType, String resultType, String name, List<Argument> arguments, List<String> thrownTypes, String stateStrategy, String methodTag, String enclosedClass)
+		Method(int genericsCount, String genericType, String name, List<Argument> arguments, List<String> thrownTypes, String stateStrategy, String methodTag, String enclosedClass)
 		{
 			this.genericsCount = genericsCount;
 			this.genericType = genericType;
-			this.resultType = resultType;
 			this.name = name;
 			this.arguments = arguments;
 			this.thrownTypes = thrownTypes;
@@ -539,7 +504,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 		@Override
 		public String toString()
 		{
-			return "Method{ " + genericType + ' ' + resultType + ' ' + name + '(' + arguments + ") throws " + thrownTypes + '}';
+			return "Method{ " + genericType + " void " + name + '(' + arguments + ") throws " + thrownTypes + '}';
 		}
 	}
 

@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.arellomobile.mvp.MvpView;
-import com.arellomobile.mvp.Pair;
 import com.arellomobile.mvp.viewstate.ViewCommand;
 
 /**
@@ -16,15 +15,15 @@ import com.arellomobile.mvp.viewstate.ViewCommand;
 public class AddToEndSingleStrategy implements StateStrategy
 {
 	@Override
-	public <View extends MvpView> void beforeApply(List<Pair<ViewCommand<View>, Object>> currentState, Pair<ViewCommand<View>, Object> incomingState)
+	public <View extends MvpView> void beforeApply(List<ViewCommand<View>> currentState, ViewCommand<View> incomingState)
 	{
-		Iterator<Pair<ViewCommand<View>, Object>> iterator = currentState.iterator();
+		Iterator<ViewCommand<View>> iterator = currentState.iterator();
 
 		while (iterator.hasNext())
 		{
-			Pair<ViewCommand<View>, Object> entry = iterator.next();
+			ViewCommand<View> entry = iterator.next();
 
-			if (entry.first == incomingState.first)
+			if (entry.getClass() == incomingState.getClass())
 			{
 				iterator.remove();
 				break;
@@ -35,7 +34,7 @@ public class AddToEndSingleStrategy implements StateStrategy
 	}
 
 	@Override
-	public <View extends MvpView> void afterApply(List<Pair<ViewCommand<View>, Object>> currentState, Pair<ViewCommand<View>, Object> incomingState)
+	public <View extends MvpView> void afterApply(List<ViewCommand<View>> currentState, ViewCommand<View> incomingState)
 	{
 		// pass
 	}

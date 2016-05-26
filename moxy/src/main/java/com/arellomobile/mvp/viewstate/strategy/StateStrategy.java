@@ -27,7 +27,7 @@ public interface StateStrategy
 	 * {@link Pair} contains commands to execute and params of this command.
 	 * @param <View> type of incoming view
 	 */
-	<View extends MvpView> void beforeApply(List<Pair<ViewCommand<View>, Object>> currentState, Pair<ViewCommand<View>, Object> incomingState);
+	<View extends MvpView> void beforeApply(List<ViewCommand<View>> currentState, ViewCommand<View> incomingState);
 
 	/**
 	 * Called immediately after command applied to {@link MvpView}. Also called
@@ -40,5 +40,5 @@ public interface StateStrategy
 	 * {@link Pair} contains executed command and params of this command.
 	 * @param <View> type of incoming view
 	 */
-	<View extends MvpView> void afterApply(List<Pair<ViewCommand<View>, Object>> currentState, Pair<ViewCommand<View>, Object> incomingState);
+	<View extends MvpView> void afterApply(List<ViewCommand<View>> currentState, ViewCommand<View> incomingState);
 }

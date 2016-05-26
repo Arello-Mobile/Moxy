@@ -1,12 +1,11 @@
 package com.arellomobile.mvp.viewstate;
 
-import com.arellomobile.mvp.MvpView;
-import com.arellomobile.mvp.Pair;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
+
+import com.arellomobile.mvp.MvpView;
 
 /**
  * Date: 15.12.2015
@@ -61,7 +60,7 @@ public abstract class MvpViewState<View extends MvpView>
 	/**
 	 * <p>Detach view from view state. After this moment view state save
 	 * commands via
-	 * {@link com.arellomobile.mvp.viewstate.strategy.StateStrategy#beforeApply(List, Pair)}.</p>
+	 * {@link com.arellomobile.mvp.viewstate.strategy.StateStrategy#beforeApply(List, ViewCommand)}.</p>
 	 *
 	 * @param view target mvp view to detach
 	 */
