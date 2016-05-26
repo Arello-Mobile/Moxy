@@ -74,9 +74,9 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement>
 				"\n" +
 				"import com.arellomobile.mvp.ViewStateClassNameProvider;\n" +
 				"import java.lang.String;\n" +
-				"\n" + "public class " + viewClassName + MvpProcessor.VIEW_STATE_CLASS_NAME_PROVIDER_SUFFIX + " implements ViewStateClassNameProvider" + "\n" +
+				"\n" + "public class " + viewClassName + MvpProcessor.VIEW_STATE_CLASS_NAME_PROVIDER_SUFFIX + " extends ViewStateClassNameProvider" + "\n" +
 				"{\n" +
-				"\tpublic String getViewStateClassName()\n" +
+				"\tpublic " + viewClassName + MvpProcessor.VIEW_STATE_CLASS_NAME_PROVIDER_SUFFIX + "()\n" +
 				"\t{\n";
 		if (viewState == null)
 		{
@@ -84,7 +84,7 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement>
 		}
 		else
 		{
-			builder += "\t\treturn \"" + viewState + "\";\n";
+			builder += "\t\tsuper(\"" + viewState + "\");\n";
 		}
 		builder += "\t}\n" +
 				"}";

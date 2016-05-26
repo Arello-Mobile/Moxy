@@ -167,6 +167,8 @@ public abstract class MvpPresenter<View extends MvpView>
 		{
 			ViewStateClassNameProvider viewStateClassNameProvider;
 			String viewStateClassNameProviderClassName = presenter.getClass().getName() + "$$ViewStateClassNameProvider";
+
+			//noinspection TryWithIdenticalCatches
 			try
 			{
 				viewStateClassNameProvider = (ViewStateClassNameProvider) Class.forName(viewStateClassNameProviderClassName).newInstance();
@@ -175,7 +177,14 @@ public abstract class MvpPresenter<View extends MvpView>
 			{
 				return;
 			}
-			catch (Exception e)
+			catch (InstantiationException e)
+			{
+				throw new RuntimeException("Unable to instantiate " + viewStateClassNameProviderClassName + ": " +
+						"make sure class name exists, " +
+						"is public, and " +
+						"has an empty constructor that is public", e);
+			}
+			catch (IllegalAccessException e)
 			{
 				throw new RuntimeException("Unable to instantiate " + viewStateClassNameProviderClassName + ": " +
 						"make sure class name exists, " +

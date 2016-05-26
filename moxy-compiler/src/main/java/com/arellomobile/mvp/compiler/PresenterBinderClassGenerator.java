@@ -97,18 +97,9 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 				"import com.arellomobile.mvp.MvpPresenter;\n" +
 				"import com.arellomobile.mvp.presenter.PresenterType;\n" +
 				"\n" +
-				"public class " + viewClassName + MvpProcessor.PRESENTER_BINDER_SUFFIX + " implements PresenterBinder<" + parentClassName + ">" +
+				"public class " + viewClassName + MvpProcessor.PRESENTER_BINDER_SUFFIX + " extends PresenterBinder<" + parentClassName + ">" +
 				"\n" +
-				"{\n" +
-				"\tprivate " + parentClassName + " mTarget;\n" +
-				"\n" +
-				"\n" +
-				"\t@Override\n" +
-				"\tpublic void setTarget(final " + parentClassName + " target)\n" +
-				"\t{\n" +
-				"\t\tmTarget = target;\n" +
-				"\t}\n" +
-				"\n";
+				"{\n";
 
 		List<Field> fields = new ArrayList<>();
 
@@ -185,8 +176,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 
 	private static String generateGetPresentersMethod(final String builder, final List<Field> fields, String parentClassName)
 	{
-		String s = "\n" +
-				"\tpublic List<PresenterField<? super " + parentClassName + ">> getPresenterFields()\n" +
+		String s = "\tpublic List<PresenterField<? super " + parentClassName + ">> getPresenterFields()\n" +
 				"\t{\n" +
 				"\t\tList<PresenterField<? super " + parentClassName + ">> presenters = new ArrayList<>();\n" +
 				"\n";
@@ -230,18 +220,13 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 			}
 		}
 
-		final String s = "\tpublic class " + field.getGeneratedClassName() + " implements PresenterField\n" +
+		String defaultInstance = hasEmptyConstructor ? ("new " + field.getClazz() + "()") : "null";
+
+		final String s = "\tpublic class " + field.getGeneratedClassName() + " extends PresenterField\n" +
 				"\t{\n" +
-				"\t\t@Override\n" +
-				"\t\tpublic String getTag()\n" +
+				"\t\tpublic " + field.getGeneratedClassName() + "()\n" +
 				"\t\t{\n" +
-				"\t\t\treturn " + field.getTag() + ";\n" +
-				"\t\t}\n" +
-				"\n" +
-				"\t\t@Override\n" +
-				"\t\tpublic PresenterType getPresenterType()\n" +
-				"\t\t{\n" +
-				"\t\t\treturn PresenterType." + field.getType().name() + ";\n" +
+				"\t\t\tsuper(" + field.getTag() + ", PresenterType." + field.getType().name() + ", " + field.getFactory() + ".class, " + field.getPresenterId() + ", " + field.getFactoryParamsHolder() + ".class, " + field.getClazz().asElement() + ".class, " + defaultInstance + ");\n" +
 				"\t\t}\n" +
 				"\n" +
 				"\t\t@Override\n" +
@@ -249,41 +234,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 				"\t\t{\n" +
 				"\t\t\tmTarget." + field.getName() + " = (" + field.getClazz() + ") presenter;\n" +
 				"\t\t}\n" +
-				"\n" +
-				"\t\t@Override\n" +
-				"\t\tpublic Class<? extends MvpPresenter> getPresenterClass()\n" +
-				"\t\t{\n" +
-				"\t\t\treturn " + field.getClazz().asElement() + ".class;\n" +
-				"\t\t}\n" +
-				"\n" +
-				"\t\t@Override\n" +
-				"\t\tpublic " + field.getClazz() + " getDefaultInstance()\n" +
-				"\t\t{\n" +
-				"\t\t\treturn " + (hasEmptyConstructor ?
-					("new " + field.getClazz() + "()" )
-						:
-					"null") +
-						";\n" +
-				"\t\t}\n" +
-				"\n" +
-				"\t\t@Override\n" +
-				"\t\tpublic Class<? extends PresenterFactory<?, ?>> getFactory()\n" +
-				"\t\t{\n" +
-				"\t\t\treturn " + field.getFactory() + ".class;\n" +
-				"\t\t}\n" +
-				"\n" +
-				"\t\t@Override\n" +
-				"\t\tpublic String getPresenterId()\n" +
-				"\t\t{\n" +
-				"\t\t\treturn " + field.getPresenterId() + ";\n" +
-				"\t\t}" +
-				"\n" +
-				"\t\t@Override\n" +
-				"\t\tpublic Class<? extends ParamsHolder<?>> getParamsHolderClass()\n" +
-				"\t\t{\n" +
-				"\t\t\treturn " + field.getFactoryParamsHolder() + ".class;\n" +
-				"\t\t}\n" +
-				"\t}" +
+				"\t}\n" +
 				"\n";
 		return builder + s;
 	}

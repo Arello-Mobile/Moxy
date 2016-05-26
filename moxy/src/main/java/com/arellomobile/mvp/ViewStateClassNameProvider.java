@@ -6,12 +6,22 @@ package com.arellomobile.mvp;
  *
  * @author Yuri Shmakov
  */
-public interface ViewStateClassNameProvider
+public class ViewStateClassNameProvider
 {
+	private final String viewStateClassName;
+
+	public ViewStateClassNameProvider(String viewStateClassName)
+	{
+		this.viewStateClassName = viewStateClassName;
+	}
+
 	/**
 	 * <p>Presenter creates view state object by class name from this method.</p>
 	 *
 	 * @return view state class name
 	 */
-	String getViewStateClassName();
+	public String getViewStateClassName()
+	{
+		return viewStateClassName;
+	}
 }
