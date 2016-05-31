@@ -39,17 +39,17 @@ Maven integration:
   <dependency>
     <groupId>com.arello-mobile</groupId>
     <artifactId>moxy</artifactId>
-    <version>0.5.0</version>
+    <version>0.5.1</version>
   </dependency>
   <dependency>
     <groupId>com.arello-mobile</groupId>
     <artifactId>moxy-android</artifactId>
-    <version>0.5.0</version>
+    <version>0.5.1</version>
   </dependency>
   <dependency>
     <groupId>com.arello-mobile</groupId>
     <artifactId>moxy-compiler</artifactId>
-    <version>0.5.0</version>
+    <version>0.5.1</version>
     <optional>true</optional>
   </dependency>
 </dependencies>
@@ -59,9 +59,9 @@ Gradle integration:
 ```
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy:0.5.0'
-  compile 'com.arello-mobile:moxy-android:0.5.0'
-  provided 'com.arello-mobile:moxy-compiler:0.5.0'
+  compile 'com.arello-mobile:moxy:0.5.1'
+  compile 'com.arello-mobile:moxy-android:0.5.1'
+  provided 'com.arello-mobile:moxy-compiler:0.5.1'
 }
 ```
 
