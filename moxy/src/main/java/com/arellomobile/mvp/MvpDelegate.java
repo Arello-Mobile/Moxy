@@ -16,9 +16,9 @@ import com.arellomobile.mvp.presenter.PresenterType;
  * When using an {@link MvpDelegate}, lifecycle methods which should be proxied to the delegate:
  * <ul>
  * <li>{@link #onCreate(Bundle)}</li>
- * <li>{@link #onStart()}</li>
+ * <li>{@link #onAttach()} -> onStart()</li>
  * <li>{@link #onSaveInstanceState(android.os.Bundle)}</li>
- * <li>{@link #onStop()}</li>
+ * <li>{@link #onDetach()} -> onDestroy() for Activity or onDestroyView() for Fragment</li>
  * <li>{@link #onDestroy()}</li>
  * </ul>
  * <p>
@@ -116,78 +116,84 @@ public class MvpDelegate<Delegated>
 		}
 	}
 
-	/**
-	 * <p>Attach delegated object as view to presenter fields of this object.
-	 * If delegate did not enter at {@link #onCreate(Bundle)}(or
-	 * {@link #onCreate()}) before this method, then view will not be attached to
-	 * presenters</p>
-	 */
-	public void onStart()
-	{
-		mStateSaved = false;
+    /**
+     * <p>Attach delegated object as view to presenter fields of this object.
+     * If delegate did not enter at {@link #onCreate(Bundle)}(or
+     * {@link #onCreate()}) before this method, then view will not be attached to
+     * presenters</p>
+     */
+    public void onAttach()
+    {
 
-		for (MvpPresenter<? super Delegated> presenter : mPresenters)
-		{
-			if (mIsAttached && presenter.getAttachedViews().contains(mDelegated))
-			{
-				continue;
-			}
+        for (MvpPresenter<? super Delegated> presenter : mPresenters)
+        {
+            if (mIsAttached && presenter.getAttachedViews().contains(mDelegated))
+            {
+                continue;
+            }
 
-			presenter.attachView(mDelegated);
-		}
+            presenter.attachView(mDelegated);
+        }
 
-		for (MvpDelegate<?> childDelegate : mChildDelegates)
-		{
-			childDelegate.onStart();
-		}
+        for (FixedMvpDelegate<?> childDelegate : mChildDelegates)
+        {
+            childDelegate.onAttach();
+        }
 
-		mIsAttached = true;
-	}
+        mIsAttached = true;
+    }
 
-	public void onStop()
-	{
-		for (MvpDelegate<?> childDelegate : mChildDelegates)
-		{
-			childDelegate.onStop();
-		}
-	}
+    /**
+     * <p>Detach delegated object from their presenters and destroy presenters if
+     * they are not needed.</p>
+     */
+    public void onDetach()
+    {
+        for (MvpPresenter<? super Delegated> presenter : mPresenters)
+        {
+            presenter.detachView(mDelegated);
+        }
 
-	/**
-	 * <p>Detach delegated object from their presenters and destroy presenters if
-	 * they are not needed.</p>
-	 */
-	public void onDestroy()
-	{
-		for (MvpPresenter<? super Delegated> presenter : mPresenters)
-		{
-			presenter.detachView(mDelegated);
-		}
+        mIsAttached = false;
 
-		if (!mStateSaved)
-		{
-			destroyPresenters();
-		}
+        for (FixedMvpDelegate<?> childDelegate : mChildDelegates)
+        {
+            childDelegate.onDetach();
+        }
+    }
 
-		for (MvpDelegate<?> childDelegate : mChildDelegates)
-		{
-			childDelegate.onDestroy();
-		}
-	}
+    /**
+     * <p>Destroy presenters if
+     * they are not needed.</p>
+     */
+    public void onDestroy()
+    {
+        if (!mIsSavedState)
+        {
+            destroyPresenters();
+        }
 
-	/**
-	 * Save presenters tag prefix to save state for restore presenters at future after delegate recreate
-	 * @param outState out state from Android component
-	 */
-	public void onSaveInstanceState(Bundle outState)
-	{
-		mStateSaved = true;
-		outState.putString(mKeyTags, mDelegateTag);
+        for (FixedMvpDelegate<?> childDelegate : mChildDelegates)
+        {
+            childDelegate.onDestroy();
+        }
+    }
 
-		for (MvpDelegate childDelegate : mChildDelegates)
-		{
-			childDelegate.onSaveInstanceState(outState);
-		}
-	}
+    /**
+     * Save presenters tag prefix to save state for restore presenters at future after delegate recreate
+     * @param outState out state from Android component
+     */
+    public void onSaveInstanceState(Bundle outState)
+    {
+        mIsSavedState = true;
+
+        outState.putString(mKeyTags, mDelegateTag);
+
+        for (FixedMvpDelegate childDelegate : mChildDelegates)
+        {
+            childDelegate.onSaveInstanceState(outState);
+        }
+    }
 
 	private void destroyPresenters()
 	{
