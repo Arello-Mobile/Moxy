@@ -13,6 +13,7 @@ import com.arellomobile.mvp.viewstate.MvpViewState;
  *
  * @author Yuri Shmakov
  * @author Alexander BLinov
+ * @author Konstantin Tckhovrebov
  */
 public abstract class MvpPresenter<View extends MvpView>
 {
@@ -33,7 +34,7 @@ public abstract class MvpPresenter<View extends MvpView>
 	/**
 	 * <p>Attach view to view state or to presenter(if view state not exists).</p>
 	 * <p>If you use {@link MvpDelegate}, you should not call this method directly.
-	 * It will be called on {@link MvpDelegate#onStart()}, if view does not attached.</p>
+	 * It will be called on {@link MvpDelegate#onAttach()}, if view does not attached.</p>
 	 *
 	 * @param view to attachment
 	 */
@@ -68,7 +69,7 @@ public abstract class MvpPresenter<View extends MvpView>
 	/**
 	 * <p>Detach view from view state or from presenter(if view state not exists).</p>
 	 * <p>If you use {@link MvpDelegate}, you should not call this method directly.
-	 * It will be called on {@link MvpDelegate#onDestroy()}.</p>
+	 * It will be called on {@link MvpDelegate#onDetach()}.</p>
 	 *
 	 * @param view view to detach
 	 */

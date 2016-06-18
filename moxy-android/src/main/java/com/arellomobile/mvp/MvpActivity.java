@@ -9,6 +9,7 @@ import android.os.Bundle;
  *
  * @author Yuri Shmakov
  * @author Alexander Bliniov
+ * @author Konstantin Tckhovrebov
  */
 public class MvpActivity extends Activity
 {
@@ -27,6 +28,7 @@ public class MvpActivity extends Activity
 	{
 		super.onDestroy();
 
+		getMvpDelegate().onDetach();
 		getMvpDelegate().onDestroy();
 	}
 
@@ -44,15 +46,7 @@ public class MvpActivity extends Activity
 	{
 		super.onStart();
 
-		getMvpDelegate().onStart();
-	}
-
-	@Override
-	protected void onStop()
-	{
-		super.onStop();
-
-		getMvpDelegate().onStop();
+		getMvpDelegate().onAttach();
 	}
 
 	/**

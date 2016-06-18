@@ -12,6 +12,7 @@ import android.view.ViewGroup;
  *
  * @author Alexander Blinov
  * @author Yuri Shmakov
+ * @author Konstantin Tckhovrebov
  */
 public class MvpFragment extends Fragment
 {
@@ -30,37 +31,11 @@ public class MvpFragment extends Fragment
 		getMvpDelegate().onCreate(savedInstanceState);
 	}
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-	{
-		if (mTemporaryBundle != null)
-		{
-			getMvpDelegate().onCreate(mTemporaryBundle);
-			mTemporaryBundle = null;
-		}
-
-		return super.onCreateView(inflater, container, savedInstanceState);
-	}
-
 	public void onStart()
 	{
 		super.onStart();
 
-		getMvpDelegate().onStart();
-	}
-
-	public void onSaveInstanceState(Bundle outState)
-	{
-		super.onSaveInstanceState(outState);
-
-		getMvpDelegate().onSaveInstanceState(outState);
-	}
-
-	public void onStop()
-	{
-		super.onStop();
-
-		getMvpDelegate().onStop();
+		getMvpDelegate().onAttach();
 	}
 
 	@Override
@@ -68,10 +43,22 @@ public class MvpFragment extends Fragment
 	{
 		super.onDestroyView();
 
-		mTemporaryBundle = new Bundle();
-		getMvpDelegate().onSaveInstanceState(mTemporaryBundle);
+		getMvpDelegate().onDetach();
+	}
+
+	@Override
+	public void onDestroy()
+	{
+		super.onDestroy();
 
 		getMvpDelegate().onDestroy();
+	}
+
+	public void onSaveInstanceState(Bundle outState)
+	{
+		super.onSaveInstanceState(outState);
+
+		getMvpDelegate().onSaveInstanceState(outState);
 	}
 
 	public MvpDelegate getMvpDelegate()
