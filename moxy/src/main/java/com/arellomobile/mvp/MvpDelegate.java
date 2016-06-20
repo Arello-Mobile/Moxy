@@ -16,9 +16,9 @@ import com.arellomobile.mvp.presenter.PresenterType;
  * When using an {@link MvpDelegate}, lifecycle methods which should be proxied to the delegate:
  * <ul>
  * <li>{@link #onCreate(Bundle)}</li>
- * <li>{@link #onStart()}</li>
+ * <li>{@link #onAttach()}: onStart()</li>
  * <li>{@link #onSaveInstanceState(android.os.Bundle)}</li>
- * <li>{@link #onStop()}</li>
+ * <li>{@link #onDetach()}: onDestroy() for Activity or onDestroyView() for Fragment</li>
  * <li>{@link #onDestroy()}</li>
  * </ul>
  * <p>
@@ -27,6 +27,7 @@ import com.arellomobile.mvp.presenter.PresenterType;
  * until the Object is destroyed.
  *
  * @author Alexander Blinov
+ * @author Konstantin Tckhovrebov
  */
 public class MvpDelegate<Delegated>
 {
@@ -122,9 +123,8 @@ public class MvpDelegate<Delegated>
 	 * {@link #onCreate()}) before this method, then view will not be attached to
 	 * presenters</p>
 	 */
-	public void onStart()
+	public void onAttach()
 	{
-		mStateSaved = false;
 
 		for (MvpPresenter<? super Delegated> presenter : mPresenters)
 		{
@@ -138,31 +138,35 @@ public class MvpDelegate<Delegated>
 
 		for (MvpDelegate<?> childDelegate : mChildDelegates)
 		{
-			childDelegate.onStart();
+			childDelegate.onAttach();
 		}
 
 		mIsAttached = true;
 	}
 
-	public void onStop()
-	{
-		for (MvpDelegate<?> childDelegate : mChildDelegates)
-		{
-			childDelegate.onStop();
-		}
-	}
-
 	/**
-	 * <p>Detach delegated object from their presenters and destroy presenters if
-	 * they are not needed.</p>
+	 * <p>Detach delegated object from their presenters.</p>
 	 */
-	public void onDestroy()
+	public void onDetach()
 	{
 		for (MvpPresenter<? super Delegated> presenter : mPresenters)
 		{
 			presenter.detachView(mDelegated);
 		}
 
+		mIsAttached = false;
+
+		for (MvpDelegate<?> childDelegate : mChildDelegates)
+		{
+			childDelegate.onDetach();
+		}
+	}
+
+	/**
+	 * <p>Destroy presenters if they are not needed.</p>
+	 */
+	public void onDestroy()
+	{
 		if (!mStateSaved)
 		{
 			destroyPresenters();
