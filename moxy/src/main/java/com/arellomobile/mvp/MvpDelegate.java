@@ -16,9 +16,9 @@ import com.arellomobile.mvp.presenter.PresenterType;
  * When using an {@link MvpDelegate}, lifecycle methods which should be proxied to the delegate:
  * <ul>
  * <li>{@link #onCreate(Bundle)}</li>
- * <li>{@link #onAttach()}: onStart()</li>
+ * <li>{@link #onAttach()}: inside onStart() of Activity or Fragment</li>
  * <li>{@link #onSaveInstanceState(android.os.Bundle)}</li>
- * <li>{@link #onDetach()}: onDestroy() for Activity or onDestroyView() for Fragment</li>
+ * <li>{@link #onDetach()}: inside onDestroy() for Activity or onDestroyView() for Fragment</li>
  * <li>{@link #onDestroy()}</li>
  * </ul>
  * <p>
