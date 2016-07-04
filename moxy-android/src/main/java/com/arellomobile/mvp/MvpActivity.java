@@ -29,7 +29,11 @@ public class MvpActivity extends Activity
 		super.onDestroy();
 
 		getMvpDelegate().onDetach();
-		getMvpDelegate().onDestroy();
+
+        if (isFinishing())
+        {
+			getMvpDelegate().onDestroy();
+		}
 	}
 
 
