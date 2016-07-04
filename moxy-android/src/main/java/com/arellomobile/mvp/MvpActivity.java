@@ -30,8 +30,8 @@ public class MvpActivity extends Activity
 
 		getMvpDelegate().onDetach();
 
-        if (isFinishing())
-        {
+		if (isFinishing())
+		{
 			getMvpDelegate().onDestroy();
 		}
 	}

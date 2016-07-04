@@ -45,8 +45,8 @@ public class MvpFragment extends Fragment
 	{
 		super.onDestroy();
 
-        if (isRemoving())
-        {
+		if (isRemoving())
+		{
 			getMvpDelegate().onDestroy();
 		}
 	}
