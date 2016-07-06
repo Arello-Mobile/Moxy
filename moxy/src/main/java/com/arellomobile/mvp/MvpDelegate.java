@@ -36,7 +36,6 @@ public class MvpDelegate<Delegated>
 	private String mKeyTags = KEY_TAGS;
 	private String mDelegateTag;
 	private final Delegated mDelegated;
-	private boolean mStateSaved;
 	private boolean mIsAttached;
 	private MvpDelegate mParentDelegate;
 	private List<MvpPresenter<? super Delegated>> mPresenters;
@@ -94,7 +93,6 @@ public class MvpDelegate<Delegated>
 	 */
 	public void onCreate(Bundle bundle)
 	{
-		mStateSaved = false;
 		mIsAttached = false;
 		mBundle = bundle;
 
@@ -163,13 +161,19 @@ public class MvpDelegate<Delegated>
 	}
 
 	/**
-	 * <p>Destroy presenters if they are not needed.</p>
+	 * <p>Destroy presenters.</p>
 	 */
 	public void onDestroy()
 	{
-		if (!mStateSaved)
+		PresenterStore presenterStore = MvpFacade.getInstance().getPresenterStore();
+
+		for (MvpPresenter<?> presenter : mPresenters)
 		{
-			destroyPresenters();
+			if (presenter.getPresenterType() == PresenterType.LOCAL)
+			{
+				presenter.onDestroy();
+				presenterStore.remove(PresenterType.LOCAL, presenter.getTag(), presenter.getClass());
+			}
 		}
 
 		for (MvpDelegate<?> childDelegate : mChildDelegates)
@@ -184,26 +188,11 @@ public class MvpDelegate<Delegated>
 	 */
 	public void onSaveInstanceState(Bundle outState)
 	{
-		mStateSaved = true;
 		outState.putString(mKeyTags, mDelegateTag);
 
 		for (MvpDelegate childDelegate : mChildDelegates)
 		{
 			childDelegate.onSaveInstanceState(outState);
-		}
-	}
-
-	private void destroyPresenters()
-	{
-		PresenterStore presenterStore = MvpFacade.getInstance().getPresenterStore();
-
-		for (MvpPresenter<?> presenter : mPresenters)
-		{
-			if (presenter.getPresenterType() == PresenterType.LOCAL)
-			{
-				presenter.onDestroy();
-				presenterStore.remove(PresenterType.LOCAL, presenter.getTag(), presenter.getClass());
-			}
 		}
 	}
 

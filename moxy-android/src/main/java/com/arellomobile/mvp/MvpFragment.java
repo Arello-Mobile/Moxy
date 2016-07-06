@@ -16,13 +16,7 @@ import android.view.ViewGroup;
  */
 public class MvpFragment extends Fragment
 {
-	private Bundle mTemporaryBundle;// required for view destroy/restore
 	private MvpDelegate<? extends MvpFragment> mMvpDelegate;
-
-	public MvpFragment()
-	{
-		mTemporaryBundle = null;
-	}
 
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -51,7 +45,10 @@ public class MvpFragment extends Fragment
 	{
 		super.onDestroy();
 
-		getMvpDelegate().onDestroy();
+		if (isRemoving())
+		{
+			getMvpDelegate().onDestroy();
+		}
 	}
 
 	public void onSaveInstanceState(Bundle outState)
