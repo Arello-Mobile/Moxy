@@ -1,7 +1,6 @@
 package com.arellomobile.mvp.compiler;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,9 +42,11 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 
 	public boolean generate(TypeElement typeElement, List<ClassGeneratingParams> classGeneratingParamsList)
 	{
+		String generic = Util.getClassGenerics(typeElement);
+		String interfaceGeneric = "";
 		if (!typeElement.getTypeParameters().isEmpty())
 		{
-			throw new IllegalStateException("Code generation can't be applied to generic interface " + typeElement.getSimpleName());
+			interfaceGeneric = "<" + typeElement.getTypeParameters() + ">";
 		}
 
 		String fullClassName = Util.getFullClassName(typeElement);
@@ -64,7 +65,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 				"import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy;\n" +
 				"import com.arellomobile.mvp.viewstate.strategy.StateStrategy;\n" +
 				"\n" +
-				"public class " + fullClassName.substring(fullClassName.lastIndexOf(".") + 1) + "$$State extends MvpViewState<" + mViewClassName + "> implements " + mViewClassName + "\n" +
+				"public class " + fullClassName.substring(fullClassName.lastIndexOf(".") + 1) + "$$State" + generic + " extends MvpViewState<" + mViewClassName + "> implements " + mViewClassName + interfaceGeneric + "\n" +
 				"{\n" +
 				"\tprivate ViewCommands<" + mViewClassName + "> mViewCommands = new ViewCommands<>();\n" +
 				"\n" +
@@ -84,11 +85,20 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 
 		String stateStrategyType = getStateStrategyType(typeElement);
 
+		Map<String, String> types = new HashMap<>();
+		if (!typeElement.getTypeParameters().isEmpty())
+		{
+			for (TypeParameterElement typeParameterElement : typeElement.getTypeParameters())
+			{
+				types.put(typeParameterElement.toString(), typeParameterElement.toString());
+			}
+		}
+
 		// Get methods for input class
-		getMethods(Collections.<String, String>emptyMap(), typeElement, stateStrategyType, new ArrayList<Method>(), methods);
+		getMethods(types, typeElement, stateStrategyType, new ArrayList<Method>(), methods);
 
 		// Add methods from super intefaces
-		methods.addAll(iterateInterfaces(0, typeElement, stateStrategyType, Collections.<String, String>emptyMap(), methods, new ArrayList<Method>()));
+		methods.addAll(iterateInterfaces(0, typeElement, stateStrategyType, new HashMap<String, String>(), methods, new ArrayList<Method>()));
 
 		// Allow methods be with same names
 		Map<String, Integer> methodsCounter = new HashMap<>();
@@ -184,7 +194,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 			final List<? extends TypeMirror> typeArguments = ((DeclaredType) typeMirror).getTypeArguments();
 			final List<? extends TypeParameterElement> typeParameters = anInterface.getTypeParameters();
 
-			if (typeArguments.size() != typeParameters.size())
+			if (typeArguments.size() > typeParameters.size())
 			{
 				throw new IllegalArgumentException("Code generation for interface " + anInterface.getSimpleName() + " failed. Simplify your generics.");
 			}
@@ -199,7 +209,15 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 			for (int i = 0; i < typeArguments.size(); i++)
 			{
 				totalInterfaceTypes.put(typeParameters.get(i).toString(), fillGenerics(parentTypes, typeArguments.get(i)));
+			}
+			for (int i = typeArguments.size(); i < typeParameters.size(); i++)
+			{
+				if (typeParameters.get(i).getBounds().size() != 1)
+				{
+					throw new IllegalArgumentException("Code generation for interface " + anInterface.getSimpleName() + " failed. Simplify your generics.");
+				}
 
+				totalInterfaceTypes.put(typeParameters.get(i).toString(), typeParameters.get(i).getBounds().get(0).toString());
 			}
 
 			String defaultStrategy = parentDefaultStrategy != null ? parentDefaultStrategy : getStateStrategyType(anInterface);

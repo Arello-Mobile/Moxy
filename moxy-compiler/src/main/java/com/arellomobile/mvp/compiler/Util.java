@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.IntersectionType;
 import javax.lang.model.type.TypeMirror;
@@ -30,6 +31,7 @@ import javax.lang.model.type.WildcardType;
 /**
  * Utilities for handling types in annotation processors
  */
+@SuppressWarnings("WeakerAccess")
 final class Util
 {
 	public static String fillGenerics(Map<String, String> types, TypeMirror param)
@@ -125,5 +127,92 @@ final class Util
 		}
 		String className = typeElement.toString().substring(packageName.length());
 		return packageName + className.replaceAll("\\.", "\\$");
+	}
+
+	public static String getClassGenerics(TypeElement typeElement)
+	{
+		String generic = "";
+
+		if (!typeElement.getTypeParameters().isEmpty())
+		{
+			generic = "<";
+			boolean isFirstType = true;
+
+			for (TypeParameterElement typeParameterElement : typeElement.getTypeParameters())
+			{
+				if (!isFirstType)
+				{
+					generic += ", ";
+				}
+				isFirstType = false;
+
+				generic += typeParameterElement;
+
+				List<? extends TypeMirror> bounds = typeParameterElement.getBounds();
+				if (!bounds.isEmpty())
+				{
+					if (bounds.size() == 1 && bounds.get(0).toString().equals(Object.class.getCanonicalName()))
+					{
+						continue;
+					}
+
+					generic += " extends " + join(" & ", bounds);
+				}
+			}
+
+			generic += ">";
+		}
+
+		return generic;
+	}
+
+	/**
+	 * Returns a string containing the tokens joined by delimiters.
+	 *
+	 * @param tokens an array objects to be joined. Strings will be formed from
+	 *               the objects by calling object.toString().
+	 */
+	public static String join(CharSequence delimiter, Object[] tokens)
+	{
+		StringBuilder sb = new StringBuilder();
+		boolean firstTime = true;
+		for (Object token : tokens)
+		{
+			if (firstTime)
+			{
+				firstTime = false;
+			}
+			else
+			{
+				sb.append(delimiter);
+			}
+			sb.append(token);
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * Returns a string containing the tokens joined by delimiters.
+	 *
+	 * @param tokens an array objects to be joined. Strings will be formed from
+	 *               the objects by calling object.toString().
+	 */
+	public static String join(CharSequence delimiter, Iterable tokens)
+	{
+		StringBuilder sb = new StringBuilder();
+		boolean firstTime = true;
+		for (Object token : tokens)
+		{
+			if (firstTime)
+			{
+				firstTime = false;
+			}
+			else
+			{
+				sb.append(delimiter);
+			}
+			sb.append(token);
+		}
+		return sb.toString();
 	}
 }
