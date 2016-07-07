@@ -31,13 +31,13 @@ public class MvpDelegateTest
 	public void init()
 	{
 		mMvpDelegate.onCreate(Mockito.mock(Bundle.class));
-		mMvpDelegate.onStart();
+		mMvpDelegate.onAttach();
 	}
 
 	@After
 	public void reset()
 	{
-		mMvpDelegate.onStop();
+		mMvpDelegate.onDetach();
 		mMvpDelegate.onDestroy();
 	}
 

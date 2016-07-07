@@ -16,9 +16,8 @@ public abstract class PresenterField<View extends MvpView>
 	protected final String presenterId;
 	protected final Class<? extends ParamsHolder<?>> paramsHolderClass;
 	protected final Class<? extends MvpPresenter<?>> presenterClass;
-	protected final MvpPresenter<View> defaultInstance;
 
-	protected PresenterField(String tag, PresenterType presenterType, Class<? extends PresenterFactory<?, ?>> factory, String presenterId, Class<? extends ParamsHolder<?>> paramsHolderClass, Class<? extends MvpPresenter<?>> presenterClass, MvpPresenter<View> defaultInstance)
+	protected PresenterField(String tag, PresenterType presenterType, Class<? extends PresenterFactory<?, ?>> factory, String presenterId, Class<? extends ParamsHolder<?>> paramsHolderClass, Class<? extends MvpPresenter<?>> presenterClass)
 	{
 		this.tag = tag;
 		this.presenterType = presenterType;
@@ -26,7 +25,6 @@ public abstract class PresenterField<View extends MvpView>
 		this.presenterId = presenterId;
 		this.paramsHolderClass = paramsHolderClass;
 		this.presenterClass = presenterClass;
-		this.defaultInstance = defaultInstance;
 	}
 
 	public abstract void setValue(MvpPresenter presenter);
@@ -59,10 +57,5 @@ public abstract class PresenterField<View extends MvpView>
 	public Class<? extends MvpPresenter<?>> getPresenterClass()
 	{
 		return presenterClass;
-	}
-
-	public MvpPresenter<View> getDefaultInstance()
-	{
-		return defaultInstance;
 	}
 }

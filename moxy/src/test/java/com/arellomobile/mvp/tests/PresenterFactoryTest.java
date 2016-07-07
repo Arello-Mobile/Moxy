@@ -29,19 +29,19 @@ public class PresenterFactoryTest
 	public void setup()
 	{
 		mTestViewMvpDelegate.onCreate(null);
-		mTestViewMvpDelegate.onStart();
+		mTestViewMvpDelegate.onAttach();
 
 		mTestViewMvpDelegate2.onCreate(null);
-		mTestViewMvpDelegate2.onStart();
+		mTestViewMvpDelegate2.onAttach();
 	}
 
 	@After
 	public void reset()
 	{
-		mTestViewMvpDelegate.onStop();
+		mTestViewMvpDelegate.onDetach();
 		mTestViewMvpDelegate.onDestroy();
 
-		mTestViewMvpDelegate2.onStop();
+		mTestViewMvpDelegate2.onDetach();
 		mTestViewMvpDelegate2.onDestroy();
 	}
 

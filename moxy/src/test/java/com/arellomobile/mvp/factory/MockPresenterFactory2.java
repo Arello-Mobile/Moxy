@@ -13,7 +13,7 @@ public class MockPresenterFactory2 implements PresenterFactory<MvpPresenter<?>, 
 {
 
 	@Override
-	public MvpPresenter<?> createPresenter(final MvpPresenter<?> defaultInstance, final Class<MvpPresenter<?>> presenterClazz, final String s)
+	public MvpPresenter<?> createPresenter(final Class<MvpPresenter<?>> presenterClazz, final String s)
 	{
 		try
 		{
@@ -28,7 +28,7 @@ public class MockPresenterFactory2 implements PresenterFactory<MvpPresenter<?>, 
 			e.printStackTrace();
 		}
 
-		return defaultInstance;
+		return null;
 	}
 
 	@Override

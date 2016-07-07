@@ -17,17 +17,16 @@ public interface PresenterFactory<Presenter extends MvpPresenter<?>, Params>
 	/**
 	 * This method creates presenter Instance.
 	 *
-	 * @param defaultInstance instance created by empty constructor, or null if empty constructor not exists
 	 * @param presenterClazz expected clazz of presenter
 	 * @param params         initial params for presenter.
 	 * @return MvpPresenter instance.
 	 */
-	Presenter createPresenter(Presenter defaultInstance, Class<Presenter> presenterClazz, Params params);
+	Presenter createPresenter(Class<Presenter> presenterClazz, Params params);
 
 	/**
 	 * @param presenterClazz expected clazz of presenter
 	 * @param params         initial params for presenter.
-	 * @return unique tag for presenter created via {@link #createPresenter(MvpPresenter, Class, Object)}
+	 * @return unique tag for presenter created via {@link #createPresenter(Class, Object)}
 	 */
 	String createTag(Class<Presenter> presenterClazz, Params params);
 }

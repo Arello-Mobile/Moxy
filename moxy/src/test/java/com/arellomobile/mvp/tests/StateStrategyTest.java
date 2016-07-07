@@ -1,5 +1,8 @@
 package com.arellomobile.mvp.tests;
 
+import java.lang.reflect.Field;
+import java.util.Map;
+
 import android.os.Bundle;
 
 import com.arellomobile.mvp.MvpDelegate;
@@ -15,8 +18,6 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import java.lang.reflect.Field;
-import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -37,7 +38,7 @@ public class StateStrategyTest
 		ChildView childView = mock(ChildView.class);
 		MvpDelegate<ChildView> mvpDelegate = new MvpDelegate<>(childView);
 		mvpDelegate.onCreate(mock(Bundle.class));
-		mvpDelegate.onStart();
+		mvpDelegate.onAttach();
 		try
 		{
 			Object[] enumConstants = Class.forName("com.arellomobile.mvp.view.ChildView$$State$LocalViewCommand").getEnumConstants();

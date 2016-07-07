@@ -14,9 +14,7 @@ import com.arellomobile.mvp.presenter.PresenterType;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
@@ -197,36 +195,11 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 
 	private static String generatePresenterBinderClass(final String builder, final Field field)
 	{
-		boolean hasEmptyConstructor = false;
-
-		for (Element element : ((TypeElement) field.getClazz().asElement()).getEnclosedElements())
-		{
-			if (element.getKind() != ElementKind.CONSTRUCTOR)
-			{
-				continue;
-			}
-
-			final ExecutableElement constructor = (ExecutableElement) element;
-
-			if (!constructor.getModifiers().contains(Modifier.PUBLIC))
-			{
-				continue;
-			}
-
-			hasEmptyConstructor = constructor.getParameters().size() == 0;
-			if (hasEmptyConstructor)
-			{
-				break;
-			}
-		}
-
-		String defaultInstance = hasEmptyConstructor ? ("new " + field.getClazz() + "()") : "null";
-
 		final String s = "\tpublic class " + field.getGeneratedClassName() + " extends PresenterField\n" +
 				"\t{\n" +
 				"\t\tpublic " + field.getGeneratedClassName() + "()\n" +
 				"\t\t{\n" +
-				"\t\t\tsuper(" + field.getTag() + ", PresenterType." + field.getType().name() + ", " + field.getFactory() + ".class, " + field.getPresenterId() + ", " + field.getFactoryParamsHolder() + ".class, " + field.getClazz().asElement() + ".class, " + defaultInstance + ");\n" +
+				"\t\t\tsuper(" + field.getTag() + ", PresenterType." + field.getType().name() + ", " + field.getFactory() + ".class, " + field.getPresenterId() + ", " + field.getFactoryParamsHolder() + ".class, " + field.getClazz().asElement() + ".class);\n" +
 				"\t\t}\n" +
 				"\n" +
 				"\t\t@Override\n" +
