@@ -1,9 +1,5 @@
 package com.arellomobile.mvp.compiler;
 
-import com.arellomobile.mvp.MvpPresenter;
-import com.arellomobile.mvp.MvpView;
-import com.arellomobile.mvp.presenter.InjectPresenter;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,6 +7,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
+import com.arellomobile.mvp.MvpPresenter;
+import com.arellomobile.mvp.MvpView;
+import com.arellomobile.mvp.presenter.InjectPresenter;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -22,6 +22,7 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
 import javax.tools.Diagnostic;
+
 
 import static com.arellomobile.mvp.compiler.Util.fillGenerics;
 
@@ -72,9 +73,10 @@ public class PresenterInjectorRules extends AnnotationRule
 		Collection<TypeMirror> viewsType = getViewsType((TypeElement) ((DeclaredType) annotatedField.getEnclosingElement().asType()).asElement());
 
 		boolean result = false;
+
 		for (TypeMirror typeMirror : viewsType)
 		{
-			if (Util.getFullClassName(typeMirror).equals(viewClassFromGeneric))
+			if (Util.getFullClassName(typeMirror).equals(viewClassFromGeneric) || Util.fillGenerics(Collections.<String, String>emptyMap(), typeMirror).equals(viewClassFromGeneric))
 			{
 				result = true;
 				break;

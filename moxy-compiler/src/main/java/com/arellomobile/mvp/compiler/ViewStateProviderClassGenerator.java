@@ -59,6 +59,12 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement>
 
 			if (view != null)
 			{
+				// Remove generic from view class name
+				if (view.contains("<"))
+				{
+					view = view.substring(0, view.indexOf("<"));
+				}
+
 				TypeElement viewTypeElement = MvpCompiler.getElementUtils().getTypeElement(view);
 				if (viewTypeElement == null)
 				{

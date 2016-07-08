@@ -1,5 +1,9 @@
 package com.arellomobile.mvp.compiler;
 
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.truth.Truth;
@@ -7,11 +11,8 @@ import com.google.testing.compile.JavaFileObjects;
 
 import org.junit.Test;
 
-import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.tools.Diagnostic;
+
 
 import static org.junit.Assert.fail;
 
@@ -56,12 +57,11 @@ public class ViewStateClassTest extends CompilerTest
 	{
 		try
 		{
-			getThat(JavaFileObjects.forResource("presenter/InjectViewStateForGenericViewPresenter.java"), JavaFileObjects.forResource("view/ViewStateForGenericView.java")).failsToCompile();
-			fail();
+			getThat(JavaFileObjects.forResource("presenter/InjectViewStateForGenericViewPresenter.java"), JavaFileObjects.forResource("view/ViewStateForGenericView.java")).compilesWithoutError();
 		}
 		catch (RuntimeException e)
 		{
-			Truth.assertThat(e.getLocalizedMessage().contains("Code generation can't be applied to generic interface"));
+			fail(e.getLocalizedMessage());
 		}
 	}
 
