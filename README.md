@@ -66,15 +66,9 @@ dependencies {
 ```
 ## Android studio templates
 
-In order to avoid boilerplate code creating for binding activity,fragments and its presentation part, we propose to use Android Studio templates for Moxy. Templates located in /moxy-templates
+In order to avoid boilerplate code creating for binding activity,fragments and its presentation part, we propose to use Android Studio templates for Moxy. 
 
-To use the templates you need:
-* Get template from /moxy-templates or [Download archive](https://goo.gl/q9qHVC)
-* Open in your machine android_studio_dir/plugins/android/lib/templates/other
-* Copy archive content to this folder
-* Restart Android Studio
-
-**Attention!** Android studio may remove this files during update
+Templates located in [/moxy-templates](https://github.com/Arello-Mobile/Moxy/tree/master/moxy-templates)
 
 
 
