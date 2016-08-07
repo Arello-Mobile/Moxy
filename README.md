@@ -30,7 +30,7 @@ You can find the sample project [here](https://github.com/Arello-Mobile/MoxySamp
 
 ## References
 [_RU_] [Moxy — реализация MVP под Android с щепоткой магии](https://habrahabr.ru/post/276189/)
-
+[_EN_] [Android without Lifecycle: MPVsV approach with Moxy](https://medium.com/@xanderblinov/6a3ae33521e)
 ## Integration
 
 Maven integration:
