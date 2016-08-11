@@ -45,7 +45,7 @@ public class MvpFragment extends Fragment
 	{
 		super.onDestroy();
 
-		if (isRemoving())
+		if (isRemoving() || getActivity().isFinishing())
 		{
 			getMvpDelegate().onDestroy();
 		}
