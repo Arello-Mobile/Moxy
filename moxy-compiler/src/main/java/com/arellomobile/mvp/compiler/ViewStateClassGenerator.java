@@ -62,15 +62,12 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 		                 "import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy;\n" +
 		                 "import com.arellomobile.mvp.viewstate.strategy.StateStrategy;\n" +
 		                 "\n" +
-		                 "public class " + fullClassName.substring(fullClassName.lastIndexOf(".") + 1) + "$$State" + generic + " extends MvpViewState<" + mViewClassName + "> implements " + mViewClassName + interfaceGeneric + "\n" +
-		                 "{\n" +
+		                 "public class " + fullClassName.substring(fullClassName.lastIndexOf(".") + 1) + "$$State" + generic + " extends MvpViewState<" + mViewClassName + "> implements " + mViewClassName + interfaceGeneric + " {\n" +
 		                 "\tprivate ViewCommands<" + mViewClassName + "> mViewCommands = new ViewCommands<>();\n" +
 		                 "\n" +
 		                 "\t@Override\n" +
-		                 "\tpublic void restoreState(" + mViewClassName + " view)\n" +
-		                 "\t{\n" +
-		                 "\t\tif (mViewCommands.isEmpty())\n" +
-		                 "\t\t{\n" +
+		                 "\tpublic void restoreState(" + mViewClassName + " view) {\n" +
+		                 "\t\tif (mViewCommands.isEmpty()) {\n" +
 		                 "\t\t\treturn;\n" +
 		                 "\t\t}\n" +
 		                 "\n" +
@@ -138,18 +135,15 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 			String argumentsWrapperNewInstance = "new " + method.commandClassName + "(" + argumentsString + ");\n";
 
 			builder += "\t@Override\n" +
-			           "\tpublic " + method.genericType + " void " + method.name + "(" + join(", ", method.arguments) + ")" + throwTypesString + "\n" +
-			           "\t{\n" +
+			           "\tpublic " + method.genericType + " void " + method.name + "(" + join(", ", method.arguments) + ")" + throwTypesString + " {\n" +
 			           "\t\t" + argumentClassName + " command = " + argumentsWrapperNewInstance +
 			           "\t\tmViewCommands.beforeApply(command);\n" +
 			           "\n" +
-			           "\t\tif (mViews == null || mViews.isEmpty())\n" +
-			           "\t\t{\n" +
+			           "\t\tif (mViews == null || mViews.isEmpty()) {\n" +
 			           "\t\t\treturn;\n" +
 			           "\t\t}\n" +
 			           "\n" +
-			           "\t\tfor(" + mViewClassName + " view : mViews)\n" +
-			           "\t\t{\n" +
+			           "\t\tfor(" + mViewClassName + " view : mViews) {\n" +
 			           "\t\t\tview." + method.name + "(" + argumentsString + ");\n" +
 			           "\t\t}\n" +
 			           "\n" +
@@ -345,18 +339,15 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 				argumentsInit += "\n";
 			}
 
-			builder += "\n\tprivate class " + method.commandClassName + method.genericType + " extends ViewCommand<" + viewClassName + ">\n" +
-			           "\t{\n" +
+			builder += "\n\tprivate class " + method.commandClassName + method.genericType + " extends ViewCommand<" + viewClassName + "> {\n" +
 			           argumentsInit +
-			           "\t\t" + method.commandClassName + "(" + join(", ", method.arguments) + ")\n" +
-			           "\t\t{\n" +
+			           "\t\t" + method.commandClassName + "(" + join(", ", method.arguments) + ") {\n" +
 			           "\t\t\tsuper(" + method.tag + ", " + method.stateStrategy + ");\n" +
 			           argumentsBind +
 			           "\t\t}\n" +
 			           "\n" +
 			           "\t\t@Override\n" +
-			           "\t\tpublic void apply(" + viewClassName + " mvpView)\n" +
-			           "\t\t{\n" +
+			           "\t\tpublic void apply(" + viewClassName + " mvpView) {\n" +
 			           "\t\t\tmvpView." + method.name + "(" + argumentsString + ");\n" +
 			           "\t\t}\n" +
 			           "\t}\n";
@@ -432,7 +423,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 
 		@Override
 		public String toString() {
-			return "Method{ " + genericType + " void " + name + '(' + arguments + ") throws " + thrownTypes + '}';
+			return "Method { " + genericType + " void " + name + '(' + arguments + ") throws " + thrownTypes + '}';
 		}
 	}
 

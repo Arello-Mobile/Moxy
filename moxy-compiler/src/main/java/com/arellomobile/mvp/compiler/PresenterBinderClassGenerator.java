@@ -90,9 +90,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		                 "import com.arellomobile.mvp.MvpPresenter;\n" +
 		                 "import com.arellomobile.mvp.presenter.PresenterType;\n" +
 		                 "\n" +
-		                 "public class " + viewClassName + MvpProcessor.PRESENTER_BINDER_SUFFIX + " extends PresenterBinder<" + parentClassName + ">" +
-		                 "\n" +
-		                 "{\n";
+		                 "public class " + viewClassName + MvpProcessor.PRESENTER_BINDER_SUFFIX + " extends PresenterBinder<" + parentClassName + "> {\n";
 
 		List<Field> fields = new ArrayList<>();
 
@@ -158,8 +156,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 	}
 
 	private static String generateGetPresentersMethod(final String builder, final List<Field> fields, String parentClassName) {
-		String s = "\tpublic List<PresenterField<? super " + parentClassName + ">> getPresenterFields()\n" +
-		           "\t{\n" +
+		String s = "\tpublic List<PresenterField<? super " + parentClassName + ">> getPresenterFields() {\n" +
 		           "\t\tList<PresenterField<? super " + parentClassName + ">> presenters = new ArrayList<>();\n" +
 		           "\n";
 
@@ -177,16 +174,13 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 	}
 
 	private static String generatePresenterBinderClass(final String builder, final Field field) {
-		final String s = "\tpublic class " + field.getGeneratedClassName() + " extends PresenterField\n" +
-		                 "\t{\n" +
-		                 "\t\tpublic " + field.getGeneratedClassName() + "()\n" +
-		                 "\t\t{\n" +
+		final String s = "\tpublic class " + field.getGeneratedClassName() + " extends PresenterField {\n" +
+		                 "\t\tpublic " + field.getGeneratedClassName() + "() {\n" +
 		                 "\t\t\tsuper(" + field.getTag() + ", PresenterType." + field.getType().name() + ", " + field.getFactory() + ".class, " + field.getPresenterId() + ", " + field.getFactoryParamsHolder() + ".class, " + field.getClazz().asElement() + ".class);\n" +
 		                 "\t\t}\n" +
 		                 "\n" +
 		                 "\t\t@Override\n" +
-		                 "\t\tpublic void setValue(MvpPresenter presenter)\n" +
-		                 "\t\t{\n" +
+		                 "\t\tpublic void setValue(MvpPresenter presenter) {\n" +
 		                 "\t\t\tmTarget." + field.getName() + " = (" + field.getClazz() + ") presenter;\n" +
 		                 "\t\t}\n" +
 		                 "\t}\n" +

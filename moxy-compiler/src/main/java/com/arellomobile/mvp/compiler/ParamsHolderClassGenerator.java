@@ -1,10 +1,10 @@
 package com.arellomobile.mvp.compiler;
 
+import java.util.List;
+
 import com.arellomobile.mvp.DefaultPresenterFactory;
 import com.arellomobile.mvp.MvpProcessor;
 import com.arellomobile.mvp.ParamsProvider;
-
-import java.util.List;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -77,12 +77,9 @@ final class ParamsHolderClassGenerator extends ClassGenerator<TypeElement> {
 		                 "import com.arellomobile.mvp.ParamsHolder;\n" +
 		                 "import com.arellomobile.mvp.presenter.PresenterField;\n" +
 		                 "\n" +
-		                 "public class " + viewClassName + MvpProcessor.FACTORY_PARAMS_HOLDER_SUFFIX + " implements ParamsHolder<" + returnType + ">" +//" implements PresenterBinder<" + parentClassName + ">" +
-		                 "\n" +
-		                 "{\n" +
+		                 "public class " + viewClassName + MvpProcessor.FACTORY_PARAMS_HOLDER_SUFFIX + " implements ParamsHolder<" + returnType + "> {\n" +
 		                 "\t@Override\n" +
-		                 "\tpublic " + returnType + " getParams(PresenterField<?> presenterField, Object delegated, String delegateTag)\n" +
-		                 "\t{\n" +
+		                 "\tpublic " + returnType + " getParams(PresenterField<?> presenterField, Object delegated, String delegateTag) {\n" +
 		                 "\t\treturn ((" + className + ") delegated)." + methodName + "(presenterField.getPresenterId());\n" +
 		                 "\t}\n" +
 		                 "}\n";
