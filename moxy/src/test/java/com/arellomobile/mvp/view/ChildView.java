@@ -12,8 +12,7 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
  */
 @GenerateViewState
 @StateStrategyType(SkipStrategy.class)
-public interface ChildView extends ParentView, SimpleInterface
-{
+public interface ChildView extends ParentView, SimpleInterface {
 	@Override
 	void parentOverrideMethodWithCustomStrategy();
 }

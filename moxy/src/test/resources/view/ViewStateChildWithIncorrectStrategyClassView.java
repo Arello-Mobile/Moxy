@@ -10,7 +10,6 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
  *
  * @author Savin Mikhail
  */
-public interface ViewStateChildWithIncorrectStrategyClassView extends ViewStateParentView, ViewStateParentStrategyClassView
-{
+public interface ViewStateChildWithIncorrectStrategyClassView extends ViewStateParentView, ViewStateParentStrategyClassView {
 
 }

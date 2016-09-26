@@ -9,31 +9,25 @@ import java.util.Map;
  *
  * @author Alexander Blinov
  */
-public class PresenterFactoryStore
-{
+public class PresenterFactoryStore {
 	private static Map<Class<? extends PresenterFactory<?, ?>>, PresenterFactory<?, ?>> sPresenterFactories = new HashMap<>();
 	private static Map<Class<? extends ParamsHolder<?>>, ParamsHolder<?>> sParamsHolders = new HashMap<>();
 
-	public PresenterFactory<?, ?> getPresenterFactory(Class<? extends PresenterFactory<?, ?>> clazz)
-	{
-		if (sPresenterFactories.containsKey(clazz))
-		{
+	public PresenterFactory<?, ?> getPresenterFactory(Class<? extends PresenterFactory<?, ?>> clazz) {
+		if (sPresenterFactories.containsKey(clazz)) {
 			//noinspection unchecked
 			return sPresenterFactories.get(clazz);
 		}
 
 		PresenterFactory<?, ?> instance;
 
-		try
-		{
+		try {
 			instance = clazz.newInstance();
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			throw new RuntimeException("Unable to instantiate " + clazz + ": " +
-					"make sure class name exists, " +
-					"is public, and " +
-					"has an empty constructor that is public", e);
+			                           "make sure class name exists, " +
+			                           "is public, and " +
+			                           "has an empty constructor that is public", e);
 		}
 
 		sPresenterFactories.put(clazz, instance);
@@ -41,25 +35,20 @@ public class PresenterFactoryStore
 		return instance;
 	}
 
-	public ParamsHolder<?> getParamsHolder(Class<? extends ParamsHolder<?>> clazz)
-	{
-		if (sParamsHolders.containsKey(clazz))
-		{
+	public ParamsHolder<?> getParamsHolder(Class<? extends ParamsHolder<?>> clazz) {
+		if (sParamsHolders.containsKey(clazz)) {
 			return sParamsHolders.get(clazz);
 		}
 
 		ParamsHolder<?> instance;
 
-		try
-		{
+		try {
 			instance = clazz.newInstance();
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			throw new RuntimeException("Unable to instantiate " + clazz + ": " +
-					"make sure class name exists, " +
-					"is public, and " +
-					"has an empty constructor that is public", e);
+			                           "make sure class name exists, " +
+			                           "is public, and " +
+			                           "has an empty constructor that is public", e);
 		}
 
 		sParamsHolders.put(clazz, instance);

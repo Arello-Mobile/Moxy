@@ -14,41 +14,31 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategy;
  *
  * @author Yuri Shmakov
  */
-public class ViewCommands<View extends MvpView>
-{
+public class ViewCommands<View extends MvpView> {
 	private List<ViewCommand<View>> mState = new ArrayList<>();
 	private Map<Class<? extends StateStrategy>, StateStrategy> mStrategies = new HashMap<>();
 
-	public void beforeApply(ViewCommand<View> viewCommand)
-	{
+	public void beforeApply(ViewCommand<View> viewCommand) {
 		StateStrategy stateStrategy = getStateStrategy(viewCommand);
 
 		stateStrategy.beforeApply(mState, viewCommand);
 	}
 
-	public void afterApply(ViewCommand<View> viewCommand)
-	{
+	public void afterApply(ViewCommand<View> viewCommand) {
 		StateStrategy stateStrategy = getStateStrategy(viewCommand);
 
 		stateStrategy.afterApply(mState, viewCommand);
 	}
 
-	private StateStrategy getStateStrategy(ViewCommand<View> viewCommand)
-	{
+	private StateStrategy getStateStrategy(ViewCommand<View> viewCommand) {
 		StateStrategy stateStrategy = mStrategies.get(viewCommand.getStrategyType());
-		if (stateStrategy == null)
-		{
+		if (stateStrategy == null) {
 			//noinspection TryWithIdenticalCatches
-			try
-			{
+			try {
 				stateStrategy = viewCommand.getStrategyType().newInstance();
-			}
-			catch (InstantiationException e)
-			{
+			} catch (InstantiationException e) {
 				throw new IllegalArgumentException("Unable to create state strategy: " + viewCommand.toString());
-			}
-			catch (IllegalAccessException e)
-			{
+			} catch (IllegalAccessException e) {
 				throw new IllegalArgumentException("Unable to create state strategy: " + viewCommand.toString());
 			}
 
@@ -58,17 +48,14 @@ public class ViewCommands<View extends MvpView>
 		return stateStrategy;
 	}
 
-	public boolean isEmpty()
-	{
+	public boolean isEmpty() {
 		return mState.isEmpty();
 	}
 
-	public void reapply(View view)
-	{
+	public void reapply(View view) {
 		final ArrayList<ViewCommand<View>> commands = new ArrayList<>(mState);
 
-		for (ViewCommand<View> command : commands)
-		{
+		for (ViewCommand<View> command : commands) {
 			command.apply(view);
 
 			afterApply(command);

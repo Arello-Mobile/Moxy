@@ -17,8 +17,7 @@ import com.arellomobile.mvp.PresenterFactory;
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface InjectPresenter
-{
+public @interface InjectPresenter {
 	String EMPTY = "";
 
 	PresenterType type() default PresenterType.LOCAL;

@@ -14,6 +14,5 @@ import view.PositiveParamsView;
  *
  * @author Savin Mikhail
  */
-public class WithViewGenericPresenter<T extends CounterTestView, S extends CounterTestView> extends WithViewGenericPresenter2<T, S>
-{
+public class WithViewGenericPresenter<T extends CounterTestView, S extends CounterTestView> extends WithViewGenericPresenter2<T, S> {
 }

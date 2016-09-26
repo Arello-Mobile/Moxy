@@ -9,6 +9,5 @@ import com.arellomobile.mvp.MvpView;
  *
  * @author Savin Mikhail
  */
-public class PositiveParamsViewPresenter<V extends MvpView> extends MvpPresenter<V>
-{
+public class PositiveParamsViewPresenter<V extends MvpView> extends MvpPresenter<V> {
 }

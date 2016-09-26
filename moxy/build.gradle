@@ -66,7 +66,7 @@ task copyVersion << {
 }
 
 def getBasePom() {
-    def basePom =  pom {
+    def basePom = pom {
         //noinspection GroovyAssignabilityCheck
         project {
             groupId targetGroupId
@@ -112,13 +112,13 @@ def getBasePom() {
         }
     }
 
-    return basePom.withXml{
+    return basePom.withXml {
         asNode().dependencies.'*'.findAll() {
             it.version.text() == '4.0.+' && project.configurations.compile.allDependencies.find { dep ->
                 dep.name == it.artifactId.text()
             }
         }.each() {
-           it.version*.value = '[4.0,)'
+            it.version*.value = '[4.0,)'
         }
     }
 }
@@ -132,9 +132,9 @@ task copyJars << {
     }
 
     copy {
-        from (buildDir)
+        from(buildDir)
                 {
-                    rename targetArtefactId+'(.*)', targetArtefactIdDev + '$1'
+                    rename targetArtefactId + '(.*)', targetArtefactIdDev + '$1'
                 }
         into publishDir
     }
@@ -180,20 +180,20 @@ task createPomXml << {
 
     getBasePom().withXml {
 
-             asNode().appendNode('build')
-                     .appendNode('plugins')
-                     .appendNode('plugin')
-                     .with {
-                 appendNode('groupId', 'org.sonatype.plugins')
-                 appendNode('artifactId', 'nexus-staging-maven-plugin')
-                 appendNode('version', '1.6.4')
-                 appendNode('extensions', 'true')
-                 appendNode('configuration').with {
-                     appendNode('serverId', 'ossrh')
-                     appendNode('nexusUrl', 'https://oss.sonatype.org/')
-                     appendNode('autoReleaseAfterClose', 'false')
-                 }
-             }
+        asNode().appendNode('build')
+                .appendNode('plugins')
+                .appendNode('plugin')
+                .with {
+            appendNode('groupId', 'org.sonatype.plugins')
+            appendNode('artifactId', 'nexus-staging-maven-plugin')
+            appendNode('version', '1.6.4')
+            appendNode('extensions', 'true')
+            appendNode('configuration').with {
+                appendNode('serverId', 'ossrh')
+                appendNode('nexusUrl', 'https://oss.sonatype.org/')
+                appendNode('autoReleaseAfterClose', 'false')
+            }
+        }
         asNode().appendNode('distributionManagement').with {
             appendNode('snapshotRepository')
                     .with {
@@ -211,7 +211,7 @@ task createPomXml << {
 
     getBasePom()
 
-    .writeTo(publishMavenDir + "/" + targetArtefactId + ".pom")
+            .writeTo(publishMavenDir + "/" + targetArtefactId + ".pom")
 }
 
 compileJava.dependsOn clearPublishDir

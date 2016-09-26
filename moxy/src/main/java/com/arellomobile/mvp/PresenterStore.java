@@ -11,48 +11,39 @@ import com.arellomobile.mvp.presenter.PresenterType;
  *
  * @author Alexander Blinov
  */
-public class PresenterStore
-{
+public class PresenterStore {
 	private Map<Class<? extends MvpPresenter>, Map<String, MvpPresenter>> mGlobalPresenters = new HashMap<>();
 	private Map<Class<? extends MvpPresenter>, Map<String, MvpPresenter>> mWeakPresenters = new WeakValueHashMap<>();
 
 	/**
-	 *
 	 * @param type     Type is presenter local, global or weak
 	 * @param tag      Object to store presenter
 	 * @param instance Instance of MvpPresenter implementation to store
 	 * @param <T>      type of presenter
 	 */
-	public <T extends MvpPresenter> void add(PresenterType type, String tag, T instance)
-	{
+	public <T extends MvpPresenter> void add(PresenterType type, String tag, T instance) {
 		Map<String, MvpPresenter> mvpPresenterMap;
 
 		final Map<Class<? extends MvpPresenter>, Map<String, MvpPresenter>> presenters = getPresenters(type);
 
-		if (presenters.containsKey(instance.getClass()))
-		{
+		if (presenters.containsKey(instance.getClass())) {
 			mvpPresenterMap = presenters.get(instance.getClass());
-		}
-		else
-		{
+		} else {
 			mvpPresenterMap = createPresentersStore(type);
 			presenters.put(instance.getClass(), mvpPresenterMap);
 		}
 
-		if (mvpPresenterMap.containsKey(tag))
-		{
+		if (mvpPresenterMap.containsKey(tag)) {
 			throw new IllegalStateException("mvp multiple presenters map already contains tag");
 		}
 
 		mvpPresenterMap.put(tag, instance);
 	}
 
-	public MvpPresenter get(PresenterType type, String tag, Class<? extends MvpPresenter> clazz)
-	{
+	public MvpPresenter get(PresenterType type, String tag, Class<? extends MvpPresenter> clazz) {
 		Map<String, MvpPresenter> tagMvpPresenterMap = getPresenters(type).get(clazz);
 
-		if (tagMvpPresenterMap == null)
-		{
+		if (tagMvpPresenterMap == null) {
 			//TODO add builder
 			return null;
 		}
@@ -63,32 +54,26 @@ public class PresenterStore
 	}
 
 
-	public MvpPresenter remove(PresenterType type, String tag, Class<? extends MvpPresenter> clazz)
-	{
+	public MvpPresenter remove(PresenterType type, String tag, Class<? extends MvpPresenter> clazz) {
 		Map<String, MvpPresenter> tagMvpPresenterMap = getPresenters(type).get(clazz);
 
-		if (tagMvpPresenterMap == null)
-		{
+		if (tagMvpPresenterMap == null) {
 			return null;
 		}
 
 		return tagMvpPresenterMap.remove(tag);
 	}
 
-	private Map<Class<? extends MvpPresenter>, Map<String, MvpPresenter>> getPresenters(PresenterType type)
-	{
-		if (type == PresenterType.WEAK)
-		{
+	private Map<Class<? extends MvpPresenter>, Map<String, MvpPresenter>> getPresenters(PresenterType type) {
+		if (type == PresenterType.WEAK) {
 			return mWeakPresenters;
 		}
 
 		return mGlobalPresenters;
 	}
 
-	private Map<String, MvpPresenter> createPresentersStore(PresenterType type)
-	{
-		if (type == PresenterType.WEAK)
-		{
+	private Map<String, MvpPresenter> createPresentersStore(PresenterType type) {
+		if (type == PresenterType.WEAK) {
 			return new WeakValueHashMap<>();
 		}
 

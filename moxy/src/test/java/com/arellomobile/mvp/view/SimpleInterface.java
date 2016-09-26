@@ -6,7 +6,6 @@ package com.arellomobile.mvp.view;
  *
  * @author Savin Mikhail
  */
-public interface SimpleInterface
-{
+public interface SimpleInterface {
 	void simpleInterfaceMethod();
 }

@@ -6,32 +6,26 @@ package com.arellomobile.mvp.compiler;
  *
  * @author Alexander Blinov
  */
-final class ClassGeneratingParams
-{
+final class ClassGeneratingParams {
 	private String mName;
 	private String mBody;
 
-	public ClassGeneratingParams()
-	{
+	public ClassGeneratingParams() {
 	}
 
-	public void setName(String name)
-	{
+	public void setName(String name) {
 		mName = name;
 	}
 
-	public void setBody(String body)
-	{
+	public void setBody(String body) {
 		mBody = body;
 	}
 
-	public String getName()
-	{
+	public String getName() {
 		return mName;
 	}
 
-	public String getBody()
-	{
+	public String getBody() {
 		return mBody;
 	}
 }

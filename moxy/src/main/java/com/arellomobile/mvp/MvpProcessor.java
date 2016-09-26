@@ -13,8 +13,7 @@ import com.arellomobile.mvp.presenter.PresenterType;
  *
  * @author Alexander Blinov
  */
-public class MvpProcessor
-{
+public class MvpProcessor {
 	private static final String TAG = "MvpProcessor";
 
 	public static final String PRESENTER_BINDER_SUFFIX = "$$PresentersBinder";
@@ -30,20 +29,14 @@ public class MvpProcessor
 	 * @param <Delegated> type of delegated
 	 * @return PresenterBinder instance
 	 */
-	private <Delegated> PresenterBinder<? super Delegated> getPresenterBinder(Class<? super Delegated> delegated)
-	{
+	private <Delegated> PresenterBinder<? super Delegated> getPresenterBinder(Class<? super Delegated> delegated) {
 		PresenterBinder<Delegated> binder;
-		try
-		{
+		try {
 			//noinspection unchecked
 			binder = (PresenterBinder<Delegated>) findPresenterBinderForClass(delegated);
-		}
-		catch (InstantiationException e)
-		{
+		} catch (InstantiationException e) {
 			throw new IllegalStateException("can not instantiate binder for " + delegated.getName(), e);
-		}
-		catch (IllegalAccessException e)
-		{
+		} catch (IllegalAccessException e) {
 			throw new IllegalStateException("have no access to binder for " + delegated.getName(), e);
 		}
 
@@ -60,21 +53,17 @@ public class MvpProcessor
 	 * @throws InstantiationException
 	 */
 	private <Delegated> PresenterBinder<? super Delegated> findPresenterBinderForClass(Class<Delegated> clazz)
-			throws IllegalAccessException, InstantiationException
-	{
+	throws IllegalAccessException, InstantiationException {
 		PresenterBinder<? super Delegated> presenterBinder;
 		String clsName = clazz.getName();
 
 		String className = clsName + PRESENTER_BINDER_SUFFIX;
-		try
-		{
+		try {
 			Class<?> presenterBinderClass = Class.forName(className);
 			//noinspection unchecked
 			presenterBinder = (PresenterBinder<? super Delegated>) presenterBinderClass.newInstance();
 
-		}
-		catch (ClassNotFoundException e)
-		{
+		} catch (ClassNotFoundException e) {
 			return null;
 		}
 		//TODO add to binders array
@@ -99,8 +88,7 @@ public class MvpProcessor
 	 * @param <Delegated>    type of delegated
 	 * @return MvpPresenter instance
 	 */
-	private <Delegated> MvpPresenter<? super Delegated> getMvpPresenter(PresenterField<? super Delegated> presenterField, Delegated delegated, String delegateTag)
-	{
+	private <Delegated> MvpPresenter<? super Delegated> getMvpPresenter(PresenterField<? super Delegated> presenterField, Delegated delegated, String delegateTag) {
 		Class<? extends MvpPresenter<?>> presenterClass = presenterField.getPresenterClass();
 		Class<? extends PresenterFactory<?, ?>> presenterFactoryClass = presenterField.getFactory();
 		ParamsHolder<?> holder = MvpFacade.getInstance().getPresenterFactoryStore().getParamsHolder(presenterField.getParamsHolderClass());
@@ -116,8 +104,7 @@ public class MvpProcessor
 
 		//noinspection unchecked
 		MvpPresenter<? super Delegated> presenter = presenterStore.get(type, tag, presenterClass);
-		if (presenter != null)
-		{
+		if (presenter != null) {
 			return presenter;
 		}
 
@@ -141,20 +128,17 @@ public class MvpProcessor
 	 * @param <Delegated> type of delegated
 	 * @return presenters list for specifies presenters container
 	 */
-	<Delegated> List<MvpPresenter<? super Delegated>> getMvpPresenters(Delegated delegated, String delegateTag)
-	{
+	<Delegated> List<MvpPresenter<? super Delegated>> getMvpPresenters(Delegated delegated, String delegateTag) {
 		@SuppressWarnings("unchecked")
 		Class<? super Delegated> aClass = (Class<Delegated>) delegated.getClass();
 		List<PresenterBinder<? super Delegated>> presenterBinders = new ArrayList<>();
 
-		while (aClass != Object.class)
-		{
+		while (aClass != Object.class) {
 			PresenterBinder<? super Delegated> presenterBinder = MvpFacade.getInstance().getMvpProcessor().getPresenterBinder(aClass);
 
 			aClass = aClass.getSuperclass();
 
-			if (presenterBinder == null)
-			{
+			if (presenterBinder == null) {
 				continue;
 			}
 
@@ -162,22 +146,18 @@ public class MvpProcessor
 			presenterBinders.add(presenterBinder);
 		}
 
-		if (presenterBinders.isEmpty())
-		{
+		if (presenterBinders.isEmpty()) {
 			return Collections.emptyList();
 		}
 
 		List<MvpPresenter<? super Delegated>> presenters = new ArrayList<>();
-		for (PresenterBinder<? super Delegated> presenterBinder : presenterBinders)
-		{
+		for (PresenterBinder<? super Delegated> presenterBinder : presenterBinders) {
 			List<? extends PresenterField<? super Delegated>> presenterFields = presenterBinder.getPresenterFields();
 
-			for (PresenterField<? super Delegated> presenterField : presenterFields)
-			{
+			for (PresenterField<? super Delegated> presenterField : presenterFields) {
 				MvpPresenter<? super Delegated> presenter = getMvpPresenter(presenterField, delegated, delegateTag);
 
-				if (presenter != null)
-				{
+				if (presenter != null) {
 					presenters.add(presenter);
 					presenterField.setValue(presenter);
 				}

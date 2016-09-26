@@ -14,54 +14,45 @@ import android.view.ViewGroup;
  * @author Yuri Shmakov
  * @author Konstantin Tckhovrebov
  */
-public class MvpFragment extends Fragment
-{
+public class MvpFragment extends Fragment {
 	private MvpDelegate<? extends MvpFragment> mMvpDelegate;
 
-	public void onCreate(Bundle savedInstanceState)
-	{
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		getMvpDelegate().onCreate(savedInstanceState);
 	}
 
-	public void onStart()
-	{
+	public void onStart() {
 		super.onStart();
 
 		getMvpDelegate().onAttach();
 	}
 
 	@Override
-	public void onDestroyView()
-	{
+	public void onDestroyView() {
 		super.onDestroyView();
 
 		getMvpDelegate().onDetach();
 	}
 
 	@Override
-	public void onDestroy()
-	{
+	public void onDestroy() {
 		super.onDestroy();
 
-		if (isRemoving() || getActivity().isFinishing())
-		{
+		if (isRemoving() || getActivity().isFinishing()) {
 			getMvpDelegate().onDestroy();
 		}
 	}
 
-	public void onSaveInstanceState(Bundle outState)
-	{
+	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 
 		getMvpDelegate().onSaveInstanceState(outState);
 	}
 
-	public MvpDelegate getMvpDelegate()
-	{
-		if (mMvpDelegate == null)
-		{
+	public MvpDelegate getMvpDelegate() {
+		if (mMvpDelegate == null) {
 			mMvpDelegate = new MvpDelegate<>(this);
 		}
 

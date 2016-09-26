@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import javax.tools.Diagnostic;
 
+
 import static org.junit.Assert.fail;
 
 /**
@@ -21,62 +22,45 @@ import static org.junit.Assert.fail;
  *
  * @author Savin Mikhail
  */
-public class ParamsHolderClassTest extends CompilerTest
-{
+public class ParamsHolderClassTest extends CompilerTest {
 	@Test
-	public void checkSeveralParams_throw()
-	{
-		try
-		{
+	public void checkSeveralParams_throw() {
+		try {
 			getThat(JavaFileObjects.forResource("params/SeveralMethodParams.java"), JavaFileObjects.forResource("view/SeveralMethodParamsView.java"))
 					.compilesWithoutError();
 			Assert.fail();
-		}
-		catch (RuntimeException e)
-		{
+		} catch (RuntimeException e) {
 			Truth.assertThat(e.getLocalizedMessage().startsWith("Your params provider interface should contains only one methods, annotated as "));
 		}
 	}
 
 	@Test
-	public void checkEmptyParams_throw()
-	{
-		try
-		{
+	public void checkEmptyParams_throw() {
+		try {
 			getThat(JavaFileObjects.forResource("view/EmptyParams.java"), JavaFileObjects.forResource("view/EmptyParamsView.java"))
 					.compilesWithoutError();
 			Assert.fail();
-		}
-		catch (RuntimeException e)
-		{
+		} catch (RuntimeException e) {
 			Truth.assertThat(e.getLocalizedMessage().startsWith("Your params provider interface should contains only one methods, annotated as "));
 		}
 	}
 
 	@Test
-	public void checkIncorrectParametersForMethod_throw()
-	{
-		try
-		{
+	public void checkIncorrectParametersForMethod_throw() {
+		try {
 			getThat(JavaFileObjects.forResource("params/IncorrectParametersParams.java"), JavaFileObjects.forResource("view/IncorrectParametersParamsView.java")).compilesWithoutError();
 			Assert.fail();
-		}
-		catch (RuntimeException e)
-		{
+		} catch (RuntimeException e) {
 			Truth.assertThat(e.getLocalizedMessage().startsWith("Your params provider interface should contains only one methods, annotated as "));
 		}
 	}
 
 	@Test
-	public void checkIncorrectCountOfParametersForMethod_throw()
-	{
-		try
-		{
+	public void checkIncorrectCountOfParametersForMethod_throw() {
+		try {
 			getThat(JavaFileObjects.forResource("params/IncorrectCountOfParametersParams.java"), JavaFileObjects.forResource("view/IncorrectCountOfParametersParamsView.java")).compilesWithoutError();
 			Assert.fail();
-		}
-		catch (RuntimeException e)
-		{
+		} catch (RuntimeException e) {
 			Truth.assertThat(e.getLocalizedMessage().startsWith("Your params provider interface should contains only one methods, annotated as "));
 		}
 	}
@@ -84,16 +68,12 @@ public class ParamsHolderClassTest extends CompilerTest
 	//Uncomment this when [MOXY-22] will be fixed
 	//TODO change message text to correct
 	//	@Test
-	public void checkWarningWhenImplementSeveralParamsProviders()
-	{
+	public void checkWarningWhenImplementSeveralParamsProviders() {
 		Pattern warningPattern = Pattern.compile("expected error");
 		ImmutableTable<Diagnostic.Kind, Integer, Pattern> expectedDiagnostics = ImmutableTable.of(Diagnostic.Kind.WARNING, 16, warningPattern);
-		try
-		{
+		try {
 			assertCompilationResultIs(expectedDiagnostics, ImmutableList.of(getString("params/Params1.java"), getString("params/Params2.java"), getString("view/SeveralParamsView.java")));
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
 		}
@@ -101,15 +81,11 @@ public class ParamsHolderClassTest extends CompilerTest
 
 	//Uncomment this when [MOXY-25] will be fixed
 	//	@Test
-	public void checkPositiveParamsProviders()
-	{
+	public void checkPositiveParamsProviders() {
 		ImmutableTable<Diagnostic.Kind, Integer, Pattern> expectedDiagnostics = ImmutableTable.of();
-		try
-		{
+		try {
 			assertCompilationResultIs(expectedDiagnostics, ImmutableList.of(getString("params/Params1.java"), getString("presenter/PositiveParamsViewPresenter.java"), getString("view/PositiveParamsView.java")));
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
 		}

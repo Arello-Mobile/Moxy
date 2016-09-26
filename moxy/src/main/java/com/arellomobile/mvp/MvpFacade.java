@@ -6,20 +6,15 @@ package com.arellomobile.mvp;
  *
  * @author Alexander Blinov
  */
-public final class MvpFacade
-{
+public final class MvpFacade {
 	private static volatile MvpFacade sInstance;
 
 	private static final Object sLock = new Object();
 
-	public static MvpFacade getInstance()
-	{
-		if (sInstance == null)
-		{
-			synchronized (sLock)
-			{
-				if (sInstance == null)
-				{
+	public static MvpFacade getInstance() {
+		if (sInstance == null) {
+			synchronized (sLock) {
+				if (sInstance == null) {
 					sInstance = new MvpFacade();
 				}
 			}
@@ -27,13 +22,11 @@ public final class MvpFacade
 		return sInstance;
 	}
 
-	public static void init()
-	{
+	public static void init() {
 		getInstance();
 	}
 
-	private MvpFacade()
-	{
+	private MvpFacade() {
 		mPresenterStore = new PresenterStore();
 		mMvpProcessor = new MvpProcessor();
 		mPresenterFactoryStore = new PresenterFactoryStore();
@@ -45,18 +38,15 @@ public final class MvpFacade
 
 	private PresenterFactoryStore mPresenterFactoryStore;
 
-	public PresenterStore getPresenterStore()
-	{
+	public PresenterStore getPresenterStore() {
 		return mPresenterStore;
 	}
 
-	public PresenterFactoryStore getPresenterFactoryStore()
-	{
+	public PresenterFactoryStore getPresenterFactoryStore() {
 		return mPresenterFactoryStore;
 	}
 
-	public MvpProcessor getMvpProcessor()
-	{
+	public MvpProcessor getMvpProcessor() {
 		return mMvpProcessor;
 	}
 }

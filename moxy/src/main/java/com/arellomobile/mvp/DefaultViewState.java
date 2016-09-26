@@ -8,11 +8,9 @@ import com.arellomobile.mvp.viewstate.MvpViewState;
  *
  * @author Yuri Shmakov
  */
-public final class DefaultViewState extends MvpViewState
-{
+public final class DefaultViewState extends MvpViewState {
 	@Override
-	protected void restoreState(MvpView view)
-	{
+	protected void restoreState(MvpView view) {
 		// Stub!
 	}
 }

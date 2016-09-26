@@ -8,11 +8,9 @@ import com.arellomobile.mvp.presenter.PresenterField;
  *
  * @author Alexander Blinov
  */
-public class DefaultParamsHolder implements ParamsHolder<DefaultPresenterFactory.Params>
-{
+public class DefaultParamsHolder implements ParamsHolder<DefaultPresenterFactory.Params> {
 	@Override
-	public DefaultPresenterFactory.Params getParams(PresenterField<?> presenterField, Object delegated, String delegateTag)
-	{
+	public DefaultPresenterFactory.Params getParams(PresenterField<?> presenterField, Object delegated, String delegateTag) {
 		return new DefaultPresenterFactory.Params(delegateTag, presenterField.getClass().getSimpleName(), presenterField.getTag());
 	}
 }

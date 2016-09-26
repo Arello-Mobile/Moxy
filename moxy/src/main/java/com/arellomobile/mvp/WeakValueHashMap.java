@@ -18,11 +18,11 @@ import java.lang.ref.WeakReference;
  * The desired behaviour of an in-memory cache is to keep a weak reference to the cached object,
  * this will allow the garbage collector to remove an object from memory once it isn't needed
  * anymore.
- *
+ * <p>
  * A {@link HashMap} doesn't help here since it will keep hard references for key and
  * value objects. A {@link WeakHashMap} doesn't either, because it keeps weak references to the
  * key objects, but we want to track the value objects.
- *
+ * <p>
  * This implementation of a Map uses a {@link WeakReference} to the value objects. Once the
  * garbage collector decides it wants to finalize a value object, it will be removed from the
  * map automatically.
@@ -30,7 +30,7 @@ import java.lang.ref.WeakReference;
  * @param <K> - the type of the key object
  * @param <V> - the type of the value object
  */
-public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
+public class WeakValueHashMap<K, V> extends AbstractMap<K, V> {
 
 	// the internal hash map to the weak references of the actual value objects
 	private HashMap<K, WeakValue<V>> references;
@@ -40,6 +40,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
 
 	/**
 	 * Creates a WeakValueHashMap with a desired initial capacity
+	 *
 	 * @param capacity - the initial capacity
 	 */
 	public WeakValueHashMap(int capacity) {
@@ -56,11 +57,12 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
 
 	/**
 	 * Creates a WeakValueHashMap and copies the content from an existing map
+	 *
 	 * @param map - the map to copy from
 	 */
 	public WeakValueHashMap(Map<? extends K, ? extends V> map) {
 		this(map.size());
-		for (Map.Entry<? extends K, ? extends V> entry : map.entrySet() ) {
+		for (Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
 			put(entry.getKey(), entry.getValue());
 		}
 	}
@@ -70,7 +72,9 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
 		processQueue();
 		WeakValue<V> valueRef = new WeakValue<V>(key, value, gcQueue);
 		return getReferenceValue(references.put(key, valueRef));
-	};
+	}
+
+	;
 
 	@Override
 	public V get(Object key) {
@@ -118,11 +122,11 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
 	}
 
 	@Override
-	public Set<Map.Entry<K,V>> entrySet() {
+	public Set<Map.Entry<K, V>> entrySet() {
 		processQueue();
 
-		Set<Map.Entry<K,V>> entries = new LinkedHashSet<>();
-		for (Map.Entry<K,WeakValue<V>> entry : references.entrySet()) {
+		Set<Map.Entry<K, V>> entries = new LinkedHashSet<>();
+		for (Map.Entry<K, WeakValue<V>> entry : references.entrySet()) {
 			entries.add(new AbstractMap.SimpleEntry<>(entry.getKey(), getReferenceValue(entry.getValue())));
 		}
 		return entries;
@@ -146,7 +150,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
 	@SuppressWarnings("unchecked")
 	private void processQueue() {
 		WeakValue<V> valueRef;
-		while ( (valueRef = (WeakValue<V>) gcQueue.poll()) != null ) {
+		while ((valueRef = (WeakValue<V>) gcQueue.poll()) != null) {
 			references.remove(valueRef.getKey());
 		}
 	}

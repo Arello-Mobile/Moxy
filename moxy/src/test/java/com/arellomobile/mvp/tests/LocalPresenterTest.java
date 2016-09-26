@@ -32,9 +32,8 @@ import static org.mockito.Mockito.mock;
  * @author Savin Mikhail
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(manifest=Config.NONE)
-public class LocalPresenterTest
-{
+@Config(manifest = Config.NONE)
+public class LocalPresenterTest {
 	@Mock
 	TestView mTestView;
 
@@ -46,8 +45,7 @@ public class LocalPresenterTest
 
 
 	@Before
-	public void setup()
-	{
+	public void setup() {
 		mTestView = mock(TestView.class);
 
 		mTestViewMvpDelegate.onCreate(null);
@@ -58,8 +56,7 @@ public class LocalPresenterTest
 	}
 
 	@After
-	public void reset()
-	{
+	public void reset() {
 		mTestViewMvpDelegate.onDetach();
 		mTestViewMvpDelegate.onDestroy();
 
@@ -68,56 +65,45 @@ public class LocalPresenterTest
 	}
 
 	@Test
-	public void checkWithInjectViewState()
-	{
+	public void checkWithInjectViewState() {
 		InjectViewStatePresenter injectViewStatePresenter = new InjectViewStatePresenter();
 		injectViewStatePresenter.attachView(mTestView);
-		try
-		{
+		try {
 			Field mViewState = MvpPresenter.class.getDeclaredField("mViewState");
 
 			mViewState.setAccessible(true);
 			assertTrue("ViewState is null for InjectViewStatePresenter", mViewState.get(injectViewStatePresenter) != null);
-		}
-		catch (IllegalAccessException | NoSuchFieldException e)
-		{
+		} catch (IllegalAccessException | NoSuchFieldException e) {
 			assertFalse(e.getLocalizedMessage(), true);
 		}
 	}
 
 	@Test
-	public void checkWithoutViewState()
-	{
+	public void checkWithoutViewState() {
 		NoViewStatePresenter noViewStatePresenter = new NoViewStatePresenter();
 		noViewStatePresenter.attachView(mTestView);
-		try
-		{
+		try {
 			Field mViewState = MvpPresenter.class.getDeclaredField("mViewState");
 
 			mViewState.setAccessible(true);
 			assertTrue("ViewState is not null for NoViewStatePresenter", mViewState.get(noViewStatePresenter) == null);
-		}
-		catch (IllegalAccessException | NoSuchFieldException e)
-		{
+		} catch (IllegalAccessException | NoSuchFieldException e) {
 			assertFalse(e.getLocalizedMessage(), true);
 		}
 	}
 
 	@Test
-	public void checkDelegatePresenter()
-	{
+	public void checkDelegatePresenter() {
 		assertTrue("Presenter is null for delegate", mDelegateLocalPresenterTestView.mInjectViewStatePresenter != null);
 	}
 
 	@Test
-	public void checkLocalPresenters()
-	{
+	public void checkLocalPresenters() {
 		assertNotEquals("Local Presenters for two different view is equal", mDelegateLocalPresenterTestView.mInjectViewStatePresenter.hashCode(), mDelegateLocalPresenter2TestView.mInjectViewStatePresenter.hashCode());
 	}
 
 	@Test
-	public void checkSaveState()
-	{
+	public void checkSaveState() {
 		int hashCode = mDelegateLocalPresenterTestView.mInjectViewStatePresenter.hashCode();
 
 		Bundle bundle = new Bundle();

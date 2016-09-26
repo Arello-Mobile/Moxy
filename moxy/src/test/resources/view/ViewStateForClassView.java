@@ -10,13 +10,12 @@ import com.arellomobile.mvp.MvpView;
  * @author Savin Mikhail
  */
 @GenerateViewState
-public class ViewStateForClassView implements MvpView
-{
-	public void showProgress(){
+public class ViewStateForClassView implements MvpView {
+	public void showProgress() {
 
 	}
 
-	public void hideProgress(){
+	public void hideProgress() {
 
 	}
 }

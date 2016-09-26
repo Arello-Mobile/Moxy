@@ -8,6 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -16,8 +17,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @author Savin Mikhail
  */
-public class PresenterFactoryTest
-{
+public class PresenterFactoryTest {
 	DelegateLocalPresenter2TestView mDelegateLocalPresenterTestView = new DelegateLocalPresenter2TestView();
 	DelegateLocalPresenter2TestView mDelegateLocalPresenter2TestView = new DelegateLocalPresenter2TestView();
 
@@ -26,8 +26,7 @@ public class PresenterFactoryTest
 
 
 	@Before
-	public void setup()
-	{
+	public void setup() {
 		mTestViewMvpDelegate.onCreate(null);
 		mTestViewMvpDelegate.onAttach();
 
@@ -36,8 +35,7 @@ public class PresenterFactoryTest
 	}
 
 	@After
-	public void reset()
-	{
+	public void reset() {
 		mTestViewMvpDelegate.onDetach();
 		mTestViewMvpDelegate.onDestroy();
 
@@ -46,8 +44,7 @@ public class PresenterFactoryTest
 	}
 
 	@Test
-	public void checkLocalPresenters()
-	{
+	public void checkLocalPresenters() {
 		assertEquals("Local Presenters with same presenterId was not equal", mDelegateLocalPresenterTestView.mInjectViewStatePresenter.hashCode(), mDelegateLocalPresenter2TestView.mInjectViewStatePresenter.hashCode());
 	}
 }

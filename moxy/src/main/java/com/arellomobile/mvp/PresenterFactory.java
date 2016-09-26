@@ -12,8 +12,7 @@ package com.arellomobile.mvp;
  * <p>
  * You can getPresenterFactory access to presenters from hear using listeners and manipulate them directly
  */
-public interface PresenterFactory<Presenter extends MvpPresenter<?>, Params>
-{
+public interface PresenterFactory<Presenter extends MvpPresenter<?>, Params> {
 	/**
 	 * This method creates presenter Instance.
 	 *

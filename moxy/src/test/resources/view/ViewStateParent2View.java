@@ -10,8 +10,7 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
  *
  * @author Savin Mikhail
  */
-public interface ViewStateParent2View
-{
+public interface ViewStateParent2View {
 	@StateStrategyType(SingleStateStrategy.class)
 	void method1();
 

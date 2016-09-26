@@ -34,15 +34,13 @@ import static javax.lang.model.SourceVersion.latestSupported;
 
 @SuppressWarnings("unused")
 @AutoService(Processor.class)
-public class MvpCompiler extends AbstractProcessor
-{
+public class MvpCompiler extends AbstractProcessor {
 	private static Messager sMessager;
 	private static Types sTypeUtils;
 	private static Elements sElementUtils;
 
 	@Override
-	public synchronized void init(ProcessingEnvironment processingEnv)
-	{
+	public synchronized void init(ProcessingEnvironment processingEnv) {
 		super.init(processingEnv);
 
 		sMessager = processingEnv.getMessager();
@@ -50,38 +48,32 @@ public class MvpCompiler extends AbstractProcessor
 		sElementUtils = processingEnv.getElementUtils();
 	}
 
-	public static Messager getMessager()
-	{
+	public static Messager getMessager() {
 		return sMessager;
 	}
 
-	public static Types getTypeUtils()
-	{
+	public static Types getTypeUtils() {
 		return sTypeUtils;
 	}
 
-	public static Elements getElementUtils()
-	{
+	public static Elements getElementUtils() {
 		return sElementUtils;
 	}
 
 	@Override
-	public Set<String> getSupportedAnnotationTypes()
-	{
+	public Set<String> getSupportedAnnotationTypes() {
 		Set<String> supportedAnnotationTypes = new HashSet<>();
 		Collections.addAll(supportedAnnotationTypes, InjectPresenter.class.getCanonicalName(), ParamsProvider.class.getCanonicalName(), InjectViewState.class.getCanonicalName(), GenerateViewState.class.getCanonicalName());
 		return supportedAnnotationTypes;
 	}
 
 	@Override
-	public SourceVersion getSupportedSourceVersion()
-	{
+	public SourceVersion getSupportedSourceVersion() {
 		return latestSupported();
 	}
 
 	@Override
-	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv)
-	{
+	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 		checkInjectors(roundEnv, InjectPresenter.class, new PresenterInjectorRules(ElementKind.FIELD, Modifier.PUBLIC, Modifier.DEFAULT));
 
 		ViewStateProviderClassGenerator viewStateProviderClassGenerator = new ViewStateProviderClassGenerator();
@@ -92,8 +84,7 @@ public class MvpCompiler extends AbstractProcessor
 		ViewStateClassGenerator viewStateClassGenerator = new ViewStateClassGenerator();
 		Set<TypeElement> usedViews = viewStateProviderClassGenerator.getUsedViews();
 
-		for (TypeElement usedView : usedViews)
-		{
+		for (TypeElement usedView : usedViews) {
 			generateCode(ElementKind.INTERFACE, viewStateClassGenerator, usedView);
 		}
 
@@ -101,26 +92,20 @@ public class MvpCompiler extends AbstractProcessor
 	}
 
 
-	private void checkInjectors(final RoundEnvironment roundEnv, Class<? extends Annotation> clazz, AnnotationRule annotationRule)
-	{
-		for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(clazz))
-		{
+	private void checkInjectors(final RoundEnvironment roundEnv, Class<? extends Annotation> clazz, AnnotationRule annotationRule) {
+		for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(clazz)) {
 			annotationRule.checkAnnotation(annotatedElement);
 		}
 
 		String errorStack = annotationRule.getErrorStack();
-		if (errorStack != null && errorStack.length() > 0)
-		{
+		if (errorStack != null && errorStack.length() > 0) {
 			throw new RuntimeException("\n" + errorStack);
 		}
 	}
 
-	private void processInjectors(final RoundEnvironment roundEnv, Class<? extends Annotation> clazz, ElementKind kind, ClassGenerator classGenerator)
-	{
-		for (Element annotatedElements : roundEnv.getElementsAnnotatedWith(clazz))
-		{
-			if (annotatedElements.getKind() != kind)
-			{
+	private void processInjectors(final RoundEnvironment roundEnv, Class<? extends Annotation> clazz, ElementKind kind, ClassGenerator classGenerator) {
+		for (Element annotatedElements : roundEnv.getElementsAnnotatedWith(clazz)) {
+			if (annotatedElements.getKind() != kind) {
 				throw new RuntimeException(annotatedElements + " must be " + kind.name() + ", or not mark it as @" + clazz.getSimpleName());
 			}
 
@@ -128,10 +113,8 @@ public class MvpCompiler extends AbstractProcessor
 		}
 	}
 
-	private void generateCode(ElementKind kind, ClassGenerator classGenerator, Element element)
-	{
-		if (element.getKind() != kind)
-		{
+	private void generateCode(ElementKind kind, ClassGenerator classGenerator, Element element) {
+		if (element.getKind() != kind) {
 			throw new RuntimeException(element + " must be " + kind.name());
 		}
 
@@ -140,30 +123,24 @@ public class MvpCompiler extends AbstractProcessor
 		//noinspection unchecked
 		final boolean generated = classGenerator.generate(element, classGeneratingParamsList);
 
-		if (!generated)
-		{
+		if (!generated) {
 			return;
 		}
 
-		for (ClassGeneratingParams classGeneratingParams : classGeneratingParamsList)
-		{
+		for (ClassGeneratingParams classGeneratingParams : classGeneratingParamsList) {
 			createSourceFile(classGeneratingParams);
 		}
 	}
 
-	private void createSourceFile(ClassGeneratingParams classGeneratingParams)
-	{
-		try
-		{
+	private void createSourceFile(ClassGeneratingParams classGeneratingParams) {
+		try {
 			JavaFileObject f = processingEnv.getFiler().createSourceFile(classGeneratingParams.getName());
 
 			Writer w = f.openWriter();
 			w.write(classGeneratingParams.getBody());
 			w.flush();
 			w.close();
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

@@ -8,8 +8,7 @@ import com.arellomobile.mvp.*;
  *
  * @author Alexander Blinov
  */
-public abstract class PresenterField<View extends MvpView>
-{
+public abstract class PresenterField<View extends MvpView> {
 	protected final String tag;
 	protected final PresenterType presenterType;
 	protected final Class<? extends PresenterFactory<?, ?>> factory;
@@ -17,8 +16,7 @@ public abstract class PresenterField<View extends MvpView>
 	protected final Class<? extends ParamsHolder<?>> paramsHolderClass;
 	protected final Class<? extends MvpPresenter<?>> presenterClass;
 
-	protected PresenterField(String tag, PresenterType presenterType, Class<? extends PresenterFactory<?, ?>> factory, String presenterId, Class<? extends ParamsHolder<?>> paramsHolderClass, Class<? extends MvpPresenter<?>> presenterClass)
-	{
+	protected PresenterField(String tag, PresenterType presenterType, Class<? extends PresenterFactory<?, ?>> factory, String presenterId, Class<? extends ParamsHolder<?>> paramsHolderClass, Class<? extends MvpPresenter<?>> presenterClass) {
 		this.tag = tag;
 		this.presenterType = presenterType;
 		this.factory = factory;
@@ -29,33 +27,27 @@ public abstract class PresenterField<View extends MvpView>
 
 	public abstract void setValue(MvpPresenter presenter);
 
-	public String getTag()
-	{
+	public String getTag() {
 		return tag;
 	}
 
-	public PresenterType getPresenterType()
-	{
+	public PresenterType getPresenterType() {
 		return presenterType;
 	}
 
-	public Class<? extends PresenterFactory<?, ?>> getFactory()
-	{
+	public Class<? extends PresenterFactory<?, ?>> getFactory() {
 		return factory;
 	}
 
-	public String getPresenterId()
-	{
+	public String getPresenterId() {
 		return presenterId;
 	}
 
-	public Class<? extends ParamsHolder<?>> getParamsHolderClass()
-	{
+	public Class<? extends ParamsHolder<?>> getParamsHolderClass() {
 		return paramsHolderClass;
 	}
 
-	public Class<? extends MvpPresenter<?>> getPresenterClass()
-	{
+	public Class<? extends MvpPresenter<?>> getPresenterClass() {
 		return presenterClass;
 	}
 }

@@ -12,8 +12,7 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
  * @author Savin Mikhail
  */
 @GenerateViewState
-public interface ParentView extends MvpView
-{
+public interface ParentView extends MvpView {
 	void withoutStrategyMethod();
 
 	@StateStrategyType(AddToEndSingleStrategy.class)

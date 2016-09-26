@@ -12,7 +12,6 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
  * @author Savin Mikhail
  */
 @GenerateViewState
-public interface ViewStateChildWithIncorrectStrategyTagView extends ViewStateParentView, ViewStateParentStrategyTagView
-{
+public interface ViewStateChildWithIncorrectStrategyTagView extends ViewStateParentView, ViewStateParentStrategyTagView {
 
 }

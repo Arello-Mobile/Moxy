@@ -11,6 +11,5 @@ import com.arellomobile.mvp.view.PositiveViewStateView;
  * @author Savin Mikhail
  */
 @InjectViewState
-public class InjectViewStatePositivePresenter extends MvpPresenter<PositiveViewStateView>
-{
+public class InjectViewStatePositivePresenter extends MvpPresenter<PositiveViewStateView> {
 }

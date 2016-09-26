@@ -32,74 +32,55 @@ import javax.lang.model.type.WildcardType;
  * Utilities for handling types in annotation processors
  */
 @SuppressWarnings("WeakerAccess")
-final class Util
-{
-	public static String fillGenerics(Map<String, String> types, TypeMirror param)
-	{
+final class Util {
+	public static String fillGenerics(Map<String, String> types, TypeMirror param) {
 		return fillGenerics(types, Collections.singletonList(param));
 	}
 
-	public static String fillGenerics(Map<String, String> types, List<? extends TypeMirror> params)
-	{
+	public static String fillGenerics(Map<String, String> types, List<? extends TypeMirror> params) {
 		return fillGenerics(types, params, ", ");
 	}
 
-	public static String fillGenerics(Map<String, String> types, List<? extends TypeMirror> params, String separator)
-	{
+	public static String fillGenerics(Map<String, String> types, List<? extends TypeMirror> params, String separator) {
 		String result = "";
 
-		for (TypeMirror param : params)
-		{
-			if (result.length() > 0)
-			{
+		for (TypeMirror param : params) {
+			if (result.length() > 0) {
 				result += separator;
 			}
 
 			/**
 			 * "if" block's order is critically! E.g. IntersectionType is TypeVariable.
 			 */
-			if (param instanceof WildcardType)
-			{
+			if (param instanceof WildcardType) {
 				result += "?";
 				final TypeMirror extendsBound = ((WildcardType) param).getExtendsBound();
-				if (extendsBound != null)
-				{
+				if (extendsBound != null) {
 					result += " extends " + fillGenerics(types, extendsBound);
 				}
 				final TypeMirror superBound = ((WildcardType) param).getSuperBound();
-				if (superBound != null)
-				{
+				if (superBound != null) {
 					result += " super " + fillGenerics(types, superBound);
 				}
-			}
-			else if (param instanceof IntersectionType)
-			{
+			} else if (param instanceof IntersectionType) {
 				result += "?";
 				final List<? extends TypeMirror> bounds = ((IntersectionType) param).getBounds();
 
-				if (!bounds.isEmpty())
-				{
+				if (!bounds.isEmpty()) {
 					result += " extends " + fillGenerics(types, bounds, " & ");
 				}
-			}
-			else if (param instanceof DeclaredType)
-			{
+			} else if (param instanceof DeclaredType) {
 				result += ((DeclaredType) param).asElement();
 
 				final List<? extends TypeMirror> typeArguments = ((DeclaredType) param).getTypeArguments();
-				if (!typeArguments.isEmpty())
-				{
+				if (!typeArguments.isEmpty()) {
 					final String s = fillGenerics(types, typeArguments);
 
 					result += "<" + s + ">";
 				}
-			}
-			else if (param instanceof TypeVariable)
-			{
+			} else if (param instanceof TypeVariable) {
 				result += types.get(param.toString());
-			}
-			else
-			{
+			} else {
 				result += param;
 			}
 		}
@@ -107,10 +88,8 @@ final class Util
 		return result;
 	}
 
-	public static String getFullClassName(TypeMirror typeMirror)
-	{
-		if (!(typeMirror instanceof DeclaredType))
-		{
+	public static String getFullClassName(TypeMirror typeMirror) {
+		if (!(typeMirror instanceof DeclaredType)) {
 			return "";
 		}
 
@@ -118,30 +97,24 @@ final class Util
 		return getFullClassName(typeElement);
 	}
 
-	public static String getFullClassName(TypeElement typeElement)
-	{
+	public static String getFullClassName(TypeElement typeElement) {
 		String packageName = MvpCompiler.getElementUtils().getPackageOf(typeElement).toString();
-		if (packageName.length() > 0)
-		{
+		if (packageName.length() > 0) {
 			packageName += ".";
 		}
 		String className = typeElement.toString().substring(packageName.length());
 		return packageName + className.replaceAll("\\.", "\\$");
 	}
 
-	public static String getClassGenerics(TypeElement typeElement)
-	{
+	public static String getClassGenerics(TypeElement typeElement) {
 		String generic = "";
 
-		if (!typeElement.getTypeParameters().isEmpty())
-		{
+		if (!typeElement.getTypeParameters().isEmpty()) {
 			generic = "<";
 			boolean isFirstType = true;
 
-			for (TypeParameterElement typeParameterElement : typeElement.getTypeParameters())
-			{
-				if (!isFirstType)
-				{
+			for (TypeParameterElement typeParameterElement : typeElement.getTypeParameters()) {
+				if (!isFirstType) {
 					generic += ", ";
 				}
 				isFirstType = false;
@@ -149,10 +122,8 @@ final class Util
 				generic += typeParameterElement;
 
 				List<? extends TypeMirror> bounds = typeParameterElement.getBounds();
-				if (!bounds.isEmpty())
-				{
-					if (bounds.size() == 1 && bounds.get(0).toString().equals(Object.class.getCanonicalName()))
-					{
+				if (!bounds.isEmpty()) {
+					if (bounds.size() == 1 && bounds.get(0).toString().equals(Object.class.getCanonicalName())) {
 						continue;
 					}
 
@@ -172,18 +143,13 @@ final class Util
 	 * @param tokens an array objects to be joined. Strings will be formed from
 	 *               the objects by calling object.toString().
 	 */
-	public static String join(CharSequence delimiter, Object[] tokens)
-	{
+	public static String join(CharSequence delimiter, Object[] tokens) {
 		StringBuilder sb = new StringBuilder();
 		boolean firstTime = true;
-		for (Object token : tokens)
-		{
-			if (firstTime)
-			{
+		for (Object token : tokens) {
+			if (firstTime) {
 				firstTime = false;
-			}
-			else
-			{
+			} else {
 				sb.append(delimiter);
 			}
 			sb.append(token);
@@ -197,18 +163,13 @@ final class Util
 	 * @param tokens an array objects to be joined. Strings will be formed from
 	 *               the objects by calling object.toString().
 	 */
-	public static String join(CharSequence delimiter, Iterable tokens)
-	{
+	public static String join(CharSequence delimiter, Iterable tokens) {
 		StringBuilder sb = new StringBuilder();
 		boolean firstTime = true;
-		for (Object token : tokens)
-		{
-			if (firstTime)
-			{
+		for (Object token : tokens) {
+			if (firstTime) {
 				firstTime = false;
-			}
-			else
-			{
+			} else {
 				sb.append(delimiter);
 			}
 			sb.append(token);

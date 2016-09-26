@@ -11,18 +11,15 @@ import com.arellomobile.mvp.viewstate.ViewCommand;
  *
  * @author Alexander Blinov
  */
-public class SingleStateStrategy implements StateStrategy
-{
+public class SingleStateStrategy implements StateStrategy {
 	@Override
-	public <View extends MvpView> void beforeApply(List<ViewCommand<View>> currentState, ViewCommand<View> incomingCommand)
-	{
+	public <View extends MvpView> void beforeApply(List<ViewCommand<View>> currentState, ViewCommand<View> incomingCommand) {
 		currentState.clear();
 		currentState.add(incomingCommand);
 	}
 
 	@Override
-	public <View extends MvpView> void afterApply(List<ViewCommand<View>> currentState, ViewCommand<View> incomingCommand)
-	{
+	public <View extends MvpView> void afterApply(List<ViewCommand<View>> currentState, ViewCommand<View> incomingCommand) {
 		// pass
 	}
 }

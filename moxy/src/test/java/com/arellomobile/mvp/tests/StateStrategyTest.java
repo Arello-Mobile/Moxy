@@ -30,17 +30,14 @@ import static org.mockito.Mockito.mock;
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
-public class StateStrategyTest
-{
+public class StateStrategyTest {
 	@Test
-	public void defaultStateStrategyTest()
-	{
+	public void defaultStateStrategyTest() {
 		ChildView childView = mock(ChildView.class);
 		MvpDelegate<ChildView> mvpDelegate = new MvpDelegate<>(childView);
 		mvpDelegate.onCreate(mock(Bundle.class));
 		mvpDelegate.onAttach();
-		try
-		{
+		try {
 			Object[] enumConstants = Class.forName("com.arellomobile.mvp.view.ChildView$$State$LocalViewCommand").getEnumConstants();
 			Map<String, Class<? extends StateStrategy>> result = ImmutableMap.of("withoutStrategyMethod", SkipStrategy.class,
 					"customStrategyMethod", AddToEndSingleStrategy.class,
@@ -53,19 +50,15 @@ public class StateStrategyTest
 					"parentOverrideMethodWithCustomStrategy", AddToEndSingleStrategy.class,
 					"customStrategyMethod", AddToEndSingleStrategy.class);
 			checkStrategy(enumConstants, result);
-		}
-		catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e)
-		{
+		} catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
 
 	}
 
 	@SuppressWarnings("unchecked")
-	private void checkStrategy(final Object[] enumConstants, final Map<String, Class<? extends StateStrategy>> result) throws NoSuchFieldException, IllegalAccessException
-	{
-		for (Object object : enumConstants)
-		{
+	private void checkStrategy(final Object[] enumConstants, final Map<String, Class<? extends StateStrategy>> result) throws NoSuchFieldException, IllegalAccessException {
+		for (Object object : enumConstants) {
 			Field strategyType = object.getClass().getSuperclass().getDeclaredField("mStateStrategyType");
 			strategyType.setAccessible(true);
 			Class<? extends StateStrategy> strategyClass = (Class<? extends StateStrategy>) strategyType.get(object);

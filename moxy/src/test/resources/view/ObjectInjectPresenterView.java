@@ -9,8 +9,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
  *
  * @author Savin Mikhail
  */
-public class ObjectInjectPresenterView implements MvpView
-{
+public class ObjectInjectPresenterView implements MvpView {
 	@InjectPresenter
 	public Object mObject;
 }

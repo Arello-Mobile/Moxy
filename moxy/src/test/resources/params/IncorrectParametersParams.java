@@ -10,7 +10,6 @@ import com.arellomobile.mvp.factory.MockPresenterFactory;
  * @author Savin Mikhail
  */
 @ParamsProvider(MockPresenterFactory.class)
-public interface IncorrectParametersParams
-{
+public interface IncorrectParametersParams {
 	void method1(Integer i);
 }

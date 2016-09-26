@@ -13,8 +13,8 @@ import java.lang.annotation.Target;
  */
 @Target(value = {ElementType.TYPE, ElementType.METHOD})
 @Retention(value = RetentionPolicy.RUNTIME)
-public @interface StateStrategyType
-{
+public @interface StateStrategyType {
 	Class<? extends StateStrategy> value();
+
 	String tag() default "";
 }

@@ -9,8 +9,7 @@ import com.arellomobile.mvp.presenter.PresenterType;
 
 import params.EmptyParams;
 
-public class EmptyParamsView implements MvpView, EmptyParams
-{
+public class EmptyParamsView implements MvpView, EmptyParams {
 	@InjectPresenter(factory = MockPresenterFactory.class, presenterId = "Test", type = PresenterType.LOCAL)
 	public MvpPresenter<MvpView> mInjectViewStatePresenter;
 }

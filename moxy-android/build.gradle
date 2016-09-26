@@ -135,9 +135,9 @@ task copyJars << {
     }
 
     copy {
-        from (buildDir)
+        from(buildDir)
                 {
-                    rename targetArtefactId+'(.*)', targetArtefactIdDev + '$1'
+                    rename targetArtefactId + '(.*)', targetArtefactIdDev + '$1'
                 }
         into publishDir
     }

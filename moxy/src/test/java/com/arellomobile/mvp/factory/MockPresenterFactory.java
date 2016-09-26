@@ -9,22 +9,15 @@ import com.arellomobile.mvp.PresenterFactory;
  *
  * @author Savin Mikhail
  */
-public class MockPresenterFactory implements PresenterFactory<MvpPresenter<?>, String>
-{
+public class MockPresenterFactory implements PresenterFactory<MvpPresenter<?>, String> {
 
 	@Override
-	public MvpPresenter<?> createPresenter(final Class<MvpPresenter<?>> presenterClazz, final String s)
-	{
-		try
-		{
+	public MvpPresenter<?> createPresenter(final Class<MvpPresenter<?>> presenterClazz, final String s) {
+		try {
 			return presenterClazz.newInstance();
-		}
-		catch (InstantiationException e)
-		{
+		} catch (InstantiationException e) {
 			e.printStackTrace();
-		}
-		catch (IllegalAccessException e)
-		{
+		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
 
@@ -32,8 +25,7 @@ public class MockPresenterFactory implements PresenterFactory<MvpPresenter<?>, S
 	}
 
 	@Override
-	public String createTag(final Class<MvpPresenter<?>> aClass, final String s)
-	{
+	public String createTag(final Class<MvpPresenter<?>> aClass, final String s) {
 		return s;
 	}
 }

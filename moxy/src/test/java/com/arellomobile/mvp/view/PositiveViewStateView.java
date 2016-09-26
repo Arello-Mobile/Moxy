@@ -8,7 +8,6 @@ import com.arellomobile.mvp.MvpView;
  *
  * @author Savin Mikhail
  */
-public interface PositiveViewStateView extends MvpView
-{
+public interface PositiveViewStateView extends MvpView {
 	void method();
 }

@@ -14,16 +14,13 @@ import javax.lang.model.element.Modifier;
  *
  * @author esorokin
  */
-public abstract class AnnotationRule
-{
+public abstract class AnnotationRule {
 	protected final ElementKind mValidKind;
 	protected final Set<Modifier> mValidModifiers;
 	protected StringBuilder mErrorBuilder;
 
-	public AnnotationRule(ElementKind validKind, Modifier... validModifiers)
-	{
-		if (validModifiers == null || validModifiers.length == 0)
-		{
+	public AnnotationRule(ElementKind validKind, Modifier... validModifiers) {
+		if (validModifiers == null || validModifiers.length == 0) {
 			throw new RuntimeException("Valid modifiers cant be empty or null.");
 		}
 
@@ -34,25 +31,21 @@ public abstract class AnnotationRule
 
 	/**
 	 * Method describe rules for using Annotation.
+	 *
 	 * @param AnnotatedField Checking annotated field.
 	 */
 	public abstract void checkAnnotation(Element AnnotatedField);
 
-	public String getErrorStack()
-	{
+	public String getErrorStack() {
 		return mErrorBuilder.toString();
 	}
 
-	protected String validModifiersToString()
-	{
-		if (mValidModifiers.size() > 1)
-		{
+	protected String validModifiersToString() {
+		if (mValidModifiers.size() > 1) {
 			StringBuilder result = new StringBuilder("one of [");
 			boolean addSeparator = false;
-			for (Modifier validModifier : mValidModifiers)
-			{
-				if (addSeparator)
-				{
+			for (Modifier validModifier : mValidModifiers) {
+				if (addSeparator) {
 					result.append(", ");
 				}
 				addSeparator = true;
@@ -60,9 +53,7 @@ public abstract class AnnotationRule
 			}
 			result.append("]");
 			return result.toString();
-		}
-		else
-		{
+		} else {
 			return mValidModifiers.iterator().next() + ".";
 		}
 	}

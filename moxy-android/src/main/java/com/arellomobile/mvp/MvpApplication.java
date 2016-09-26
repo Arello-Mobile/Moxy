@@ -8,11 +8,9 @@ import android.app.Application;
  *
  * @author Alexander Blinov
  */
-public class MvpApplication extends Application
-{
+public class MvpApplication extends Application {
 	@Override
-	public void onCreate()
-	{
+	public void onCreate() {
 		super.onCreate();
 		MvpFacade.init();
 	}

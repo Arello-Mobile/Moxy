@@ -13,7 +13,6 @@ import java.lang.annotation.Target;
  */
 @Target(value = ElementType.TYPE)
 @Retention(value = RetentionPolicy.RUNTIME)
-public @interface ParamsProvider
-{
+public @interface ParamsProvider {
 	Class<? extends PresenterFactory<? extends MvpPresenter<?>, ?>>[] value();
 }
