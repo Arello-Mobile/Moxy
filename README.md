@@ -31,12 +31,17 @@ You can find the sample project [here](https://github.com/Arello-Mobile/MoxySamp
 ## Wiki
 For all information check [Moxy Wiki](https://github.com/Arello-Mobile/Moxy/wiki)
 
+## Android studio templates
+In order to avoid boilerplate code creating for binding activity,fragments and its presentation part, we propose to use Android Studio templates for Moxy. 
+
+Templates located in [/moxy-templates](https://github.com/Arello-Mobile/Moxy/tree/master/moxy-templates)
+
 ## References
 [_RU_] [Moxy — реализация MVP под Android с щепоткой магии](https://habrahabr.ru/post/276189/)
 
 [_EN_] [Android without Lifecycle: MPVsV approach with Moxy](https://medium.com/@xanderblinov/6a3ae33521e)
-## Integration
 
+## Integration
 Maven integration:
 ```
 <dependencies>
@@ -68,13 +73,16 @@ dependencies {
   provided 'com.arello-mobile:moxy-compiler:0.5.4'
 }
 ```
-## Android studio templates
 
-In order to avoid boilerplate code creating for binding activity,fragments and its presentation part, we propose to use Android Studio templates for Moxy. 
-
-Templates located in [/moxy-templates](https://github.com/Arello-Mobile/Moxy/tree/master/moxy-templates)
-
-
+## ProGuard
+If you are using ProGuard you might need to add the following option:
+```
+-keep class **$$PresentersBinder
+-keep class **$$State
+-keep class **$$ParamsHolder
+-keep class **$$ViewStateClassNameProvider
+-keepnames class * extends com.arellomobile.mvp.*
+```
 
 ## License
 ```
