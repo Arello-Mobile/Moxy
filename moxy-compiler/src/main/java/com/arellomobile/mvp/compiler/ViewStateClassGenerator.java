@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import com.arellomobile.mvp.MvpProcessor;
@@ -118,6 +119,8 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 
 			String fieldName = "params";
 			String argumentsString = "";
+			List<String> argumentNames = new ArrayList<>();
+
 			int index = 0;
 			for (Argument argument : method.arguments) {
 				if (argument.name.equals(fieldName)) {
@@ -128,16 +131,25 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 					argumentsString += ", ";
 				}
 				argumentsString += argument.name;
+				argumentNames.add(argument.name);
 				index++;
 			}
 
-			String argumentClassName = method.commandClassName;
-			String argumentsWrapperNewInstance = "new " + method.commandClassName + "(" + argumentsString + ");\n";
+
+			String commandFieldName = decapitalizeString(method.commandClassName);
+			String commandClassName = method.commandClassName;
+			String commandWrapperNewInstance = "new " + method.commandClassName + "(" + argumentsString + ");\n";
+
+			// Add salt if contains argument with same name
+			Random random = new Random();
+			while (argumentNames.contains(commandFieldName)) {
+				commandFieldName += random.nextInt(10);
+			}
 
 			builder += "\t@Override\n" +
 			           "\tpublic " + method.genericType + " void " + method.name + "(" + join(", ", method.arguments) + ")" + throwTypesString + " {\n" +
-			           "\t\t" + argumentClassName + " command = " + argumentsWrapperNewInstance +
-			           "\t\tmViewCommands.beforeApply(command);\n" +
+			           "\t\t" + commandClassName + " " + commandFieldName + " = " + commandWrapperNewInstance +
+			           "\t\tmViewCommands.beforeApply(" + commandFieldName + ");\n" +
 			           "\n" +
 			           "\t\tif (mViews == null || mViews.isEmpty()) {\n" +
 			           "\t\t\treturn;\n" +
@@ -147,7 +159,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 			           "\t\t\tview." + method.name + "(" + argumentsString + ");\n" +
 			           "\t\t}\n" +
 			           "\n" +
-			           "\t\tmViewCommands.afterApply(command);\n" +
+			           "\t\tmViewCommands.afterApply(" + commandFieldName + ");\n" +
 			           "\t}\n" +
 			           "\n";
 		}
@@ -473,5 +485,9 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 			sb.append(token);
 		}
 		return sb.toString();
+	}
+
+	public static String decapitalizeString(String string) {
+		return string == null || string.isEmpty() ? "" : string.length() == 1 ? string.toLowerCase() : Character.toLowerCase(string.charAt(0)) + string.substring(1);
 	}
 }
