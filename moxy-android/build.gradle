@@ -274,6 +274,6 @@ dependencies {
     compile project(':moxy')
     runtime project(':moxy')
     javadocDeps project(':moxy')
-    compile 'com.google.android:android:4.0.1.2'
+    compileOnly 'com.google.android:android:4.0.1.2'
     javadocDeps 'com.google.android:android:4.0.1.2'
 }
