@@ -64,7 +64,7 @@ public class PresenterStore {
 		return tagMvpPresenterMap.remove(tag);
 	}
 
-	private Map<Class<? extends MvpPresenter>, Map<String, MvpPresenter>> getPresenters(PresenterType type) {
+	protected Map<Class<? extends MvpPresenter>, Map<String, MvpPresenter>> getPresenters(PresenterType type) {
 		if (type == PresenterType.WEAK) {
 			return mWeakPresenters;
 		}
@@ -72,7 +72,7 @@ public class PresenterStore {
 		return mGlobalPresenters;
 	}
 
-	private Map<String, MvpPresenter> createPresentersStore(PresenterType type) {
+	protected Map<String, MvpPresenter> createPresentersStore(PresenterType type) {
 		if (type == PresenterType.WEAK) {
 			return new WeakValueHashMap<>();
 		}

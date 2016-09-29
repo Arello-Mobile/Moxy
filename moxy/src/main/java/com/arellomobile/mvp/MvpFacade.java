@@ -42,11 +42,23 @@ public final class MvpFacade {
 		return mPresenterStore;
 	}
 
-	public PresenterFactoryStore getPresenterFactoryStore() {
-		return mPresenterFactoryStore;
+	public void setPresenterStore(PresenterStore presenterStore) {
+		mPresenterStore = presenterStore;
 	}
 
 	public MvpProcessor getMvpProcessor() {
 		return mMvpProcessor;
+	}
+
+	public void setMvpProcessor(MvpProcessor mvpProcessor) {
+		mMvpProcessor = mvpProcessor;
+	}
+
+	public PresenterFactoryStore getPresenterFactoryStore() {
+		return mPresenterFactoryStore;
+	}
+
+	public void setPresenterFactoryStore(PresenterFactoryStore presenterFactoryStore) {
+		mPresenterFactoryStore = presenterFactoryStore;
 	}
 }
