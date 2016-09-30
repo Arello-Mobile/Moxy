@@ -1,1 +1,2 @@
-include ':moxy', ':moxy-android', ':moxy-compiler'
+include ':moxy', ':moxy-android', ':moxy-compiler', ':moxy-app-compat', ':stub-appcompat'
+project(':stub-appcompat').projectDir = new File('moxy-app-compat/stub-appcompat')
