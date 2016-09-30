@@ -26,7 +26,45 @@ Moxy has a few killer features on other ways:
 - Capability to changes of many _Views_ from one _Presenter_
 
 ## Sample
-You can find the sample project [here](https://github.com/Arello-Mobile/MoxySample)
+
+View interface
+```java
+public interface HelloWorldView extends MvpView {
+	void showMessage(int message);
+}
+```
+Presenter
+```java
+public class HelloWorldPresenter extends MvpPresenter<HelloWorldView> {
+	public HelloWorldPresenter() {
+		getViewState().showMessage(R.string.hello_world);
+	}
+}
+```
+View implementation
+```java
+public class HelloWorldActivity extends MvpAppCompatActivity implements HelloWorldView {
+
+	@InjectPresenter
+	HelloWorldPresenter mHelloWorldPresenter;
+
+	private TextView mHelloWorldTextView;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_hello_world);
+
+		mHelloWorldTextView = ((TextView) findViewById(R.id.activity_hello_world_text_view_message));
+	}
+
+	@Override
+	public void showMessage(int message) {
+		mHelloWorldTextView.setText(message);
+	}
+}
+```
+More extensive example [here](https://github.com/Arello-Mobile/MoxySample)
 
 ## Wiki
 For all information check [Moxy Wiki](https://github.com/Arello-Mobile/Moxy/wiki)
@@ -42,35 +80,33 @@ Templates located in [/moxy-templates](https://github.com/Arello-Mobile/Moxy/tre
 [_EN_] [Android without Lifecycle: MPVsV approach with Moxy](https://medium.com/@xanderblinov/6a3ae33521e)
 
 ## Integration
-Maven integration:
-```
-<dependencies>
-  <dependency>
-    <groupId>com.arello-mobile</groupId>
-    <artifactId>moxy</artifactId>
-    <version>0.5.4</version>
-  </dependency>
-  <dependency>
-    <groupId>com.arello-mobile</groupId>
-    <artifactId>moxy-android</artifactId>
-    <version>0.5.4</version>
-  </dependency>
-  <dependency>
-    <groupId>com.arello-mobile</groupId>
-    <artifactId>moxy-compiler</artifactId>
-    <version>0.5.4</version>
-    <optional>true</optional>
-  </dependency>
-</dependencies>
-```
-
-Gradle integration:
+Base modules integration:
 ```
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy:0.5.4'
-  compile 'com.arello-mobile:moxy-android:0.5.4'
-  provided 'com.arello-mobile:moxy-compiler:0.5.4'
+  compile 'com.arello-mobile:moxy:1.0.0'
+  provided 'com.arello-mobile:moxy-compiler:1.0.0'
+}
+```
+If you want to see generated code, use `apt` instead of `provided` dependency type:
+```
+dependencies {
+  ...
+  apt 'com.arello-mobile:moxy-compiler:1.0.0'
+}
+```
+For additional base view classes `MvpActivity` and `MvpFragment` add this:
+```
+dependencies {
+  ...
+  compile 'com.arello-mobile:moxy-android:1.0.0'
+}
+```
+If you planing to use AppCompat, then you can use `MvpAppCompatActivity` and `MvpAppCompatFragment`. Then add this:
+```
+dependencies {
+  ...
+  compile 'com.arello-mobile:moxy-app-compat:1.0.0'
 }
 ```
 
