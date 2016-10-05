@@ -1,5 +1,5 @@
 # Moxy
-Moxy is Android library based on MVP pattern.
+Moxy is a library that help to use MVP pattern when you do the Android Application. _Without problems of lifecycle and boilerplate code!_
 
 Main idea of using Moxy:
 ![schemmatic using](https://habrastorage.org/files/ac7/e3c/6f5/ac7e3c6f5eec4f498ab50e597606faa5.gif)
