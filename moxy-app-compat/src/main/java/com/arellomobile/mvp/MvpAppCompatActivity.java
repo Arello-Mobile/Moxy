@@ -47,6 +47,9 @@ public class MvpAppCompatActivity extends AppCompatActivity {
 		getMvpDelegate().onAttach();
 	}
 
+	/**
+	 * @return The {@link MvpDelegate} being used by this Activity.
+	 */
 	public MvpDelegate getMvpDelegate() {
 		if (mMvpDelegate == null) {
 			mMvpDelegate = new MvpDelegate<>(this);

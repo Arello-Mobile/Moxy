@@ -2,9 +2,6 @@ package com.arellomobile.mvp;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 /**
  * Date: 19-Dec-15
@@ -51,6 +48,9 @@ public class MvpFragment extends Fragment {
 		getMvpDelegate().onSaveInstanceState(outState);
 	}
 
+	/**
+	 * @return The {@link MvpDelegate} being used by this Fragment.
+	 */
 	public MvpDelegate getMvpDelegate() {
 		if (mMvpDelegate == null) {
 			mMvpDelegate = new MvpDelegate<>(this);

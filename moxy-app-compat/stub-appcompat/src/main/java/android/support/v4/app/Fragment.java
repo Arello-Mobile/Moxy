@@ -1,5 +1,6 @@
 package android.support.v4.app;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 /**
@@ -30,6 +31,10 @@ public class Fragment {
 	}
 
 	final public boolean isRemoving() {
+		throw new RuntimeException("Stub!");
+	}
+
+	public final Activity getActivity() {
 		throw new RuntimeException("Stub!");
 	}
 }
