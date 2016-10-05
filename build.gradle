@@ -20,8 +20,8 @@ allprojects {
 }
 
 ext {
-    targetVersionCode = 21
-    targetVersionName = "1.0.0"
+    targetVersionCode = 22
+    targetVersionName = "1.0.1"
 }
 
 task clean(type: Delete) {
