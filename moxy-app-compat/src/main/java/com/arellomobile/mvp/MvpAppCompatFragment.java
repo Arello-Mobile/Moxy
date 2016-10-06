@@ -44,7 +44,7 @@ public class MvpAppCompatFragment extends Fragment {
 			parent = parent.getParentFragment();
 		}
 
-		if (isRemoving() || getActivity().isFinishing()) {
+		if (isRemoving() || anyParentIsRemoving || getActivity().isFinishing()) {
 			getMvpDelegate().onDestroy();
 		}
 	}
