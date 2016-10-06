@@ -37,4 +37,8 @@ public class Fragment {
 	public final Activity getActivity() {
 		throw new RuntimeException("Stub!");
 	}
+
+	public Fragment getParentFragment() {
+		throw new RuntimeException("Stub!");
+	}
 }
