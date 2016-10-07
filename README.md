@@ -35,6 +35,7 @@ public interface HelloWorldView extends MvpView {
 ```
 Presenter
 ```java
+@InjectViewState
 public class HelloWorldPresenter extends MvpPresenter<HelloWorldView> {
 	public HelloWorldPresenter() {
 		getViewState().showMessage(R.string.hello_world);
@@ -81,7 +82,7 @@ Templates located in [/moxy-templates](https://github.com/Arello-Mobile/Moxy/tre
 
 ## Integration
 Base modules integration:
-```
+```groovy
 dependencies {
   ...
   compile 'com.arello-mobile:moxy:1.0.1'
@@ -89,21 +90,21 @@ dependencies {
 }
 ```
 If you want to see generated code, use `apt` instead of `provided` dependency type:
-```
+```groovy
 dependencies {
   ...
   apt 'com.arello-mobile:moxy-compiler:1.0.1'
 }
 ```
 For additional base view classes `MvpActivity` and `MvpFragment` add this:
-```
+```groovy
 dependencies {
   ...
   compile 'com.arello-mobile:moxy-android:1.0.1'
 }
 ```
 If you planing to use AppCompat, then you can use `MvpAppCompatActivity` and `MvpAppCompatFragment`. Then add this:
-```
+```groovy
 dependencies {
   ...
   compile 'com.arello-mobile:moxy-app-compat:1.0.1'
