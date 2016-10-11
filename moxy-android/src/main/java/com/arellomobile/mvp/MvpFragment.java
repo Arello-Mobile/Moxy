@@ -1,6 +1,7 @@
 package com.arellomobile.mvp;
 
 import android.app.Fragment;
+import android.os.Build;
 import android.os.Bundle;
 
 /**
@@ -36,6 +37,16 @@ public class MvpFragment extends Fragment {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+
+		boolean anyParentIsRemoving = false;
+
+		if (Build.VERSION.SDK_INT >= 17) {
+			Fragment parent = getParentFragment();
+			while (!anyParentIsRemoving && parent != null) {
+				anyParentIsRemoving = parent.isRemoving();
+				parent = parent.getParentFragment();
+			}
+		}
 
 		if (isRemoving() || getActivity().isFinishing()) {
 			getMvpDelegate().onDestroy();
