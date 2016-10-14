@@ -8,6 +8,8 @@ import java.util.List;
 
 /**
 Forces contract: calling method should have  parameter<? extends Object> which is called "id"
+
+@author Alex Shafir
 */
 public class TraceStrategy implements StateStrategy {
     private static final String ID_FIELD = "id";
