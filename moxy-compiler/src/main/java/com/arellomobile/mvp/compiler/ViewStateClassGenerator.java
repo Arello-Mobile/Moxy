@@ -351,7 +351,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 				argumentsInit += "\n";
 			}
 
-			builder += "\n\tprivate class " + method.commandClassName + method.genericType + " extends ViewCommand<" + viewClassName + "> {\n" +
+			builder += "\n\tpublic class " + method.commandClassName + method.genericType + " extends ViewCommand<" + viewClassName + "> {\n" +
 			           argumentsInit +
 			           "\t\t" + method.commandClassName + "(" + join(", ", method.arguments) + ") {\n" +
 			           "\t\t\tsuper(" + method.tag + ", " + method.stateStrategy + ");\n" +
