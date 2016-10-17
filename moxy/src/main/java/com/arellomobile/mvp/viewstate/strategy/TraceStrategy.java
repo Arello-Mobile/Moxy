@@ -30,6 +30,7 @@ public class TraceStrategy implements StateStrategy {
         try {
             Class clazz = object.getClass();
             Field idField = clazz.getDeclaredField(ID_FIELD);
+            idField.setAccessible(true);
             Object value = idField.get(object);
             result = value.toString();
         } catch (NoSuchFieldException | IllegalAccessException e) {
