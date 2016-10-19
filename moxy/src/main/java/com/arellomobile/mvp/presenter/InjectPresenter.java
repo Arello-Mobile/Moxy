@@ -17,9 +17,9 @@ import java.lang.annotation.Target;
 public @interface InjectPresenter {
 	String EMPTY = "";
 
-	PresenterType type() default PresenterType.LOCAL;
+	String tag() default EMPTY;
 
-	String tag() default "";
+	PresenterType type() default PresenterType.LOCAL;
 
 	String presenterId() default EMPTY;
 }

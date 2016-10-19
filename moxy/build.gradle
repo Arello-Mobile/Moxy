@@ -226,7 +226,7 @@ assemble.dependsOn copyVersion
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.google.android:android:1.5_r3'
+    compileOnly 'com.google.android:android:1.5_r3'
     javadocDeps 'com.google.android:android:1.5_r3'
 
     testCompile project(':moxy-compiler')

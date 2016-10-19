@@ -15,6 +15,8 @@ import java.lang.annotation.Target;
  * <li>Tags should be equals</li>
  * <li>Presenter IDs should be equals</li>
  * </ul>
+ * <p>Note: if this method stay unused after build, then Moxy never use this method and you should check annotation parameters. These parameters should be equals to @InjectPresenter parameters</p>
+ * <br />
  * Date: 14.10.2016
  * Time: 00:09
  *
@@ -23,7 +25,11 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ProvidePresenter {
+	String EMPTY = "";
+
+	String tag() default EMPTY;
+
 	PresenterType type() default PresenterType.LOCAL;
 
-	String tag();
+	String presenterId() default EMPTY;
 }

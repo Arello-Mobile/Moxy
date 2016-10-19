@@ -19,7 +19,6 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.tools.Diagnostic;
 
 /**
  * 18.12.2015
@@ -100,8 +99,6 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 
 		bindProvidersToFields(fields, presenterProviders);
 
-		MvpCompiler.getMessager().printMessage(Diagnostic.Kind.NOTE, presenterProviders.toString());
-
 		for (Field field : fields) {
 			builder = generatePresenterBinderClass(builder, field);
 		}
@@ -126,7 +123,24 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 
 			for (Field field : fields) {
 				if ((field.mClazz).equals(providerTypeMirror)) {
-					MvpCompiler.getMessager().printMessage(Diagnostic.Kind.NOTE, field.toString());
+					if (field.mType != presenterProvider.mType) {
+						continue;
+					}
+
+					if (field.mTag == null && presenterProvider.mTag != null) {
+						continue;
+					}
+					if (field.mTag != null && !field.mTag.equals(presenterProvider.mTag)) {
+						continue;
+					}
+
+					if (field.mPresenterId == null && presenterProvider.mPresenterId != null) {
+						continue;
+					}
+					if (field.mPresenterId != null && !field.mPresenterId.equals(presenterProvider.mPresenterId)) {
+						continue;
+					}
+
 					field.setPresenterProviderMethodName(presenterProvider.mName);
 				}
 			}
