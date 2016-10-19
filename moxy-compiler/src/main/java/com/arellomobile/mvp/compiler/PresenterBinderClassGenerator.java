@@ -226,7 +226,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		}
 
 		public String getGeneratedClassName() {
-			return mName + MvpProcessor.VIEW_STATE_CLASS_NAME_PROVIDER_SUFFIX;
+			return mName + MvpProcessor.PRESENTER_BINDER_INNER_SUFFIX;
 		}
 
 		public String getTag() {

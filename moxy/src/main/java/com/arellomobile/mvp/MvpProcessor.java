@@ -17,9 +17,9 @@ public class MvpProcessor {
 	private static final String TAG = "MvpProcessor";
 
 	public static final String PRESENTER_BINDER_SUFFIX = "$$PresentersBinder";
+	public static final String PRESENTER_BINDER_INNER_SUFFIX = "Binder";
 	public static final String VIEW_STATE_SUFFIX = "$$State";
 	public static final String FACTORY_PARAMS_HOLDER_SUFFIX = "$$ParamsHolder";
-	public static final String PRESENTER_BINDER_INNER_SUFFIX = "Binder";
 	public static final String VIEW_STATE_CLASS_NAME_PROVIDER_SUFFIX = "$$ViewStateClassNameProvider";
 
 	/**
