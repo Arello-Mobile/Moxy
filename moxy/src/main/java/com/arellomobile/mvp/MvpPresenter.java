@@ -12,7 +12,7 @@ import com.arellomobile.mvp.viewstate.MvpViewState;
  * Time: 19:31
  *
  * @author Yuri Shmakov
- * @author Alexander BLinov
+ * @author Alexander Blinov
  * @author Konstantin Tckhovrebov
  */
 public abstract class MvpPresenter<View extends MvpView> {
@@ -22,6 +22,7 @@ public abstract class MvpPresenter<View extends MvpView> {
 	private Set<View> mViews;
 	private View mViewStateAsView;
 	private MvpViewState<View> mViewState;
+	private Class<? extends MvpPresenter<?>> mPresenterClass;
 
 	public MvpPresenter() {
 		Binder.bind(this);
@@ -65,6 +66,7 @@ public abstract class MvpPresenter<View extends MvpView> {
 	 *
 	 * @param view view to detach
 	 */
+	@SuppressWarnings("WeakerAccess")
 	public void detachView(View view) {
 		if (mViewState != null) {
 			mViewState.detachView(view);
@@ -76,6 +78,7 @@ public abstract class MvpPresenter<View extends MvpView> {
 	/**
 	 * @return views attached to view state, or attached to presenter(if view state not exists)
 	 */
+	@SuppressWarnings("WeakerAccess")
 	public Set<View> getAttachedViews() {
 		if (mViewState != null) {
 			return mViewState.getViews();
@@ -87,6 +90,7 @@ public abstract class MvpPresenter<View extends MvpView> {
 	/**
 	 * @return view state, casted to view interface for simplify
 	 */
+	@SuppressWarnings("WeakerAccess")
 	public View getViewState() {
 		return mViewStateAsView;
 	}
@@ -97,6 +101,7 @@ public abstract class MvpPresenter<View extends MvpView> {
 	 * @param view view for check
 	 * @return true if view state restore state to incoming view. false otherwise.
 	 */
+	@SuppressWarnings("unused")
 	public boolean isInRestoreState(View view) {
 		//noinspection SimplifiableIfStatement
 		if (mViewState != null) {
@@ -110,7 +115,7 @@ public abstract class MvpPresenter<View extends MvpView> {
 	 *
 	 * @param viewState that implements type, setted as View generic param
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked", "unused"})
 	public void setViewState(MvpViewState<View> viewState) {
 		mViewStateAsView = (View) viewState;
 		mViewState = (MvpViewState) viewState;
@@ -130,6 +135,14 @@ public abstract class MvpPresenter<View extends MvpView> {
 
 	void setTag(String tag) {
 		mTag = tag;
+	}
+
+	void setPresenterClass(Class<? extends MvpPresenter<?>> presenterClass) {
+		mPresenterClass = presenterClass;
+	}
+
+	Class<? extends MvpPresenter<?>> getPresenterClass() {
+		return mPresenterClass;
 	}
 
 	/**

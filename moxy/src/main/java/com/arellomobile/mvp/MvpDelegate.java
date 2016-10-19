@@ -149,7 +149,7 @@ public class MvpDelegate<Delegated> {
 		for (MvpPresenter<?> presenter : mPresenters) {
 			if (presenter.getPresenterType() == PresenterType.LOCAL) {
 				presenter.onDestroy();
-				presenterStore.remove(PresenterType.LOCAL, presenter.getTag(), presenter.getClass());
+				presenterStore.remove(PresenterType.LOCAL, presenter.getTag(), presenter.getPresenterClass());
 			}
 		}
 
