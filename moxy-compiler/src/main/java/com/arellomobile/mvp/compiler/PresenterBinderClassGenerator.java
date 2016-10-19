@@ -5,11 +5,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.arellomobile.mvp.DefaultParamsHolder;
-import com.arellomobile.mvp.DefaultPresenterFactory;
 import com.arellomobile.mvp.MvpProcessor;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
@@ -44,9 +43,11 @@ import javax.lang.model.type.DeclaredType;
  * <p>
  *
  * @author Alexander Blinov
+ * @author Yuri Shmakov
  */
 final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement> {
 	public static final String PRESENTER_FIELD_ANNOTATION = InjectPresenter.class.getName();
+	public static final String PROVIDE_PRESENTER = ProvidePresenter.class.getName();
 	private final List<String> mPresentersContainers;
 
 	public PresenterBinderClassGenerator() {
@@ -83,15 +84,30 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		                 "import java.util.ArrayList;\n" +
 		                 "import java.util.List;\n" +
 		                 "\n" +
-		                 "import com.arellomobile.mvp.ParamsHolder;" +
 		                 "import com.arellomobile.mvp.PresenterBinder;\n" +
 		                 "import com.arellomobile.mvp.presenter.PresenterField;\n" +
-		                 "import com.arellomobile.mvp.PresenterFactory;\n" +
 		                 "import com.arellomobile.mvp.MvpPresenter;\n" +
 		                 "import com.arellomobile.mvp.presenter.PresenterType;\n" +
 		                 "\n" +
 		                 "public class " + viewClassName + MvpProcessor.PRESENTER_BINDER_SUFFIX + " extends PresenterBinder<" + parentClassName + "> {\n";
 
+		List<Field> fields = collectFields(presentersContainer);
+
+		for (Field field : fields) {
+			builder = generatePresenterBinderClass(builder, field);
+		}
+
+		builder = generateGetPresentersMethod(builder, fields, parentClassName);
+
+		builder += "}\n";
+
+		classGeneratingParams.setBody(builder);
+		classGeneratingParamsList.add(classGeneratingParams);
+
+		return true;
+	}
+
+	private List<Field> collectFields(TypeElement presentersContainer) {
 		List<Field> fields = new ArrayList<>();
 
 		outer:
@@ -106,7 +122,6 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 				if (annotationMirror.getAnnotationType().asElement().toString().equals(PRESENTER_FIELD_ANNOTATION)) {
 					String type = null;
 					String tag = null;
-					DeclaredType factory = null;
 					String presenterId = null;
 
 					final String name = element.toString();
@@ -126,38 +141,22 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 							tag = elementValues.get(executableElement).toString();
 						}
 
-						if ("factory()".equals(executableElement.toString())) {
-							factory = (DeclaredType) elementValues.get(executableElement).getValue();
-						}
-
 						if ("presenterId()".equals(executableElement.toString())) {
 							presenterId = elementValues.get(executableElement).toString();
 						}
 					}
-					Field field = new Field(clazz, name, type, tag, factory, presenterId);
+					Field field = new Field(clazz, name, type, tag, presenterId);
 					fields.add(field);
 					continue outer;
 				}
 			}
 		}
-
-		for (Field field : fields) {
-			builder = generatePresenterBinderClass(builder, field);
-		}
-
-		builder = generateGetPresentersMethod(builder, fields, parentClassName);
-
-		builder += "}\n";
-
-		classGeneratingParams.setBody(builder);
-		classGeneratingParamsList.add(classGeneratingParams);
-
-		return true;
+		return fields;
 	}
 
 	private static String generateGetPresentersMethod(final String builder, final List<Field> fields, String parentClassName) {
-		String s = "\tpublic List<PresenterField<? super " + parentClassName + ">> getPresenterFields() {\n" +
-		           "\t\tList<PresenterField<? super " + parentClassName + ">> presenters = new ArrayList<>();\n" +
+		String s = "\tpublic List<PresenterField<?, ? super " + parentClassName + ">> getPresenterFields() {\n" +
+		           "\t\tList<PresenterField<?, ? super " + parentClassName + ">> presenters = new ArrayList<>();\n" +
 		           "\n";
 
 
@@ -176,7 +175,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 	private static String generatePresenterBinderClass(final String builder, final Field field) {
 		final String s = "\tpublic class " + field.getGeneratedClassName() + " extends PresenterField {\n" +
 		                 "\t\tpublic " + field.getGeneratedClassName() + "() {\n" +
-		                 "\t\t\tsuper(" + field.getTag() + ", PresenterType." + field.getType().name() + ", " + field.getFactory() + ".class, " + field.getPresenterId() + ", " + field.getFactoryParamsHolder() + ".class, " + field.getClazz().asElement() + ".class);\n" +
+		                 "\t\t\tsuper(" + field.getTag() + ", PresenterType." + field.getType().name() + ", " + field.getPresenterId() + ", " + field.getClazz().asElement() + ".class);\n" +
 		                 "\t\t}\n" +
 		                 "\n" +
 		                 "\t\t@Override\n" +
@@ -191,14 +190,11 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 	private static class Field {
 		private final DeclaredType mClazz;
 		private final String mName;
-		private final DeclaredType mFactory;
-		private final String mFactoryParamsHolder;
+		private final PresenterType mType;
+		private final String mTag;
 		private final String mPresenterId;
 
-		String mTag;
-		PresenterType mType;
-
-		public Field(final DeclaredType clazz, final String name, final String type, final String tag, DeclaredType factory, String presenterId) {
+		Field(final DeclaredType clazz, final String name, final String type, final String tag, String presenterId) {
 			mClazz = clazz;
 			mName = name;
 			mTag = tag;
@@ -210,15 +206,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 				mType = PresenterType.valueOf(type);
 			}
 
-			mFactory = factory;
-			if (factory == null) {
-				mFactoryParamsHolder = DefaultParamsHolder.class.getCanonicalName();
-			} else {
-				mFactoryParamsHolder = Util.getFullClassName(factory) + MvpProcessor.FACTORY_PARAMS_HOLDER_SUFFIX;
-			}
-
 			mPresenterId = presenterId;
-
 		}
 
 		public DeclaredType getClazz() {
@@ -241,16 +229,8 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 			return mType;
 		}
 
-		public String getFactory() {
-			return mFactory != null ? mFactory.toString() : DefaultPresenterFactory.class.getCanonicalName();
-		}
-
 		public String getPresenterId() {
 			return mPresenterId;
-		}
-
-		public String getFactoryParamsHolder() {
-			return mFactoryParamsHolder;
 		}
 	}
 }

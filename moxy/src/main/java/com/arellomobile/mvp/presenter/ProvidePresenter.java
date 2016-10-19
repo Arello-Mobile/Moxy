@@ -6,20 +6,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Date: 17.12.2015
- * Time: 14:54
+ * Date: 14.10.2016
+ * Time: 00:09
  *
  * @author Yuri Shmakov
- * @author Alexander BLinov
  */
-@Target(ElementType.FIELD)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface InjectPresenter {
-	String EMPTY = "";
-
+public @interface ProvidePresenter {
 	PresenterType type() default PresenterType.LOCAL;
 
-	String tag() default "";
-
-	String presenterId() default EMPTY;
+	String tag();
 }
