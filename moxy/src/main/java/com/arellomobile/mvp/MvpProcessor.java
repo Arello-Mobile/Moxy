@@ -107,6 +107,7 @@ public class MvpProcessor {
 
 		presenter.setPresenterType(type);
 		presenter.setTag(tag);
+		presenter.setPresenterClass(presenterClass);
 		presenterStore.add(type, tag, presenterClass, presenter);
 
 		return presenter;

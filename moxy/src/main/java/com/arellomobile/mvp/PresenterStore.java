@@ -53,7 +53,6 @@ public class PresenterStore {
 		return tagMvpPresenterMap.get(tag);
 	}
 
-
 	public MvpPresenter remove(PresenterType type, String tag, Class<? extends MvpPresenter> clazz) {
 		Map<String, MvpPresenter> tagMvpPresenterMap = getPresenters(type).get(clazz);
 

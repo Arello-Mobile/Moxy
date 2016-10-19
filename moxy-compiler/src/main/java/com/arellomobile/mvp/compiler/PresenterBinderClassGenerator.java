@@ -122,25 +122,15 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		}
 
 		for (PresenterProvider presenterProvider : presenterProviders) {
-			List<Field> skip = new ArrayList<>();
-
 			TypeMirror providerTypeMirror = presenterProvider.mClazz.asElement().asType();
 
-			while (providerTypeMirror.getKind() == TypeKind.DECLARED) {
-				for (Field field : fields) {
-					if (skip.contains(field)) {
-						continue;
-					}
-
-					if ((field.mClazz).equals(providerTypeMirror)) {
-						MvpCompiler.getMessager().printMessage(Diagnostic.Kind.NOTE, field.toString());
-						field.setPresenterProviderMethodName(presenterProvider.mName);
-						skip.add(field);
-					}
+			for (Field field : fields) {
+				if ((field.mClazz).equals(providerTypeMirror)) {
+					MvpCompiler.getMessager().printMessage(Diagnostic.Kind.NOTE, field.toString());
+					field.setPresenterProviderMethodName(presenterProvider.mName);
 				}
-
-				providerTypeMirror = ((TypeElement) ((DeclaredType) providerTypeMirror).asElement()).getSuperclass();
 			}
+
 		}
 	}
 
@@ -262,25 +252,25 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 
 	private static String generatePresenterBinderClass(final String builder, final Field field) {
 		String s = "\tpublic class " + field.getGeneratedClassName() + " extends PresenterField {\n" +
-		                 "\t\tpublic " + field.getGeneratedClassName() + "() {\n" +
-		                 "\t\t\tsuper(" + field.getTag() + ", PresenterType." + field.getType().name() + ", " + field.getPresenterId() + ", " + field.getClazz() + ".class);\n" +
-		                 "\t\t}\n" +
-		                 "\n" +
-		                 "\t\t@Override\n" +
-		                 "\t\tpublic void setValue(MvpPresenter presenter) {\n" +
-		                 "\t\t\tmTarget." + field.getName() + " = (" + field.getClazz() + ") presenter;\n" +
-		                 "\t\t}\n";
+		           "\t\tpublic " + field.getGeneratedClassName() + "() {\n" +
+		           "\t\t\tsuper(" + field.getTag() + ", PresenterType." + field.getType().name() + ", " + field.getPresenterId() + ", " + field.getClazz() + ".class);\n" +
+		           "\t\t}\n" +
+		           "\n" +
+		           "\t\t@Override\n" +
+		           "\t\tpublic void setValue(MvpPresenter presenter) {\n" +
+		           "\t\t\tmTarget." + field.getName() + " = (" + field.getClazz() + ") presenter;\n" +
+		           "\t\t}\n";
 
 		if (field.getPresenterProviderMethodName() != null) {
-			        s += "\t\t@Override\n" +
-			             "\t\tpublic MvpPresenter<?> providePresenter() {\n" +
-			             "\t\t\treturn mTarget." + field.getPresenterProviderMethodName() + "();\n" +
-			             "\t\t}\n" +
-			             "\t";
+			s += "\t\t@Override\n" +
+			     "\t\tpublic MvpPresenter<?> providePresenter() {\n" +
+			     "\t\t\treturn mTarget." + field.getPresenterProviderMethodName() + "();\n" +
+			     "\t\t}\n" +
+			     "\t";
 		}
 
-		            s += "\t}\n" +
-		                 "\n";
+		s += "\t}\n" +
+		     "\n";
 		return builder + s;
 	}
 
