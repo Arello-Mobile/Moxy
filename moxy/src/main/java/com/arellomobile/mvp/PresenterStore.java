@@ -21,16 +21,16 @@ public class PresenterStore {
 	 * @param instance Instance of MvpPresenter implementation to store
 	 * @param <T>      type of presenter
 	 */
-	public <T extends MvpPresenter> void add(PresenterType type, String tag, T instance) {
+	public <T extends MvpPresenter> void add(PresenterType type, String tag, Class<? extends MvpPresenter> clazz, T instance) {
 		Map<String, MvpPresenter> mvpPresenterMap;
 
 		final Map<Class<? extends MvpPresenter>, Map<String, MvpPresenter>> presenters = getPresenters(type);
 
-		if (presenters.containsKey(instance.getClass())) {
-			mvpPresenterMap = presenters.get(instance.getClass());
+		if (presenters.containsKey(clazz)) {
+			mvpPresenterMap = presenters.get(clazz);
 		} else {
 			mvpPresenterMap = createPresentersStore(type);
-			presenters.put(instance.getClass(), mvpPresenterMap);
+			presenters.put(clazz, mvpPresenterMap);
 		}
 
 		if (mvpPresenterMap.containsKey(tag)) {

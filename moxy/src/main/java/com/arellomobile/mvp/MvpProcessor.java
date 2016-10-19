@@ -72,15 +72,11 @@ public class MvpProcessor {
 	}
 
 	/**
-	 * 1) Generates tag for identification MvpPresenter using params.
-	 * Custom presenter factory should use interface {@link ParamsProvider}'s method annotated with {@link ParamsProvider} to provide params from view
-	 * <p>
-	 * {@link com.arellomobile.mvp.DefaultPresenterFactory} works with {@link com.arellomobile.mvp.DefaultPresenterFactory.Params}.
-	 * Default factory doesn't need in special method of view to provide params. It takes param from {@link com.arellomobile.mvp.presenter.InjectPresenter} annotation fields
+	 * 1) Generates tag for identification MvpPresenter
 	 * <p>
 	 * 2) Checks if presenter with tag is already exist in {@link com.arellomobile.mvp.PresenterStore}, and returns it.
 	 * <p>
-	 * 3)If {@link com.arellomobile.mvp.PresenterStore} doesn't contain MvpPresenter with current tag, {@link com.arellomobile.mvp.PresenterFactory} will create it
+	 * 3)If {@link com.arellomobile.mvp.PresenterStore} doesn't contain MvpPresenter with current tag, {@link PresenterField} will create it
 	 *
 	 * @param presenterField info about presenter from {@link com.arellomobile.mvp.presenter.InjectPresenter}
 	 * @param delegated      class contains presenter
@@ -111,7 +107,7 @@ public class MvpProcessor {
 
 		presenter.setPresenterType(type);
 		presenter.setTag(tag);
-		presenterStore.add(type, tag, presenter);
+		presenterStore.add(type, tag, presenterClass, presenter);
 
 		return presenter;
 	}
