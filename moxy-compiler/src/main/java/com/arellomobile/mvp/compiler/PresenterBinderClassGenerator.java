@@ -9,6 +9,7 @@ import com.arellomobile.mvp.MvpProcessor;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
+import com.arellomobile.mvp.presenter.ProvidePresenterTag;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
@@ -50,6 +51,7 @@ import javax.lang.model.type.TypeMirror;
 final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement> {
 	public static final String PRESENTER_FIELD_ANNOTATION = InjectPresenter.class.getName();
 	public static final String PROVIDE_PRESENTER = ProvidePresenter.class.getName();
+	public static final String PROVIDE_PRESENTER_TAG = ProvidePresenterTag.class.getName();
 	private final List<String> mPresentersContainers;
 
 	public PresenterBinderClassGenerator() {
@@ -95,9 +97,13 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 
 		List<Field> fields = collectFields(presentersContainer);
 
-		List<PresenterProvider> presenterProviders = collectProviders(presentersContainer);
+		List<PresenterProvider> presenterProviders = collectPresenterProviders(presentersContainer);
+
+		List<PresenterTagProvider> presenterTagProviders = collectPresenterTagProviders(presentersContainer);
 
 		bindProvidersToFields(fields, presenterProviders);
+
+		bindTagProvidersToFields(fields, presenterTagProviders);
 
 		for (Field field : fields) {
 			builder = generatePresenterBinderClass(builder, field);
@@ -142,6 +148,32 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 					}
 
 					field.setPresenterProviderMethodName(presenterProvider.mName);
+				}
+			}
+
+		}
+	}
+
+	private void bindTagProvidersToFields(List<Field> fields, List<PresenterTagProvider> presenterTagProviders) {
+		if (fields.isEmpty() || presenterTagProviders.isEmpty()) {
+			return;
+		}
+		for (PresenterTagProvider presenterTagProvider : presenterTagProviders) {
+			TypeMirror providerTypeMirror = presenterTagProvider.mClazz.asElement().asType();
+			for (Field field : fields) {
+				if ((field.mClazz).equals(providerTypeMirror)) {
+					if (field.mType != presenterTagProvider.mType) {
+						continue;
+					}
+
+					if (field.mPresenterId == null && presenterTagProvider.mPresenterId != null) {
+						continue;
+					}
+					if (field.mPresenterId != null && !field.mPresenterId.equals(presenterTagProvider.mPresenterId)) {
+						continue;
+					}
+
+					field.setPresenterTagProviderMethodName(presenterTagProvider.mName);
 				}
 			}
 
@@ -195,7 +227,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		return fields;
 	}
 
-	private List<PresenterProvider> collectProviders(TypeElement presentersContainer) {
+	private List<PresenterProvider> collectPresenterProviders(TypeElement presentersContainer) {
 		List<PresenterProvider> providers = new ArrayList<>();
 
 		outer:
@@ -246,6 +278,57 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		return providers;
 	}
 
+	private List<PresenterTagProvider> collectPresenterTagProviders(TypeElement presentersContainer) {
+		List<PresenterTagProvider> providers = new ArrayList<>();
+
+		outer:
+		for (Element element : presentersContainer.getEnclosedElements()) {
+			if (!(element instanceof ExecutableElement)) {
+				continue;
+			}
+
+			final ExecutableElement providerMethod = (ExecutableElement) element;
+
+			for (AnnotationMirror annotationMirror : providerMethod.getAnnotationMirrors()) {
+				if (annotationMirror.getAnnotationType().asElement().toString().equals(PROVIDE_PRESENTER_TAG)) {
+					if (providerMethod.getReturnType().getKind() != TypeKind.DECLARED) {
+						continue;
+					}
+
+					DeclaredType kind = null;
+					String type = null;
+					String presenterId = null;
+
+					final String name = providerMethod.getSimpleName().toString();
+
+					final Map<? extends ExecutableElement, ? extends AnnotationValue> elementValues = annotationMirror.getElementValues();
+
+					final Set<? extends ExecutableElement> keySet = elementValues.keySet();
+
+					for (ExecutableElement executableElement : keySet) {
+
+						if ("presenterClass()".equals(executableElement.toString())) {
+							kind = (DeclaredType) elementValues.get(executableElement).getValue();
+						}
+
+						if ("type()".equals(executableElement.toString())) {
+							type = elementValues.get(executableElement).getValue().toString();
+						}
+
+						if ("presenterId()".equals(executableElement.toString())) {
+							presenterId = elementValues.get(executableElement).toString();
+						}
+					}
+
+					PresenterTagProvider provider = new PresenterTagProvider(kind, name, type, presenterId);
+					providers.add(provider);
+					continue outer;
+				}
+			}
+		}
+		return providers;
+	}
+
 	private static String generateGetPresentersMethod(final String builder, final List<Field> fields, String parentClassName) {
 		String s = "\tpublic List<PresenterField<?, ? super " + parentClassName + ">> getPresenterFields() {\n" +
 		           "\t\tList<PresenterField<?, ? super " + parentClassName + ">> presenters = new ArrayList<>();\n" +
@@ -280,7 +363,15 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 			     "\t\tpublic MvpPresenter<?> providePresenter() {\n" +
 			     "\t\t\treturn mTarget." + field.getPresenterProviderMethodName() + "();\n" +
 			     "\t\t}\n" +
-			     "\t";
+			     "\t\n";
+		}
+
+		if (field.getPresenterTagProviderMethodName() != null) {
+			s += "\t\t@Override\n" +
+			     "\t\tpublic String getTag() {\n" +
+			     "\t\t\treturn String.valueOf(mTarget." + field.getPresenterTagProviderMethodName() + "());\n" +
+			     "\t\t}\n" +
+			     "\t\n";
 		}
 
 		s += "\t}\n" +
@@ -296,6 +387,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		private final String mPresenterId;
 
 		private String mPresenterProviderMethodName;
+		private String mPresenterTagProviderMethodName;
 
 		Field(final TypeMirror clazz, final String name, final String type, final String tag, String presenterId) {
 			mClazz = clazz;
@@ -344,6 +436,14 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 			mPresenterProviderMethodName = presenterProviderMethodName;
 		}
 
+		public String getPresenterTagProviderMethodName() {
+			return mPresenterTagProviderMethodName;
+		}
+
+		public void setPresenterTagProviderMethodName(String presenterTagProviderMethodName) {
+			mPresenterTagProviderMethodName = presenterTagProviderMethodName;
+		}
+
 		@Override
 		public String toString() {
 			return "Field{" +
@@ -385,6 +485,24 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 			       ", mTag='" + mTag + '\'' +
 			       ", mPresenterId='" + mPresenterId + '\'' +
 			       '}';
+		}
+	}
+
+	private class PresenterTagProvider {
+		private final DeclaredType mClazz;
+		private final String mName;
+		private final PresenterType mType;
+		private final String mPresenterId;
+
+		public PresenterTagProvider(DeclaredType clazz, String name, String type, String presenterId) {
+			mClazz = clazz;
+			mName = name;
+			if (type == null) {
+				mType = PresenterType.LOCAL;
+			} else {
+				mType = PresenterType.valueOf(type);
+			}
+			mPresenterId = presenterId;
 		}
 	}
 }

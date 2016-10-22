@@ -5,11 +5,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.arellomobile.mvp.MvpPresenter;
+
 /**
  * <p>Called when Moxy generate presenter tag for search Presenter in {@link com.arellomobile.mvp.PresenterStore}.</p>
  * <p>Requirements:</p>
  * <ul>
- * <li>Method should return full equals class as presenter field type</li>
+ * <li>presenterClass parameter should be equals with presenter field type</li>
+ * <li>Presenter Types should be same</li>
  * <li>Presenter IDs should be equals</li>
  * </ul>
  * <p>Note: if this method stay unused after build, then Moxy never use this method and you should check annotation parameters.</p>
@@ -23,6 +26,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ProvidePresenterTag {
 	String EMPTY = "";
+
+	Class<? extends MvpPresenter<?>> presenterClass();
+
+	PresenterType type() default PresenterType.LOCAL;
 
 	String presenterId() default EMPTY;
 }
