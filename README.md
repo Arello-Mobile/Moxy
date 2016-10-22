@@ -67,6 +67,8 @@ Templates located in [/moxy-templates](https://github.com/Arello-Mobile/Moxy/tre
 
 [_EN_] [Android without Lifecycle: MPVsV approach with Moxy](https://medium.com/@xanderblinov/6a3ae33521e)
 
+[_EN_] [MVP on steroids - how we force the robot to write code for you](https://medium.com/@xanderblinov/mvp-on-steroids-how-we-force-the-robot-to-write-code-for-you-56fbc8ecefce#.5btn77voh)
+
 ## Integration
 Base modules integration:
 ```groovy
