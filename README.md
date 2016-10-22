@@ -78,29 +78,29 @@ Base modules integration:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy:1.0.3'
-  provided 'com.arello-mobile:moxy-compiler:1.0.3'
+  compile 'com.arello-mobile:moxy:1.1.0'
+  provided 'com.arello-mobile:moxy-compiler:1.1.0'
 }
 ```
 If you want to see generated code, use `apt` instead of `provided` dependency type:
 ```groovy
 dependencies {
   ...
-  apt 'com.arello-mobile:moxy-compiler:1.0.3'
+  apt 'com.arello-mobile:moxy-compiler:1.1.0'
 }
 ```
 For additional base view classes `MvpActivity` and `MvpFragment` add this:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy-android:1.0.3'
+  compile 'com.arello-mobile:moxy-android:1.1.0'
 }
 ```
 If you planing to use AppCompat, then you can use `MvpAppCompatActivity` and `MvpAppCompatFragment`. Then add this:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy-app-compat:1.0.3'
+  compile 'com.arello-mobile:moxy-app-compat:1.1.0'
 }
 ```
 
@@ -109,7 +109,6 @@ If you are using ProGuard you might need to add the following option:
 ```
 -keep class **$$PresentersBinder
 -keep class **$$State
--keep class **$$ParamsHolder
 -keep class **$$ViewStateClassNameProvider
 -keepnames class * extends com.arellomobile.mvp.*
 ```
