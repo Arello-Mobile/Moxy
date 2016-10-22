@@ -5,9 +5,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.arellomobile.mvp.DefaultPresenterFactory;
-import com.arellomobile.mvp.PresenterFactory;
-
 /**
  * Date: 17.12.2015
  * Time: 14:54
@@ -20,11 +17,9 @@ import com.arellomobile.mvp.PresenterFactory;
 public @interface InjectPresenter {
 	String EMPTY = "";
 
+	String tag() default EMPTY;
+
 	PresenterType type() default PresenterType.LOCAL;
-
-	String tag() default "";
-
-	Class<? extends PresenterFactory> factory() default DefaultPresenterFactory.class;
 
 	String presenterId() default EMPTY;
 }

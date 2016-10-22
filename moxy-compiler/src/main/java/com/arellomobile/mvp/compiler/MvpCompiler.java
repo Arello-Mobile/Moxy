@@ -11,7 +11,6 @@ import java.util.Set;
 
 import com.arellomobile.mvp.GenerateViewState;
 import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.ParamsProvider;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.google.auto.service.AutoService;
 
@@ -29,8 +28,14 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.JavaFileObject;
 
-
 import static javax.lang.model.SourceVersion.latestSupported;
+
+/**
+ * Date: 12.12.2015
+ * Time: 15:35
+ *
+ * @author Yuri Shmakov
+ */
 
 @SuppressWarnings("unused")
 @AutoService(Processor.class)
@@ -63,7 +68,7 @@ public class MvpCompiler extends AbstractProcessor {
 	@Override
 	public Set<String> getSupportedAnnotationTypes() {
 		Set<String> supportedAnnotationTypes = new HashSet<>();
-		Collections.addAll(supportedAnnotationTypes, InjectPresenter.class.getCanonicalName(), ParamsProvider.class.getCanonicalName(), InjectViewState.class.getCanonicalName(), GenerateViewState.class.getCanonicalName());
+		Collections.addAll(supportedAnnotationTypes, InjectPresenter.class.getCanonicalName(), InjectViewState.class.getCanonicalName(), GenerateViewState.class.getCanonicalName());
 		return supportedAnnotationTypes;
 	}
 
@@ -79,7 +84,6 @@ public class MvpCompiler extends AbstractProcessor {
 		ViewStateProviderClassGenerator viewStateProviderClassGenerator = new ViewStateProviderClassGenerator();
 		processInjectors(roundEnv, InjectViewState.class, ElementKind.CLASS, viewStateProviderClassGenerator);
 		processInjectors(roundEnv, InjectPresenter.class, ElementKind.FIELD, new PresenterBinderClassGenerator());
-		processInjectors(roundEnv, ParamsProvider.class, ElementKind.INTERFACE, new ParamsHolderClassGenerator());
 
 		ViewStateClassGenerator viewStateClassGenerator = new ViewStateClassGenerator();
 		Set<TypeElement> usedViews = viewStateProviderClassGenerator.getUsedViews();

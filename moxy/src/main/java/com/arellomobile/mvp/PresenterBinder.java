@@ -17,5 +17,5 @@ public abstract class PresenterBinder<PresentersContainer> {
 		mTarget = presenterAggregator;
 	}
 
-	public abstract List<PresenterField<? super PresentersContainer>> getPresenterFields();
+	public abstract List<PresenterField<?, ? super PresentersContainer>> getPresenterFields();
 }

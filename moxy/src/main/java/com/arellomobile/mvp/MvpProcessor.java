@@ -12,14 +12,14 @@ import com.arellomobile.mvp.presenter.PresenterType;
  * Time: 13:16
  *
  * @author Alexander Blinov
+ * @author Yuri Shmakov
  */
 public class MvpProcessor {
 	private static final String TAG = "MvpProcessor";
 
 	public static final String PRESENTER_BINDER_SUFFIX = "$$PresentersBinder";
-	public static final String VIEW_STATE_SUFFIX = "$$State";
-	public static final String FACTORY_PARAMS_HOLDER_SUFFIX = "$$ParamsHolder";
 	public static final String PRESENTER_BINDER_INNER_SUFFIX = "Binder";
+	public static final String VIEW_STATE_SUFFIX = "$$State";
 	public static final String VIEW_STATE_CLASS_NAME_PROVIDER_SUFFIX = "$$ViewStateClassNameProvider";
 
 	/**
@@ -72,15 +72,11 @@ public class MvpProcessor {
 	}
 
 	/**
-	 * 1) Generates tag for identification MvpPresenter using params.
-	 * Custom presenter factory should use interface {@link ParamsProvider}'s method annotated with {@link ParamsProvider} to provide params from view
-	 * <p>
-	 * {@link com.arellomobile.mvp.DefaultPresenterFactory} works with {@link com.arellomobile.mvp.DefaultPresenterFactory.Params}.
-	 * Default factory doesn't need in special method of view to provide params. It takes param from {@link com.arellomobile.mvp.presenter.InjectPresenter} annotation fields
+	 * 1) Generates tag for identification MvpPresenter
 	 * <p>
 	 * 2) Checks if presenter with tag is already exist in {@link com.arellomobile.mvp.PresenterStore}, and returns it.
 	 * <p>
-	 * 3)If {@link com.arellomobile.mvp.PresenterStore} doesn't contain MvpPresenter with current tag, {@link com.arellomobile.mvp.PresenterFactory} will create it
+	 * 3)If {@link com.arellomobile.mvp.PresenterStore} doesn't contain MvpPresenter with current tag, {@link PresenterField} will create it
 	 *
 	 * @param presenterField info about presenter from {@link com.arellomobile.mvp.presenter.InjectPresenter}
 	 * @param delegated      class contains presenter
@@ -88,19 +84,15 @@ public class MvpProcessor {
 	 * @param <Delegated>    type of delegated
 	 * @return MvpPresenter instance
 	 */
-	private <Delegated> MvpPresenter<? super Delegated> getMvpPresenter(PresenterField<? super Delegated> presenterField, Delegated delegated, String delegateTag) {
+	private <Delegated> MvpPresenter<? super Delegated> getMvpPresenter(PresenterField<?, ? super Delegated> presenterField, Delegated delegated, String delegateTag) {
 		Class<? extends MvpPresenter<?>> presenterClass = presenterField.getPresenterClass();
-		Class<? extends PresenterFactory<?, ?>> presenterFactoryClass = presenterField.getFactory();
-		ParamsHolder<?> holder = MvpFacade.getInstance().getPresenterFactoryStore().getParamsHolder(presenterField.getParamsHolderClass());
 		PresenterStore presenterStore = MvpFacade.getInstance().getPresenterStore();
-		PresenterFactory presenterFactory = MvpFacade.getInstance().getPresenterFactoryStore().getPresenterFactory(presenterFactoryClass);
-
-		Object params = holder.getParams(presenterField, delegated, delegateTag);
 
 		//TODO throw exception
-		//noinspection unchecked
-		String tag = presenterFactory.createTag(presenterClass, params);
 		PresenterType type = presenterField.getPresenterType();
+		//noinspection unchecked
+		String tag = type == PresenterType.LOCAL ? delegateTag + "$" : "";
+		tag += presenterField.getTag();
 
 		//noinspection unchecked
 		MvpPresenter<? super Delegated> presenter = presenterStore.get(type, tag, presenterClass);
@@ -108,11 +100,16 @@ public class MvpProcessor {
 			return presenter;
 		}
 
-		//noinspection unchecked
-		presenter = presenterFactory.createPresenter(presenterClass, params);
+		presenter = (MvpPresenter<? super Delegated>) presenterField.providePresenter();
+
+		if (presenter == null) {
+			return null;
+		}
+
 		presenter.setPresenterType(type);
 		presenter.setTag(tag);
-		presenterStore.add(type, tag, presenter);
+		presenter.setPresenterClass(presenterClass);
+		presenterStore.add(type, tag, presenterClass, presenter);
 
 		return presenter;
 	}
@@ -152,9 +149,9 @@ public class MvpProcessor {
 
 		List<MvpPresenter<? super Delegated>> presenters = new ArrayList<>();
 		for (PresenterBinder<? super Delegated> presenterBinder : presenterBinders) {
-			List<? extends PresenterField<? super Delegated>> presenterFields = presenterBinder.getPresenterFields();
+			List<? extends PresenterField<?, ? super Delegated>> presenterFields = presenterBinder.getPresenterFields();
 
-			for (PresenterField<? super Delegated> presenterField : presenterFields) {
+			for (PresenterField<?, ? super Delegated> presenterField : presenterFields) {
 				MvpPresenter<? super Delegated> presenter = getMvpPresenter(presenterField, delegated, delegateTag);
 
 				if (presenter != null) {
