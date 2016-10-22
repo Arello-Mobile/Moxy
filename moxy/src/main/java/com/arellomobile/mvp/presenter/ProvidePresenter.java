@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
  * <li>Presenter IDs should be equals</li>
  * </ul>
  * <p>Note: if this method stay unused after build, then Moxy never use this method and you should check annotation parameters. These parameters should be equals to @InjectPresenter parameters</p>
- * <br />
+ * <br>
  * Date: 14.10.2016
  * Time: 00:09
  *
