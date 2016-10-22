@@ -25,7 +25,7 @@ public abstract class PresenterField<Presenter extends MvpPresenter<? extends Vi
 	public abstract void setValue(MvpPresenter presenter);
 
 	public String getTag() {
-		return tag;
+		return tag != null ? tag : getClass().getSimpleName();
 	}
 
 	public PresenterType getPresenterType() {

@@ -91,7 +91,8 @@ public class MvpProcessor {
 		//TODO throw exception
 		PresenterType type = presenterField.getPresenterType();
 		//noinspection unchecked
-		String tag = presenterField.getClass().getSimpleName();
+		String tag = type == PresenterType.LOCAL ? delegateTag + "$" : "";
+		tag += presenterField.getTag();
 
 		//noinspection unchecked
 		MvpPresenter<? super Delegated> presenter = presenterStore.get(type, tag, presenterClass);
