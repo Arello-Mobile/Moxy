@@ -63,9 +63,13 @@ In order to avoid boilerplate code creating for binding activity,fragments and i
 Templates located in [/moxy-templates](https://github.com/Arello-Mobile/Moxy/tree/master/moxy-templates)
 
 ## References
+[_EN_] [Android without Lifecycle: MPVsV approach with Moxy](https://medium.com/@xanderblinov/6a3ae33521e)
+
 [_RU_] [Moxy — реализация MVP под Android с щепоткой магии](https://habrahabr.ru/post/276189/)
 
-[_EN_] [Android without Lifecycle: MPVsV approach with Moxy](https://medium.com/@xanderblinov/6a3ae33521e)
+[_RU_] [MVP на стероидах: заставляем робота писать код за вас](https://habrahabr.ru/company/redmadrobot/blog/305798/)
+
+[_RU_] [Moxy. Из чего состоит и как этим пользоваться](http://www.slideshare.net/YuriShmakov/moxy)
 
 [_EN_] [MVP on steroids - how we force the robot to write code for you](https://medium.com/@xanderblinov/mvp-on-steroids-how-we-force-the-robot-to-write-code-for-you-56fbc8ecefce#.5btn77voh)
 
