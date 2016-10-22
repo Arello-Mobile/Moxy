@@ -99,11 +99,11 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 
 		List<PresenterProvider> presenterProviders = collectPresenterProviders(presentersContainer);
 
-		List<PresenterTagProvider> presenterTagProviders = collectPresenterTagProviders(presentersContainer);
+		List<TagProvider> tagProviders = collectTagProviders(presentersContainer);
 
 		bindProvidersToFields(fields, presenterProviders);
 
-		bindTagProvidersToFields(fields, presenterTagProviders);
+		bindTagProvidersToFields(fields, tagProviders);
 
 		for (Field field : fields) {
 			builder = generatePresenterBinderClass(builder, field);
@@ -154,26 +154,26 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		}
 	}
 
-	private void bindTagProvidersToFields(List<Field> fields, List<PresenterTagProvider> presenterTagProviders) {
-		if (fields.isEmpty() || presenterTagProviders.isEmpty()) {
+	private void bindTagProvidersToFields(List<Field> fields, List<TagProvider> tagProviders) {
+		if (fields.isEmpty() || tagProviders.isEmpty()) {
 			return;
 		}
-		for (PresenterTagProvider presenterTagProvider : presenterTagProviders) {
-			TypeMirror providerTypeMirror = presenterTagProvider.mClazz.asElement().asType();
+		for (TagProvider tagProvider : tagProviders) {
+			TypeMirror providerTypeMirror = tagProvider.mPresenterClass.asElement().asType();
 			for (Field field : fields) {
 				if ((field.mClazz).equals(providerTypeMirror)) {
-					if (field.mType != presenterTagProvider.mType) {
+					if (field.mType != tagProvider.mType) {
 						continue;
 					}
 
-					if (field.mPresenterId == null && presenterTagProvider.mPresenterId != null) {
+					if (field.mPresenterId == null && tagProvider.mPresenterId != null) {
 						continue;
 					}
-					if (field.mPresenterId != null && !field.mPresenterId.equals(presenterTagProvider.mPresenterId)) {
+					if (field.mPresenterId != null && !field.mPresenterId.equals(tagProvider.mPresenterId)) {
 						continue;
 					}
 
-					field.setPresenterTagProviderMethodName(presenterTagProvider.mName);
+					field.setPresenterTagProviderMethodName(tagProvider.mMethodName);
 				}
 			}
 
@@ -278,8 +278,8 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		return providers;
 	}
 
-	private List<PresenterTagProvider> collectPresenterTagProviders(TypeElement presentersContainer) {
-		List<PresenterTagProvider> providers = new ArrayList<>();
+	private List<TagProvider> collectTagProviders(TypeElement presentersContainer) {
+		List<TagProvider> providers = new ArrayList<>();
 
 		outer:
 		for (Element element : presentersContainer.getEnclosedElements()) {
@@ -320,7 +320,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 						}
 					}
 
-					PresenterTagProvider provider = new PresenterTagProvider(kind, name, type, presenterId);
+					TagProvider provider = new TagProvider(kind, name, type, presenterId);
 					providers.add(provider);
 					continue outer;
 				}
@@ -447,8 +447,8 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		@Override
 		public String toString() {
 			return "Field{" +
-			       "mClazz=" + mClazz +
-			       ", mName='" + mName + '\'' +
+			       "mPresenterClass=" + mClazz +
+			       ", mMethodName='" + mName + '\'' +
 			       ", mType=" + mType +
 			       ", mTag='" + mTag + '\'' +
 			       ", mPresenterId='" + mPresenterId + '\'' +
@@ -479,8 +479,8 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		@Override
 		public String toString() {
 			return "PresenterProvider{" +
-			       "mClazz=" + mClazz +
-			       ", mName='" + mName + '\'' +
+			       "mPresenterClass=" + mClazz +
+			       ", mMethodName='" + mName + '\'' +
 			       ", mType=" + mType +
 			       ", mTag='" + mTag + '\'' +
 			       ", mPresenterId='" + mPresenterId + '\'' +
@@ -488,15 +488,15 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		}
 	}
 
-	private class PresenterTagProvider {
-		private final DeclaredType mClazz;
-		private final String mName;
+	private class TagProvider {
+		private final DeclaredType mPresenterClass;
+		private final String mMethodName;
 		private final PresenterType mType;
 		private final String mPresenterId;
 
-		public PresenterTagProvider(DeclaredType clazz, String name, String type, String presenterId) {
-			mClazz = clazz;
-			mName = name;
+		public TagProvider(DeclaredType presenterClass, String methodName, String type, String presenterId) {
+			mPresenterClass = presenterClass;
+			mMethodName = methodName;
 			if (type == null) {
 				mType = PresenterType.LOCAL;
 			} else {
