@@ -26,6 +26,7 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
 import static javax.lang.model.SourceVersion.latestSupported;
@@ -79,6 +80,19 @@ public class MvpCompiler extends AbstractProcessor {
 
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+		try {
+			return throwableProcess(roundEnv);
+		} catch (RuntimeException e) {
+			getMessager().printMessage(Diagnostic.Kind.OTHER, "Moxy compilation failed. Could you copy stack trace above and write us (or make issue on Githhub)?");
+			e.printStackTrace();
+
+			getMessager().printMessage(Diagnostic.Kind.ERROR, "Moxy compilation failed; see the compiler error output for details (" + e + ")");
+		}
+
+		return false;
+	}
+
+	private boolean throwableProcess(RoundEnvironment roundEnv) {
 		checkInjectors(roundEnv, InjectPresenter.class, new PresenterInjectorRules(ElementKind.FIELD, Modifier.PUBLIC, Modifier.DEFAULT));
 
 		ViewStateProviderClassGenerator viewStateProviderClassGenerator = new ViewStateProviderClassGenerator();
