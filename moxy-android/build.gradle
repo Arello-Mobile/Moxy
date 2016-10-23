@@ -135,9 +135,9 @@ task copyJars << {
     }
 
     copy {
-        from (buildDir)
+        from(buildDir)
                 {
-                    rename targetArtefactId+'(.*)', targetArtefactIdDev + '$1'
+                    rename targetArtefactId + '(.*)', targetArtefactIdDev + '$1'
                 }
         into publishDir
     }
@@ -152,23 +152,6 @@ task createPomXml << {
 
     getBasePom('moxy-dev').withXml {
         asNode().appendNode('build').appendNode('plugins').with {
-            appendNode('plugin').with {
-                appendNode('artifactId', 'maven-android-plugin')
-                appendNode('executions').with {
-                    appendNode('execution').with {
-                        appendNode('id', 'default-compile')
-                        appendNode('goals').with {
-                            appendNode('goal', 'compile')
-                        }
-                        appendNode('configuration').with {
-                            appendNode('annotationProcessors').with {
-                                appendNode('annotationProcessor', 'com.google.auto.value.processor.AutoValueProcessor')
-                                appendNode('annotationProcessor', 'com.google.auto.service.processor.AutoServiceProcessor')
-                            }
-                        }
-                    }
-                }
-            }
             appendNode('plugin').with {
                 appendNode('groupId', 'org.apache.maven.plugins')
                 appendNode('artifactId', 'maven-gpg-plugin')
@@ -205,23 +188,6 @@ task createPomXml << {
 
         asNode().appendNode('build')
                 .appendNode('plugins')
-                .appendNode('plugin').with {
-            appendNode('artifactId', 'maven-android-plugin')
-            appendNode('executions').with {
-                appendNode('execution').with {
-                    appendNode('id', 'default-compile')
-                    appendNode('goals').with {
-                        appendNode('goal', 'compile')
-                    }
-                    appendNode('configuration').with {
-                        appendNode('annotationProcessors').with {
-                            appendNode('annotationProcessor', 'com.google.auto.value.processor.AutoValueProcessor')
-                            appendNode('annotationProcessor', 'com.google.auto.service.processor.AutoServiceProcessor')
-                        }
-                    }
-                }
-            }
-        }
 
 
     }.writeTo(publishMavenDir + "/" + targetArtefactId + ".pom")
@@ -274,6 +240,8 @@ dependencies {
     compile project(':moxy')
     runtime project(':moxy')
     javadocDeps project(':moxy')
-    compile 'com.google.android:android:4.0.1.2'
-    javadocDeps 'com.google.android:android:4.0.1.2'
+    compileOnly 'com.google.android:android:1.6_r2'
+    javadocDeps 'com.google.android:android:1.6_r2'
+    compileOnly project(':stub-android')
+    javadocDeps project(':stub-android')
 }

@@ -14,12 +14,11 @@ import presenter.WithViewGenericPresenter;
  *
  * @author Savin Mikhail
  */
-public class InjectPresenterWithGenericView extends CounterTestView
-{
+public class InjectPresenterWithGenericView extends CounterTestView {
 	@InjectPresenter
-	WithViewGenericPresenter<InjectPresenterWithGenericView, CounterTestView>  mPresenter;
+	WithViewGenericPresenter<InjectPresenterWithGenericView, CounterTestView> mPresenter;
 
-	public void testEvent(){
+	public void testEvent() {
 
 	}
 }

@@ -29,34 +29,28 @@ import com.arellomobile.mvp.presenter.PresenterType;
  * @author Alexander Blinov
  * @author Konstantin Tckhovrebov
  */
-public class MvpDelegate<Delegated>
-{
+public class MvpDelegate<Delegated> {
 	private static final String KEY_TAGS = "com.arellomobile.mvp.MvpDelegate.KEY_TAGS";
 
 	private String mKeyTags = KEY_TAGS;
 	private String mDelegateTag;
 	private final Delegated mDelegated;
-	private boolean mStateSaved;
 	private boolean mIsAttached;
 	private MvpDelegate mParentDelegate;
 	private List<MvpPresenter<? super Delegated>> mPresenters;
 	private List<MvpDelegate> mChildDelegates;
 	private Bundle mBundle;
 
-	public MvpDelegate(Delegated delegated)
-	{
+	public MvpDelegate(Delegated delegated) {
 		mDelegated = delegated;
 		mChildDelegates = new ArrayList<>();
 	}
 
-	public void setParentDelegate(MvpDelegate delegate, String childId)
-	{
-		if (mBundle != null)
-		{
+	public void setParentDelegate(MvpDelegate delegate, String childId) {
+		if (mBundle != null) {
 			throw new IllegalStateException("You should call setParentDelegate() before first onCreate()");
- 		}
-		if (mChildDelegates != null && mChildDelegates.size() > 0)
-		{
+		}
+		if (mChildDelegates != null && mChildDelegates.size() > 0) {
 			throw new IllegalStateException("You could not set parent delegate when it already has child presenters");
 		}
 
@@ -66,8 +60,7 @@ public class MvpDelegate<Delegated>
 		delegate.addChildDelegate(this);
 	}
 
-	private void addChildDelegate(MvpDelegate delegate)
-	{
+	private void addChildDelegate(MvpDelegate delegate) {
 		mChildDelegates.add(delegate);
 	}
 
@@ -75,11 +68,9 @@ public class MvpDelegate<Delegated>
 	 * <p>Similar like {@link #onCreate(Bundle)}. But this method try to get saved
 	 * state from parent presenter before get presenters</p>
 	 */
-	public void onCreate()
-	{
+	public void onCreate() {
 		Bundle bundle = new Bundle();
-		if (mParentDelegate != null)
-		{
+		if (mParentDelegate != null) {
 			bundle = mParentDelegate.mBundle;
 		}
 
@@ -92,27 +83,21 @@ public class MvpDelegate<Delegated>
 	 *
 	 * @param bundle with saved state
 	 */
-	public void onCreate(Bundle bundle)
-	{
-		mStateSaved = false;
+	public void onCreate(Bundle bundle) {
 		mIsAttached = false;
 		mBundle = bundle;
 
 		//get base tag for presenters
-		if (bundle == null || !mBundle.containsKey(mKeyTags))
-		{
+		if (bundle == null || !mBundle.containsKey(mKeyTags)) {
 			mDelegateTag = generateTag();
-		}
-		else
-		{
+		} else {
 			mDelegateTag = bundle.getString(mKeyTags);
 		}
 
 		//bind presenters to view
 		mPresenters = MvpFacade.getInstance().getMvpProcessor().getMvpPresenters(mDelegated, mDelegateTag);
 
-		for (MvpDelegate childDelegate : mChildDelegates)
-		{
+		for (MvpDelegate childDelegate : mChildDelegates) {
 			childDelegate.onCreate(bundle);
 		}
 	}
@@ -123,21 +108,17 @@ public class MvpDelegate<Delegated>
 	 * {@link #onCreate()}) before this method, then view will not be attached to
 	 * presenters</p>
 	 */
-	public void onAttach()
-	{
+	public void onAttach() {
 
-		for (MvpPresenter<? super Delegated> presenter : mPresenters)
-		{
-			if (mIsAttached && presenter.getAttachedViews().contains(mDelegated))
-			{
+		for (MvpPresenter<? super Delegated> presenter : mPresenters) {
+			if (mIsAttached && presenter.getAttachedViews().contains(mDelegated)) {
 				continue;
 			}
 
 			presenter.attachView(mDelegated);
 		}
 
-		for (MvpDelegate<?> childDelegate : mChildDelegates)
-		{
+		for (MvpDelegate<?> childDelegate : mChildDelegates) {
 			childDelegate.onAttach();
 		}
 
@@ -147,73 +128,55 @@ public class MvpDelegate<Delegated>
 	/**
 	 * <p>Detach delegated object from their presenters.</p>
 	 */
-	public void onDetach()
-	{
-		for (MvpPresenter<? super Delegated> presenter : mPresenters)
-		{
+	public void onDetach() {
+		for (MvpPresenter<? super Delegated> presenter : mPresenters) {
 			presenter.detachView(mDelegated);
 		}
 
 		mIsAttached = false;
 
-		for (MvpDelegate<?> childDelegate : mChildDelegates)
-		{
+		for (MvpDelegate<?> childDelegate : mChildDelegates) {
 			childDelegate.onDetach();
 		}
 	}
 
 	/**
-	 * <p>Destroy presenters if they are not needed.</p>
+	 * <p>Destroy presenters.</p>
 	 */
-	public void onDestroy()
-	{
-		if (!mStateSaved)
-		{
-			destroyPresenters();
+	public void onDestroy() {
+		PresenterStore presenterStore = MvpFacade.getInstance().getPresenterStore();
+
+		for (MvpPresenter<?> presenter : mPresenters) {
+			if (presenter.getPresenterType() == PresenterType.LOCAL) {
+				presenter.onDestroy();
+				presenterStore.remove(PresenterType.LOCAL, presenter.getTag(), presenter.getPresenterClass());
+			}
 		}
 
-		for (MvpDelegate<?> childDelegate : mChildDelegates)
-		{
+		for (MvpDelegate<?> childDelegate : mChildDelegates) {
 			childDelegate.onDestroy();
 		}
 	}
 
 	/**
 	 * Save presenters tag prefix to save state for restore presenters at future after delegate recreate
+	 *
 	 * @param outState out state from Android component
 	 */
-	public void onSaveInstanceState(Bundle outState)
-	{
-		mStateSaved = true;
+	public void onSaveInstanceState(Bundle outState) {
 		outState.putString(mKeyTags, mDelegateTag);
 
-		for (MvpDelegate childDelegate : mChildDelegates)
-		{
+		for (MvpDelegate childDelegate : mChildDelegates) {
 			childDelegate.onSaveInstanceState(outState);
-		}
-	}
-
-	private void destroyPresenters()
-	{
-		PresenterStore presenterStore = MvpFacade.getInstance().getPresenterStore();
-
-		for (MvpPresenter<?> presenter : mPresenters)
-		{
-			if (presenter.getPresenterType() == PresenterType.LOCAL)
-			{
-				presenter.onDestroy();
-				presenterStore.remove(PresenterType.LOCAL, presenter.getTag(), presenter.getClass());
-			}
 		}
 	}
 
 	/**
 	 * @return generated tag in format: Delegated_class_full_name$MvpDelegate@hashCode
-	 *
+	 * <p>
 	 * example: com.arellomobile.com.arellomobile.mvp.sample.SampleFragment$MvpDelegate@32649b0
 	 */
-	private String generateTag()
-	{
-		return mDelegated.getClass().getName() + "$" + getClass().getSimpleName()+ toString().replace(getClass().getName(),"");
+	private String generateTag() {
+		return mDelegated.getClass().getName() + "$" + getClass().getSimpleName() + toString().replace(getClass().getName(), "");
 	}
 }

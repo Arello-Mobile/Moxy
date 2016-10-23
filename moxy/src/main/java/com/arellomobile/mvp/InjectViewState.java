@@ -15,8 +15,8 @@ import static java.lang.annotation.ElementType.TYPE;
  * code, that broke your app.
  */
 @Target(value = TYPE)
-public @interface InjectViewState
-{
+public @interface InjectViewState {
 	Class<? extends MvpViewState> value() default DefaultViewState.class;
+
 	Class<? extends MvpView> view() default DefaultView.class;
 }

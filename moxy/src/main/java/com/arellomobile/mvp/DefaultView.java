@@ -6,6 +6,5 @@ package com.arellomobile.mvp;
  *
  * @author Yuri Shmakov
  */
-public interface DefaultView extends MvpView
-{
+public interface DefaultView extends MvpView {
 }

@@ -1,10 +1,8 @@
 package com.arellomobile.mvp;
 
 import android.app.Fragment;
+import android.os.Build;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 /**
  * Date: 19-Dec-15
@@ -14,57 +12,58 @@ import android.view.ViewGroup;
  * @author Yuri Shmakov
  * @author Konstantin Tckhovrebov
  */
-public class MvpFragment extends Fragment
-{
-	private Bundle mTemporaryBundle;// required for view destroy/restore
+public class MvpFragment extends Fragment {
 	private MvpDelegate<? extends MvpFragment> mMvpDelegate;
 
-	public MvpFragment()
-	{
-		mTemporaryBundle = null;
-	}
-
-	public void onCreate(Bundle savedInstanceState)
-	{
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		getMvpDelegate().onCreate(savedInstanceState);
 	}
 
-	public void onStart()
-	{
+	public void onStart() {
 		super.onStart();
 
 		getMvpDelegate().onAttach();
 	}
 
 	@Override
-	public void onDestroyView()
-	{
+	public void onDestroyView() {
 		super.onDestroyView();
 
 		getMvpDelegate().onDetach();
 	}
 
 	@Override
-	public void onDestroy()
-	{
+	public void onDestroy() {
 		super.onDestroy();
 
-		getMvpDelegate().onDestroy();
+		boolean anyParentIsRemoving = false;
+
+		if (Build.VERSION.SDK_INT >= 17) {
+			Fragment parent = getParentFragment();
+			while (!anyParentIsRemoving && parent != null) {
+				anyParentIsRemoving = parent.isRemoving();
+				parent = parent.getParentFragment();
+			}
+		}
+
+		if (isRemoving() || getActivity().isFinishing()) {
+			getMvpDelegate().onDestroy();
+		}
 	}
 
-	public void onSaveInstanceState(Bundle outState)
-	{
+	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 
 		getMvpDelegate().onSaveInstanceState(outState);
 	}
 
-	public MvpDelegate getMvpDelegate()
-	{
-		if (mMvpDelegate == null)
-		{
+	/**
+	 * @return The {@link MvpDelegate} being used by this Fragment.
+	 */
+	public MvpDelegate getMvpDelegate() {
+		if (mMvpDelegate == null) {
 			mMvpDelegate = new MvpDelegate<>(this);
 		}
 

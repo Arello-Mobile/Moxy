@@ -1,10 +1,10 @@
 package com.arellomobile.mvp.compiler;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import com.arellomobile.mvp.MvpProcessor;
@@ -34,18 +34,17 @@ import static com.arellomobile.mvp.compiler.Util.fillGenerics;
  *
  * @author Yuri Shmakov
  */
-final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
-{
+final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 	public static final String STATE_STRATEGY_TYPE_ANNOTATION = StateStrategyType.class.getName();
 	public static final String DEFAULT_STATE_STRATEGY = AddToEndStrategy.class.getName() + ".class";
 
 	private String mViewClassName;
 
-	public boolean generate(TypeElement typeElement, List<ClassGeneratingParams> classGeneratingParamsList)
-	{
-		if (!typeElement.getTypeParameters().isEmpty())
-		{
-			throw new IllegalStateException("Code generation can't be applied to generic interface " + typeElement.getSimpleName());
+	public boolean generate(TypeElement typeElement, List<ClassGeneratingParams> classGeneratingParamsList) {
+		String generic = Util.getClassGenerics(typeElement);
+		String interfaceGeneric = "";
+		if (!typeElement.getTypeParameters().isEmpty()) {
+			interfaceGeneric = "<" + typeElement.getTypeParameters() + ">";
 		}
 
 		String fullClassName = Util.getFullClassName(typeElement);
@@ -56,53 +55,53 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 		mViewClassName = getClassName(typeElement);
 
 		String builder = "package " + fullClassName.substring(0, fullClassName.lastIndexOf(".")) + ";\n" +
-				"\n" +
-				"import com.arellomobile.mvp.viewstate.MvpViewState;\n" +
-				"import com.arellomobile.mvp.viewstate.ViewCommand;\n" +
-				"import com.arellomobile.mvp.viewstate.ViewCommands;\n" +
-				"import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;\n" +
-				"import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy;\n" +
-				"import com.arellomobile.mvp.viewstate.strategy.StateStrategy;\n" +
-				"\n" +
-				"public class " + fullClassName.substring(fullClassName.lastIndexOf(".") + 1) + "$$State extends MvpViewState<" + mViewClassName + "> implements " + mViewClassName + "\n" +
-				"{\n" +
-				"\tprivate ViewCommands<" + mViewClassName + "> mViewCommands = new ViewCommands<>();\n" +
-				"\n" +
-				"\t@Override\n" +
-				"\tpublic void restoreState(" + mViewClassName + " view)\n" +
-				"\t{\n" +
-				"\t\tif (mViewCommands.isEmpty())\n" +
-				"\t\t{\n" +
-				"\t\t\treturn;\n" +
-				"\t\t}\n" +
-				"\n" +
-				"\t\tmViewCommands.reapply(view);\n" +
-				"\t}\n" +
-				"\n";
+		                 "\n" +
+		                 "import com.arellomobile.mvp.viewstate.MvpViewState;\n" +
+		                 "import com.arellomobile.mvp.viewstate.ViewCommand;\n" +
+		                 "import com.arellomobile.mvp.viewstate.ViewCommands;\n" +
+		                 "import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;\n" +
+		                 "import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy;\n" +
+		                 "import com.arellomobile.mvp.viewstate.strategy.StateStrategy;\n" +
+		                 "\n" +
+		                 "public class " + fullClassName.substring(fullClassName.lastIndexOf(".") + 1) + "$$State" + generic + " extends MvpViewState<" + mViewClassName + "> implements " + mViewClassName + interfaceGeneric + " {\n" +
+		                 "\tprivate ViewCommands<" + mViewClassName + "> mViewCommands = new ViewCommands<>();\n" +
+		                 "\n" +
+		                 "\t@Override\n" +
+		                 "\tpublic void restoreState(" + mViewClassName + " view) {\n" +
+		                 "\t\tif (mViewCommands.isEmpty()) {\n" +
+		                 "\t\t\treturn;\n" +
+		                 "\t\t}\n" +
+		                 "\n" +
+		                 "\t\tmViewCommands.reapply(view);\n" +
+		                 "\t}\n" +
+		                 "\n";
 
 		List<Method> methods = new ArrayList<>();
 
 		String stateStrategyType = getStateStrategyType(typeElement);
 
+		Map<String, String> types = new HashMap<>();
+		if (!typeElement.getTypeParameters().isEmpty()) {
+			for (TypeParameterElement typeParameterElement : typeElement.getTypeParameters()) {
+				types.put(typeParameterElement.toString(), typeParameterElement.toString());
+			}
+		}
+
 		// Get methods for input class
-		getMethods(Collections.<String, String>emptyMap(), typeElement, stateStrategyType, new ArrayList<Method>(), methods);
+		getMethods(types, typeElement, stateStrategyType, new ArrayList<Method>(), methods);
 
 		// Add methods from super intefaces
-		methods.addAll(iterateInterfaces(0, typeElement, stateStrategyType, Collections.<String, String>emptyMap(), methods, new ArrayList<Method>()));
+		methods.addAll(iterateInterfaces(0, typeElement, stateStrategyType, new HashMap<String, String>(), methods, new ArrayList<Method>()));
 
 		// Allow methods be with same names
 		Map<String, Integer> methodsCounter = new HashMap<>();
-		for (Method method : methods)
-		{
+		for (Method method : methods) {
 			Integer counter = methodsCounter.get(method.name);
 
-			if (counter == null || counter == 0)
-			{
+			if (counter == null || counter == 0) {
 				counter = 0;
 				method.uniqueName = method.name;
-			}
-			else
-			{
+			} else {
 				method.uniqueName = method.name + counter;
 			}
 
@@ -112,58 +111,60 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 			methodsCounter.put(method.name, counter);
 		}
 
-		for (Method method : methods)
-		{
+		for (Method method : methods) {
 			String throwTypesString = join(", ", method.thrownTypes);
-			if (throwTypesString.length() > 0)
-			{
+			if (throwTypesString.length() > 0) {
 				throwTypesString = " throws " + throwTypesString;
 			}
 
 			String fieldName = "params";
 			String argumentsString = "";
+			List<String> argumentNames = new ArrayList<>();
+
 			int index = 0;
-			for (Argument argument : method.arguments)
-			{
-				if (argument.name.equals(fieldName))
-				{
+			for (Argument argument : method.arguments) {
+				if (argument.name.equals(fieldName)) {
 					fieldName = "params" + index;
 				}
 
-				if (argumentsString.length() > 0)
-				{
+				if (argumentsString.length() > 0) {
 					argumentsString += ", ";
 				}
 				argumentsString += argument.name;
+				argumentNames.add(argument.name);
 				index++;
 			}
 
-			String argumentClassName = method.commandClassName;
-			String argumentsWrapperNewInstance = "new " + method.commandClassName + "(" + argumentsString + ");\n";
+
+			String commandFieldName = decapitalizeString(method.commandClassName);
+			String commandClassName = method.commandClassName;
+			String commandWrapperNewInstance = "new " + method.commandClassName + "(" + argumentsString + ");\n";
+
+			// Add salt if contains argument with same name
+			Random random = new Random();
+			while (argumentNames.contains(commandFieldName)) {
+				commandFieldName += random.nextInt(10);
+			}
 
 			builder += "\t@Override\n" +
-					"\tpublic " + method.genericType + " void " + method.name + "(" + join(", ", method.arguments) + ")" + throwTypesString + "\n" +
-					"\t{\n" +
-					"\t\t" + argumentClassName + " command = " + argumentsWrapperNewInstance +
-					"\t\tmViewCommands.beforeApply(command);\n" +
-					"\n" +
-					"\t\tif (mViews == null || mViews.isEmpty())\n" +
-					"\t\t{\n" +
-					"\t\t\treturn;\n" +
-					"\t\t}\n" +
-					"\n" +
-					"\t\tfor(" + mViewClassName + " view : mViews)\n" +
-					"\t\t{\n" +
-					"\t\t\tview." + method.name + "(" + argumentsString + ");\n" +
-					"\t\t}\n" +
-					"\n" +
-					"\t\tmViewCommands.afterApply(command);\n" +
-					"\t}\n" +
-					"\n";
+			           "\tpublic " + method.genericType + " void " + method.name + "(" + join(", ", method.arguments) + ")" + throwTypesString + " {\n" +
+			           "\t\t" + commandClassName + " " + commandFieldName + " = " + commandWrapperNewInstance +
+			           "\t\tmViewCommands.beforeApply(" + commandFieldName + ");\n" +
+			           "\n" +
+			           "\t\tif (mViews == null || mViews.isEmpty()) {\n" +
+			           "\t\t\treturn;\n" +
+			           "\t\t}\n" +
+			           "\n" +
+			           "\t\tfor(" + mViewClassName + " view : mViews) {\n" +
+			           "\t\t\tview." + method.name + "(" + argumentsString + ");\n" +
+			           "\t\t}\n" +
+			           "\n" +
+			           "\t\tmViewCommands.afterApply(" + commandFieldName + ");\n" +
+			           "\t}\n" +
+			           "\n";
 		}
 
-		if (!methods.isEmpty())
-		{
+		if (!methods.isEmpty()) {
 			builder = generateLocalViewCommand(mViewClassName, builder, methods);
 		}
 
@@ -175,31 +176,32 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 		return true;
 	}
 
-	private List<Method> iterateInterfaces(int level, TypeElement parentElement, String parentDefaultStrategy, Map<String, String> parentTypes, List<Method> rootMethods, List<Method> superinterfacesMethods)
-	{
-		for (TypeMirror typeMirror : parentElement.getInterfaces())
-		{
+	private List<Method> iterateInterfaces(int level, TypeElement parentElement, String parentDefaultStrategy, Map<String, String> parentTypes, List<Method> rootMethods, List<Method> superinterfacesMethods) {
+		for (TypeMirror typeMirror : parentElement.getInterfaces()) {
 			final TypeElement anInterface = (TypeElement) ((DeclaredType) typeMirror).asElement();
 
 			final List<? extends TypeMirror> typeArguments = ((DeclaredType) typeMirror).getTypeArguments();
 			final List<? extends TypeParameterElement> typeParameters = anInterface.getTypeParameters();
 
-			if (typeArguments.size() != typeParameters.size())
-			{
+			if (typeArguments.size() > typeParameters.size()) {
 				throw new IllegalArgumentException("Code generation for interface " + anInterface.getSimpleName() + " failed. Simplify your generics.");
 			}
 
 			Map<String, String> types = new HashMap<>();
-			for (int i = 0; i < typeArguments.size(); i++)
-			{
+			for (int i = 0; i < typeArguments.size(); i++) {
 				types.put(typeParameters.get(i).toString(), typeArguments.get(i).toString());
 			}
 
 			Map<String, String> totalInterfaceTypes = new HashMap<>(typeParameters.size());
-			for (int i = 0; i < typeArguments.size(); i++)
-			{
+			for (int i = 0; i < typeArguments.size(); i++) {
 				totalInterfaceTypes.put(typeParameters.get(i).toString(), fillGenerics(parentTypes, typeArguments.get(i)));
+			}
+			for (int i = typeArguments.size(); i < typeParameters.size(); i++) {
+				if (typeParameters.get(i).getBounds().size() != 1) {
+					throw new IllegalArgumentException("Code generation for interface " + anInterface.getSimpleName() + " failed. Simplify your generics.");
+				}
 
+				totalInterfaceTypes.put(typeParameters.get(i).toString(), typeParameters.get(i).getBounds().get(0).toString());
 			}
 
 			String defaultStrategy = parentDefaultStrategy != null ? parentDefaultStrategy : getStateStrategyType(anInterface);
@@ -212,42 +214,32 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 		return superinterfacesMethods;
 	}
 
-	private List<Method> getMethods(Map<String, String> types, TypeElement typeElement, String defaultStrategy, List<Method> rootMethods, List<Method> superinterfacesMethods)
-	{
-		for (Element element : typeElement.getEnclosedElements())
-		{
-			if (!(element instanceof ExecutableElement))
-			{
+	private List<Method> getMethods(Map<String, String> types, TypeElement typeElement, String defaultStrategy, List<Method> rootMethods, List<Method> superinterfacesMethods) {
+		for (Element element : typeElement.getEnclosedElements()) {
+			if (!(element instanceof ExecutableElement)) {
 				continue;
 			}
 
 			final ExecutableElement methodElement = (ExecutableElement) element;
 
-			if (!methodElement.getReturnType().toString().equals("void"))
-			{
+			if (!methodElement.getReturnType().toString().equals("void")) {
 				MvpCompiler.getMessager().printMessage(Diagnostic.Kind.ERROR, "You are trying generate ViewState for " + typeElement.getSimpleName() + ". But " + typeElement.getSimpleName() + " contains non-void method \"" + methodElement.getSimpleName() + "\" that return type is " + methodElement.getReturnType() + ". See more here: https://github.com/Arello-Mobile/Moxy/issues/2");
 			}
 
 			String strategyClass = defaultStrategy != null ? defaultStrategy : DEFAULT_STATE_STRATEGY;
 			String methodTag = "\"" + methodElement.getSimpleName() + "\"";
-			for (AnnotationMirror annotationMirror : methodElement.getAnnotationMirrors())
-			{
-				if (!annotationMirror.getAnnotationType().asElement().toString().equals(STATE_STRATEGY_TYPE_ANNOTATION))
-				{
+			for (AnnotationMirror annotationMirror : methodElement.getAnnotationMirrors()) {
+				if (!annotationMirror.getAnnotationType().asElement().toString().equals(STATE_STRATEGY_TYPE_ANNOTATION)) {
 					continue;
 				}
 
 				final Map<? extends ExecutableElement, ? extends AnnotationValue> elementValues = annotationMirror.getElementValues();
 				final Set<? extends ExecutableElement> keySet = elementValues.keySet();
 
-				for (ExecutableElement key : keySet)
-				{
-					if ("value()".equals(key.toString()))
-					{
+				for (ExecutableElement key : keySet) {
+					if ("value()".equals(key.toString())) {
 						strategyClass = elementValues.get(key).toString();
-					}
-					else if ("tag()".equals(key.toString()))
-					{
+					} else if ("tag()".equals(key.toString())) {
 						methodTag = elementValues.get(key).toString();
 					}
 				}
@@ -257,41 +249,32 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 
 			final ExecutableType executableType = (ExecutableType) methodElement.asType();
 			final List<? extends TypeVariable> typeVariables = executableType.getTypeVariables();
-			if (!typeVariables.isEmpty())
-			{
-				for (TypeVariable typeVariable : typeVariables)
-				{
+			if (!typeVariables.isEmpty()) {
+				for (TypeVariable typeVariable : typeVariables) {
 					methodTypes.put(typeVariable.asElement().toString(), typeVariable.asElement().toString());
 				}
 			}
 
 			String generics = "";
 
-			if (!typeVariables.isEmpty())
-			{
+			if (!typeVariables.isEmpty()) {
 				generics += "<";
-				for (TypeVariable typeVariable : typeVariables)
-				{
-					if (generics.length() > 1)
-					{
+				for (TypeVariable typeVariable : typeVariables) {
+					if (generics.length() > 1) {
 						generics += ", ";
 					}
 
 					final TypeMirror upperBound = typeVariable.getUpperBound();
 
-					if (upperBound.toString().equals(Object.class.getCanonicalName()))
-					{
+					if (upperBound.toString().equals(Object.class.getCanonicalName())) {
 						generics += typeVariable.asElement();
 						continue;
 					}
 
 					final String filledGeneric = fillGenerics(methodTypes, upperBound);
-					if (filledGeneric.startsWith("?"))
-					{
+					if (filledGeneric.startsWith("?")) {
 						generics += filledGeneric.replaceFirst("\\?", typeVariable.asElement().toString());
-					}
-					else
-					{
+					} else {
 						generics += typeVariable.asElement() + " extends " + filledGeneric;
 					}
 				}
@@ -301,34 +284,28 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 			final List<? extends VariableElement> parameters = methodElement.getParameters();
 
 			List<Argument> arguments = new ArrayList<>();
-			for (VariableElement parameter : parameters)
-			{
+			for (VariableElement parameter : parameters) {
 				arguments.add(new Argument(fillGenerics(methodTypes, parameter.asType()), parameter.toString()));
 			}
 
 			List<String> throwTypes = new ArrayList<>();
-			for (TypeMirror typeMirror : methodElement.getThrownTypes())
-			{
+			for (TypeMirror typeMirror : methodElement.getThrownTypes()) {
 				throwTypes.add(fillGenerics(methodTypes, typeMirror));
 			}
 
 			final Method method = new Method(generics, methodElement.getSimpleName().toString(), arguments, throwTypes, strategyClass, methodTag, getClassName(typeElement));
 
-			if (rootMethods.contains(method))
-			{
+			if (rootMethods.contains(method)) {
 				continue;
 			}
 
-			if (superinterfacesMethods.contains(method))
-			{
+			if (superinterfacesMethods.contains(method)) {
 				final Method existingMethod = superinterfacesMethods.get(superinterfacesMethods.indexOf(method));
 
-				if (!existingMethod.stateStrategy.equals(method.stateStrategy))
-				{
+				if (!existingMethod.stateStrategy.equals(method.stateStrategy)) {
 					throw new IllegalStateException("Both " + existingMethod.enclosedClass + " and " + method.enclosedClass + " has method " + method.name + "(" + method.arguments.toString().substring(1, method.arguments.toString().length() - 1) + ") with difference strategies. Override this method in " + mViewClassName + " or make strategies equals");
 				}
-				if (!existingMethod.tag.equals(method.tag))
-				{
+				if (!existingMethod.tag.equals(method.tag)) {
 					throw new IllegalStateException("Both " + existingMethod.enclosedClass + " and " + method.enclosedClass + " has method " + method.name + "(" + method.arguments.toString().substring(1, method.arguments.toString().length() - 1) + ") with difference tags. Override this method in " + mViewClassName + " or make tags equals");
 				}
 
@@ -341,13 +318,11 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 		return superinterfacesMethods;
 	}
 
-	private String getClassName(TypeElement typeElement)
-	{
+	private String getClassName(TypeElement typeElement) {
 		String name = typeElement.getSimpleName().toString();
 
 		Element enclosingElement = typeElement.getEnclosingElement();
-		while (enclosingElement != null && enclosingElement.getKind() == ElementKind.CLASS)
-		{
+		while (enclosingElement != null && enclosingElement.getKind() == ElementKind.CLASS) {
 			name = enclosingElement.getSimpleName() + "." + name;
 			enclosingElement = enclosingElement.getEnclosingElement();
 		}
@@ -355,15 +330,11 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 		return name;
 	}
 
-	private String generateLocalViewCommand(String viewClassName, String builder, List<Method> methods)
-	{
-		for (Method method : methods)
-		{
+	private String generateLocalViewCommand(String viewClassName, String builder, List<Method> methods) {
+		for (Method method : methods) {
 			String argumentsString = "";
-			for (Argument argument : method.arguments)
-			{
-				if (argumentsString.length() > 0)
-				{
+			for (Argument argument : method.arguments) {
+				if (argumentsString.length() > 0) {
 					argumentsString += ", ";
 				}
 
@@ -372,51 +343,41 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 
 			String argumentsInit = "";
 			String argumentsBind = "";
-			for (Argument argument : method.arguments)
-			{
+			for (Argument argument : method.arguments) {
 				argumentsInit += "\t\tpublic final " + argument.type + " " + argument.name + ";\n";
 				argumentsBind += "\t\t\tthis." + argument.name + " = " + argument.name + ";\n";
 			}
-			if (!argumentsInit.isEmpty())
-			{
+			if (!argumentsInit.isEmpty()) {
 				argumentsInit += "\n";
 			}
 
-			builder += "\n\tprivate class " + method.commandClassName + method.genericType + " extends ViewCommand<" + viewClassName + ">\n" +
-					"\t{\n" +
-					argumentsInit +
-					"\t\t" + method.commandClassName + "(" + join(", ", method.arguments) + ")\n" +
-					"\t\t{\n" +
-					"\t\t\tsuper(" + method.tag + ", " + method.stateStrategy + ");\n" +
-					argumentsBind +
-					"\t\t}\n" +
-					"\n" +
-					"\t\t@Override\n" +
-					"\t\tpublic void apply(" + viewClassName + " mvpView)\n" +
-					"\t\t{\n" +
-					"\t\t\tmvpView." + method.name + "(" + argumentsString + ");\n" +
-					"\t\t}\n" +
-					"\t}\n";
+			builder += "\n\tpublic class " + method.commandClassName + method.genericType + " extends ViewCommand<" + viewClassName + "> {\n" +
+			           argumentsInit +
+			           "\t\t" + method.commandClassName + "(" + join(", ", method.arguments) + ") {\n" +
+			           "\t\t\tsuper(" + method.tag + ", " + method.stateStrategy + ");\n" +
+			           argumentsBind +
+			           "\t\t}\n" +
+			           "\n" +
+			           "\t\t@Override\n" +
+			           "\t\tpublic void apply(" + viewClassName + " mvpView) {\n" +
+			           "\t\t\tmvpView." + method.name + "(" + argumentsString + ");\n" +
+			           "\t\t}\n" +
+			           "\t}\n";
 		}
 		return builder;
 	}
 
-	public String getStateStrategyType(TypeElement typeElement)
-	{
-		for (AnnotationMirror annotationMirror : typeElement.getAnnotationMirrors())
-		{
-			if (!annotationMirror.getAnnotationType().asElement().toString().equals(STATE_STRATEGY_TYPE_ANNOTATION))
-			{
+	public String getStateStrategyType(TypeElement typeElement) {
+		for (AnnotationMirror annotationMirror : typeElement.getAnnotationMirrors()) {
+			if (!annotationMirror.getAnnotationType().asElement().toString().equals(STATE_STRATEGY_TYPE_ANNOTATION)) {
 				continue;
 			}
 
 			final Map<? extends ExecutableElement, ? extends AnnotationValue> elementValues = annotationMirror.getElementValues();
 			final Set<? extends ExecutableElement> keySet = elementValues.keySet();
 
-			for (ExecutableElement key : keySet)
-			{
-				if ("value()".equals(key.toString()))
-				{
+			for (ExecutableElement key : keySet) {
+				if ("value()".equals(key.toString())) {
 					return elementValues.get(key).toString();
 				}
 			}
@@ -425,8 +386,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 		return null;
 	}
 
-	private static class Method
-	{
+	private static class Method {
 		String genericType;
 		String name;
 		String uniqueName; // required for methods with same name but difference params
@@ -437,8 +397,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 		String tag;
 		String enclosedClass;
 
-		Method(String genericType, String name, List<Argument> arguments, List<String> thrownTypes, String stateStrategy, String methodTag, String enclosedClass)
-		{
+		Method(String genericType, String name, List<Argument> arguments, List<String> thrownTypes, String stateStrategy, String methodTag, String enclosedClass) {
 			this.genericType = genericType;
 			this.name = name;
 			this.arguments = arguments;
@@ -449,56 +408,59 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 		}
 
 		@Override
-		public boolean equals(Object o)
-		{
-			if (this == o) return true;
-			if (o == null || getClass() != o.getClass()) return false;
+		public boolean equals(Object o) {
+			if (this == o) {
+				return true;
+			}
+			if (o == null || getClass() != o.getClass()) {
+				return false;
+			}
 
 			Method method = (Method) o;
 
 			//noinspection SimplifiableIfStatement
-			if (name != null ? !name.equals(method.name) : method.name != null) return false;
+			if (name != null ? !name.equals(method.name) : method.name != null) {
+				return false;
+			}
 			return !(arguments != null ? !arguments.equals(method.arguments) : method.arguments != null);
 
 		}
 
 		@Override
-		public int hashCode()
-		{
+		public int hashCode() {
 			int result = name != null ? name.hashCode() : 0;
 			result = 31 * result + (arguments != null ? arguments.hashCode() : 0);
 			return result;
 		}
 
 		@Override
-		public String toString()
-		{
-			return "Method{ " + genericType + " void " + name + '(' + arguments + ") throws " + thrownTypes + '}';
+		public String toString() {
+			return "Method { " + genericType + " void " + name + '(' + arguments + ") throws " + thrownTypes + '}';
 		}
 	}
 
-	private static class Argument
-	{
+	private static class Argument {
 		String type;
 		String name;
 
-		public Argument(String type, String name)
-		{
+		public Argument(String type, String name) {
 			this.type = type;
 			this.name = name;
 		}
 
 		@Override
-		public String toString()
-		{
+		public String toString() {
 			return type + " " + name;
 		}
 
 		@Override
-		public boolean equals(Object o)
-		{
-			if (this == o) return true;
-			if (o == null || getClass() != o.getClass()) return false;
+		public boolean equals(Object o) {
+			if (this == o) {
+				return true;
+			}
+			if (o == null || getClass() != o.getClass()) {
+				return false;
+			}
 
 			Argument argument = (Argument) o;
 
@@ -506,28 +468,26 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement>
 		}
 
 		@Override
-		public int hashCode()
-		{
+		public int hashCode() {
 			return type != null ? type.hashCode() : 0;
 		}
 	}
 
-	public static String join(CharSequence delimiter, Iterable tokens)
-	{
+	public static String join(CharSequence delimiter, Iterable tokens) {
 		StringBuilder sb = new StringBuilder();
 		boolean firstTime = true;
-		for (Object token : tokens)
-		{
-			if (firstTime)
-			{
+		for (Object token : tokens) {
+			if (firstTime) {
 				firstTime = false;
-			}
-			else
-			{
+			} else {
 				sb.append(delimiter);
 			}
 			sb.append(token);
 		}
 		return sb.toString();
+	}
+
+	public static String decapitalizeString(String string) {
+		return string == null || string.isEmpty() ? "" : string.length() == 1 ? string.toLowerCase() : Character.toLowerCase(string.charAt(0)) + string.substring(1);
 	}
 }

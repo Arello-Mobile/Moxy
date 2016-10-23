@@ -12,6 +12,5 @@ import view.PositiveViewStateView;
  * @author Savin Mikhail
  */
 @InjectViewState
-public class PositiveViewStateProviderForNotPresenter
-{
+public class PositiveViewStateProviderForNotPresenter {
 }

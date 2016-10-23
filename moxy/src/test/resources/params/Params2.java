@@ -10,7 +10,6 @@ import com.arellomobile.mvp.factory.MockPresenterFactory;
  * @author Savin Mikhail
  */
 @ParamsProvider(MockPresenterFactory.class)
-public interface Params2
-{
+public interface Params2 {
 	String mockParams2(String presenterId);
 }

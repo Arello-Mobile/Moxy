@@ -102,7 +102,7 @@ def getBasePom(String libName) {
         }
     }
 
-    return basePom.withXml{
+    return basePom.withXml {
 
         asNode().dependencies.'*'.findAll() {
             it.version.text() == 'unspecified' && project.configurations.compile.allDependencies.find { dep ->
@@ -179,7 +179,6 @@ task createPomXml << {
         asNode().artifactId*.value = targetArtefactIdDev
 
 
-
     }.writeTo(publishDir + "/" + targetArtefactIdDev + ".pom")
 
     //creating global pom
@@ -205,8 +204,6 @@ task createPomXml << {
                 }
             }
         }
-
-
 
 
     }.writeTo(publishMavenDir + "/" + targetArtefactId + ".pom")

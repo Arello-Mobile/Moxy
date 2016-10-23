@@ -13,13 +13,11 @@ import com.arellomobile.mvp.MvpView;
  *
  * @author Yuri Shmakov
  */
-public abstract class MvpViewState<View extends MvpView>
-{
+public abstract class MvpViewState<View extends MvpView> {
 	protected Set<View> mViews;
 	protected Set<View> mInRestoreState;
 
-	public MvpViewState()
-	{
+	public MvpViewState() {
 		mViews = Collections.newSetFromMap(new WeakHashMap<View, Boolean>());
 		mInRestoreState = Collections.newSetFromMap(new WeakHashMap<View, Boolean>());
 	}
@@ -36,17 +34,14 @@ public abstract class MvpViewState<View extends MvpView>
 	 *
 	 * @param view attachment
 	 */
-	public void attachView(View view)
-	{
-		if (view == null)
-		{
+	public void attachView(View view) {
+		if (view == null) {
 			throw new IllegalArgumentException("Mvp view must be not null");
 		}
 
 		boolean isViewAdded = mViews.add(view);
 
-		if (!isViewAdded)
-		{
+		if (!isViewAdded) {
 			return;
 		}
 
@@ -64,8 +59,7 @@ public abstract class MvpViewState<View extends MvpView>
 	 *
 	 * @param view target mvp view to detach
 	 */
-	public void detachView(View view)
-	{
+	public void detachView(View view) {
 		mViews.remove(view);
 		mInRestoreState.remove(view);
 	}
@@ -73,8 +67,7 @@ public abstract class MvpViewState<View extends MvpView>
 	/**
 	 * @return views, attached to this view state instance
 	 */
-	public Set<View> getViews()
-	{
+	public Set<View> getViews() {
 		return mViews;
 	}
 
@@ -84,8 +77,7 @@ public abstract class MvpViewState<View extends MvpView>
 	 * @param view view for check
 	 * @return true if view state restore state to incoming view. false otherwise.
 	 */
-	public boolean isInRestoreState(View view)
-	{
+	public boolean isInRestoreState(View view) {
 		return mInRestoreState.contains(view);
 	}
 }

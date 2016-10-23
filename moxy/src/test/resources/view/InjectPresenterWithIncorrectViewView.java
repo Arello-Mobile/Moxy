@@ -10,8 +10,7 @@ import com.arellomobile.mvp.presenter.TestViewPresenter;
  *
  * @author Savin Mikhail
  */
-public class InjectPresenterWithIncorrectViewView implements MvpView
-{
+public class InjectPresenterWithIncorrectViewView implements MvpView {
 	@InjectPresenter
 	public TestViewPresenter mTestViewPresenter;
 }

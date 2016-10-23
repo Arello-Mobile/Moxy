@@ -6,6 +6,5 @@ package com.arellomobile.mvp.presenter;
  *
  * @author Savin Mikhail
  */
-public class NoViewStatePresenter extends TestViewPresenter
-{
+public class NoViewStatePresenter extends TestViewPresenter {
 }

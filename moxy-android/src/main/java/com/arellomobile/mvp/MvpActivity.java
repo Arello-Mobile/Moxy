@@ -11,39 +11,37 @@ import android.os.Bundle;
  * @author Alexander Bliniov
  * @author Konstantin Tckhovrebov
  */
-public class MvpActivity extends Activity
-{
+public class MvpActivity extends Activity {
 	private MvpDelegate<? extends MvpActivity> mMvpDelegate;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		getMvpDelegate().onCreate(savedInstanceState);
 	}
 
 	@Override
-	protected void onDestroy()
-	{
+	protected void onDestroy() {
 		super.onDestroy();
 
 		getMvpDelegate().onDetach();
-		getMvpDelegate().onDestroy();
+
+		if (isFinishing()) {
+			getMvpDelegate().onDestroy();
+		}
 	}
 
 
 	@Override
-	protected void onSaveInstanceState(Bundle outState)
-	{
+	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 
 		getMvpDelegate().onSaveInstanceState(outState);
 	}
 
 	@Override
-	protected void onStart()
-	{
+	protected void onStart() {
 		super.onStart();
 
 		getMvpDelegate().onAttach();
@@ -52,10 +50,8 @@ public class MvpActivity extends Activity
 	/**
 	 * @return The {@link MvpDelegate} being used by this Activity.
 	 */
-	public MvpDelegate getMvpDelegate()
-	{
-		if (mMvpDelegate == null)
-		{
+	public MvpDelegate getMvpDelegate() {
+		if (mMvpDelegate == null) {
 			mMvpDelegate = new MvpDelegate<>(this);
 		}
 		return mMvpDelegate;

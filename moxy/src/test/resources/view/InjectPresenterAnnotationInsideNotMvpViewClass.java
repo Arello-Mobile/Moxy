@@ -10,8 +10,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
  *
  * @author Savin Mikhail
  */
-public class InjectPresenterAnnotationInsideNotMvpViewClass
-{
+public class InjectPresenterAnnotationInsideNotMvpViewClass {
 	@InjectPresenter
 	public MvpPresenter<MvpView> mObject;
 }

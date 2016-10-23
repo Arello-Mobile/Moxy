@@ -12,19 +12,15 @@ import com.arellomobile.mvp.viewstate.ViewCommand;
  *
  * @author Yuri Shmakov
  */
-public class AddToEndSingleStrategy implements StateStrategy
-{
+public class AddToEndSingleStrategy implements StateStrategy {
 	@Override
-	public <View extends MvpView> void beforeApply(List<ViewCommand<View>> currentState, ViewCommand<View> incomingCommand)
-	{
+	public <View extends MvpView> void beforeApply(List<ViewCommand<View>> currentState, ViewCommand<View> incomingCommand) {
 		Iterator<ViewCommand<View>> iterator = currentState.iterator();
 
-		while (iterator.hasNext())
-		{
+		while (iterator.hasNext()) {
 			ViewCommand<View> entry = iterator.next();
 
-			if (entry.getClass() == incomingCommand.getClass())
-			{
+			if (entry.getClass() == incomingCommand.getClass()) {
 				iterator.remove();
 				break;
 			}
@@ -34,8 +30,7 @@ public class AddToEndSingleStrategy implements StateStrategy
 	}
 
 	@Override
-	public <View extends MvpView> void afterApply(List<ViewCommand<View>> currentState, ViewCommand<View> incomingCommand)
-	{
+	public <View extends MvpView> void afterApply(List<ViewCommand<View>> currentState, ViewCommand<View> incomingCommand) {
 		// pass
 	}
 }

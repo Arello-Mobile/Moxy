@@ -6,12 +6,10 @@ package com.arellomobile.mvp;
  *
  * @author Yuri Shmakov
  */
-public class ViewStateClassNameProvider
-{
+public class ViewStateClassNameProvider {
 	private final String viewStateClassName;
 
-	public ViewStateClassNameProvider(String viewStateClassName)
-	{
+	public ViewStateClassNameProvider(String viewStateClassName) {
 		this.viewStateClassName = viewStateClassName;
 	}
 
@@ -20,8 +18,7 @@ public class ViewStateClassNameProvider
 	 *
 	 * @return view state class name
 	 */
-	public String getViewStateClassName()
-	{
+	public String getViewStateClassName() {
 		return viewStateClassName;
 	}
 }

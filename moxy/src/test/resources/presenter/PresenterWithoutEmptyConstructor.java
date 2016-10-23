@@ -9,10 +9,9 @@ import com.arellomobile.mvp.MvpView;
  *
  * @author Savin Mikhail
  */
-public class PresenterWithoutEmptyConstructor<V extends MvpView> extends MvpPresenter<V>
-{
+public class PresenterWithoutEmptyConstructor<V extends MvpView> extends MvpPresenter<V> {
 
-	public PresenterWithoutEmptyConstructor (String s) {/*do nothing*/}
+	public PresenterWithoutEmptyConstructor(String s) {/*do nothing*/}
 
-	private PresenterWithoutEmptyConstructor () {/*do nothing*/}
+	private PresenterWithoutEmptyConstructor() {/*do nothing*/}
 }

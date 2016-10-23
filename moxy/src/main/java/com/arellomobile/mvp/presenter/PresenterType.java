@@ -6,7 +6,8 @@ package com.arellomobile.mvp.presenter;
  *
  * @author Alexander Blinov
  */
-public enum PresenterType
-{
-	LOCAL, WEAK, GLOBAL
+public enum PresenterType {
+	LOCAL,
+	WEAK,
+	GLOBAL
 }

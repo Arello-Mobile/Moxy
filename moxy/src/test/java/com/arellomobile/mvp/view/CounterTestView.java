@@ -9,21 +9,16 @@ import java.util.Map;
  *
  * @author Savin Mikhail
  */
-public class CounterTestView implements TestView
-{
+public class CounterTestView implements TestView {
 
 	public final Map<String, Integer> counterEvents = new HashMap<>();
 
 	@Override
-	public void testEvent()
-	{
+	public void testEvent() {
 		String testEvent = "testEvent";
-		if (counterEvents.containsKey(testEvent))
-		{
+		if (counterEvents.containsKey(testEvent)) {
 			counterEvents.put(testEvent, counterEvents.get(testEvent) + 1);
-		}
-		else
-		{
+		} else {
 			counterEvents.put(testEvent, 1);
 		}
 	}

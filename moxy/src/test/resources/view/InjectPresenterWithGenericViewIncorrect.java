@@ -13,12 +13,11 @@ import presenter.WithViewGenericPresenter;
  *
  * @author Savin Mikhail
  */
-public class InjectPresenterWithGenericViewIncorrect extends TestViewChild2<MvpView>
-{
+public class InjectPresenterWithGenericViewIncorrect extends TestViewChild2<MvpView> {
 	@InjectPresenter
-	WithViewGenericPresenter<CounterTestView, InjectPresenterWithGenericViewIncorrect>  mPresenter;
+	WithViewGenericPresenter<CounterTestView, InjectPresenterWithGenericViewIncorrect> mPresenter;
 
-	public void testEvent(){
+	public void testEvent() {
 
 	}
 }

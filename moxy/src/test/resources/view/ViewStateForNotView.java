@@ -9,6 +9,5 @@ import com.arellomobile.mvp.GenerateViewState;
  * @author Savin Mikhail
  */
 @GenerateViewState
-public interface ViewStateForNotView
-{
+public interface ViewStateForNotView {
 }

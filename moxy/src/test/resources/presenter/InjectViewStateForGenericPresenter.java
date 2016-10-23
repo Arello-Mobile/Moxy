@@ -11,6 +11,5 @@ import com.arellomobile.mvp.view.CounterTestView;
  * @author Savin Mikhail
  */
 @InjectViewState
-public class InjectViewStateForGenericPresenter<T extends CounterTestView> extends MvpPresenter<T>
-{
+public class InjectViewStateForGenericPresenter<T extends CounterTestView> extends MvpPresenter<T> {
 }

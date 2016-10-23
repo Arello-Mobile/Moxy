@@ -6,6 +6,5 @@ package com.arellomobile.mvp;
  *
  * @author Yuri Shmakov
  */
-public interface MvpView
-{
+public interface MvpView {
 }

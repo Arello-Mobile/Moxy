@@ -12,6 +12,5 @@ import view.ViewStateChildWithIncorrectStrategyClassView;
  * @author Savin Mikhail
  */
 @InjectViewState
-public class ViewStateChildWithIncorrectStrategyClassPresenter extends MvpPresenter<ViewStateChildWithIncorrectStrategyClassView>
-{
+public class ViewStateChildWithIncorrectStrategyClassPresenter extends MvpPresenter<ViewStateChildWithIncorrectStrategyClassView> {
 }

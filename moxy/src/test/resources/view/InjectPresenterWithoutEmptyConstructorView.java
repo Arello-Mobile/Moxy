@@ -11,8 +11,7 @@ import presenter.PresenterWithoutEmptyConstructor;
  *
  * @author Savin Mikhail
  */
-public class InjectPresenterWithoutEmptyConstructorView implements MvpView
-{
+public class InjectPresenterWithoutEmptyConstructorView implements MvpView {
 
 	@InjectPresenter
 	public PresenterWithoutEmptyConstructor<InjectPresenterWithoutEmptyConstructorView> mPresenterWithoutEmptyConstructorViewPresenterWithoutEmptyConstructor;

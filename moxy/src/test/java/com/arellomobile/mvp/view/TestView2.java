@@ -8,7 +8,6 @@ import com.arellomobile.mvp.MvpView;
  *
  * @author Savin Mikhail
  */
-public interface TestView2 extends MvpView
-{
+public interface TestView2 extends MvpView {
 	void testEvent(Object o);
 }

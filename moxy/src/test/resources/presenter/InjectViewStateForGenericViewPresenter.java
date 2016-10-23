@@ -12,6 +12,5 @@ import view.ViewStateForGenericView;
  * @author Savin Mikhail
  */
 @InjectViewState
-public class InjectViewStateForGenericViewPresenter extends MvpPresenter<ViewStateForGenericView<Object>>
-{
+public class InjectViewStateForGenericViewPresenter extends MvpPresenter<ViewStateForGenericView<Object>> {
 }

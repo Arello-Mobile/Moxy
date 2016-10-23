@@ -8,6 +8,5 @@ import com.arellomobile.mvp.MvpView;
  *
  * @author Savin Mikhail
  */
-public abstract class TestViewChild2<T extends MvpView> extends TestViewChild<T>
-{
+public abstract class TestViewChild2<T extends MvpView> extends TestViewChild<T> {
 }

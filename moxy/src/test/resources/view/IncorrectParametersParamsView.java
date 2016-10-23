@@ -14,14 +14,12 @@ import params.IncorrectParametersParams;
  *
  * @author Savin Mikhail
  */
-public class IncorrectParametersParamsView implements MvpView, IncorrectParametersParams
-{
+public class IncorrectParametersParamsView implements MvpView, IncorrectParametersParams {
 	@InjectPresenter(factory = MockPresenterFactory.class, presenterId = "Test", type = PresenterType.LOCAL)
 	public InjectViewStatePresenter mInjectViewStatePresenter;
 
 	@Override
-	public void method1(final Integer i)
-	{
+	public void method1(final Integer i) {
 
 	}
 }

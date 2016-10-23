@@ -9,7 +9,6 @@ import com.arellomobile.mvp.InjectViewState;
  * @author Savin Mikhail
  */
 @InjectViewState
-public class InjectViewStatePresenter extends TestViewPresenter
-{
+public class InjectViewStatePresenter extends TestViewPresenter {
 
 }

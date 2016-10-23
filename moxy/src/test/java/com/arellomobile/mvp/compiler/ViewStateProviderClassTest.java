@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 import javax.tools.Diagnostic;
 
+
 import static org.junit.Assert.fail;
 
 /**
@@ -20,31 +21,22 @@ import static org.junit.Assert.fail;
  *
  * @author Savin Mikhail
  */
-public class ViewStateProviderClassTest extends CompilerTest
-{
+public class ViewStateProviderClassTest extends CompilerTest {
 	@Test
-	public void positiveViewStateProvider()
-	{
-		try
-		{
+	public void positiveViewStateProvider() {
+		try {
 			assertCompilationResultIs(ImmutableTable.<Diagnostic.Kind, Integer, Pattern>of(), ImmutableList.of(getString("com/arellomobile/mvp/presenter/PositiveViewStateProviderPresenter$$ViewStateClassNameProvider.java")));
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			fail(e.getLocalizedMessage());
 		}
 	}
 
 	@Test
-	public void viewStateProviderForNotPresenter_throw()
-	{
-		try
-		{
+	public void viewStateProviderForNotPresenter_throw() {
+		try {
 			getThat(JavaFileObjects.forResource("presenter/PositiveViewStateProviderForNotPresenter.java")).failsToCompile();
 			fail();
-		}
-		catch (RuntimeException e)
-		{
+		} catch (RuntimeException e) {
 			Truth.assertThat(e.getLocalizedMessage().contains(" doesn't know, what is target MvpView type of this presenter."));
 		}
 	}

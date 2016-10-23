@@ -13,8 +13,7 @@ import presenter.PositiveParamsViewPresenter;
  *
  * @author Savin Mikhail
  */
-public class InjectPresenterTypeBehaviorView implements MvpView
-{
+public class InjectPresenterTypeBehaviorView implements MvpView {
 	@InjectPresenter(tag = "", type = PresenterType.LOCAL)
 	private PositiveParamsViewPresenter<InjectPresenterTypeBehaviorView> mTagLocalPresenter;
 

@@ -11,6 +11,5 @@ import com.arellomobile.mvp.view.TestView2;
  * @author Savin Mikhail
  */
 @InjectViewState
-public class InjectViewStatePresenter2 extends MvpPresenter<TestView2>
-{
+public class InjectViewStatePresenter2 extends MvpPresenter<TestView2> {
 }

@@ -8,6 +8,5 @@ import com.arellomobile.mvp.MvpView;
  *
  * @author Savin Mikhail
  */
-public interface WithoutGenerateViewAnnotationView extends MvpView
-{
+public interface WithoutGenerateViewAnnotationView extends MvpView {
 }

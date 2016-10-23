@@ -9,9 +9,8 @@ import com.arellomobile.mvp.view.TestView;
  *
  * @author Savin Mikhail
  */
-public class TestViewPresenter extends MvpPresenter<TestView>
-{
-	public void testEvent(){
+public class TestViewPresenter extends MvpPresenter<TestView> {
+	public void testEvent() {
 		getViewState().testEvent();
 	}
 }

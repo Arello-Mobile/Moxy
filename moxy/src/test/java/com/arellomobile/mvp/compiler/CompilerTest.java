@@ -34,6 +34,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -44,42 +45,36 @@ import static org.junit.Assert.fail;
  *
  * @author Savin Mikhail
  */
-public abstract class CompilerTest
-{
+public abstract class CompilerTest {
 	private JavaCompiler javac;
 	private DiagnosticCollector<JavaFileObject> diagnosticCollector;
 	private StandardJavaFileManager fileManager;
 	private File tmpDir;
 
 	@Before
-	public void setUp()
-	{
+	public void setUp() {
 		javac = ToolProvider.getSystemJavaCompiler();
 		diagnosticCollector = new DiagnosticCollector<>();
 		fileManager = javac.getStandardFileManager(diagnosticCollector, null, null);
 		tmpDir = Files.createTempDir();
 	}
 
-	protected CompileTester getThat(final JavaFileObject... target)
-	{
+	protected CompileTester getThat(final JavaFileObject... target) {
 		return getThat(Collections.singletonList(new MvpCompiler()), target);
 	}
 
-	protected CompileTester getThat(Collection<? extends Processor> processors, final JavaFileObject... target)
-	{
+	protected CompileTester getThat(Collection<? extends Processor> processors, final JavaFileObject... target) {
 		return Truth.assert_().about(JavaSourcesSubjectFactory.javaSources())
 				.that(Arrays.asList(target))
 				.processedWith(processors);
 	}
 
-	protected String getString(String filePath) throws IOException
-	{
+	protected String getString(String filePath) throws IOException {
 
 		URL resource = Resources.getResource(filePath);
 		Scanner scanner = new Scanner(new ByteArrayInputStream(Resources.toByteArray(resource)));
 		StringBuilder stringBuilder = new StringBuilder();
-		while (scanner.hasNextLine())
-		{
+		while (scanner.hasNextLine()) {
 			stringBuilder.append(scanner.nextLine());
 			stringBuilder.append("\n");
 		}
@@ -87,14 +82,12 @@ public abstract class CompilerTest
 		return stringBuilder.toString();
 	}
 
-	protected void assertCompilationResultIs(Table<Diagnostic.Kind, Integer, Pattern> expectedDiagnostics, Collection<String> resources) throws IOException
-	{
+	protected void assertCompilationResultIs(Table<Diagnostic.Kind, Integer, Pattern> expectedDiagnostics, Collection<String> resources) throws IOException {
 		assertCompilationResultIs(expectedDiagnostics, resources, MvpCompiler.class);
 	}
 
 	//For more info see https://github.com/google/auto/blob/master/value/src/test/java/com/google/auto/value/processor/CompilationErrorsTest.java
-	protected void assertCompilationResultIs(Table<Diagnostic.Kind, Integer, Pattern> expectedDiagnostics, Collection<String> resources, final Class<? extends Processor> processor) throws IOException
-	{
+	protected void assertCompilationResultIs(Table<Diagnostic.Kind, Integer, Pattern> expectedDiagnostics, Collection<String> resources, final Class<? extends Processor> processor) throws IOException {
 		StringWriter compilerOut = new StringWriter();
 
 		List<String> options = ImmutableList.of(
@@ -109,8 +102,7 @@ public abstract class CompilerTest
 		// can feed to the compiler.
 		List<String> classNames = Lists.newArrayList();
 		List<JavaFileObject> sourceFiles = Lists.newArrayList();
-		for (String source : resources)
-		{
+		for (String source : resources) {
 			ClassName className = ClassName.extractFromSource(source);
 			File dir = new File(tmpDir, className.sourceDirectoryName());
 			dir.mkdirs();
@@ -133,14 +125,12 @@ public abstract class CompilerTest
 		// We ignore "notes", typically debugging output from the annotation processor
 		// when that is enabled.
 		Table<Diagnostic.Kind, Integer, String> diagnostics = HashBasedTable.create();
-		for (Diagnostic<?> diagnostic : diagnosticCollector.getDiagnostics())
-		{
+		for (Diagnostic<?> diagnostic : diagnosticCollector.getDiagnostics()) {
 			boolean ignore = (diagnostic.getKind() == Diagnostic.Kind.NOTE
-					|| (diagnostic.getKind() == Diagnostic.Kind.WARNING
-					&& diagnostic.getMessage(null).contains(
+			                  || (diagnostic.getKind() == Diagnostic.Kind.WARNING
+			                      && diagnostic.getMessage(null).contains(
 					"No processor claimed any of these annotations")));
-			if (!ignore)
-			{
+			if (!ignore) {
 				diagnostics.put(
 						diagnostic.getKind(), (int) diagnostic.getLineNumber(), diagnostic.getMessage(null));
 			}
@@ -149,22 +139,17 @@ public abstract class CompilerTest
 		assertEquals("Diagnostic kinds should match: " + diagnostics,
 				expectedDiagnostics.rowKeySet(), diagnostics.rowKeySet());
 		for (Table.Cell<Diagnostic.Kind, Integer, Pattern> expectedDiagnostic :
-				expectedDiagnostics.cellSet())
-		{
+				expectedDiagnostics.cellSet()) {
 			boolean match = false;
-			for (Table.Cell<Diagnostic.Kind, Integer, String> diagnostic : diagnostics.cellSet())
-			{
+			for (Table.Cell<Diagnostic.Kind, Integer, String> diagnostic : diagnostics.cellSet()) {
 
-				if (expectedDiagnostic.getValue().matcher(diagnostic.getValue()).find())
-				{
+				if (expectedDiagnostic.getValue().matcher(diagnostic.getValue()).find()) {
 					int expectedLine = expectedDiagnostic.getColumnKey();
-					if (expectedLine != 0)
-					{
+					if (expectedLine != 0) {
 						int actualLine = diagnostic.getColumnKey();
-						if (actualLine != expectedLine)
-						{
+						if (actualLine != expectedLine) {
 							fail("Diagnostic matched pattern but on line " + actualLine
-									+ " not line " + expectedLine + ": " + diagnostic.getValue());
+							     + " not line " + expectedLine + ": " + diagnostic.getValue());
 						}
 					}
 					match = true;
@@ -175,29 +160,23 @@ public abstract class CompilerTest
 		}
 	}
 
-	private static class ClassName
-	{
+	private static class ClassName {
 		final String packageName; // Package name with trailing dot. May be empty but not null.
 		final String simpleName;
 
-		private ClassName(String packageName, String simpleName)
-		{
+		private ClassName(String packageName, String simpleName) {
 			this.packageName = packageName;
 			this.simpleName = simpleName;
 		}
 
 		// Extract the package and simple name of the top-level class defined in the given string,
 		// which is a Java sourceUnit unit.
-		static ClassName extractFromSource(String sourceUnit)
-		{
+		static ClassName extractFromSource(String sourceUnit) {
 			String pkg;
-			if (sourceUnit.contains("package "))
-			{
+			if (sourceUnit.contains("package ")) {
 				// (?s) means that . matches everything including \n
 				pkg = sourceUnit.replaceAll("(?s).*?package ([a-z.]+);.*", "$1") + ".";
-			}
-			else
-			{
+			} else {
 				pkg = "";
 			}
 			String cls = sourceUnit.replaceAll("(?s).*?(class|interface|enum) ([A-Za-z0-9_$]+).*", "$2");
@@ -205,13 +184,11 @@ public abstract class CompilerTest
 			return new ClassName(pkg, cls);
 		}
 
-		String fullName()
-		{
+		String fullName() {
 			return packageName + simpleName;
 		}
 
-		String sourceDirectoryName()
-		{
+		String sourceDirectoryName() {
 			return packageName.replace('.', '/');
 		}
 	}
