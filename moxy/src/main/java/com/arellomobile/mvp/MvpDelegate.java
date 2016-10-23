@@ -85,7 +85,7 @@ public class MvpDelegate<Delegated> {
 	 */
 	public void onCreate(Bundle bundle) {
 		mIsAttached = false;
-		mBundle = bundle;
+		mBundle = bundle != null ? bundle : new Bundle();
 
 		//get base tag for presenters
 		if (bundle == null || !mBundle.containsKey(mKeyTags)) {
@@ -159,16 +159,36 @@ public class MvpDelegate<Delegated> {
 	}
 
 	/**
+	 * <p>Similar like {@link #onSaveInstanceState(Bundle)}. But this method try to save
+	 * state to parent presenter Bundle</p>
+	 */
+	public void onSaveInstanceState() {
+		Bundle bundle = new Bundle();
+		if (mParentDelegate != null) {
+			bundle = mParentDelegate.mBundle;
+		} else {
+
+		}
+
+		onCreate(bundle);
+	}
+
+	/**
 	 * Save presenters tag prefix to save state for restore presenters at future after delegate recreate
 	 *
 	 * @param outState out state from Android component
 	 */
 	public void onSaveInstanceState(Bundle outState) {
+		outState.putAll(mBundle);
 		outState.putString(mKeyTags, mDelegateTag);
 
 		for (MvpDelegate childDelegate : mChildDelegates) {
 			childDelegate.onSaveInstanceState(outState);
 		}
+	}
+
+	public Bundle getChildrenSaveState() {
+		return mBundle;
 	}
 
 	/**
