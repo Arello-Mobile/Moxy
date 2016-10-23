@@ -8,8 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
+import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.PresenterType;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
+import com.arellomobile.mvp.presenter.ProvidePresenterTag;
 import com.arellomobile.mvp.sample.github.R;
 import com.arellomobile.mvp.sample.github.mvp.common.MvpAppCompatFragment;
 import com.arellomobile.mvp.sample.github.mvp.models.Repository;
@@ -17,10 +20,7 @@ import com.arellomobile.mvp.sample.github.mvp.presenters.RepositoryLikesPresente
 import com.arellomobile.mvp.sample.github.mvp.presenters.RepositoryPresenter;
 import com.arellomobile.mvp.sample.github.mvp.views.RepositoryLikesView;
 import com.arellomobile.mvp.sample.github.mvp.views.RepositoryView;
-import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.presenter.PresenterType;
-import com.arellomobile.mvp.presenter.ProvidePresenter;
-import com.arellomobile.mvp.presenter.ProvidePresenterTag;
+import com.arellomobile.mvp.sample.github.ui.views.RepositoryWidget;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -56,7 +56,7 @@ public class DetailsFragment extends MvpAppCompatFragment implements RepositoryV
 	RepositoryLikesPresenter mRepositoryLikesPresenter;
 
 	@Bind(R.id.fragment_repository_details_text_view_title)
-	TextView mTitleTextView;
+	RepositoryWidget mTitleTextView;
 	@Bind(R.id.fragment_repository_details_image_button_like)
 	ImageButton mLikeImageButton;
 
@@ -99,7 +99,7 @@ public class DetailsFragment extends MvpAppCompatFragment implements RepositoryV
 	public void showRepository(Repository repository) {
 		mRepository = repository;
 
-		mTitleTextView.setText(repository.getName());
+		mTitleTextView.setRepository(getMvpDelegate(), repository);
 	}
 
 	@Override

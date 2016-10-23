@@ -5,6 +5,7 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -167,17 +168,25 @@ public class HomeActivity extends MvpAppCompatActivity implements SignOutView, R
 	}
 
 	@Override
-	public void showDetails(int position, Repository repository) {
+	public void showDetailsContainer() {
 		if (mDetailsFragmeLayout.getVisibility() == View.GONE) {
 			mDetailsFragmeLayout.setVisibility(View.VISIBLE);
 		}
+	}
 
-		mRepositoriesAdapter.setSelection(position);
+	@Override
+	public void showDetails(int position, Repository repository) {
+		DetailsFragment detailsFragment = (DetailsFragment) getSupportFragmentManager().findFragmentById(R.id.activity_home_frame_layout_details);
 
-		getSupportFragmentManager()
+		FragmentTransaction transaction = getSupportFragmentManager()
 				.beginTransaction()
-				.replace(R.id.activity_home_frame_layout_details, DetailsFragment.getInstance(repository))
-				.commit();
+				.replace(R.id.activity_home_frame_layout_details, DetailsFragment.getInstance(repository));
+
+		if (detailsFragment != null) {
+			transaction.addToBackStack(null);
+		}
+
+		transaction.commit();
 	}
 
 	@Override
