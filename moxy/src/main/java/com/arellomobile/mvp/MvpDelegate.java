@@ -170,7 +170,7 @@ public class MvpDelegate<Delegated> {
 
 		}
 
-		onCreate(bundle);
+		onSaveInstanceState(bundle);
 	}
 
 	/**
