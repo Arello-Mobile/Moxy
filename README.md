@@ -52,7 +52,8 @@ public class HelloWorldActivity extends MvpAppCompatActivity implements HelloWor
 	}
 }
 ```
-More extensive example [here](https://github.com/Arello-Mobile/MoxySample)
+
+[Here](https://github.com/Arello-Mobile/Moxy/tree/develop/sample-github) you can see "Github" sample application.
 
 ## Wiki
 For all information check [Moxy Wiki](https://github.com/Arello-Mobile/Moxy/wiki)
