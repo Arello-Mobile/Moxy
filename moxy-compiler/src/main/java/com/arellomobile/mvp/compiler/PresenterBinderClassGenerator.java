@@ -70,8 +70,6 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 
 		TypeElement presentersContainer = (TypeElement) enclosingElement;
 
-		System.out.println(presentersContainer + " " + presentersContainer.getModifiers().iterator().next().name());
-
 		mPresentersContainers.add(presentersContainer.toString());
 
 		String fullClassName = Util.getFullClassName(presentersContainer);
