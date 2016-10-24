@@ -53,7 +53,7 @@ public class HelloWorldActivity extends MvpAppCompatActivity implements HelloWor
 }
 ```
 
-[Here](https://github.com/Arello-Mobile/Moxy/tree/develop/sample-github) you can see "Github" sample application.
+[Here](https://github.com/Arello-Mobile/Moxy/tree/master/sample-github) you can see "Github" sample application.
 
 ## Wiki
 For all information check [Moxy Wiki](https://github.com/Arello-Mobile/Moxy/wiki)
@@ -79,29 +79,29 @@ Base modules integration:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy:1.1.0'
-  provided 'com.arello-mobile:moxy-compiler:1.1.0'
+  compile 'com.arello-mobile:moxy:1.1.1'
+  provided 'com.arello-mobile:moxy-compiler:1.1.1'
 }
 ```
 If you want to see generated code, use `apt` instead of `provided` dependency type:
 ```groovy
 dependencies {
   ...
-  apt 'com.arello-mobile:moxy-compiler:1.1.0'
+  apt 'com.arello-mobile:moxy-compiler:1.1.1'
 }
 ```
 For additional base view classes `MvpActivity` and `MvpFragment` add this:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy-android:1.1.0'
+  compile 'com.arello-mobile:moxy-android:1.1.1'
 }
 ```
 If you planing to use AppCompat, then you can use `MvpAppCompatActivity` and `MvpAppCompatFragment`. Then add this:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy-app-compat:1.1.0'
+  compile 'com.arello-mobile:moxy-app-compat:1.1.1'
 }
 ```
 
