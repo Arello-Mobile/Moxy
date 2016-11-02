@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.arellomobile.mvp.MvpDelegate;
 import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.arellomobile.mvp.sample.github.mvp.models.Repository;
 import com.arellomobile.mvp.sample.github.mvp.presenters.RepositoryPresenter;
 import com.arellomobile.mvp.sample.github.mvp.views.RepositoryView;
@@ -44,6 +45,11 @@ public class RepositoryWidget extends TextView implements RepositoryView {
 	@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 	public RepositoryWidget(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
 		super(context, attrs, defStyleAttr, defStyleRes);
+	}
+
+	@ProvidePresenter
+	RepositoryPresenter provideRepositoryPresenter() {
+		return new RepositoryPresenter();
 	}
 
 	public void setRepository(MvpDelegate parentDelegate, Repository repository) {

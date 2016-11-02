@@ -48,7 +48,7 @@ public class MvpFragment extends Fragment {
 			}
 		}
 
-		if (isRemoving() || getActivity().isFinishing()) {
+		if (isRemoving() || anyParentIsRemoving || getActivity().isFinishing()) {
 			getMvpDelegate().onDestroy();
 		}
 	}
