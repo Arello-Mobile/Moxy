@@ -1,4 +1,6 @@
 # Moxy
+[![Maven Central](https://img.shields.io/maven-central/v/com.arello-mobile/moxy.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.arello-mobile%22%20AND%20(a%3A%22moxy%22%20OR%20a%3A%22moxy-compiler%22%20OR%20a%3A%22moxy-android%22%20OR%20a%3A%22moxy-app-compat%22)) [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
+
 Moxy is a library that help to use MVP pattern when you do the Android Application. _Without problems of lifecycle and boilerplate code!_
 
 Main idea of using Moxy:
@@ -79,29 +81,29 @@ Base modules integration:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy:1.1.1'
-  provided 'com.arello-mobile:moxy-compiler:1.1.1'
+  compile 'com.arello-mobile:moxy:1.1.2'
+  provided 'com.arello-mobile:moxy-compiler:1.1.2'
 }
 ```
 If you want to see generated code, use `apt` instead of `provided` dependency type:
 ```groovy
 dependencies {
   ...
-  apt 'com.arello-mobile:moxy-compiler:1.1.1'
+  apt 'com.arello-mobile:moxy-compiler:1.1.2'
 }
 ```
 For additional base view classes `MvpActivity` and `MvpFragment` add this:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy-android:1.1.1'
+  compile 'com.arello-mobile:moxy-android:1.1.2'
 }
 ```
 If you planing to use AppCompat, then you can use `MvpAppCompatActivity` and `MvpAppCompatFragment`. Then add this:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy-app-compat:1.1.1'
+  compile 'com.arello-mobile:moxy-app-compat:1.1.2'
 }
 ```
 
