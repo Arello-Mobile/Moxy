@@ -1,4 +1,6 @@
 # Moxy
+[![Maven Central](https://img.shields.io/maven-central/v/com.arello-mobile/moxy.svg)](http://search.maven.org/#artifactdetails%7Ccom.arello-mobile%7Cmoxy) [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
+
 Moxy is a library that help to use MVP pattern when you do the Android Application. _Without problems of lifecycle and boilerplate code!_
 
 Main idea of using Moxy:
