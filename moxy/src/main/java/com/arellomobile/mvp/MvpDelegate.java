@@ -30,9 +30,9 @@ import com.arellomobile.mvp.presenter.PresenterType;
  * @author Konstantin Tckhovrebov
  */
 public class MvpDelegate<Delegated> {
-	private static final String KEY_TAGS = "com.arellomobile.mvp.MvpDelegate.KEY_TAGS";
+	private static final String KEY_TAG = "com.arellomobile.mvp.MvpDelegate.KEY_TAG";
 
-	private String mKeyTags = KEY_TAGS;
+	private String mKeyTag = KEY_TAG;
 	private String mDelegateTag;
 	private final Delegated mDelegated;
 	private boolean mIsAttached;
@@ -40,10 +40,12 @@ public class MvpDelegate<Delegated> {
 	private List<MvpPresenter<? super Delegated>> mPresenters;
 	private List<MvpDelegate> mChildDelegates;
 	private Bundle mBundle;
+	private Bundle mChildKeyTagsBundle;
 
 	public MvpDelegate(Delegated delegated) {
 		mDelegated = delegated;
 		mChildDelegates = new ArrayList<>();
+		mChildKeyTagsBundle = new Bundle();
 	}
 
 	public void setParentDelegate(MvpDelegate delegate, String childId) {
@@ -55,7 +57,7 @@ public class MvpDelegate<Delegated> {
 		}
 
 		mParentDelegate = delegate;
-		mKeyTags = mParentDelegate.mKeyTags + "$" + childId;
+		mKeyTag = mParentDelegate.mKeyTag + "$" + childId;
 
 		delegate.addChildDelegate(this);
 	}
@@ -88,10 +90,10 @@ public class MvpDelegate<Delegated> {
 		mBundle = bundle != null ? bundle : new Bundle();
 
 		//get base tag for presenters
-		if (bundle == null || !mBundle.containsKey(mKeyTags)) {
+		if (bundle == null || !mBundle.containsKey(mKeyTag)) {
 			mDelegateTag = generateTag();
 		} else {
-			mDelegateTag = bundle.getString(mKeyTags);
+			mDelegateTag = bundle.getString(mKeyTag);
 		}
 
 		//bind presenters to view
@@ -165,12 +167,12 @@ public class MvpDelegate<Delegated> {
 	public void onSaveInstanceState() {
 		Bundle bundle = new Bundle();
 		if (mParentDelegate != null) {
-			bundle = mParentDelegate.mBundle;
-		} else {
-
+			bundle = mParentDelegate.mChildKeyTagsBundle;
 		}
 
 		onSaveInstanceState(bundle);
+
+		mParentDelegate.mBundle.putAll(bundle);
 	}
 
 	/**
@@ -179,8 +181,8 @@ public class MvpDelegate<Delegated> {
 	 * @param outState out state from Android component
 	 */
 	public void onSaveInstanceState(Bundle outState) {
-		outState.putAll(mBundle);
-		outState.putString(mKeyTags, mDelegateTag);
+		outState.putAll(mChildKeyTagsBundle);
+		outState.putString(mKeyTag, mDelegateTag);
 
 		for (MvpDelegate childDelegate : mChildDelegates) {
 			childDelegate.onSaveInstanceState(outState);

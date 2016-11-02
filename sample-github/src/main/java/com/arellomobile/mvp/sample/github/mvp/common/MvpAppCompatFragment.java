@@ -37,7 +37,14 @@ public class MvpAppCompatFragment extends Fragment {
 	public void onDestroy() {
 		super.onDestroy();
 
-		if (isRemoving()) {
+		boolean anyParentIsRemoving = false;
+		Fragment parent = getParentFragment();
+		while (!anyParentIsRemoving && parent != null) {
+			anyParentIsRemoving = parent.isRemoving();
+			parent = parent.getParentFragment();
+		}
+
+		if (isRemoving() || anyParentIsRemoving || getActivity().isFinishing()) {
 			getMvpDelegate().onDestroy();
 		}
 	}
@@ -48,6 +55,9 @@ public class MvpAppCompatFragment extends Fragment {
 		getMvpDelegate().onSaveInstanceState(outState);
 	}
 
+	/**
+	 * @return The {@link MvpDelegate} being used by this Fragment.
+	 */
 	public MvpDelegate getMvpDelegate() {
 		if (mMvpDelegate == null) {
 			mMvpDelegate = new MvpDelegate<>(this);

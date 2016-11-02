@@ -6,16 +6,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.sample.github.R;
 import com.arellomobile.mvp.sample.github.mvp.common.MvpAppCompatActivity;
 import com.arellomobile.mvp.sample.github.mvp.presenters.SignInPresenter;
 import com.arellomobile.mvp.sample.github.mvp.views.SignInView;
-import com.arellomobile.mvp.presenter.InjectPresenter;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -28,7 +27,7 @@ public class SignInActivity extends MvpAppCompatActivity implements SignInView, 
 	SignInPresenter mSignInPresenter;
 
 	@Bind(R.id.email)
-	AutoCompleteTextView mEmailView;
+	EditText mEmailView;
 	@Bind(R.id.password)
 	EditText mPasswordView;
 	@Bind(R.id.email_sign_in_button)
