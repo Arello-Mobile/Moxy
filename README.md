@@ -92,6 +92,16 @@ dependencies {
   apt 'com.arello-mobile:moxy-compiler:1.1.2'
 }
 ```
+If you are using kotlin, use `kapt` instead of `provided` dependency type and set `generateStubs` property of `kapt` to `true`:
+```groovy
+dependencies {
+  ...
+  kapt 'com.arello-mobile:moxy-compiler:1.1.2'
+}
+kapt {
+    generateStubs = true
+}
+```
 For additional base view classes `MvpActivity` and `MvpFragment` add this:
 ```groovy
 dependencies {
