@@ -41,7 +41,7 @@ dependencies {
 
     compile 'com.google.code.gson:gson:2.5'
 
-    compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.jakewharton:butterknife:8.4.0'
 
     compile 'com.squareup.retrofit2:retrofit:2.0.0-beta3'
     compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta3'
@@ -53,7 +53,11 @@ dependencies {
 
     compile "com.google.dagger:dagger:2.5"
     provided 'org.glassfish:javax.annotation:10.0-b28'
+
+    apt "com.jakewharton:butterknife-compiler:8.4.0"
     apt "com.google.dagger:dagger-compiler:2.5"
+
+
 
     /*compile 'com.arello-mobile:moxy:1.1.2'
     apt 'com.arello-mobile:moxy-compiler:1.1.2'*/
