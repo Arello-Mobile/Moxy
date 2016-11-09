@@ -3,14 +3,13 @@ package com.arellomobile.mvp.sample.github.mvp.presenters;
 import android.content.Context;
 import android.util.Base64;
 
-import com.arellomobile.mvp.sample.github.BuildConfig;
 import com.arellomobile.mvp.sample.github.R;
-import com.arellomobile.mvp.sample.github.app.GithubApp;
 import com.arellomobile.mvp.sample.github.di.AppComponent;
 import com.arellomobile.mvp.sample.github.mvp.GithubService;
 import com.arellomobile.mvp.sample.github.mvp.common.AuthUtils;
 import com.arellomobile.mvp.sample.github.mvp.models.User;
 import com.arellomobile.mvp.sample.github.mvp.views.SignInView$$State;
+import com.arellomobile.mvp.sample.github.test.GithubSampleTestRunner;
 import com.arellomobile.mvp.sample.github.test.TestComponent;
 import com.arellomobile.mvp.sample.github.test.TestComponentRule;
 
@@ -21,9 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
 
 import rx.Observable;
 
@@ -31,12 +28,11 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
+@RunWith(GithubSampleTestRunner.class)
 public final class SignInPresenterTest {
 
     @Rule
-    public TestComponentRule rule = new TestComponentRule(testAppComponent());
+    public TestComponentRule testComponentRule = new TestComponentRule(testAppComponent());
 
     @Mock
     GithubService githubService;
@@ -44,13 +40,13 @@ public final class SignInPresenterTest {
     @Mock
     SignInView$$State signInViewState;
 
-    private SignInPresenter signInPresenter;
+    private SignInPresenter presenter;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        signInPresenter = new SignInPresenter();
-        signInPresenter.setViewState(signInViewState);
+        presenter = new SignInPresenter();
+        presenter.setViewState(signInViewState);
     }
 
     @Test
@@ -58,7 +54,7 @@ public final class SignInPresenterTest {
         String token = token();
         when(githubService.signIn(token)).thenReturn(Observable.just(new User()));
 
-        signInPresenter.signIn(email(), password());
+        presenter.signIn(email(), password());
 
         Assert.assertEquals(token, AuthUtils.getToken());
         isSignInAndHideShowProgressCalled();
@@ -69,7 +65,7 @@ public final class SignInPresenterTest {
     public void signin_shouldShowError() {
         when(githubService.signIn(token())).thenReturn(Observable.error(new Throwable()));
 
-        signInPresenter.signIn(email(), password());
+        presenter.signIn(email(), password());
 
         Assert.assertEquals("", "");
 
@@ -79,13 +75,13 @@ public final class SignInPresenterTest {
 
     @Test
     public void signin_shouldShowPasswordAndEmailEmptyErros() {
-        signInPresenter.signIn(null, null);
+        presenter.signIn(null, null);
         verify(signInViewState).showError(R.string.error_field_required, R.string.error_invalid_password);
     }
 
     @Test
     public void signin_shouldOnErrorCancel() {
-        signInPresenter.onErrorCancel();
+        presenter.onErrorCancel();
         verify(signInViewState).hideError();
     }
 

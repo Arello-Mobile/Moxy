@@ -15,6 +15,7 @@ import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rx.schedulers.Schedulers;
 
 /**
  * Date: 8/26/2016
@@ -34,7 +35,7 @@ public class RetrofitModule {
 	@Singleton
 	public Retrofit.Builder provideRetrofitBuilder(Converter.Factory converterFactory) {
 		return new Retrofit.Builder()
-				.addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+				.addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
 				.addConverterFactory(converterFactory);
 	}
 

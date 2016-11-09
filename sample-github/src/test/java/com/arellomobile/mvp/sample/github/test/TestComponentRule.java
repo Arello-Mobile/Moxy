@@ -27,6 +27,7 @@ public class TestComponentRule implements TestRule {
         return new Statement() {
             @Override public void evaluate() throws Throwable {
                 GithubApp.setAppComponent(appComponent);
+                base.evaluate();
             }
         };
     }

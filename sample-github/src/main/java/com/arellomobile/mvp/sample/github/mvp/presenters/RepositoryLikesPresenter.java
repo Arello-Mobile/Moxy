@@ -12,8 +12,12 @@ import com.arellomobile.mvp.MvpPresenter;
 import com.squareup.otto.Bus;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Date: 26.01.2016
@@ -22,7 +26,7 @@ import rx.Observable;
  * @author Yuri Shmakov
  */
 @InjectViewState
-public class RepositoryLikesPresenter extends MvpPresenter<RepositoryLikesView> {
+public class RepositoryLikesPresenter extends BasePresenter<RepositoryLikesView> {
 	public static final String TAG = "RepositoryLikesPresenter";
 
 	@Inject
@@ -56,12 +60,15 @@ public class RepositoryLikesPresenter extends MvpPresenter<RepositoryLikesView> 
 			subscriber.onNext(!mLikedIds.contains(id));
 		});
 
-		toggleObservable
+	 	Subscription subscription = toggleObservable
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(isLiked -> {
 					onComplete(id, isLiked);
 				}, throwable -> {
 					onFail(id);
 				});
+		unsubscribeOnDestroy(subscription);
 	}
 
 	private void onComplete(int id, Boolean isLiked) {
@@ -91,7 +98,6 @@ public class RepositoryLikesPresenter extends MvpPresenter<RepositoryLikesView> 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-
 		mBus.unregister(this);
 	}
 }

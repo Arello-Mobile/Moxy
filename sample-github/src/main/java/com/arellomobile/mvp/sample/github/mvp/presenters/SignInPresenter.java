@@ -17,6 +17,7 @@ import com.arellomobile.mvp.MvpPresenter;
 import javax.inject.Inject;
 
 import rx.Observable;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 
 /**
@@ -26,7 +27,7 @@ import rx.android.schedulers.AndroidSchedulers;
  * @author Yuri Shmakov
  */
 @InjectViewState
-public class SignInPresenter extends MvpPresenter<SignInView> {
+public class SignInPresenter extends BasePresenter<SignInView> {
 
     @Inject
     GithubService mGithubService;
@@ -64,7 +65,7 @@ public class SignInPresenter extends MvpPresenter<SignInView> {
         Observable<User> userObservable = mGithubService.signIn(token)
                 .doOnNext(user -> AuthUtils.setToken(token));
 
-        userObservable
+        Subscription subscription = userObservable
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(user -> {
                     getViewState().hideProgress();
@@ -73,6 +74,7 @@ public class SignInPresenter extends MvpPresenter<SignInView> {
                     getViewState().hideProgress();
                     getViewState().showError(exception.getMessage());
                 });
+        unsubscribeOnDestroy(subscription);
     }
 
     public void onErrorCancel() {
