@@ -17,6 +17,7 @@ import com.arellomobile.mvp.MvpPresenter;
 import javax.inject.Inject;
 
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Date: 15.01.2016
@@ -27,56 +28,54 @@ import rx.Observable;
 @InjectViewState
 public class SignInPresenter extends MvpPresenter<SignInView> {
 
-	@Inject
-	Context mContext;
-	@Inject
-	GithubService mGithubService;
+    @Inject
+    GithubService mGithubService;
 
-	public SignInPresenter() {
-		GithubApp.getAppComponent().inject(this);
-	}
+    public SignInPresenter() {
+        GithubApp.getAppComponent().inject(this);
+    }
 
-	public void signIn(String email, String password) {
+    public void signIn(String email, String password) {
 
-		Integer emailError = null;
-		Integer passwordError = null;
+        Integer emailError = null;
+        Integer passwordError = null;
 
-		getViewState().showError(null, null);
+        getViewState().showError(null, null);
 
-		if (TextUtils.isEmpty(email)) {
-			emailError = R.string.error_field_required;
-		}
+        if (TextUtils.isEmpty(email)) {
+            emailError = R.string.error_field_required;
+        }
 
-		if (TextUtils.isEmpty(password)) {
-			passwordError = R.string.error_invalid_password;
-		}
+        if (TextUtils.isEmpty(password)) {
+            passwordError = R.string.error_invalid_password;
+        }
 
-		if (emailError != null || passwordError != null) {
-			getViewState().showError(emailError, passwordError);
+        if (emailError != null || passwordError != null) {
+            getViewState().showError(emailError, passwordError);
+            return;
+        }
 
-			return;
-		}
+        getViewState().showProgress();
 
-		getViewState().showProgress();
+        String credentials = String.format("%s:%s", email, password);
 
-		String credentials = String.format("%s:%s", email, password);
+         final String token = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
 
-		final String token = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        Observable<User> userObservable = mGithubService.signIn(token)
+                .doOnNext(user -> AuthUtils.setToken(token));
 
-		Observable<User> userObservable = RxUtils.wrapRetrofitCall(mGithubService.signIn(token))
-				.doOnNext(user -> AuthUtils.setToken(token));
+        userObservable
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(user -> {
+                    getViewState().hideProgress();
+                    getViewState().successSignIn();
+                }, exception -> {
+                    getViewState().hideProgress();
+                    getViewState().showError(exception.getMessage());
+                });
+    }
 
-		RxUtils.wrapAsync(userObservable)
-				.subscribe(user -> {
-					getViewState().hideProgress();
-					getViewState().successSignIn();
-				}, exception -> {
-					getViewState().hideProgress();
-					getViewState().showError(exception.getMessage());
-				});
-	}
-
-	public void onErrorCancel() {
-		getViewState().hideError();
-	}
+    public void onErrorCancel() {
+        getViewState().hideError();
+    }
 }

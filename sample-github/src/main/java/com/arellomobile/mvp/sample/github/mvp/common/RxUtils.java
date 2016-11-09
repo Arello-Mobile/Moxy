@@ -18,24 +18,6 @@ import rx.schedulers.Schedulers;
  * @author Yuri Shmakov
  */
 public class RxUtils {
-	public static <T> Observable<T> wrapRetrofitCall(final Call<T> call) {
-		return Observable.create(subscriber ->
-		{
-			final Response<T> execute;
-			try {
-				execute = call.execute();
-			} catch (IOException e) {
-				subscriber.onError(e);
-				return;
-			}
-
-			if (execute.isSuccess()) {
-				subscriber.onNext(execute.body());
-			} else {
-				subscriber.onError(new GithubError(execute.errorBody()));
-			}
-		});
-	}
 
 	public static <T> Observable<T> wrapAsync(Observable<T> observable) {
 		return wrapAsync(observable, Schedulers.io());

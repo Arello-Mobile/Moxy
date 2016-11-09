@@ -56,7 +56,7 @@ public class RepositoriesPresenter extends MvpPresenter<RepositoriesView> {
 
 		showProgress(isPageLoading, isRefreshing);
 
-		final Observable<List<Repository>> observable = RxUtils.wrapRetrofitCall(mGithubService.getUserRepos("JakeWharton", page, GithubApi.PAGE_SIZE));
+		final Observable<List<Repository>> observable = mGithubService.getUserRepos("JakeWharton", page, GithubApi.PAGE_SIZE);
 
 		RxUtils.wrapAsync(observable)
 				.subscribe(repositories -> {

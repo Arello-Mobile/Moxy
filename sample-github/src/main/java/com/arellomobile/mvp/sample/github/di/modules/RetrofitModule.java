@@ -12,8 +12,9 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import retrofit2.Converter;
-import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Date: 8/26/2016
@@ -33,6 +34,7 @@ public class RetrofitModule {
 	@Singleton
 	public Retrofit.Builder provideRetrofitBuilder(Converter.Factory converterFactory) {
 		return new Retrofit.Builder()
+				.addCallAdapterFactory(RxJavaCallAdapterFactory.create())
 				.addConverterFactory(converterFactory);
 	}
 

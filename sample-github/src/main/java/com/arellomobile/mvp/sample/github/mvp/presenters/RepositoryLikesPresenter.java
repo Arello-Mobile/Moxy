@@ -37,35 +37,6 @@ public class RepositoryLikesPresenter extends MvpPresenter<RepositoryLikesView> 
 		mBus.register(this);
 	}
 
-	/*
-		// Lice random repositories
-		@Subscribe
-		public void repositoriesLoaded(RepositoriesLoadedEvent repositoriesLoadedEvent)
-		{
-			final Random random = new Random();
-
-			for (Repository repository : repositoriesLoadedEvent.getRepositories())
-			{
-				if (!mInProgress.contains(repository.getId()))
-				{
-					continue;
-				}
-
-				if (random.nextBoolean())
-				{
-					mLikedIds.add(repository.getId());
-				}
-				else
-				{
-					mLikedIds.remove(Integer.valueOf(repository.getId()));
-				}
-
-				mInProgress.remove(Integer.valueOf(repository.getId()));
-			}
-
-			getViewState().updateLikes(mInProgress, mLikedIds);
-		}
-	*/
 	public void toggleLike(int id) {
 		if (mInProgress.contains(id)) {
 			return;
@@ -85,7 +56,7 @@ public class RepositoryLikesPresenter extends MvpPresenter<RepositoryLikesView> 
 			subscriber.onNext(!mLikedIds.contains(id));
 		});
 
-		RxUtils.wrapAsync(toggleObservable)
+		toggleObservable
 				.subscribe(isLiked -> {
 					onComplete(id, isLiked);
 				}, throwable -> {

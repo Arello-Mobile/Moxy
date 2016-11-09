@@ -6,7 +6,7 @@ import com.arellomobile.mvp.sample.github.app.GithubApi;
 import com.arellomobile.mvp.sample.github.mvp.models.Repository;
 import com.arellomobile.mvp.sample.github.mvp.models.User;
 
-import retrofit2.Call;
+import rx.Observable;
 
 /**
  * Date: 20.09.2016
@@ -24,11 +24,11 @@ public class GithubService {
 	}
 
 
-	public Call<User> signIn(String token) {
+	public Observable<User> signIn(String token) {
 		return mGithubApi.signIn(token);
 	}
 
-	public Call<List<Repository>> getUserRepos(String user, int page, Integer pageSize) {
+	public Observable<List<Repository>> getUserRepos(String user, int page, Integer pageSize) {
 		return mGithubApi.getUserRepos(user, page, pageSize);
 	}
 }

@@ -17,6 +17,7 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -31,37 +32,50 @@ android {
     }
 }
 
+def powerMockVersion =  '1.6.6'
+def retrofit = '2.1.0'
+
 dependencies {
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:25.0.0'
-    compile 'com.android.support:design:25.0.0'
+    testCompile "junit:junit:4.12"
+    compile "com.android.support:appcompat-v7:25.0.0"
+    compile "com.android.support:design:25.0.0"
 
-    compile 'com.j256.ormlite:ormlite-core:4.48'
-    compile 'com.j256.ormlite:ormlite-android:4.48'
+    compile "com.j256.ormlite:ormlite-core:4.48"
+    compile "com.j256.ormlite:ormlite-android:4.48"
 
-    compile 'com.google.code.gson:gson:2.5'
+    compile "com.google.code.gson:gson:2.5"
 
-    compile 'com.jakewharton:butterknife:8.4.0'
+    compile "com.jakewharton:butterknife:8.4.0"
 
-    compile 'com.squareup.retrofit2:retrofit:2.0.0-beta3'
-    compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta3'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.squareup:otto:1.3.8'
+    compile "com.squareup.retrofit2:retrofit:$retrofit"
+    compile "com.squareup.retrofit2:converter-gson:$retrofit"
+    compile "com.squareup.retrofit2:adapter-rxjava:$retrofit"
+    compile "com.squareup.picasso:picasso:2.5.2"
+    compile "com.squareup:otto:1.3.8"
 
-    compile 'io.reactivex:rxjava:1.1.0'
-    compile 'io.reactivex:rxandroid:1.1.0'
+    compile "io.reactivex:rxjava:1.1.0"
+    compile "io.reactivex:rxandroid:1.1.0"
 
     compile "com.google.dagger:dagger:2.5"
-    provided 'org.glassfish:javax.annotation:10.0-b28'
+    provided "org.glassfish:javax.annotation:10.0-b28"
 
     apt "com.jakewharton:butterknife-compiler:8.4.0"
     apt "com.google.dagger:dagger-compiler:2.5"
 
+    compile "com.arello-mobile:moxy:1.1.2"
+    apt "com.arello-mobile:moxy-compiler:1.1.2"
 
+    testCompile "junit:junit:4.12"
+    testCompile "org.mockito:mockito-all:1.10.19"
+    testCompile "org.hamcrest:hamcrest-all:1.3"
+    testCompile "org.robolectric:robolectric:3.0"
+    // PowerMock
+    testCompile "org.powermock:powermock-module-junit4:$powerMockVersion"
+    testCompile "org.powermock:powermock-module-junit4-rule:$powerMockVersion"
+    testCompile "org.powermock:powermock-api-mockito:$powerMockVersion"
+    testCompile "org.powermock:powermock-classloading-xstream:$powerMockVersion"
 
-    /*compile 'com.arello-mobile:moxy:1.1.2'
-    apt 'com.arello-mobile:moxy-compiler:1.1.2'*/
-
+/*
     compile project(':moxy')
-    apt project(':moxy-compiler')
+    apt project(':moxy-compiler')*/
 }
