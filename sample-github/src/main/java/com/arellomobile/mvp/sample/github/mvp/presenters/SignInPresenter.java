@@ -1,6 +1,5 @@
 package com.arellomobile.mvp.sample.github.mvp.presenters;
 
-import android.content.Context;
 import android.text.TextUtils;
 import android.util.Base64;
 
@@ -8,11 +7,9 @@ import com.arellomobile.mvp.sample.github.R;
 import com.arellomobile.mvp.sample.github.app.GithubApp;
 import com.arellomobile.mvp.sample.github.mvp.GithubService;
 import com.arellomobile.mvp.sample.github.mvp.common.AuthUtils;
-import com.arellomobile.mvp.sample.github.mvp.common.RxUtils;
 import com.arellomobile.mvp.sample.github.mvp.models.User;
 import com.arellomobile.mvp.sample.github.mvp.views.SignInView;
 import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.MvpPresenter;
 
 import javax.inject.Inject;
 

@@ -5,14 +5,11 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.arellomobile.mvp.sample.github.app.GithubApp;
-import com.arellomobile.mvp.sample.github.mvp.common.RxUtils;
 import com.arellomobile.mvp.sample.github.mvp.views.RepositoryLikesView;
 import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.MvpPresenter;
 import com.squareup.otto.Bus;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import rx.Observable;
 import rx.Subscription;

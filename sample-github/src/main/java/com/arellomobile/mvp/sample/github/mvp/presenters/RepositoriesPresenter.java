@@ -5,11 +5,9 @@ import java.util.List;
 import com.arellomobile.mvp.sample.github.app.GithubApi;
 import com.arellomobile.mvp.sample.github.app.GithubApp;
 import com.arellomobile.mvp.sample.github.mvp.GithubService;
-import com.arellomobile.mvp.sample.github.mvp.common.RxUtils;
 import com.arellomobile.mvp.sample.github.mvp.models.Repository;
 import com.arellomobile.mvp.sample.github.mvp.views.RepositoriesView;
 import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.MvpPresenter;
 
 import javax.inject.Inject;
 
