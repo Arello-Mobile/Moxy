@@ -5,15 +5,16 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.arellomobile.mvp.sample.github.app.GithubApp;
-import com.arellomobile.mvp.sample.github.mvp.common.RxUtils;
 import com.arellomobile.mvp.sample.github.mvp.views.RepositoryLikesView;
 import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.MvpPresenter;
 import com.squareup.otto.Bus;
 
 import javax.inject.Inject;
 
 import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Date: 26.01.2016
@@ -22,7 +23,7 @@ import rx.Observable;
  * @author Yuri Shmakov
  */
 @InjectViewState
-public class RepositoryLikesPresenter extends MvpPresenter<RepositoryLikesView> {
+public class RepositoryLikesPresenter extends BasePresenter<RepositoryLikesView> {
 	public static final String TAG = "RepositoryLikesPresenter";
 
 	@Inject
@@ -37,35 +38,6 @@ public class RepositoryLikesPresenter extends MvpPresenter<RepositoryLikesView> 
 		mBus.register(this);
 	}
 
-	/*
-		// Lice random repositories
-		@Subscribe
-		public void repositoriesLoaded(RepositoriesLoadedEvent repositoriesLoadedEvent)
-		{
-			final Random random = new Random();
-
-			for (Repository repository : repositoriesLoadedEvent.getRepositories())
-			{
-				if (!mInProgress.contains(repository.getId()))
-				{
-					continue;
-				}
-
-				if (random.nextBoolean())
-				{
-					mLikedIds.add(repository.getId());
-				}
-				else
-				{
-					mLikedIds.remove(Integer.valueOf(repository.getId()));
-				}
-
-				mInProgress.remove(Integer.valueOf(repository.getId()));
-			}
-
-			getViewState().updateLikes(mInProgress, mLikedIds);
-		}
-	*/
 	public void toggleLike(int id) {
 		if (mInProgress.contains(id)) {
 			return;
@@ -85,12 +57,15 @@ public class RepositoryLikesPresenter extends MvpPresenter<RepositoryLikesView> 
 			subscriber.onNext(!mLikedIds.contains(id));
 		});
 
-		RxUtils.wrapAsync(toggleObservable)
+	 	Subscription subscription = toggleObservable
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(isLiked -> {
 					onComplete(id, isLiked);
 				}, throwable -> {
 					onFail(id);
 				});
+		unsubscribeOnDestroy(subscription);
 	}
 
 	private void onComplete(int id, Boolean isLiked) {
@@ -120,7 +95,6 @@ public class RepositoryLikesPresenter extends MvpPresenter<RepositoryLikesView> 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-
 		mBus.unregister(this);
 	}
 }

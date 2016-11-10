@@ -30,7 +30,7 @@ import com.arellomobile.mvp.sample.github.ui.adapters.RepositoriesAdapter;
 import com.arellomobile.mvp.sample.github.ui.fragments.DetailsFragment;
 import com.arellomobile.mvp.sample.github.ui.views.FrameSwipeRefreshLayout;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class HomeActivity extends MvpAppCompatActivity implements SignOutView, RepositoriesView, HomeView, RepositoriesAdapter.OnScrollToBottomListener {
@@ -41,17 +41,17 @@ public class HomeActivity extends MvpAppCompatActivity implements SignOutView, R
 	@InjectPresenter
 	HomePresenter mHomePresenter;
 
-	@Bind(R.id.activity_home_toolbar)
+	@BindView(R.id.activity_home_toolbar)
 	Toolbar mToolbar;
-	@Bind(R.id.activity_home_swipe_refresh_layout)
+	@BindView(R.id.activity_home_swipe_refresh_layout)
 	FrameSwipeRefreshLayout mSwipeRefreshLayout;
-	@Bind(R.id.activity_home_progress_bar_repositories)
+	@BindView(R.id.activity_home_progress_bar_repositories)
 	ProgressBar mRepositoriesProgressBar;
-	@Bind(R.id.activity_home_list_view_repositories)
+	@BindView(R.id.activity_home_list_view_repositories)
 	ListView mRepositoriesListView;
-	@Bind(R.id.activity_home_text_view_no_repositories)
+	@BindView(R.id.activity_home_text_view_no_repositories)
 	TextView mNoRepositoriesTextView;
-	@Bind(R.id.activity_home_frame_layout_details)
+	@BindView(R.id.activity_home_frame_layout_details)
 	FrameLayout mDetailsFragmeLayout;
 
 	private AlertDialog mErrorDialog;

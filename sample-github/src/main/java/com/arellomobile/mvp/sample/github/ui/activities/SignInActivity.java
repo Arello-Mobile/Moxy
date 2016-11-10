@@ -16,7 +16,7 @@ import com.arellomobile.mvp.sample.github.mvp.common.MvpAppCompatActivity;
 import com.arellomobile.mvp.sample.github.mvp.presenters.SignInPresenter;
 import com.arellomobile.mvp.sample.github.mvp.views.SignInView;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -26,17 +26,17 @@ public class SignInActivity extends MvpAppCompatActivity implements SignInView, 
 	@InjectPresenter
 	SignInPresenter mSignInPresenter;
 
-	@Bind(R.id.email)
+	@BindView(R.id.email)
 	EditText mEmailView;
-	@Bind(R.id.password)
+	@BindView(R.id.password)
 	EditText mPasswordView;
-	@Bind(R.id.email_sign_in_button)
+	@BindView(R.id.email_sign_in_button)
 	Button mSignInButton;
-	@Bind(R.id.activity_sign_in_linear_layout_container)
+	@BindView(R.id.activity_sign_in_linear_layout_container)
 	LinearLayout mContainer;
-	@Bind(R.id.login_form)
+	@BindView(R.id.login_form)
 	View mLoginFormView;
-	@Bind(R.id.login_progress)
+	@BindView(R.id.login_progress)
 	View mProgressView;
 
 	private AlertDialog mErrorDialog;

@@ -1,6 +1,8 @@
 package com.arellomobile.mvp.sample.github.app;
 
 import android.app.Application;
+import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 
 import com.arellomobile.mvp.sample.github.di.AppComponent;
 import com.arellomobile.mvp.sample.github.di.DaggerAppComponent;
@@ -27,5 +29,11 @@ public class GithubApp extends Application {
 
 	public static AppComponent getAppComponent() {
 		return sAppComponent;
+	}
+
+
+	@VisibleForTesting
+	public static void setAppComponent(@NonNull AppComponent appComponent) {
+		sAppComponent = appComponent;
 	}
 }
