@@ -5,15 +5,15 @@ import java.util.List;
 import com.arellomobile.mvp.sample.github.app.GithubApi;
 import com.arellomobile.mvp.sample.github.app.GithubApp;
 import com.arellomobile.mvp.sample.github.mvp.GithubService;
-import com.arellomobile.mvp.sample.github.mvp.common.RxUtils;
 import com.arellomobile.mvp.sample.github.mvp.models.Repository;
 import com.arellomobile.mvp.sample.github.mvp.views.RepositoriesView;
 import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.MvpPresenter;
 
 import javax.inject.Inject;
 
 import rx.Observable;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Date: 22.01.2016
@@ -22,7 +22,7 @@ import rx.Observable;
  * @author Yuri Shmakov
  */
 @InjectViewState
-public class RepositoriesPresenter extends MvpPresenter<RepositoriesView> {
+public class RepositoriesPresenter extends BasePresenter<RepositoriesView> {
 
 	@Inject
 	GithubService mGithubService;
@@ -31,7 +31,10 @@ public class RepositoriesPresenter extends MvpPresenter<RepositoriesView> {
 
 	public RepositoriesPresenter() {
 		GithubApp.getAppComponent().inject(this);
+	}
 
+	@Override protected void onFirstViewAttach() {
+		super.onFirstViewAttach();
 		loadRepositories(false);
 	}
 
@@ -56,9 +59,9 @@ public class RepositoriesPresenter extends MvpPresenter<RepositoriesView> {
 
 		showProgress(isPageLoading, isRefreshing);
 
-		final Observable<List<Repository>> observable = RxUtils.wrapRetrofitCall(mGithubService.getUserRepos("JakeWharton", page, GithubApi.PAGE_SIZE));
+		final Observable<List<Repository>> observable = mGithubService.getUserRepos("JakeWharton", page, GithubApi.PAGE_SIZE);
 
-		RxUtils.wrapAsync(observable)
+		Subscription subscription = observable.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(repositories -> {
 					onLoadingFinish(isPageLoading, isRefreshing);
 					onLoadingSuccess(isPageLoading, repositories);
@@ -66,6 +69,7 @@ public class RepositoriesPresenter extends MvpPresenter<RepositoriesView> {
 					onLoadingFinish(isPageLoading, isRefreshing);
 					onLoadingFailed(error);
 				});
+		unsubscribeOnDestroy(subscription);
 	}
 
 	private void onLoadingFinish(boolean isPageLoading, boolean isRefreshing) {
@@ -77,8 +81,6 @@ public class RepositoriesPresenter extends MvpPresenter<RepositoriesView> {
 	}
 
 	private void onLoadingSuccess(boolean isPageLoading, List<Repository> repositories) {
-		//GithubApp.get().getBus().post(new RepositoriesLoadedEvent(repositories));
-
 		boolean maybeMore = repositories.size() >= GithubApi.PAGE_SIZE;
 		if (isPageLoading) {
 			getViewState().addRepositories(repositories, maybeMore);

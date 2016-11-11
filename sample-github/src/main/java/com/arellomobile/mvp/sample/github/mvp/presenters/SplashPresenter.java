@@ -7,6 +7,7 @@ import com.arellomobile.mvp.sample.github.mvp.views.SplashView;
 import com.arellomobile.mvp.MvpPresenter;
 
 import rx.Observable;
+import rx.Subscription;
 
 /**
  * Date: 18.01.2016
@@ -14,14 +15,15 @@ import rx.Observable;
  *
  * @author Yuri Shmakov
  */
-public class SplashPresenter extends MvpPresenter<SplashView> {
+public class SplashPresenter extends BasePresenter<SplashView> {
 	public void checkAuthorized() {
 		final Observable<String> getTokenObservable = Observable.create(subscriber -> subscriber.onNext(AuthUtils.getToken()));
 
-		getTokenObservable.subscribe(token -> {
+		Subscription subscription = getTokenObservable.subscribe(token -> {
 			for (SplashView splashView : getAttachedViews()) {
 				splashView.setAuthorized(!TextUtils.isEmpty(token));
 			}
 		});
+		unsubscribeOnDestroy(subscription);
 	}
 }

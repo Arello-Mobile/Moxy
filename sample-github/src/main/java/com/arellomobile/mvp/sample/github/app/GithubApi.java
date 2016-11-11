@@ -7,10 +7,12 @@ import com.arellomobile.mvp.sample.github.mvp.models.User;
 import com.arellomobile.mvp.sample.github.mvp.models.gson.SearchResult;
 
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import rx.Observable;
 
 /**
  * Date: 18.01.2016
@@ -22,11 +24,11 @@ public interface GithubApi {
 	Integer PAGE_SIZE = 50;
 
 	@GET("/user")
-	Call<User> signIn(@Header("Authorization") String token);
+	Observable<User> signIn(@Header("Authorization") String token);
 
 	@GET("/search/repositories?sort=stars&order=desc")
-	Call<SearchResult> search(@Query("q") String query);
+	Observable<SearchResult> search(@Query("q") String query);
 
 	@GET("/users/{login}/repos")
-	Call<List<Repository>> getUserRepos(@Path("login") String login, @Query("page") int page, @Query("per_page") int pageSize);
+	Observable<List<Repository>> getUserRepos(@Path("login") String login, @Query("page") int page, @Query("per_page") int pageSize);
 }

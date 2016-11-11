@@ -22,7 +22,7 @@ import com.arellomobile.mvp.sample.github.mvp.views.RepositoryLikesView;
 import com.arellomobile.mvp.sample.github.mvp.views.RepositoryView;
 import com.arellomobile.mvp.sample.github.ui.views.RepositoryWidget;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -55,9 +55,9 @@ public class DetailsFragment extends MvpAppCompatFragment implements RepositoryV
 	@InjectPresenter(type = PresenterType.GLOBAL, tag = RepositoryLikesPresenter.TAG)
 	RepositoryLikesPresenter mRepositoryLikesPresenter;
 
-	@Bind(R.id.fragment_repository_details_text_view_title)
+	@BindView(R.id.fragment_repository_details_text_view_title)
 	RepositoryWidget mTitleTextView;
-	@Bind(R.id.fragment_repository_details_image_button_like)
+	@BindView(R.id.fragment_repository_details_image_button_like)
 	ImageButton mLikeImageButton;
 
 	public static DetailsFragment getInstance(Repository repository) {

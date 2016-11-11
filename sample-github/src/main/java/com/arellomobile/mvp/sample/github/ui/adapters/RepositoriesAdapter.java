@@ -22,7 +22,7 @@ import com.arellomobile.mvp.presenter.PresenterType;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenterTag;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -159,9 +159,9 @@ public class RepositoriesAdapter extends MvpBaseAdapter implements RepositoryLik
 
 		View view;
 
-		@Bind(R.id.item_repository_text_view_name)
+		@BindView(R.id.item_repository_text_view_name)
 		TextView nameTextView;
-		@Bind(R.id.item_repository_image_button_like)
+		@BindView(R.id.item_repository_image_button_like)
 		ImageButton likeImageButton;
 		private MvpDelegate mMvpDelegate;
 
