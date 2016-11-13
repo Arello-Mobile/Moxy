@@ -12,70 +12,85 @@ import com.arellomobile.mvp.presenter.PresenterType;
  * @author Alexander Blinov
  */
 public class PresenterStore {
-	private Map<Class<? extends MvpPresenter>, Map<String, MvpPresenter>> mGlobalPresenters = new HashMap<>();
-	private Map<Class<? extends MvpPresenter>, Map<String, MvpPresenter>> mWeakPresenters = new WeakValueHashMap<>();
+	private Map<Key, MvpPresenter> mPresenters = new HashMap<>();
 
 	/**
+	 * Add presenter to storage
+	 *
 	 * @param type     Type is presenter local, global or weak
-	 * @param tag      Object to store presenter
+	 * @param tag      Tag of presenter
+	 * @param clazz    Presenter class
 	 * @param instance Instance of MvpPresenter implementation to store
-	 * @param <T>      type of presenter
+	 * @param <T>      Type of presenter
 	 */
 	public <T extends MvpPresenter> void add(PresenterType type, String tag, Class<? extends MvpPresenter> clazz, T instance) {
-		Map<String, MvpPresenter> mvpPresenterMap;
-
-		final Map<Class<? extends MvpPresenter>, Map<String, MvpPresenter>> presenters = getPresenters(type);
-
-		if (presenters.containsKey(clazz)) {
-			mvpPresenterMap = presenters.get(clazz);
-		} else {
-			mvpPresenterMap = createPresentersStore(type);
-			presenters.put(clazz, mvpPresenterMap);
-		}
-
-		if (mvpPresenterMap.containsKey(tag)) {
-			throw new IllegalStateException("mvp multiple presenters map already contains tag");
-		}
-
-		mvpPresenterMap.put(tag, instance);
+		Key key = new Key(type, clazz, tag);
+		mPresenters.put(key, instance);
 	}
 
+	/**
+	 * Get presenter on existing params
+	 *
+	 * @param type     Type is presenter local, global or weak
+	 * @param tag      Tag of presenter
+	 * @param clazz    Presenter class
+	 * @return         Presenter if it's exists. Null otherwise (if it's no exists)
+	 */
 	public MvpPresenter get(PresenterType type, String tag, Class<? extends MvpPresenter> clazz) {
-		Map<String, MvpPresenter> tagMvpPresenterMap = getPresenters(type).get(clazz);
-
-		if (tagMvpPresenterMap == null) {
-			//TODO add builder
-			return null;
-		}
-
-		//TODO add builder if tagMvpPresenterMap.getPresenterFactory(tag) == null
-
-		return tagMvpPresenterMap.get(tag);
+		Key key = new Key(type, clazz, tag);
+		return mPresenters.get(key);
 	}
 
+	/**
+	 * Remove presenter from store.
+	 *
+	 * @param type     Type is presenter local, global or weak
+	 * @param tag      Tag of presenter
+	 * @param clazz    Presenter class
+	 * @return         Presenter which was removed
+	 */
 	public MvpPresenter remove(PresenterType type, String tag, Class<? extends MvpPresenter> clazz) {
-		Map<String, MvpPresenter> tagMvpPresenterMap = getPresenters(type).get(clazz);
-
-		if (tagMvpPresenterMap == null) {
-			return null;
-		}
-
-		return tagMvpPresenterMap.remove(tag);
+		Key key = new Key(type, clazz, tag);
+		return mPresenters.remove(key);
 	}
 
-	protected Map<Class<? extends MvpPresenter>, Map<String, MvpPresenter>> getPresenters(PresenterType type) {
-		if (type == PresenterType.WEAK) {
-			return mWeakPresenters;
+	private static class Key {
+		PresenterType mPresenterType;
+		Class<? extends MvpPresenter> mPresenterClass;
+		String mPresenterTag;
+
+		Key(PresenterType presenterType, Class<? extends MvpPresenter> presenterClass, String presenterTag) {
+			mPresenterType = presenterType;
+			mPresenterClass = presenterClass;
+			mPresenterTag = presenterTag;
 		}
 
-		return mGlobalPresenters;
-	}
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) {
+				return true;
+			}
+			if (o == null || getClass() != o.getClass()) {
+				return false;
+			}
 
-	protected Map<String, MvpPresenter> createPresentersStore(PresenterType type) {
-		if (type == PresenterType.WEAK) {
-			return new WeakValueHashMap<>();
+			Key key = (Key) o;
+
+			if (mPresenterType != key.mPresenterType) {
+				return false;
+			}
+			if (!mPresenterClass.equals(key.mPresenterClass)) {
+				return false;
+			}
+			return mPresenterTag.equals(key.mPresenterTag);
 		}
 
-		return new HashMap<>();
+		@Override
+		public int hashCode() {
+			int result = mPresenterType.hashCode();
+			result = 31 * result + mPresenterClass.hashCode();
+			result = 31 * result + mPresenterTag.hashCode();
+			return result;
+		}
 	}
 }
