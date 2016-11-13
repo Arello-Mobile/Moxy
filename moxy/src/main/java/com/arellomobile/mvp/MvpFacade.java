@@ -7,6 +7,7 @@ package com.arellomobile.mvp;
  * @author Alexander Blinov
  * @author Yuri Shmakov
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public final class MvpFacade {
 	private static volatile MvpFacade sInstance;
 
@@ -28,13 +29,14 @@ public final class MvpFacade {
 	}
 
 	private MvpFacade() {
+		mPresentersCounter = new PresentersCounter();
 		mPresenterStore = new PresenterStore();
 		mMvpProcessor = new MvpProcessor();
 	}
 
 	private PresenterStore mPresenterStore;
-
 	private MvpProcessor mMvpProcessor;
+	private PresentersCounter mPresentersCounter;
 
 	public PresenterStore getPresenterStore() {
 		return mPresenterStore;
@@ -50,5 +52,13 @@ public final class MvpFacade {
 
 	public void setMvpProcessor(MvpProcessor mvpProcessor) {
 		mMvpProcessor = mvpProcessor;
+	}
+
+	public PresentersCounter getPresentersCounter() {
+		return mPresentersCounter;
+	}
+
+	public void setPresentersCounter(PresentersCounter presentersCounter) {
+		mPresentersCounter = presentersCounter;
 	}
 }

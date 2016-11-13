@@ -9,8 +9,10 @@ import com.arellomobile.mvp.presenter.PresenterType;
  * Date: 17-Dec-15
  * Time: 16:05
  *
+ * @author Yuri Shmakov
  * @author Alexander Blinov
  */
+@SuppressWarnings("WeakerAccess")
 public class PresenterStore {
 	private Map<Key, MvpPresenter> mPresenters = new HashMap<>();
 
@@ -65,6 +67,7 @@ public class PresenterStore {
 			mPresenterTag = presenterTag;
 		}
 
+		@SuppressWarnings("SimplifiableIfStatement")
 		@Override
 		public boolean equals(Object o) {
 			if (this == o) {
