@@ -35,7 +35,7 @@ public class RepositoriesAdapter extends MvpBaseAdapter implements RepositoryLik
 	public static final int REPOSITORY_VIEW_TYPE = 0;
 	public static final int PROGRESS_VIEW_TYPE = 1;
 
-	@InjectPresenter(type = PresenterType.GLOBAL, tag = RepositoryLikesPresenter.TAG)
+	@InjectPresenter(type = PresenterType.WEAK, tag = RepositoryLikesPresenter.TAG)
 	RepositoryLikesPresenter mRepositoryLikesPresenter;
 
 	private int mSelection = -1;
@@ -140,17 +140,17 @@ public class RepositoriesAdapter extends MvpBaseAdapter implements RepositoryLik
 
 	class RepositoryHolder implements RepositoryView {
 
-		@InjectPresenter(type = PresenterType.GLOBAL)
+		@InjectPresenter(type = PresenterType.WEAK)
 		RepositoryPresenter mRepositoryPresenter;
 
 		private Repository mRepository;
 
-		@ProvidePresenterTag(presenterClass = RepositoryPresenter.class, type = PresenterType.GLOBAL)
+		@ProvidePresenterTag(presenterClass = RepositoryPresenter.class, type = PresenterType.WEAK)
 		String provideRepositoryPresenterTag() {
 			return String.valueOf(mRepository.getId());
 		}
 
-		@ProvidePresenter(type = PresenterType.GLOBAL)
+		@ProvidePresenter(type = PresenterType.WEAK)
 		RepositoryPresenter provideRepositoryPresenter() {
 			RepositoryPresenter repositoryPresenter = new RepositoryPresenter();
 			repositoryPresenter.setRepository(mRepository);

@@ -70,6 +70,6 @@ dependencies {
     testCompile "org.robolectric:robolectric:3.1-rc1"
 
     compile project(':moxy')
-    compile  project(':moxy-android')
+    compile project(':moxy-android')
     apt  project(':moxy-compiler')
 }
