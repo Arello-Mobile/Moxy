@@ -26,6 +26,7 @@ import com.arellomobile.mvp.presenter.PresenterType;
  * so the instance returned from {@link #MvpDelegate(Object)}} should be kept
  * until the Object is destroyed.
  *
+ * @author Yuri Shmakov
  * @author Alexander Blinov
  * @author Konstantin Tckhovrebov
  */
@@ -146,12 +147,14 @@ public class MvpDelegate<Delegated> {
 	 * <p>Destroy presenters.</p>
 	 */
 	public void onDestroy() {
+		PresentersCounter presentersCounter = MvpFacade.getInstance().getPresentersCounter();
 		PresenterStore presenterStore = MvpFacade.getInstance().getPresenterStore();
 
 		for (MvpPresenter<?> presenter : mPresenters) {
-			if (presenter.getPresenterType() == PresenterType.LOCAL) {
+			boolean isRejected = presentersCounter.rejectPresenter(presenter, mDelegateTag);
+			if (isRejected && presenter.getPresenterType() != PresenterType.GLOBAL) {
+				presenterStore.remove(presenter.getPresenterType(), presenter.getTag(), presenter.getPresenterClass());
 				presenter.onDestroy();
-				presenterStore.remove(PresenterType.LOCAL, presenter.getTag(), presenter.getPresenterClass());
 			}
 		}
 

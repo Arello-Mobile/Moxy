@@ -34,25 +34,25 @@ import butterknife.ButterKnife;
 public class DetailsFragment extends MvpAppCompatFragment implements RepositoryView, RepositoryLikesView {
 	public static final String ARGS_REPOSITORY = "argsRepository";
 
-	@InjectPresenter(type = PresenterType.GLOBAL)
+	@InjectPresenter(type = PresenterType.WEAK)
 	RepositoryPresenter mRepositoryPresenter;
 
 	private Repository mRepository;
 
-	@ProvidePresenterTag(presenterClass = RepositoryPresenter.class, type = PresenterType.GLOBAL)
+	@ProvidePresenterTag(presenterClass = RepositoryPresenter.class, type = PresenterType.WEAK)
 	String provideRepositoryPresenterTag() {
 		mRepository = (Repository) getArguments().get(ARGS_REPOSITORY);
 		return String.valueOf(mRepository.getId());
 	}
 
-	@ProvidePresenter(type = PresenterType.GLOBAL)
+	@ProvidePresenter(type = PresenterType.WEAK)
 	RepositoryPresenter provideRepositoryPresenter() {
 		RepositoryPresenter repositoryPresenter = new RepositoryPresenter();
 		repositoryPresenter.setRepository(mRepository);
 		return repositoryPresenter;
 	}
 
-	@InjectPresenter(type = PresenterType.GLOBAL, tag = RepositoryLikesPresenter.TAG)
+	@InjectPresenter(type = PresenterType.WEAK, tag = RepositoryLikesPresenter.TAG)
 	RepositoryLikesPresenter mRepositoryLikesPresenter;
 
 	@BindView(R.id.fragment_repository_details_text_view_title)
