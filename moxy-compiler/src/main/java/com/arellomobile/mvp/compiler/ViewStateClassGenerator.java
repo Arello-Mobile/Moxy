@@ -236,11 +236,13 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 				final Map<? extends ExecutableElement, ? extends AnnotationValue> elementValues = annotationMirror.getElementValues();
 				final Set<? extends ExecutableElement> keySet = elementValues.keySet();
 
-				for (ExecutableElement key : keySet) {
-					if ("value()".equals(key.toString())) {
-						strategyClass = elementValues.get(key).toString();
-					} else if ("tag()".equals(key.toString())) {
-						methodTag = elementValues.get(key).toString();
+				for (ExecutableElement executableElement : keySet) {
+					String key = executableElement.getSimpleName().toString();
+
+					if ("value".equals(key)) {
+						strategyClass = elementValues.get(executableElement).toString();
+					} else if ("tag".equals(key)) {
+						methodTag = elementValues.get(executableElement).toString();
 					}
 				}
 			}
@@ -377,7 +379,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 			final Set<? extends ExecutableElement> keySet = elementValues.keySet();
 
 			for (ExecutableElement key : keySet) {
-				if ("value()".equals(key.toString())) {
+				if ("value".equals(key.getSimpleName().toString())) {
 					return elementValues.get(key).toString();
 				}
 			}
