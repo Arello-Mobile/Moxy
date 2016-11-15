@@ -70,5 +70,6 @@ dependencies {
     testCompile "org.robolectric:robolectric:3.1-rc1"
 
     compile 'com.arello-mobile:moxy:1.2.0'
+    compile 'com.arello-mobile:moxy-app-compat:1.2.0'
     apt 'com.arello-mobile:moxy-compiler:1.2.0'
 }
