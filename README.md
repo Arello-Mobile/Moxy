@@ -67,6 +67,7 @@ Templates located in [/moxy-templates](https://github.com/Arello-Mobile/Moxy/tre
 
 ## Links
 [Telegram channel (en)](https://telegram.me/joinchat/CSPLxwlBb00ddt2irdhqfg)<br />
+[Telegram channel (ru)](https://telegram.me/joinchat/CSPLxweBjHgoX3ghBaJ0jg)<br />
 [References](https://github.com/Arello-Mobile/Moxy/wiki#references)<br />
 [FAQ](https://github.com/Arello-Mobile/Moxy/wiki/FAQ)
 
