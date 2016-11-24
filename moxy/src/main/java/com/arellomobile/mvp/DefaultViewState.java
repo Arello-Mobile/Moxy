@@ -1,6 +1,9 @@
 package com.arellomobile.mvp;
 
+import java.util.Set;
+
 import com.arellomobile.mvp.viewstate.MvpViewState;
+import com.arellomobile.mvp.viewstate.ViewCommand;
 
 /**
  * Date: 19.12.2015
@@ -8,9 +11,10 @@ import com.arellomobile.mvp.viewstate.MvpViewState;
  *
  * @author Yuri Shmakov
  */
-public final class DefaultViewState extends MvpViewState {
+public final class DefaultViewState extends MvpViewState<MvpView> {
+
 	@Override
-	protected void restoreState(MvpView view) {
+	protected void restoreState(MvpView view, Set<ViewCommand<MvpView>> currentState) {
 		// Stub!
 	}
 }

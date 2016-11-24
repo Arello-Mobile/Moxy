@@ -1,7 +1,10 @@
 package com.arellomobile.mvp.viewstate;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
@@ -13,21 +16,25 @@ import com.arellomobile.mvp.MvpView;
  *
  * @author Yuri Shmakov
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class MvpViewState<View extends MvpView> {
 	protected Set<View> mViews;
 	protected Set<View> mInRestoreState;
+	protected Map<View, Set<ViewCommand<View>>> mViewStates;
 
 	public MvpViewState() {
 		mViews = Collections.newSetFromMap(new WeakHashMap<View, Boolean>());
 		mInRestoreState = Collections.newSetFromMap(new WeakHashMap<View, Boolean>());
+		mViewStates = new WeakHashMap<>();
 	}
 
 	/**
 	 * Apply saved state to attached view
 	 *
 	 * @param view mvp view to restore state
+	 * @param currentState commands that was applied already
 	 */
-	protected abstract void restoreState(View view);
+	protected abstract void restoreState(View view, Set<ViewCommand<View>> currentState);
 
 	/**
 	 * Attach view to view state and apply saves state
@@ -47,7 +54,7 @@ public abstract class MvpViewState<View extends MvpView> {
 
 		mInRestoreState.add(view);
 
-		restoreState(view);
+		restoreState(view, getCurrentState(view));
 
 		mInRestoreState.remove(view);
 	}
@@ -62,6 +69,19 @@ public abstract class MvpViewState<View extends MvpView> {
 	public void detachView(View view) {
 		mViews.remove(view);
 		mInRestoreState.remove(view);
+	}
+
+	/**
+	 * @param view target view
+	 * @return commands that was applied already
+	 */
+	protected Set<ViewCommand<View>> getCurrentState(View view) {
+		Set<ViewCommand<View>> viewState = mViewStates.get(view);
+		if (viewState == null) {
+			viewState = new HashSet<>();
+			mViewStates.put(view, viewState);
+		}
+		return viewState;
 	}
 
 	/**

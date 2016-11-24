@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategy;
@@ -14,6 +15,7 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategy;
  *
  * @author Yuri Shmakov
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class ViewCommands<View extends MvpView> {
 	private List<ViewCommand<View>> mState = new ArrayList<>();
 	private Map<Class<? extends StateStrategy>, StateStrategy> mStrategies = new HashMap<>();
@@ -52,10 +54,14 @@ public class ViewCommands<View extends MvpView> {
 		return mState.isEmpty();
 	}
 
-	public void reapply(View view) {
+	public void reapply(View view, Set<ViewCommand<View>> currentState) {
 		final ArrayList<ViewCommand<View>> commands = new ArrayList<>(mState);
 
 		for (ViewCommand<View> command : commands) {
+			if (currentState.contains(command)) {
+				continue;
+			}
+
 			command.apply(view);
 
 			afterApply(command);
