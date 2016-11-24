@@ -10,9 +10,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.sample.github.R;
-import com.arellomobile.mvp.sample.github.mvp.common.MvpAppCompatActivity;
 import com.arellomobile.mvp.sample.github.mvp.presenters.SignInPresenter;
 import com.arellomobile.mvp.sample.github.mvp.views.SignInView;
 

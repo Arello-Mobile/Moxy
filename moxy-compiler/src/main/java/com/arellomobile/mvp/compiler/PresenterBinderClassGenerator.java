@@ -45,8 +45,8 @@ import javax.lang.model.type.TypeMirror;
  * PresenterBinderClassGenerator generates PresenterBinder
  * <p>
  *
- * @author Alexander Blinov
  * @author Yuri Shmakov
+ * @author Alexander Blinov
  */
 final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement> {
 	public static final String PRESENTER_FIELD_ANNOTATION = InjectPresenter.class.getName();
@@ -203,16 +203,13 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 					final Set<? extends ExecutableElement> keySet = elementValues.keySet();
 
 					for (ExecutableElement executableElement : keySet) {
+						String key = executableElement.getSimpleName().toString();
 
-						if ("type()".equals(executableElement.toString())) {
+						if ("type".equals(key)) {
 							type = elementValues.get(executableElement).getValue().toString();
-						}
-
-						if ("tag()".equals(executableElement.toString())) {
+						} else if ("tag".equals(key)) {
 							tag = elementValues.get(executableElement).toString();
-						}
-
-						if ("presenterId()".equals(executableElement.toString())) {
+						} else if ("presenterId".equals(key)) {
 							presenterId = elementValues.get(executableElement).toString();
 						}
 					}
@@ -254,16 +251,13 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 					final Set<? extends ExecutableElement> keySet = elementValues.keySet();
 
 					for (ExecutableElement executableElement : keySet) {
+						String key = executableElement.getSimpleName().toString();
 
-						if ("type()".equals(executableElement.toString())) {
+						if ("type".equals(key)) {
 							type = elementValues.get(executableElement).getValue().toString();
-						}
-
-						if ("tag()".equals(executableElement.toString())) {
+						} else if ("tag".equals(key)) {
 							tag = elementValues.get(executableElement).toString();
-						}
-
-						if ("presenterId()".equals(executableElement.toString())) {
+						} else if ("presenterId".equals(key)) {
 							presenterId = elementValues.get(executableElement).toString();
 						}
 					}
@@ -304,16 +298,13 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 					final Set<? extends ExecutableElement> keySet = elementValues.keySet();
 
 					for (ExecutableElement executableElement : keySet) {
+						String key = executableElement.getSimpleName().toString();
 
-						if ("presenterClass()".equals(executableElement.toString())) {
+						if ("presenterClass".equals(key)) {
 							kind = (DeclaredType) elementValues.get(executableElement).getValue();
-						}
-
-						if ("type()".equals(executableElement.toString())) {
+						} else if ("type".equals(key)) {
 							type = elementValues.get(executableElement).getValue().toString();
-						}
-
-						if ("presenterId()".equals(executableElement.toString())) {
+						} else if ("presenterId".equals(key)) {
 							presenterId = elementValues.get(executableElement).toString();
 						}
 					}
