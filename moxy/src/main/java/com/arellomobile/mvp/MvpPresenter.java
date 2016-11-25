@@ -55,6 +55,8 @@ public abstract class MvpPresenter<View extends MvpView> {
 	 * presenter instance will have to attach some view in future, this method
 	 * will not be called.</p>
 	 * <p>There you can to interact with {@link #mViewState}.</p>
+	 *
+	 * @deprecated you should use default constructor of presenter
 	 */
 	protected void onFirstViewAttach() {
 	}
