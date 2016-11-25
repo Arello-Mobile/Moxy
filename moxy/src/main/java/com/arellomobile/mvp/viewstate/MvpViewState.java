@@ -1,6 +1,5 @@
 package com.arellomobile.mvp.viewstate;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -54,7 +53,13 @@ public abstract class MvpViewState<View extends MvpView> {
 
 		mInRestoreState.add(view);
 
-		restoreState(view, getCurrentState(view));
+		Set<ViewCommand<View>> currentState = getCurrentState(view);
+		if (currentState == null) {
+			currentState = new HashSet<>();
+			mViewStates.put(view, currentState);
+		}
+
+		restoreState(view, currentState);
 
 		mInRestoreState.remove(view);
 	}
@@ -76,12 +81,7 @@ public abstract class MvpViewState<View extends MvpView> {
 	 * @return commands that was applied already
 	 */
 	protected Set<ViewCommand<View>> getCurrentState(View view) {
-		Set<ViewCommand<View>> viewState = mViewStates.get(view);
-		if (viewState == null) {
-			viewState = new HashSet<>();
-			mViewStates.put(view, viewState);
-		}
-		return viewState;
+		return mViewStates.get(view);
 	}
 
 	/**

@@ -159,6 +159,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 			           "\n" +
 			           "\t\tfor(" + mViewClassName + " view : mViews) {\n" +
 			           "\t\t\tview." + method.name + "(" + argumentsString + ");\n" +
+			           "\t\t\tgetCurrentState(view).add(" + commandFieldName + ");\n" +
 			           "\t\t}\n" +
 			           "\n" +
 			           "\t\tmViewCommands.afterApply(" + commandFieldName + ");\n" +
@@ -365,6 +366,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 			           "\t\t@Override\n" +
 			           "\t\tpublic void apply(" + viewClassName + " mvpView) {\n" +
 			           "\t\t\tmvpView." + method.name + "(" + argumentsString + ");\n" +
+			           "\t\t\tgetCurrentState(mvpView).add(this);\n" +
 			           "\t\t}\n" +
 			           "\t}\n";
 		}

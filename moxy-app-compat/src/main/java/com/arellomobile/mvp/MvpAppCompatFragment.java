@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
  * @author Yuri Shmakov
  * @author Konstantin Tckhovrebov
  */
+@SuppressWarnings({"ConstantConditions", "unused"})
 public class MvpAppCompatFragment extends Fragment {
 	private MvpDelegate<? extends MvpAppCompatFragment> mMvpDelegate;
 
@@ -26,9 +27,16 @@ public class MvpAppCompatFragment extends Fragment {
 		getMvpDelegate().onAttach();
 	}
 
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+
+		getMvpDelegate().onSaveInstanceState(outState);
+		getMvpDelegate().onDetach();
+	}
+
 	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
+	public void onStop() {
+		super.onStop();
 
 		getMvpDelegate().onDetach();
 	}
@@ -47,12 +55,6 @@ public class MvpAppCompatFragment extends Fragment {
 		if (isRemoving() || anyParentIsRemoving || getActivity().isFinishing()) {
 			getMvpDelegate().onDestroy();
 		}
-	}
-
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-
-		getMvpDelegate().onSaveInstanceState(outState);
 	}
 
 	/**
