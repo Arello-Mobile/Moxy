@@ -66,8 +66,8 @@ In order to avoid boilerplate code creating for binding activity,fragments and i
 Templates located in [/moxy-templates](https://github.com/Arello-Mobile/Moxy/tree/master/moxy-templates)
 
 ## Links
-[Telegram channel (en)](https://telegram.me/joinchat/CSPLxwlBb00ddt2irdhqfg)<br />
-[Telegram channel (ru)](https://telegram.me/joinchat/CSPLxweBjHgoX3ghBaJ0jg)<br />
+[Telegram channel (en)](https://telegram.me/moxy_mvp_library)<br />
+[Telegram channel (ru)](https://telegram.me/moxy_ru)<br />
 [References](https://github.com/Arello-Mobile/Moxy/wiki#references)<br />
 [FAQ](https://github.com/Arello-Mobile/Moxy/wiki/FAQ)
 
