@@ -56,6 +56,8 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 
 		String builder = "package " + fullClassName.substring(0, fullClassName.lastIndexOf(".")) + ";\n" +
 		                 "\n" +
+		                 "import java.util.Set;\n" +
+		                 "\n" +
 		                 "import com.arellomobile.mvp.viewstate.MvpViewState;\n" +
 		                 "import com.arellomobile.mvp.viewstate.ViewCommand;\n" +
 		                 "import com.arellomobile.mvp.viewstate.ViewCommands;\n" +
@@ -67,12 +69,12 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 		                 "\tprivate ViewCommands<" + mViewClassName + "> mViewCommands = new ViewCommands<>();\n" +
 		                 "\n" +
 		                 "\t@Override\n" +
-		                 "\tpublic void restoreState(" + mViewClassName + " view) {\n" +
+		                 "\tpublic void restoreState(" + mViewClassName + " view, Set<ViewCommand<" + mViewClassName + ">> currentState) {\n" +
 		                 "\t\tif (mViewCommands.isEmpty()) {\n" +
 		                 "\t\t\treturn;\n" +
 		                 "\t\t}\n" +
 		                 "\n" +
-		                 "\t\tmViewCommands.reapply(view);\n" +
+		                 "\t\tmViewCommands.reapply(view, currentState);\n" +
 		                 "\t}\n" +
 		                 "\n";
 
@@ -157,6 +159,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 			           "\n" +
 			           "\t\tfor(" + mViewClassName + " view : mViews) {\n" +
 			           "\t\t\tview." + method.name + "(" + argumentsString + ");\n" +
+			           "\t\t\tgetCurrentState(view).add(" + commandFieldName + ");\n" +
 			           "\t\t}\n" +
 			           "\n" +
 			           "\t\tmViewCommands.afterApply(" + commandFieldName + ");\n" +
@@ -363,6 +366,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 			           "\t\t@Override\n" +
 			           "\t\tpublic void apply(" + viewClassName + " mvpView) {\n" +
 			           "\t\t\tmvpView." + method.name + "(" + argumentsString + ");\n" +
+			           "\t\t\tgetCurrentState(mvpView).add(this);\n" +
 			           "\t\t}\n" +
 			           "\t}\n";
 		}

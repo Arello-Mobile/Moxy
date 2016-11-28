@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
  * Date: 16-Dec-15
  * Time: 17:07
  *
+ * @author Yuri Shmakov
  * @author Alexander Blinov
  */
 @Target(value = {ElementType.TYPE, ElementType.METHOD})

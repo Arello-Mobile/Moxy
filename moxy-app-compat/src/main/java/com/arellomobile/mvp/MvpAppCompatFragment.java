@@ -2,6 +2,9 @@ package com.arellomobile.mvp;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 /**
  * Date: 19-Dec-15
@@ -11,7 +14,10 @@ import android.support.v4.app.Fragment;
  * @author Yuri Shmakov
  * @author Konstantin Tckhovrebov
  */
+@SuppressWarnings({"ConstantConditions", "unused"})
 public class MvpAppCompatFragment extends Fragment {
+
+	private boolean mIsStateSaved;
 	private MvpDelegate<? extends MvpAppCompatFragment> mMvpDelegate;
 
 	public void onCreate(Bundle savedInstanceState) {
@@ -20,15 +26,31 @@ public class MvpAppCompatFragment extends Fragment {
 		getMvpDelegate().onCreate(savedInstanceState);
 	}
 
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		mIsStateSaved = false;
+
+		return super.onCreateView(inflater, container, savedInstanceState);
+	}
+
 	public void onStart() {
 		super.onStart();
 
 		getMvpDelegate().onAttach();
 	}
 
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+
+		mIsStateSaved = true;
+
+		getMvpDelegate().onSaveInstanceState(outState);
+		getMvpDelegate().onDetach();
+	}
+
 	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
+	public void onStop() {
+		super.onStop();
 
 		getMvpDelegate().onDetach();
 	}
@@ -36,6 +58,11 @@ public class MvpAppCompatFragment extends Fragment {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+
+		if (mIsStateSaved) {
+			mIsStateSaved = false;
+			return;
+		}
 
 		boolean anyParentIsRemoving = false;
 		Fragment parent = getParentFragment();
@@ -47,12 +74,6 @@ public class MvpAppCompatFragment extends Fragment {
 		if (isRemoving() || anyParentIsRemoving || getActivity().isFinishing()) {
 			getMvpDelegate().onDestroy();
 		}
-	}
-
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-
-		getMvpDelegate().onSaveInstanceState(outState);
 	}
 
 	/**

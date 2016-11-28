@@ -6,22 +6,22 @@ import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.ViewCommand;
 
 /**
- * This strategy will clear current commands queue and then incoming command will be put in.
+ * Command will be saved in commands queue. And this command will be removed after first execution.
  *
- * Date: 19-Dec-15
- * Time: 14:34
+ * Date: 24.11.2016
+ * Time: 11:48
  *
- * @author Alexander Blinov
+ * @author Yuri Shmakov
  */
-public class SingleStateStrategy implements StateStrategy {
+
+public class OneExecutionStateStrategy implements StateStrategy {
 	@Override
 	public <View extends MvpView> void beforeApply(List<ViewCommand<View>> currentState, ViewCommand<View> incomingCommand) {
-		currentState.clear();
 		currentState.add(incomingCommand);
 	}
 
 	@Override
 	public <View extends MvpView> void afterApply(List<ViewCommand<View>> currentState, ViewCommand<View> incomingCommand) {
-		// pass
+		currentState.remove(incomingCommand);
 	}
 }

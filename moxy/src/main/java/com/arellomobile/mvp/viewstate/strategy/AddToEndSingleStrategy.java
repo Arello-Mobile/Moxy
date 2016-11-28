@@ -7,6 +7,8 @@ import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.ViewCommand;
 
 /**
+ * Command will be added to end of commands queue. If commands queue contains same type command, then existing command will be removed.
+ *
  * Date: 17.12.2015
  * Time: 11:24
  *

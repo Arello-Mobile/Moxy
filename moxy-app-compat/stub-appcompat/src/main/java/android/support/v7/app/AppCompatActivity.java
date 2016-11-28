@@ -13,7 +13,7 @@ public class AppCompatActivity {
 		throw new RuntimeException("Stub!");
 	}
 
-	protected void onDestroy() {
+	protected void onStart() {
 		throw new RuntimeException("Stub!");
 	}
 
@@ -21,7 +21,11 @@ public class AppCompatActivity {
 		throw new RuntimeException("Stub!");
 	}
 
-	protected void onStart() {
+	protected void onStop() {
+		throw new RuntimeException("Stub!");
+	}
+
+	protected void onDestroy() {
 		throw new RuntimeException("Stub!");
 	}
 
