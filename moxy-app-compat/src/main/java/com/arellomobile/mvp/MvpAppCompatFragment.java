@@ -2,6 +2,9 @@ package com.arellomobile.mvp;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 /**
  * Date: 19-Dec-15
@@ -13,12 +16,21 @@ import android.support.v4.app.Fragment;
  */
 @SuppressWarnings({"ConstantConditions", "unused"})
 public class MvpAppCompatFragment extends Fragment {
+
+	private boolean mIsStateSaved;
 	private MvpDelegate<? extends MvpAppCompatFragment> mMvpDelegate;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		getMvpDelegate().onCreate(savedInstanceState);
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		mIsStateSaved = false;
+
+		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
 	public void onStart() {
@@ -29,6 +41,8 @@ public class MvpAppCompatFragment extends Fragment {
 
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
+
+		mIsStateSaved = true;
 
 		getMvpDelegate().onSaveInstanceState(outState);
 		getMvpDelegate().onDetach();
@@ -44,6 +58,11 @@ public class MvpAppCompatFragment extends Fragment {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+
+		if (mIsStateSaved) {
+			mIsStateSaved = false;
+			return;
+		}
 
 		boolean anyParentIsRemoving = false;
 		Fragment parent = getParentFragment();
