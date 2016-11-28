@@ -17,15 +17,15 @@ public class Fragment {
 		throw new RuntimeException("Stub!");
 	}
 
-	public void onDestroyView() {
+	public void onSaveInstanceState(Bundle outState) {
+		throw new RuntimeException("Stub!");
+	}
+
+	public void onStop() {
 		throw new RuntimeException("Stub!");
 	}
 
 	public void onDestroy() {
-		throw new RuntimeException("Stub!");
-	}
-
-	public void onSaveInstanceState(Bundle outState) {
 		throw new RuntimeException("Stub!");
 	}
 

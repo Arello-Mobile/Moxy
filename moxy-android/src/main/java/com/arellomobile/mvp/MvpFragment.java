@@ -8,10 +8,11 @@ import android.os.Bundle;
  * Date: 19-Dec-15
  * Time: 13:25
  *
- * @author Alexander Blinov
  * @author Yuri Shmakov
+ * @author Alexander Blinov
  * @author Konstantin Tckhovrebov
  */
+@SuppressWarnings("ConstantConditions")
 public class MvpFragment extends Fragment {
 	private MvpDelegate<? extends MvpFragment> mMvpDelegate;
 
@@ -27,9 +28,16 @@ public class MvpFragment extends Fragment {
 		getMvpDelegate().onAttach();
 	}
 
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+
+		getMvpDelegate().onSaveInstanceState(outState);
+		getMvpDelegate().onDetach();
+	}
+
 	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
+	public void onStop() {
+		super.onStop();
 
 		getMvpDelegate().onDetach();
 	}
@@ -51,12 +59,6 @@ public class MvpFragment extends Fragment {
 		if (isRemoving() || anyParentIsRemoving || getActivity().isFinishing()) {
 			getMvpDelegate().onDestroy();
 		}
-	}
-
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-
-		getMvpDelegate().onSaveInstanceState(outState);
 	}
 
 	/**
