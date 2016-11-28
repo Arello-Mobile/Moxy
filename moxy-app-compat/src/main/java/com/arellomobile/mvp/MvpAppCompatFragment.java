@@ -33,8 +33,8 @@ public class MvpAppCompatFragment extends Fragment {
 		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
-	public void onStart() {
-		super.onStart();
+	public void onResume() {
+		super.onResume();
 
 		getMvpDelegate().onAttach();
 	}

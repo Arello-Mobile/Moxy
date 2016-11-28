@@ -19,7 +19,7 @@ public class Fragment {
 		throw new RuntimeException("Stub!");
 	}
 
-	public void onStart() {
+	public void onResume() {
 		throw new RuntimeException("Stub!");
 	}
 
