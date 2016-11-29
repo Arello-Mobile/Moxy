@@ -1,4 +1,4 @@
-We've introduced you into Moxy - mvp framework for spliting application into logic loyers and lifecycle managing. Now it's time to to reduce boilerplate via Android Studio Templates
+We've introduced you into Moxy - mvp framework for spliting application into logic layers and lifecycle managing. Now it's time to to reduce boilerplate via Android Studio Templates
 
 
 <h4><b>Project structure</b></h4>
