@@ -76,6 +76,10 @@ public abstract class MvpViewState<View extends MvpView> {
 		mInRestoreState.remove(view);
 	}
 
+	public void destroyView(View view) {
+		mViewStates.remove(view);
+	}
+
 	/**
 	 * @param view target view
 	 * @return commands that was applied already

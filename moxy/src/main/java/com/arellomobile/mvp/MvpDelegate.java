@@ -144,6 +144,19 @@ public class MvpDelegate<Delegated> {
 	}
 
 	/**
+	 * <p>View was being destroyed, but logical unit still alive</p>
+	 */
+	public void onDestroyView() {
+		for (MvpPresenter<? super Delegated> presenter : mPresenters) {
+			presenter.destroyView(mDelegated);
+		}
+
+		for (MvpDelegate<?> childDelegate : mChildDelegates) {
+			childDelegate.onDestroyView();
+		}
+	}
+
+	/**
 	 * <p>Destroy presenters.</p>
 	 */
 	public void onDestroy() {

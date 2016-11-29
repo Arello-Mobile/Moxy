@@ -75,6 +75,12 @@ public abstract class MvpPresenter<View extends MvpView> {
 		}
 	}
 
+	public void destroyView(View view) {
+		if (mViewState != null) {
+			mViewState.destroyView(view);
+		}
+	}
+
 	/**
 	 * @return views attached to view state, or attached to presenter(if view state not exists)
 	 */
