@@ -10,7 +10,7 @@ import com.arellomobile.mvp.MvpDelegate;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.arellomobile.mvp.sample.github.mvp.models.Repository;
-import com.arellomobile.mvp.sample.github.mvp.presenters.RepositoryPresenter;
+import com.arellomobile.mvp.sample.github.mvp.presenters.RepositoryWidgetPresenter;
 import com.arellomobile.mvp.sample.github.mvp.views.RepositoryView;
 
 /**
@@ -28,7 +28,7 @@ public class RepositoryWidget extends TextView implements RepositoryView {
 	private Repository mRepository;
 
 	@InjectPresenter
-	RepositoryPresenter mRepositoryPresenter;
+	RepositoryWidgetPresenter mRepositoryPresenter;
 
 	public RepositoryWidget(Context context) {
 		super(context);
@@ -48,8 +48,8 @@ public class RepositoryWidget extends TextView implements RepositoryView {
 	}
 
 	@ProvidePresenter
-	RepositoryPresenter provideRepositoryPresenter() {
-		return new RepositoryPresenter();
+	RepositoryWidgetPresenter provideRepositoryPresenter() {
+		return new RepositoryWidgetPresenter();
 	}
 
 	public void setRepository(MvpDelegate parentDelegate, Repository repository) {
@@ -60,14 +60,6 @@ public class RepositoryWidget extends TextView implements RepositoryView {
 		getMvpDelegate().onAttach();
 
 		mRepositoryPresenter.setRepository(mRepository);
-	}
-
-	@Override
-	protected void onDetachedFromWindow() {
-		super.onDetachedFromWindow();
-
-		getMvpDelegate().onSaveInstanceState();
-		getMvpDelegate().onDetach();
 	}
 
 	public MvpDelegate getMvpDelegate() {
