@@ -1,9 +1,6 @@
 package android.support.v4.app;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 /**
  * Date: 30-Sen-16
@@ -12,10 +9,6 @@ import android.view.ViewGroup;
  * @author Yuri Shmakov
  */
 public class Fragment {
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		throw new RuntimeException("Stub!");
-	}
-
 	public void onCreate(Bundle savedInstanceState) {
 		throw new RuntimeException("Stub!");
 	}
@@ -29,6 +22,10 @@ public class Fragment {
 	}
 
 	public void onStop() {
+		throw new RuntimeException("Stub!");
+	}
+
+	public void onDestroyView() {
 		throw new RuntimeException("Stub!");
 	}
 

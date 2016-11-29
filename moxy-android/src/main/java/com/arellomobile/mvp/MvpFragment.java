@@ -3,9 +3,7 @@ package com.arellomobile.mvp;
 import android.app.Fragment;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.util.Log;
 
 /**
  * Date: 19-Dec-15
@@ -27,15 +25,10 @@ public class MvpFragment extends Fragment {
 		getMvpDelegate().onCreate(savedInstanceState);
 	}
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		mIsStateSaved = false;
-
-		return super.onCreateView(inflater, container, savedInstanceState);
-	}
-
 	public void onResume() {
 		super.onResume();
+
+		mIsStateSaved = false;
 
 		getMvpDelegate().onAttach();
 	}
@@ -54,6 +47,14 @@ public class MvpFragment extends Fragment {
 		super.onStop();
 
 		getMvpDelegate().onDetach();
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+
+		getMvpDelegate().onDetach();
+		getMvpDelegate().onDestroyView();
 	}
 
 	@Override

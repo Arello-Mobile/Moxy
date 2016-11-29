@@ -76,29 +76,29 @@ Base modules integration:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy:1.3.1'
-  provided 'com.arello-mobile:moxy-compiler:1.3.1'
+  compile 'com.arello-mobile:moxy:1.3.2'
+  provided 'com.arello-mobile:moxy-compiler:1.3.2'
 }
 ```
 If you want to see generated code, use `apt` instead of `provided` dependency type:
 ```groovy
 dependencies {
   ...
-  apt 'com.arello-mobile:moxy-compiler:1.3.1'
+  apt 'com.arello-mobile:moxy-compiler:1.3.2'
 }
 ```
 For additional base view classes `MvpActivity` and `MvpFragment` add this:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy-android:1.3.1'
+  compile 'com.arello-mobile:moxy-android:1.3.2'
 }
 ```
 If you planing to use AppCompat, then you can use `MvpAppCompatActivity` and `MvpAppCompatFragment`. Then add this:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy-app-compat:1.3.1'
+  compile 'com.arello-mobile:moxy-app-compat:1.3.2'
   compile 'com.android.support:appcompat-v7:$support_version'
 }
 ```
@@ -107,7 +107,7 @@ If you are using kotlin, use `kapt` instead of `provided`/`apt` dependency type 
 ```groovy
 dependencies {
   ...
-  kapt 'com.arello-mobile:moxy-compiler:1.3.1'
+  kapt 'com.arello-mobile:moxy-compiler:1.3.2'
 }
 kapt {
     generateStubs = true

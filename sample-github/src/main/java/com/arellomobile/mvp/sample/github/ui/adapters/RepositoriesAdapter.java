@@ -175,6 +175,7 @@ public class RepositoriesAdapter extends MvpBaseAdapter implements RepositoryLik
 			if (getMvpDelegate() != null) {
 				getMvpDelegate().onSaveInstanceState(getMvpDelegate().getChildrenSaveState());
 				getMvpDelegate().onDetach();
+				getMvpDelegate().onDestroyView();
 				mMvpDelegate = null;
 			}
 
