@@ -53,13 +53,7 @@ public abstract class MvpViewState<View extends MvpView> {
 
 		mInRestoreState.add(view);
 
-		Set<ViewCommand<View>> currentState = getCurrentState(view);
-		if (currentState == null) {
-			currentState = new HashSet<>();
-			mViewStates.put(view, currentState);
-		}
-
-		restoreState(view, currentState);
+		restoreState(view, getCurrentState(view));
 
 		mInRestoreState.remove(view);
 	}
@@ -85,7 +79,13 @@ public abstract class MvpViewState<View extends MvpView> {
 	 * @return commands that was applied already
 	 */
 	protected Set<ViewCommand<View>> getCurrentState(View view) {
-		return mViewStates.get(view);
+		Set<ViewCommand<View>> currentState = mViewStates.get(view);
+		if (currentState == null) {
+			currentState = new HashSet<>();
+			mViewStates.put(view, currentState);
+		}
+
+		return currentState;
 	}
 
 	/**
