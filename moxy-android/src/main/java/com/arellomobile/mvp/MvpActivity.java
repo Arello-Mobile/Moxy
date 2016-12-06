@@ -37,8 +37,8 @@ public class MvpActivity extends Activity {
 	}
 
 	@Override
-	protected void onStop() {
-		super.onStop();
+	protected void onResume() {
+		super.onResume();
 
 		getMvpDelegate().onDetach();
 	}
