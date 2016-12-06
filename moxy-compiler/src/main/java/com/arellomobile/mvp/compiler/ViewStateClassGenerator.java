@@ -158,8 +158,8 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 			           "\t\t}\n" +
 			           "\n" +
 			           "\t\tfor(" + mViewClassName + " view : mViews) {\n" +
-			           "\t\t\tview." + method.name + "(" + argumentsString + ");\n" +
 			           "\t\t\tgetCurrentState(view).add(" + commandFieldName + ");\n" +
+			           "\t\t\tview." + method.name + "(" + argumentsString + ");\n" +
 			           "\t\t}\n" +
 			           "\n" +
 			           "\t\tmViewCommands.afterApply(" + commandFieldName + ");\n" +

@@ -116,5 +116,15 @@ public class SignInActivity extends MvpAppCompatActivity implements SignInView, 
 
 		startActivity(intent);
 	}
+
+	@Override
+	protected void onDestroy() {
+		if (mErrorDialog != null) {
+			mErrorDialog.setOnCancelListener(null);
+			mErrorDialog.dismiss();
+		}
+
+		super.onDestroy();
+	}
 }
 

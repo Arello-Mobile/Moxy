@@ -13,7 +13,7 @@ public class AppCompatActivity {
 		throw new RuntimeException("Stub!");
 	}
 
-	protected void onStart() {
+	protected void onResume() {
 		throw new RuntimeException("Stub!");
 	}
 
