@@ -160,7 +160,7 @@ public abstract class MvpPresenter<View extends MvpView> {
 
 	private static class Binder {
 		static void bind(MvpPresenter presenter) {
-			MvpView viewState = (MvpView) MoxyReflector.getViewStateClassProvider(presenter.getClass());
+			MvpView viewState = (MvpView) MoxyReflector.getViewState(presenter.getClass());
 
 			presenter.mViewStateAsView = viewState;
 			presenter.mViewState = (MvpViewState) viewState;

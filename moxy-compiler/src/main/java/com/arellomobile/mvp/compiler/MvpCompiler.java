@@ -106,6 +106,14 @@ public class MvpCompiler extends AbstractProcessor {
 			generateCode(ElementKind.INTERFACE, viewStateClassGenerator, usedView);
 		}
 
+		String moxyReflector = MoxyReflectorGenerator.generate(viewStateProviderClassGenerator.getPresenterClassNames());
+
+		ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
+		classGeneratingParams.setName("com.arellomobile.mvp.MoxyReflector");
+		classGeneratingParams.setBody(moxyReflector);
+
+		createSourceFile(classGeneratingParams);
+
 		return true;
 	}
 

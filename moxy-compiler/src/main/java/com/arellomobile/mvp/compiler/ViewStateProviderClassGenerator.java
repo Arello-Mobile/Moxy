@@ -1,5 +1,6 @@
 package com.arellomobile.mvp.compiler;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,16 +35,22 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement> 
 	public static final String MVP_PRESENTER_CLASS = MvpPresenter.class.getCanonicalName();
 
 	private Set<TypeElement> mUsedViews;
+	private List<String> mPresenterClassNames;
 
 	public ViewStateProviderClassGenerator() {
 		mUsedViews = new HashSet<>();
+		mPresenterClassNames = new ArrayList<>();
 	}
 
 	@Override
 	public boolean generate(TypeElement typeElement, List<ClassGeneratingParams> classGeneratingParamsList) {
-		String parentClassName = typeElement.toString();
+		String fullPresenterClassName = typeElement.toString();
 
-		final String viewClassName = parentClassName.substring(parentClassName.lastIndexOf(".") + 1);
+		mPresenterClassNames.add(fullPresenterClassName);
+
+		MvpCompiler.getMessager().printMessage(Diagnostic.Kind.WARNING, "PARENT == " + fullPresenterClassName);
+
+		final String presenterClassName = fullPresenterClassName.substring(fullPresenterClassName.lastIndexOf(".") + 1);
 
 		String viewState = getViewStateClassFromAnnotationParams(typeElement);
 		if (viewState == null) {
@@ -68,22 +75,24 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement> 
 			}
 		}
 
-		String builder = "package " + parentClassName.substring(0, parentClassName.lastIndexOf(".")) + ";\n" +
+		String builder = "package " + fullPresenterClassName.substring(0, fullPresenterClassName.lastIndexOf(".")) + ";\n" +
 		                 "\n" +
-		                 "import com.arellomobile.mvp.ViewStateClassNameProvider;\n" +
-		                 "import java.lang.String;\n" +
-		                 "\n" + "public class " + viewClassName + MvpProcessor.VIEW_STATE_CLASS_NAME_PROVIDER_SUFFIX + " extends ViewStateClassNameProvider {\n" +
-		                 "\tpublic " + viewClassName + MvpProcessor.VIEW_STATE_CLASS_NAME_PROVIDER_SUFFIX + "() {\n";
+		                 "import com.arellomobile.mvp.ViewStateProvider;\n" +
+		                 "import com.arellomobile.mvp.viewstate.MvpViewState;\n" +
+		                 "\npublic class " + presenterClassName + MvpProcessor.VIEW_STATE_PROVIDER_SUFFIX + " extends ViewStateProvider {\n" +
+		                 "\t\n" +
+		                 "\t@Override\n" +
+		                 "\tpublic MvpViewState getViewState() {\n";
 		if (viewState == null) {
-			builder += "\t\tthrow new RuntimeException(" + parentClassName + " should has view\");\n";
+			builder += "\t\tthrow new RuntimeException(" + fullPresenterClassName + " should has view\");\n";
 		} else {
-			builder += "\t\tsuper(\"" + viewState + "\");\n";
+			builder += "\t\treturn new " + viewState + "();\n";
 		}
 		builder += "\t}\n" +
 		           "}";
 
 		ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
-		classGeneratingParams.setName(parentClassName + MvpProcessor.VIEW_STATE_CLASS_NAME_PROVIDER_SUFFIX);
+		classGeneratingParams.setName(fullPresenterClassName + MvpProcessor.VIEW_STATE_PROVIDER_SUFFIX);
 		classGeneratingParams.setBody(builder);
 		classGeneratingParamsList.add(classGeneratingParams);
 
@@ -172,5 +181,9 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement> 
 
 	public Set<TypeElement> getUsedViews() {
 		return mUsedViews;
+	}
+
+	public List<String> getPresenterClassNames() {
+		return mPresenterClassNames;
 	}
 }

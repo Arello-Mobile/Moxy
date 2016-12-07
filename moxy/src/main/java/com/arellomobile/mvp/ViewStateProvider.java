@@ -8,7 +8,7 @@ import com.arellomobile.mvp.viewstate.MvpViewState;
  *
  * @author Yuri Shmakov
  */
-public abstract class ViewStateClassNameProvider {
+public abstract class ViewStateProvider {
 	/**
 	 * <p>Presenter creates view state object by calling this method.</p>
 	 *
