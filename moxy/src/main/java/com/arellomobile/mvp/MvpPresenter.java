@@ -160,39 +160,9 @@ public abstract class MvpPresenter<View extends MvpView> {
 
 	private static class Binder {
 		static void bind(MvpPresenter presenter) {
-			ViewStateClassNameProvider viewStateClassNameProvider;
-			String viewStateClassNameProviderClassName = presenter.getClass().getName() + "$$ViewStateClassNameProvider";
+			MvpView viewState = (MvpView) MoxyReflector.getViewStateClassProvider(presenter.getClass());
 
-			//noinspection TryWithIdenticalCatches
-			try {
-				viewStateClassNameProvider = (ViewStateClassNameProvider) Class.forName(viewStateClassNameProviderClassName).newInstance();
-			} catch (ClassNotFoundException e) {
-				return;
-			} catch (InstantiationException e) {
-				throw new RuntimeException("Unable to instantiate " + viewStateClassNameProviderClassName + ": " +
-				                           "make sure class name exists, " +
-				                           "is public, and " +
-				                           "has an empty constructor that is public", e);
-			} catch (IllegalAccessException e) {
-				throw new RuntimeException("Unable to instantiate " + viewStateClassNameProviderClassName + ": " +
-				                           "make sure class name exists, " +
-				                           "is public, and " +
-				                           "has an empty constructor that is public", e);
-			}
-
-			final String viewStateClassName = viewStateClassNameProvider.getViewStateClassName();
-
-			Object viewState;
-			try {
-				viewState = Class.forName(viewStateClassName).newInstance();
-			} catch (Exception e) {
-				throw new RuntimeException("Unable to instantiate " + viewStateClassName + ": " +
-				                           "make sure class name exists, " +
-				                           "is public, and " +
-				                           "has an empty constructor that is public", e);
-			}
-
-			presenter.mViewStateAsView = (MvpView) viewState;
+			presenter.mViewStateAsView = viewState;
 			presenter.mViewState = (MvpViewState) viewState;
 		}
 	}

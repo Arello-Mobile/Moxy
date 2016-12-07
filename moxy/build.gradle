@@ -228,6 +228,8 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compileOnly 'com.google.android:android:1.6_r2'
     javadocDeps 'com.google.android:android:1.6_r2'
+    compileOnly project(':stub-reflector')
+    javadocDeps project(':stub-reflector')
 
     testCompile project(':moxy-compiler')
     testCompile 'com.google.android:android:1.5_r3'

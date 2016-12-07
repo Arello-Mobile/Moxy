@@ -23,55 +23,6 @@ public class MvpProcessor {
 	public static final String VIEW_STATE_CLASS_NAME_PROVIDER_SUFFIX = "$$ViewStateClassNameProvider";
 
 	/**
-	 * Return all info about injected presenters and factories in view
-	 *
-	 * @param delegated   class contains presenter
-	 * @param <Delegated> type of delegated
-	 * @return PresenterBinder instance
-	 */
-	private <Delegated> PresenterBinder<? super Delegated> getPresenterBinder(Class<? super Delegated> delegated) {
-		PresenterBinder<Delegated> binder;
-		try {
-			//noinspection unchecked
-			binder = (PresenterBinder<Delegated>) findPresenterBinderForClass(delegated);
-		} catch (InstantiationException e) {
-			throw new IllegalStateException("can not instantiate binder for " + delegated.getName(), e);
-		} catch (IllegalAccessException e) {
-			throw new IllegalStateException("have no access to binder for " + delegated.getName(), e);
-		}
-
-		return binder;
-	}
-
-	/**
-	 * Find generated binder for class
-	 *
-	 * @param clazz       class of presenter container
-	 * @param <Delegated> type of presenter container
-	 * @return PresenterBinder instance
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	private <Delegated> PresenterBinder<? super Delegated> findPresenterBinderForClass(Class<Delegated> clazz)
-	throws IllegalAccessException, InstantiationException {
-		PresenterBinder<? super Delegated> presenterBinder;
-		String clsName = clazz.getName();
-
-		String className = clsName + PRESENTER_BINDER_SUFFIX;
-		try {
-			Class<?> presenterBinderClass = Class.forName(className);
-			//noinspection unchecked
-			presenterBinder = (PresenterBinder<? super Delegated>) presenterBinderClass.newInstance();
-
-		} catch (ClassNotFoundException e) {
-			return null;
-		}
-		//TODO add to binders array
-
-		return presenterBinder;
-	}
-
-	/**
 	 * 1) Generates tag for identification MvpPresenter
 	 * <p>
 	 * 2) Checks if presenter with tag is already exist in {@link com.arellomobile.mvp.PresenterStore}, and returns it.
@@ -126,31 +77,21 @@ public class MvpProcessor {
 	 */
 	<Delegated> List<MvpPresenter<? super Delegated>> getMvpPresenters(Delegated delegated, String delegateTag) {
 		@SuppressWarnings("unchecked")
-		Class<? super Delegated> aClass = (Class<Delegated>) delegated.getClass();
-		List<PresenterBinder<? super Delegated>> presenterBinders = new ArrayList<>();
+		Class<? super Delegated> delegatedClass = (Class<Delegated>) delegated.getClass();
 
-		MvpProcessor mvpProcessor = MvpFacade.getInstance().getMvpProcessor();
-		PresentersCounter presentersCounter = MvpFacade.getInstance().getPresentersCounter();
-
-		while (aClass != Object.class) {
-			PresenterBinder<? super Delegated> presenterBinder = mvpProcessor.getPresenterBinder(aClass);
-
-			aClass = aClass.getSuperclass();
-
-			if (presenterBinder == null) {
-				continue;
-			}
-
-			presenterBinder.setTarget(delegated);
-			presenterBinders.add(presenterBinder);
-		}
+		//noinspection unchecked
+		List<PresenterBinder<? super Delegated>> presenterBinders = (List<PresenterBinder<? super Delegated>>) MoxyReflector.getPresenterBinders(delegatedClass);
 
 		if (presenterBinders.isEmpty()) {
 			return Collections.emptyList();
 		}
 
 		List<MvpPresenter<? super Delegated>> presenters = new ArrayList<>();
+		PresentersCounter presentersCounter = MvpFacade.getInstance().getPresentersCounter();
+
 		for (PresenterBinder<? super Delegated> presenterBinder : presenterBinders) {
+			presenterBinder.setTarget(delegated);
+
 			List<? extends PresenterField<?, ? super Delegated>> presenterFields = presenterBinder.getPresenterFields();
 
 			for (PresenterField<?, ? super Delegated> presenterField : presenterFields) {

@@ -1,24 +1,18 @@
 package com.arellomobile.mvp;
 
+import com.arellomobile.mvp.viewstate.MvpViewState;
+
 /**
  * Date: 18.12.2015
  * Time: 13:15
  *
  * @author Yuri Shmakov
  */
-public class ViewStateClassNameProvider {
-	private final String viewStateClassName;
-
-	public ViewStateClassNameProvider(String viewStateClassName) {
-		this.viewStateClassName = viewStateClassName;
-	}
-
+public abstract class ViewStateClassNameProvider {
 	/**
-	 * <p>Presenter creates view state object by class name from this method.</p>
+	 * <p>Presenter creates view state object by calling this method.</p>
 	 *
 	 * @return view state class name
 	 */
-	public String getViewStateClassName() {
-		return viewStateClassName;
-	}
+	public abstract MvpViewState getViewState();
 }
