@@ -138,7 +138,7 @@ public class RepositoriesAdapter extends MvpBaseAdapter implements RepositoryLik
 		return convertView;
 	}
 
-	class RepositoryHolder implements RepositoryView {
+	public class RepositoryHolder implements RepositoryView {
 
 		@InjectPresenter(type = PresenterType.WEAK)
 		RepositoryPresenter mRepositoryPresenter;

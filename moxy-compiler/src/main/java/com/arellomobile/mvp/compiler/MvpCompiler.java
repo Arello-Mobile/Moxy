@@ -96,8 +96,9 @@ public class MvpCompiler extends AbstractProcessor {
 		checkInjectors(roundEnv, InjectPresenter.class, new PresenterInjectorRules(ElementKind.FIELD, Modifier.PUBLIC, Modifier.DEFAULT));
 
 		ViewStateProviderClassGenerator viewStateProviderClassGenerator = new ViewStateProviderClassGenerator();
+		PresenterBinderClassGenerator presenterBinderClassGenerator = new PresenterBinderClassGenerator();
 		processInjectors(roundEnv, InjectViewState.class, ElementKind.CLASS, viewStateProviderClassGenerator);
-		processInjectors(roundEnv, InjectPresenter.class, ElementKind.FIELD, new PresenterBinderClassGenerator());
+		processInjectors(roundEnv, InjectPresenter.class, ElementKind.FIELD, presenterBinderClassGenerator);
 
 		ViewStateClassGenerator viewStateClassGenerator = new ViewStateClassGenerator();
 		Set<TypeElement> usedViews = viewStateProviderClassGenerator.getUsedViews();
@@ -106,7 +107,7 @@ public class MvpCompiler extends AbstractProcessor {
 			generateCode(ElementKind.INTERFACE, viewStateClassGenerator, usedView);
 		}
 
-		String moxyReflector = MoxyReflectorGenerator.generate(viewStateProviderClassGenerator.getPresenterClassNames());
+		String moxyReflector = MoxyReflectorGenerator.generate(viewStateProviderClassGenerator.getPresenterClassNames(), presenterBinderClassGenerator.getPresentersContainers());
 
 		ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
 		classGeneratingParams.setName("com.arellomobile.mvp.MoxyReflector");

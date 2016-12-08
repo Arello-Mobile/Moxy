@@ -1,6 +1,7 @@
 package com.arellomobile.mvp.compiler;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,10 +53,10 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 	public static final String PRESENTER_FIELD_ANNOTATION = InjectPresenter.class.getName();
 	public static final String PROVIDE_PRESENTER = ProvidePresenter.class.getName();
 	public static final String PROVIDE_PRESENTER_TAG = ProvidePresenterTag.class.getName();
-	private final List<String> mPresentersContainers;
+	private final Set<TypeElement> mPresentersContainers;
 
 	public PresenterBinderClassGenerator() {
-		mPresentersContainers = new ArrayList<>();
+		mPresentersContainers = new HashSet<>();
 	}
 
 	public boolean generate(VariableElement variableElement, List<ClassGeneratingParams> classGeneratingParamsList) {
@@ -64,13 +65,14 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		if (!(enclosingElement instanceof TypeElement)) {
 			throw new RuntimeException("Only class fields could be annotated as @InjectPresenter: " + variableElement + " at " + enclosingElement);
 		}
-		if (mPresentersContainers.contains(enclosingElement.toString())) {
+
+		if (mPresentersContainers.contains(enclosingElement)) {
 			return false;
 		}
 
 		TypeElement presentersContainer = (TypeElement) enclosingElement;
 
-		mPresentersContainers.add(presentersContainer.toString());
+		mPresentersContainers.add(presentersContainer);
 
 		String fullClassName = Util.getFullClassName(presentersContainer);
 
@@ -316,6 +318,10 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 			}
 		}
 		return providers;
+	}
+
+	public Set<TypeElement> getPresentersContainers() {
+		return mPresentersContainers;
 	}
 
 	private static String generateGetPresentersMethod(final String builder, final List<Field> fields, String parentClassName) {

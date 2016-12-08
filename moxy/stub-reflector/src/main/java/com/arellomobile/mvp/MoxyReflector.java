@@ -1,6 +1,7 @@
 package com.arellomobile.mvp;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,16 +12,18 @@ import java.util.Map;
  */
 class MoxyReflector {
 	private static Map<Class<?>, Object> sViewStateProviders;
+	private static Map<Class<?>, List<Object>> sPresenterBinders;
 
 	static {
 		sViewStateProviders = new HashMap<>();
+		sPresenterBinders = new HashMap<>();
 	}
 
 	public static Object getViewState(Class<?> presenterClass) {
 		return sViewStateProviders.get(presenterClass);
 	}
 
-	public static Object getPresenterBinders(Class delegated) {
-		throw new RuntimeException("Stub!");
+	public static List<Object> getPresenterBinders(Class<?> delegated) {
+		return sPresenterBinders.get(delegated);
 	}
 }
