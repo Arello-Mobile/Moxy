@@ -48,8 +48,6 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement> 
 
 		mPresenterClassNames.add(fullPresenterClassName);
 
-		MvpCompiler.getMessager().printMessage(Diagnostic.Kind.WARNING, "PARENT == " + fullPresenterClassName);
-
 		final String presenterClassName = fullPresenterClassName.substring(fullPresenterClassName.lastIndexOf(".") + 1);
 
 		String viewState = getViewStateClassFromAnnotationParams(typeElement);

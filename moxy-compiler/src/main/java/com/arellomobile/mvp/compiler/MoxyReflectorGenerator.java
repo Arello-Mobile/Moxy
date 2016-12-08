@@ -34,8 +34,13 @@ public class MoxyReflectorGenerator {
 
               builder += "\t}\n" +
 		                 "\t\n" +
-		                 "\tpublic static MvpViewState getViewStateProvider(Class<?> presenterClass) {\n" +
-		                 "\t\treturn ((ViewStateProvider) sViewStateProviders.get(presenterClass)).getViewState();\n" +
+		                 "\tpublic static Object getViewState(Class<?> presenterClass) {\n" +
+		                 "\t\tViewStateProvider viewStateProvider = (ViewStateProvider) sViewStateProviders.get(presenterClass);\n" +
+		                 "\t\tif (viewStateProvider == null) {\n" +
+		                 "\t\t\treturn null;\n" +
+		                 "\t\t}\n" +
+		                 "\t\t\n" +
+		                 "\t\treturn viewStateProvider.getViewState();\n" +
 		                 "\t}\n" +
 		                 "\n" +
 		                 "\tpublic static Object getPresenterBinders(Class delegated) {\n" +
