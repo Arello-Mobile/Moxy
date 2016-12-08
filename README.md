@@ -115,13 +115,7 @@ kapt {
 ```
 
 ## ProGuard
-If you are using ProGuard you might need to add the following option:
-```
--keep class **$$PresentersBinder
--keep class **$$State
--keep class **$$ViewStateProvider
--keepnames class * extends com.arellomobile.mvp.*
-```
+Moxy is completely without reflection! No special ProGuard rules required.
 
 ## License
 ```
