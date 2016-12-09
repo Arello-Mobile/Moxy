@@ -87,6 +87,13 @@ dependencies {
   apt 'com.arello-mobile:moxy-compiler:1.3.3'
 }
 ```
+Note: if you use gradle plugin verion 2.2.2 and above, so you can use annotationProcessor instead of apt:
+```groovy
+dependencies {
+  ...
+  annotationProcessor 'com.arello-mobile:moxy-compiler:1.3.3'
+}
+```
 For additional base view classes `MvpActivity` and `MvpFragment` add this:
 ```groovy
 dependencies {
@@ -94,7 +101,7 @@ dependencies {
   compile 'com.arello-mobile:moxy-android:1.3.3'
 }
 ```
-If you planing to use AppCompat, then you can use `MvpAppCompatActivity` and `MvpAppCompatFragment`. Then add this:
+If you are planing to use AppCompat, then you can use `MvpAppCompatActivity` and `MvpAppCompatFragment`. Then add this:
 ```groovy
 dependencies {
   ...
