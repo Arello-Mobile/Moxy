@@ -85,7 +85,6 @@ public class MvpCompiler extends AbstractProcessor {
 		} catch (RuntimeException e) {
 			getMessager().printMessage(Diagnostic.Kind.OTHER, "Moxy compilation failed. Could you copy stack trace above and write us (or make issue on Githhub)?");
 			e.printStackTrace();
-
 			getMessager().printMessage(Diagnostic.Kind.ERROR, "Moxy compilation failed; see the compiler error output for details (" + e + ")");
 		}
 
@@ -126,14 +125,14 @@ public class MvpCompiler extends AbstractProcessor {
 
 		String errorStack = annotationRule.getErrorStack();
 		if (errorStack != null && errorStack.length() > 0) {
-			throw new RuntimeException("\n" + errorStack);
+			getMessager().printMessage(Diagnostic.Kind.ERROR, errorStack);
 		}
 	}
 
 	private void processInjectors(final RoundEnvironment roundEnv, Class<? extends Annotation> clazz, ElementKind kind, ClassGenerator classGenerator) {
 		for (Element annotatedElements : roundEnv.getElementsAnnotatedWith(clazz)) {
 			if (annotatedElements.getKind() != kind) {
-				throw new RuntimeException(annotatedElements + " must be " + kind.name() + ", or not mark it as @" + clazz.getSimpleName());
+				getMessager().printMessage(Diagnostic.Kind.ERROR, annotatedElements + " must be " + kind.name() + ", or not mark it as @" + clazz.getSimpleName());
 			}
 
 			generateCode(kind, classGenerator, annotatedElements);
@@ -142,7 +141,7 @@ public class MvpCompiler extends AbstractProcessor {
 
 	private void generateCode(ElementKind kind, ClassGenerator classGenerator, Element element) {
 		if (element.getKind() != kind) {
-			throw new RuntimeException(element + " must be " + kind.name());
+			getMessager().printMessage(Diagnostic.Kind.ERROR, element + " must be " + kind.name());
 		}
 
 		List<ClassGeneratingParams> classGeneratingParamsList = new ArrayList<>();
