@@ -15,6 +15,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenterTag;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
@@ -343,30 +344,48 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 	}
 
 	private static String generatePresenterBinderClass(final String builder, final Field field) {
+		TypeElement clazz = (TypeElement) ((DeclaredType) field.getClazz()).asElement();
 		String s = "\tpublic class " + field.getGeneratedClassName() + " extends PresenterField {\n" +
 		           "\t\tpublic " + field.getGeneratedClassName() + "() {\n" +
-		           "\t\t\tsuper(" + field.getTag() + ", PresenterType." + field.getType().name() + ", " + field.getPresenterId() + ", " + field.getClazz() + ".class);\n" +
+		           "\t\t\tsuper(" + field.getTag() + ", PresenterType." + field.getType().name() + ", " + field.getPresenterId() + ", " + clazz + ".class);\n" +
 		           "\t\t}\n" +
 		           "\n" +
 		           "\t\t@Override\n" +
 		           "\t\tpublic void setValue(MvpPresenter presenter) {\n" +
-		           "\t\t\tmTarget." + field.getName() + " = (" + field.getClazz() + ") presenter;\n" +
+		           "\t\t\tmTarget." + field.getName() + " = (" + clazz.getQualifiedName() + ") presenter;\n" +
 		           "\t\t}\n";
 
+			s += "\n" +
+			     "\t\t@Override\n" +
+			     "\t\tpublic MvpPresenter<?> providePresenter() {\n";
 		if (field.getPresenterProviderMethodName() != null) {
-			s += "\t\t@Override\n" +
-			     "\t\tpublic MvpPresenter<?> providePresenter() {\n" +
-			     "\t\t\treturn mTarget." + field.getPresenterProviderMethodName() + "();\n" +
-			     "\t\t}\n" +
-			     "\t\n";
+			s+= "\t\t\treturn mTarget." + field.getPresenterProviderMethodName() + "();\n";
+		} else {
+			boolean hasEmptyConstructor = false;
+			List<? extends Element> enclosedElements = clazz.getEnclosedElements();
+			for (Element enclosedElement : enclosedElements) {
+				if (enclosedElement.getKind() == ElementKind.CONSTRUCTOR) {
+					List<? extends VariableElement> parameters = ((ExecutableElement) enclosedElement).getParameters();
+					if (parameters == null || parameters.isEmpty()) {
+						hasEmptyConstructor = true;
+						break;
+					}
+				}
+			}
+			if (hasEmptyConstructor) {
+			s += "\t\t\treturn new " + clazz.getQualifiedName() + "();\n";
+			} else {
+			s += "\t\t\tthrow new IllegalStateException(\"" + clazz.getSimpleName() + " has not default constructor. You can apply @ProvidePresenter to some method which will construct Presenter. Also you can make it default constructor\");\n";
+			}
 		}
+		    s += "\t\t}\n";
 
 		if (field.getPresenterTagProviderMethodName() != null) {
-			s += "\t\t@Override\n" +
+			s += "\n" +
+			     "\t\t@Override\n" +
 			     "\t\tpublic String getTag() {\n" +
 			     "\t\t\treturn String.valueOf(mTarget." + field.getPresenterTagProviderMethodName() + "());\n" +
-			     "\t\t}\n" +
-			     "\t\n";
+			     "\t\t}\n";
 		}
 
 		s += "\t}\n" +

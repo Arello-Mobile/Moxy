@@ -40,15 +40,5 @@ public abstract class PresenterField<Presenter extends MvpPresenter<? extends Vi
 		return presenterClass;
 	}
 
-	public MvpPresenter<?> providePresenter() {
-		try {
-			return presenterClass.newInstance();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-
-		return null;
-	}
+	public abstract MvpPresenter<?> providePresenter();
 }
