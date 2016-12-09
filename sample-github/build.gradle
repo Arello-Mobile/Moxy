@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
-apply plugin: 'com.neenbedankt.android-apt'
 
 android {
     compileOptions {
@@ -9,7 +8,7 @@ android {
     }
 
     compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    buildToolsVersion "25.0.1"
 
     defaultConfig {
         applicationId "com.arellomobile.mvp.sample.github"
@@ -32,7 +31,7 @@ android {
     }
 }
 
-def support = '25.0.0'
+def support = '25.0.1'
 def retrofit = '2.1.0'
 def dagger = '2.7'
 def butterKnife = "8.4.0"
@@ -61,8 +60,8 @@ dependencies {
     compile "com.google.dagger:dagger:$dagger"
     provided "org.glassfish:javax.annotation:10.0-b28"
 
-    apt "com.jakewharton:butterknife-compiler:$butterKnife"
-    apt "com.google.dagger:dagger-compiler:$dagger"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$butterKnife"
+    annotationProcessor "com.google.dagger:dagger-compiler:$dagger"
 
     testCompile "junit:junit:4.12"
     testCompile "org.mockito:mockito-all:1.10.19"
@@ -71,5 +70,5 @@ dependencies {
 
     compile project(':moxy')
     compile project(':moxy-app-compat')
-    apt project(':moxy-compiler')
+    annotationProcessor project(':moxy-compiler')
 }
