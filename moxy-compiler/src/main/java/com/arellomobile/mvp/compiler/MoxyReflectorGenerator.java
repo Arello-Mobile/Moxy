@@ -81,7 +81,7 @@ public class MoxyReflectorGenerator {
 		                 "\t\t\n";
 
 		for (Map.Entry<TypeElement, List<TypeElement>> keyValue : elementListMap.entrySet()) {
-			  builder += "\t\tsPresenterBinders.put(" + keyValue.getKey().getQualifiedName() + ".class, Arrays.asList(";
+			  builder += "\t\tsPresenterBinders.put(" + keyValue.getKey().getQualifiedName() + ".class, Arrays.<Object>asList(";
 
 			boolean isFirst = true;
 			for (TypeElement typeElement : keyValue.getValue()) {

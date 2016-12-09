@@ -76,11 +76,12 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement> 
 		String builder = "package " + fullPresenterClassName.substring(0, fullPresenterClassName.lastIndexOf(".")) + ";\n" +
 		                 "\n" +
 		                 "import com.arellomobile.mvp.ViewStateProvider;\n" +
+		                 "import com.arellomobile.mvp.MvpView;\n" +
 		                 "import com.arellomobile.mvp.viewstate.MvpViewState;\n" +
 		                 "\npublic class " + presenterClassName + MvpProcessor.VIEW_STATE_PROVIDER_SUFFIX + " extends ViewStateProvider {\n" +
 		                 "\t\n" +
 		                 "\t@Override\n" +
-		                 "\tpublic MvpViewState getViewState() {\n";
+		                 "\tpublic MvpViewState<? extends MvpView> getViewState() {\n";
 		if (viewState == null) {
 			builder += "\t\tthrow new RuntimeException(" + fullPresenterClassName + " should has view\");\n";
 		} else {
