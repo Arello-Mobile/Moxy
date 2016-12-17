@@ -11,7 +11,10 @@ import android.support.v4.app.Fragment;
  * @author Yuri Shmakov
  * @author Konstantin Tckhovrebov
  */
+@SuppressWarnings({"ConstantConditions", "unused"})
 public class MvpAppCompatFragment extends Fragment {
+
+	private boolean mIsStateSaved;
 	private MvpDelegate<? extends MvpAppCompatFragment> mMvpDelegate;
 
 	public void onCreate(Bundle savedInstanceState) {
@@ -20,10 +23,28 @@ public class MvpAppCompatFragment extends Fragment {
 		getMvpDelegate().onCreate(savedInstanceState);
 	}
 
-	public void onStart() {
-		super.onStart();
+	public void onResume() {
+		super.onResume();
+
+		mIsStateSaved = false;
 
 		getMvpDelegate().onAttach();
+	}
+
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+
+		mIsStateSaved = true;
+
+		getMvpDelegate().onSaveInstanceState(outState);
+		getMvpDelegate().onDetach();
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+
+		getMvpDelegate().onDetach();
 	}
 
 	@Override
@@ -31,11 +52,17 @@ public class MvpAppCompatFragment extends Fragment {
 		super.onDestroyView();
 
 		getMvpDelegate().onDetach();
+		getMvpDelegate().onDestroyView();
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+
+		if (mIsStateSaved) {
+			mIsStateSaved = false;
+			return;
+		}
 
 		boolean anyParentIsRemoving = false;
 		Fragment parent = getParentFragment();
@@ -47,12 +74,6 @@ public class MvpAppCompatFragment extends Fragment {
 		if (isRemoving() || anyParentIsRemoving || getActivity().isFinishing()) {
 			getMvpDelegate().onDestroy();
 		}
-	}
-
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-
-		getMvpDelegate().onSaveInstanceState(outState);
 	}
 
 	/**

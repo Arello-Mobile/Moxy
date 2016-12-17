@@ -7,11 +7,20 @@ import android.os.Bundle;
  */
 
 public class Fragment {
+
 	public void onCreate(Bundle savedInstanceState) {
 		throw new RuntimeException("Stub!");
 	}
 
-	public void onStart() {
+	public void onResume() {
+		throw new RuntimeException("Stub!");
+	}
+
+	public void onSaveInstanceState(Bundle outState) {
+		throw new RuntimeException("Stub!");
+	}
+
+	public void onStop() {
 		throw new RuntimeException("Stub!");
 	}
 
@@ -20,10 +29,6 @@ public class Fragment {
 	}
 
 	public void onDestroy() {
-		throw new RuntimeException("Stub!");
-	}
-
-	public void onSaveInstanceState(Bundle outState) {
 		throw new RuntimeException("Stub!");
 	}
 

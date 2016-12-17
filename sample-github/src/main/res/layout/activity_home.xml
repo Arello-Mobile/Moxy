@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
+
+	<android.support.v7.widget.Toolbar
+		android:id="@+id/activity_home_toolbar"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@color/colorPrimary"
+		app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+	<com.arellomobile.mvp.sample.github.ui.views.FrameSwipeRefreshLayout
+		android:id="@+id/activity_home_swipe_refresh_layout"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1">
+
+		<ScrollView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:fillViewport="true">
+
+			<FrameLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				tools:ignore="ScrollViewSize">
+
+				<ListView
+					android:id="@+id/activity_home_list_view_repositories"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:choiceMode="singleChoice"
+					tools:ignore="NestedScrolling" />
+
+				<TextView
+					android:id="@+id/activity_home_text_view_no_repositories"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:visibility="gone"
+					android:gravity="center"
+					android:text="No repositories" />
+
+				<ProgressBar
+					android:id="@+id/activity_home_progress_bar_repositories"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center"
+					android:visibility="gone" />
+
+			</FrameLayout>
+
+		</ScrollView>
+
+	</com.arellomobile.mvp.sample.github.ui.views.FrameSwipeRefreshLayout>
+
+	<FrameLayout
+		android:id="@+id/activity_home_frame_layout_details"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:visibility="gone"/>
+
+</LinearLayout>

@@ -6,6 +6,8 @@ import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.ViewCommand;
 
 /**
+ * This strategy will clear current commands queue and then incoming command will be put in.
+ *
  * Date: 19-Dec-15
  * Time: 14:34
  *

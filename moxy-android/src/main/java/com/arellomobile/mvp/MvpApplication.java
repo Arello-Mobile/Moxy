@@ -7,11 +7,9 @@ import android.app.Application;
  * Time: 16:46
  *
  * @author Alexander Blinov
+ *
+ * @deprecated you shouldn't use this anytime
  */
+@SuppressWarnings("unused")
 public class MvpApplication extends Application {
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		MvpFacade.init();
-	}
 }

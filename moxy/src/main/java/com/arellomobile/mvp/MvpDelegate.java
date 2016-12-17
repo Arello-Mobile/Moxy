@@ -26,13 +26,14 @@ import com.arellomobile.mvp.presenter.PresenterType;
  * so the instance returned from {@link #MvpDelegate(Object)}} should be kept
  * until the Object is destroyed.
  *
+ * @author Yuri Shmakov
  * @author Alexander Blinov
  * @author Konstantin Tckhovrebov
  */
 public class MvpDelegate<Delegated> {
-	private static final String KEY_TAGS = "com.arellomobile.mvp.MvpDelegate.KEY_TAGS";
+	private static final String KEY_TAG = "com.arellomobile.mvp.MvpDelegate.KEY_TAG";
 
-	private String mKeyTags = KEY_TAGS;
+	private String mKeyTag = KEY_TAG;
 	private String mDelegateTag;
 	private final Delegated mDelegated;
 	private boolean mIsAttached;
@@ -40,10 +41,12 @@ public class MvpDelegate<Delegated> {
 	private List<MvpPresenter<? super Delegated>> mPresenters;
 	private List<MvpDelegate> mChildDelegates;
 	private Bundle mBundle;
+	private Bundle mChildKeyTagsBundle;
 
 	public MvpDelegate(Delegated delegated) {
 		mDelegated = delegated;
 		mChildDelegates = new ArrayList<>();
+		mChildKeyTagsBundle = new Bundle();
 	}
 
 	public void setParentDelegate(MvpDelegate delegate, String childId) {
@@ -55,7 +58,7 @@ public class MvpDelegate<Delegated> {
 		}
 
 		mParentDelegate = delegate;
-		mKeyTags = mParentDelegate.mKeyTags + "$" + childId;
+		mKeyTag = mParentDelegate.mKeyTag + "$" + childId;
 
 		delegate.addChildDelegate(this);
 	}
@@ -85,13 +88,13 @@ public class MvpDelegate<Delegated> {
 	 */
 	public void onCreate(Bundle bundle) {
 		mIsAttached = false;
-		mBundle = bundle;
+		mBundle = bundle != null ? bundle : new Bundle();
 
 		//get base tag for presenters
-		if (bundle == null || !mBundle.containsKey(mKeyTags)) {
+		if (bundle == null || !mBundle.containsKey(mKeyTag)) {
 			mDelegateTag = generateTag();
 		} else {
-			mDelegateTag = bundle.getString(mKeyTags);
+			mDelegateTag = bundle.getString(mKeyTag);
 		}
 
 		//bind presenters to view
@@ -141,15 +144,30 @@ public class MvpDelegate<Delegated> {
 	}
 
 	/**
+	 * <p>View was being destroyed, but logical unit still alive</p>
+	 */
+	public void onDestroyView() {
+		for (MvpPresenter<? super Delegated> presenter : mPresenters) {
+			presenter.destroyView(mDelegated);
+		}
+
+		for (MvpDelegate<?> childDelegate : mChildDelegates) {
+			childDelegate.onDestroyView();
+		}
+	}
+
+	/**
 	 * <p>Destroy presenters.</p>
 	 */
 	public void onDestroy() {
+		PresentersCounter presentersCounter = MvpFacade.getInstance().getPresentersCounter();
 		PresenterStore presenterStore = MvpFacade.getInstance().getPresenterStore();
 
 		for (MvpPresenter<?> presenter : mPresenters) {
-			if (presenter.getPresenterType() == PresenterType.LOCAL) {
+			boolean isRejected = presentersCounter.rejectPresenter(presenter, mDelegateTag);
+			if (isRejected && presenter.getPresenterType() != PresenterType.GLOBAL) {
+				presenterStore.remove(presenter.getPresenterType(), presenter.getTag(), presenter.getPresenterClass());
 				presenter.onDestroy();
-				presenterStore.remove(PresenterType.LOCAL, presenter.getTag(), presenter.getPresenterClass());
 			}
 		}
 
@@ -159,16 +177,36 @@ public class MvpDelegate<Delegated> {
 	}
 
 	/**
+	 * <p>Similar like {@link #onSaveInstanceState(Bundle)}. But this method try to save
+	 * state to parent presenter Bundle</p>
+	 */
+	public void onSaveInstanceState() {
+		Bundle bundle = new Bundle();
+		if (mParentDelegate != null) {
+			bundle = mParentDelegate.mChildKeyTagsBundle;
+		}
+
+		onSaveInstanceState(bundle);
+
+		mParentDelegate.mBundle.putAll(bundle);
+	}
+
+	/**
 	 * Save presenters tag prefix to save state for restore presenters at future after delegate recreate
 	 *
 	 * @param outState out state from Android component
 	 */
 	public void onSaveInstanceState(Bundle outState) {
-		outState.putString(mKeyTags, mDelegateTag);
+		outState.putAll(mChildKeyTagsBundle);
+		outState.putString(mKeyTag, mDelegateTag);
 
 		for (MvpDelegate childDelegate : mChildDelegates) {
 			childDelegate.onSaveInstanceState(outState);
 		}
+	}
+
+	public Bundle getChildrenSaveState() {
+		return mBundle;
 	}
 
 	/**

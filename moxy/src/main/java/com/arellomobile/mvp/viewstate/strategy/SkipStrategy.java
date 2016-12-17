@@ -6,6 +6,8 @@ import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.ViewCommand;
 
 /**
+ * Command will not be put in commands queue
+ *
  * Date: 21-Dec-15
  * Time: 17:43
  *

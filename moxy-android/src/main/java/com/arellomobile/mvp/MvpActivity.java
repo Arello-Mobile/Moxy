@@ -22,29 +22,34 @@ public class MvpActivity extends Activity {
 	}
 
 	@Override
-	protected void onDestroy() {
-		super.onDestroy();
+	protected void onResume() {
+		super.onResume();
 
-		getMvpDelegate().onDetach();
-
-		if (isFinishing()) {
-			getMvpDelegate().onDestroy();
-		}
+		getMvpDelegate().onAttach();
 	}
-
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 
 		getMvpDelegate().onSaveInstanceState(outState);
+		getMvpDelegate().onDetach();
 	}
 
 	@Override
-	protected void onStart() {
-		super.onStart();
+	protected void onStop() {
+		super.onStop();
 
-		getMvpDelegate().onAttach();
+		getMvpDelegate().onDetach();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		if (isFinishing()) {
+			getMvpDelegate().onDestroy();
+		}
 	}
 
 	/**

@@ -1,4 +1,6 @@
 # Moxy
+[![Maven Central](https://img.shields.io/maven-central/v/com.arello-mobile/moxy.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.arello-mobile%22%20AND%20(a%3A%22moxy%22%20OR%20a%3A%22moxy-compiler%22%20OR%20a%3A%22moxy-android%22%20OR%20a%3A%22moxy-app-compat%22)) [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
+
 Moxy is a library that help to use MVP pattern when you do the Android Application. _Without problems of lifecycle and boilerplate code!_
 
 Main idea of using Moxy:
@@ -52,7 +54,8 @@ public class HelloWorldActivity extends MvpAppCompatActivity implements HelloWor
 	}
 }
 ```
-More extensive example [here](https://github.com/Arello-Mobile/MoxySample)
+
+[Here](https://github.com/Arello-Mobile/Moxy/tree/master/sample-github) you can see "Github" sample application.
 
 ## Wiki
 For all information check [Moxy Wiki](https://github.com/Arello-Mobile/Moxy/wiki)
@@ -62,45 +65,59 @@ In order to avoid boilerplate code creating for binding activity,fragments and i
 
 Templates located in [/moxy-templates](https://github.com/Arello-Mobile/Moxy/tree/master/moxy-templates)
 
-## References
-[_EN_] [Android without Lifecycle: MPVsV approach with Moxy](https://medium.com/@xanderblinov/6a3ae33521e)
-
-[_RU_] [Moxy — реализация MVP под Android с щепоткой магии](https://habrahabr.ru/post/276189/)
-
-[_RU_] [MVP на стероидах: заставляем робота писать код за вас](https://habrahabr.ru/company/redmadrobot/blog/305798/)
-
-[_RU_] [Moxy. Из чего состоит и как этим пользоваться](http://www.slideshare.net/YuriShmakov/moxy)
-
-[_EN_] [MVP on steroids - how we force the robot to write code for you](https://medium.com/@xanderblinov/mvp-on-steroids-how-we-force-the-robot-to-write-code-for-you-56fbc8ecefce#.5btn77voh)
+## Links
+[Telegram channel (en)](https://telegram.me/moxy_mvp_library)<br />
+[Telegram channel (ru)](https://telegram.me/moxy_ru)<br />
+[References](https://github.com/Arello-Mobile/Moxy/wiki#references)<br />
+[FAQ](https://github.com/Arello-Mobile/Moxy/wiki/FAQ)
 
 ## Integration
 Base modules integration:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy:1.1.0'
-  provided 'com.arello-mobile:moxy-compiler:1.1.0'
+  compile 'com.arello-mobile:moxy:1.3.3'
+  provided 'com.arello-mobile:moxy-compiler:1.3.3'
 }
 ```
 If you want to see generated code, use `apt` instead of `provided` dependency type:
 ```groovy
 dependencies {
   ...
-  apt 'com.arello-mobile:moxy-compiler:1.1.0'
+  apt 'com.arello-mobile:moxy-compiler:1.3.3'
+}
+```
+Note: if you use gradle plugin verion 2.2.2 and above, so you can use annotationProcessor instead of apt:
+```groovy
+dependencies {
+  ...
+  annotationProcessor 'com.arello-mobile:moxy-compiler:1.3.3'
 }
 ```
 For additional base view classes `MvpActivity` and `MvpFragment` add this:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy-android:1.1.0'
+  compile 'com.arello-mobile:moxy-android:1.3.3'
 }
 ```
-If you planing to use AppCompat, then you can use `MvpAppCompatActivity` and `MvpAppCompatFragment`. Then add this:
+If you are planing to use AppCompat, then you can use `MvpAppCompatActivity` and `MvpAppCompatFragment`. Then add this:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy-app-compat:1.1.0'
+  compile 'com.arello-mobile:moxy-app-compat:1.3.3'
+  compile 'com.android.support:appcompat-v7:$support_version'
+}
+```
+### Kotlin
+If you are using kotlin, use `kapt` instead of `provided`/`apt` dependency type and set `generateStubs` property of `kapt` to `true`:
+```groovy
+dependencies {
+  ...
+  kapt 'com.arello-mobile:moxy-compiler:1.3.3'
+}
+kapt {
+    generateStubs = true
 }
 ```
 
