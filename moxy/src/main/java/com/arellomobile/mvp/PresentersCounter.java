@@ -42,11 +42,18 @@ public class PresentersCounter {
 	public boolean rejectPresenter(MvpPresenter<?> presenter, String delegateTag) {
 		Set<String> delegateTags = mConnections.get(presenter);
 		if (delegateTags == null) {
+			mConnections.remove(presenter);
 			return true;
 		}
 		delegateTags.remove(delegateTag);
 
-		return delegateTags.isEmpty();
+		boolean noTags = delegateTags.isEmpty();
+
+		if (noTags) {
+			mConnections.remove(presenter);
+		}
+
+		return noTags;
 	}
 
 	@SuppressWarnings("unused")
