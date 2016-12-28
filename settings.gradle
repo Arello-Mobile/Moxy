@@ -1,4 +1,5 @@
-include ':moxy', ':moxy-android', ':moxy-compiler', ':stub-android', ':moxy-app-compat', ':stub-appcompat', ':sample-kotlin'
+include ':moxy', ':stub-reflector', ':moxy-android', ':moxy-compiler', ':stub-android', ':moxy-app-compat', ':stub-appcompat', ':sample-kotlin'
 include ':sample-github'
+project(':stub-reflector').projectDir = new File('moxy/stub-reflector')
 project(':stub-android').projectDir = new File('moxy-android/stub-android')
 project(':stub-appcompat').projectDir = new File('moxy-app-compat/stub-appcompat')
