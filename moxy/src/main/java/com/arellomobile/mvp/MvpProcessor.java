@@ -78,7 +78,7 @@ public class MvpProcessor {
 		Class<? super Delegated> aClass = (Class<Delegated>) delegated.getClass();
 		List<Object> presenterBinders = MoxyReflector.getPresenterBinders(aClass);
 
-		if (presenterBinders.isEmpty()) {
+		if (presenterBinders == null || presenterBinders.isEmpty()) {
 			return Collections.emptyList();
 		}
 

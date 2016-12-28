@@ -70,15 +70,14 @@ public class MoxyReflectorGenerator {
 		                 "\tprivate static Map<Class<?>, List<Object>> sPresenterBinders;\n" +
 		                 "\n" +
 		                 "\tstatic {\n" +
-		                 "\t\tsViewStateProviders = new HashMap<>();\n" +
-		                 "\t\t\n";
+		                 "\t\tsViewStateProviders = new HashMap<>();\n";
 
 		for (String presenterClassName : presenterClassNames) {
 			  builder += "\t\tsViewStateProviders.put(" + presenterClassName + ".class, new " + presenterClassName + MvpProcessor.VIEW_STATE_PROVIDER_SUFFIX + "());\n";
 		}
 
-		      builder += "\t\tsPresenterBinders = new HashMap<>();\n" +
-		                 "\t\t\n";
+		      builder += "\t\t\n"+
+		                 "\t\tsPresenterBinders = new HashMap<>();\n";
 
 		for (Map.Entry<TypeElement, List<TypeElement>> keyValue : elementListMap.entrySet()) {
 			  builder += "\t\tsPresenterBinders.put(" + keyValue.getKey().getQualifiedName() + ".class, Arrays.<Object>asList(";
