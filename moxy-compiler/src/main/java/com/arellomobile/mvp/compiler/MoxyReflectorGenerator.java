@@ -22,7 +22,7 @@ import javax.lang.model.type.TypeMirror;
 
 public class MoxyReflectorGenerator {
 
-	public static String generate(List<String> presenterClassNames, Set<TypeElement> presentersContainers) {
+	public static String generate(List<String> presenterClassNames, Set<TypeElement> presentersContainers, Set<String> strategyClasses) {
 		Map<TypeElement, TypeElement> extendingMap = new HashMap<>();
 
 		for (TypeElement presentersContainer : presentersContainers) {
@@ -65,9 +65,10 @@ public class MoxyReflectorGenerator {
 		                 "import java.util.List;\n" +
 		                 "import java.util.Map;\n" +
 		                 "\n" +
-		                 "class MoxyReflector {\n\n" +
+		                 "public class MoxyReflector {\n\n" +
 		                 "\tprivate static Map<Class<?>, Object> sViewStateProviders;\n" +
 		                 "\tprivate static Map<Class<?>, List<Object>> sPresenterBinders;\n" +
+		                 "\tprivate static Map<Class<?>, Object> sStrategies;\n" +
 		                 "\n" +
 		                 "\tstatic {\n" +
 		                 "\t\tsViewStateProviders = new HashMap<>();\n";
@@ -95,6 +96,13 @@ public class MoxyReflectorGenerator {
 			  builder += "));\n";
 		}
 
+		      builder += "\t\t\n" +
+				         "\t\tsStrategies = new HashMap<>();\n";
+
+		for (String strategyClass : strategyClasses) {
+			  builder += "\t\tsStrategies.put(" + strategyClass + ", new " + strategyClass.substring(0, strategyClass.lastIndexOf('.')) + "());\n";
+		}
+
               builder += "\t}\n" +
 		                 "\t\n" +
 		                 "\tpublic static Object getViewState(Class<?> presenterClass) {\n" +
@@ -108,6 +116,9 @@ public class MoxyReflectorGenerator {
 		                 "\n" +
 		                 "\tpublic static List<Object> getPresenterBinders(Class<?> delegated) {\n" +
 		                 "\t\treturn sPresenterBinders.get(delegated);\n" +
+		                 "\t}\n" +
+		                 "\tpublic static Object getStrategy(Class<?> strategyClass) {\n" +
+		                 "\t\treturn sStrategies.get(strategyClass);\n" +
 		                 "\t}\n" +
 		                 "}\n";
 
