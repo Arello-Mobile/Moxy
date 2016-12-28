@@ -87,7 +87,7 @@ dependencies {
   apt 'com.arello-mobile:moxy-compiler:1.3.3'
 }
 ```
-Note: if you use gradle plugin verion 2.2.2 and above, so you can use annotationProcessor instead of apt:
+Note: if you use gradle plugin verion 2.2.2 and above, so you can use `annotationProcessor` instead of `apt`:
 ```groovy
 dependencies {
   ...
