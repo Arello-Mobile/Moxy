@@ -15,61 +15,10 @@ import com.arellomobile.mvp.presenter.PresenterType;
  * @author Alexander Blinov
  */
 public class MvpProcessor {
-	private static final String TAG = "MvpProcessor";
-
 	public static final String PRESENTER_BINDER_SUFFIX = "$$PresentersBinder";
 	public static final String PRESENTER_BINDER_INNER_SUFFIX = "Binder";
 	public static final String VIEW_STATE_SUFFIX = "$$State";
-	public static final String VIEW_STATE_CLASS_NAME_PROVIDER_SUFFIX = "$$ViewStateClassNameProvider";
-
-	/**
-	 * Return all info about injected presenters and factories in view
-	 *
-	 * @param delegated   class contains presenter
-	 * @param <Delegated> type of delegated
-	 * @return PresenterBinder instance
-	 */
-	private <Delegated> PresenterBinder<? super Delegated> getPresenterBinder(Class<? super Delegated> delegated) {
-		PresenterBinder<Delegated> binder;
-		try {
-			//noinspection unchecked
-			binder = (PresenterBinder<Delegated>) findPresenterBinderForClass(delegated);
-		} catch (InstantiationException e) {
-			throw new IllegalStateException("can not instantiate binder for " + delegated.getName(), e);
-		} catch (IllegalAccessException e) {
-			throw new IllegalStateException("have no access to binder for " + delegated.getName(), e);
-		}
-
-		return binder;
-	}
-
-	/**
-	 * Find generated binder for class
-	 *
-	 * @param clazz       class of presenter container
-	 * @param <Delegated> type of presenter container
-	 * @return PresenterBinder instance
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	private <Delegated> PresenterBinder<? super Delegated> findPresenterBinderForClass(Class<Delegated> clazz)
-	throws IllegalAccessException, InstantiationException {
-		PresenterBinder<? super Delegated> presenterBinder;
-		String clsName = clazz.getName();
-
-		String className = clsName + PRESENTER_BINDER_SUFFIX;
-		try {
-			Class<?> presenterBinderClass = Class.forName(className);
-			//noinspection unchecked
-			presenterBinder = (PresenterBinder<? super Delegated>) presenterBinderClass.newInstance();
-
-		} catch (ClassNotFoundException e) {
-			return null;
-		}
-		//TODO add to binders array
-
-		return presenterBinder;
-	}
+	public static final String VIEW_STATE_PROVIDER_SUFFIX = "$$ViewStateProvider";
 
 	/**
 	 * 1) Generates tag for identification MvpPresenter
@@ -127,30 +76,18 @@ public class MvpProcessor {
 	<Delegated> List<MvpPresenter<? super Delegated>> getMvpPresenters(Delegated delegated, String delegateTag) {
 		@SuppressWarnings("unchecked")
 		Class<? super Delegated> aClass = (Class<Delegated>) delegated.getClass();
-		List<PresenterBinder<? super Delegated>> presenterBinders = new ArrayList<>();
+		List<Object> presenterBinders = MoxyReflector.getPresenterBinders(aClass);
 
-		MvpProcessor mvpProcessor = MvpFacade.getInstance().getMvpProcessor();
-		PresentersCounter presentersCounter = MvpFacade.getInstance().getPresentersCounter();
-
-		while (aClass != Object.class) {
-			PresenterBinder<? super Delegated> presenterBinder = mvpProcessor.getPresenterBinder(aClass);
-
-			aClass = aClass.getSuperclass();
-
-			if (presenterBinder == null) {
-				continue;
-			}
-
-			presenterBinder.setTarget(delegated);
-			presenterBinders.add(presenterBinder);
-		}
-
-		if (presenterBinders.isEmpty()) {
+		if (presenterBinders == null || presenterBinders.isEmpty()) {
 			return Collections.emptyList();
 		}
 
 		List<MvpPresenter<? super Delegated>> presenters = new ArrayList<>();
-		for (PresenterBinder<? super Delegated> presenterBinder : presenterBinders) {
+		PresentersCounter presentersCounter = MvpFacade.getInstance().getPresentersCounter();
+		for (Object presenterBinderObject : presenterBinders) {
+			//noinspection unchecked
+			PresenterBinder<? super Delegated> presenterBinder = (PresenterBinder<? super Delegated>) presenterBinderObject;
+			presenterBinder.setTarget(delegated);
 			List<? extends PresenterField<?, ? super Delegated>> presenterFields = presenterBinder.getPresenterFields();
 
 			for (PresenterField<?, ? super Delegated> presenterField : presenterFields) {

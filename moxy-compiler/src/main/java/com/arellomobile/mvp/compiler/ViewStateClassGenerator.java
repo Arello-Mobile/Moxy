@@ -2,6 +2,7 @@ package com.arellomobile.mvp.compiler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -39,6 +40,11 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 	public static final String DEFAULT_STATE_STRATEGY = AddToEndStrategy.class.getName() + ".class";
 
 	private String mViewClassName;
+	private Set<String> mStrategyClasses;
+
+	public ViewStateClassGenerator() {
+		mStrategyClasses = new HashSet<>();
+	}
 
 	public boolean generate(TypeElement typeElement, List<ClassGeneratingParams> classGeneratingParamsList) {
 		String generic = Util.getClassGenerics(typeElement);
@@ -298,6 +304,8 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 				throwTypes.add(fillGenerics(methodTypes, typeMirror));
 			}
 
+			mStrategyClasses.add(strategyClass);
+
 			final Method method = new Method(generics, methodElement.getSimpleName().toString(), arguments, throwTypes, strategyClass, methodTag, getClassName(typeElement));
 
 			if (rootMethods.contains(method)) {
@@ -495,5 +503,9 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 
 	public static String decapitalizeString(String string) {
 		return string == null || string.isEmpty() ? "" : string.length() == 1 ? string.toLowerCase() : Character.toLowerCase(string.charAt(0)) + string.substring(1);
+	}
+
+	public Set<String> getStrategyClasses() {
+		return mStrategyClasses;
 	}
 }

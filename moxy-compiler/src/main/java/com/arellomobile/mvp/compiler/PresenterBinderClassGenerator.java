@@ -1,6 +1,7 @@
 package com.arellomobile.mvp.compiler;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,6 +15,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenterTag;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
@@ -52,10 +54,10 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 	public static final String PRESENTER_FIELD_ANNOTATION = InjectPresenter.class.getName();
 	public static final String PROVIDE_PRESENTER = ProvidePresenter.class.getName();
 	public static final String PROVIDE_PRESENTER_TAG = ProvidePresenterTag.class.getName();
-	private final List<String> mPresentersContainers;
+	private final Set<TypeElement> mPresentersContainers;
 
 	public PresenterBinderClassGenerator() {
-		mPresentersContainers = new ArrayList<>();
+		mPresentersContainers = new HashSet<>();
 	}
 
 	public boolean generate(VariableElement variableElement, List<ClassGeneratingParams> classGeneratingParamsList) {
@@ -64,13 +66,14 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		if (!(enclosingElement instanceof TypeElement)) {
 			throw new RuntimeException("Only class fields could be annotated as @InjectPresenter: " + variableElement + " at " + enclosingElement);
 		}
-		if (mPresentersContainers.contains(enclosingElement.toString())) {
+
+		if (mPresentersContainers.contains(enclosingElement)) {
 			return false;
 		}
 
 		TypeElement presentersContainer = (TypeElement) enclosingElement;
 
-		mPresentersContainers.add(presentersContainer.toString());
+		mPresentersContainers.add(presentersContainer);
 
 		String fullClassName = Util.getFullClassName(presentersContainer);
 
@@ -318,6 +321,10 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		return providers;
 	}
 
+	public Set<TypeElement> getPresentersContainers() {
+		return mPresentersContainers;
+	}
+
 	private static String generateGetPresentersMethod(final String builder, final List<Field> fields, String parentClassName) {
 		String s = "\tpublic List<PresenterField<?, ? super " + parentClassName + ">> getPresenterFields() {\n" +
 		           "\t\tList<PresenterField<?, ? super " + parentClassName + ">> presenters = new ArrayList<>();\n" +
@@ -337,30 +344,48 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 	}
 
 	private static String generatePresenterBinderClass(final String builder, final Field field) {
+		TypeElement clazz = (TypeElement) ((DeclaredType) field.getClazz()).asElement();
 		String s = "\tpublic class " + field.getGeneratedClassName() + " extends PresenterField {\n" +
 		           "\t\tpublic " + field.getGeneratedClassName() + "() {\n" +
-		           "\t\t\tsuper(" + field.getTag() + ", PresenterType." + field.getType().name() + ", " + field.getPresenterId() + ", " + field.getClazz() + ".class);\n" +
+		           "\t\t\tsuper(" + field.getTag() + ", PresenterType." + field.getType().name() + ", " + field.getPresenterId() + ", " + clazz + ".class);\n" +
 		           "\t\t}\n" +
 		           "\n" +
 		           "\t\t@Override\n" +
 		           "\t\tpublic void setValue(MvpPresenter presenter) {\n" +
-		           "\t\t\tmTarget." + field.getName() + " = (" + field.getClazz() + ") presenter;\n" +
+		           "\t\t\tmTarget." + field.getName() + " = (" + clazz.getQualifiedName() + ") presenter;\n" +
 		           "\t\t}\n";
 
+			s += "\n" +
+			     "\t\t@Override\n" +
+			     "\t\tpublic MvpPresenter<?> providePresenter() {\n";
 		if (field.getPresenterProviderMethodName() != null) {
-			s += "\t\t@Override\n" +
-			     "\t\tpublic MvpPresenter<?> providePresenter() {\n" +
-			     "\t\t\treturn mTarget." + field.getPresenterProviderMethodName() + "();\n" +
-			     "\t\t}\n" +
-			     "\t\n";
+			s+= "\t\t\treturn mTarget." + field.getPresenterProviderMethodName() + "();\n";
+		} else {
+			boolean hasEmptyConstructor = false;
+			List<? extends Element> enclosedElements = clazz.getEnclosedElements();
+			for (Element enclosedElement : enclosedElements) {
+				if (enclosedElement.getKind() == ElementKind.CONSTRUCTOR) {
+					List<? extends VariableElement> parameters = ((ExecutableElement) enclosedElement).getParameters();
+					if (parameters == null || parameters.isEmpty()) {
+						hasEmptyConstructor = true;
+						break;
+					}
+				}
+			}
+			if (hasEmptyConstructor) {
+			s += "\t\t\treturn new " + clazz.getQualifiedName() + "();\n";
+			} else {
+			s += "\t\t\tthrow new IllegalStateException(\"" + clazz.getSimpleName() + " has not default constructor. You can apply @ProvidePresenter to some method which will construct Presenter. Also you can make it default constructor\");\n";
+			}
 		}
+		    s += "\t\t}\n";
 
 		if (field.getPresenterTagProviderMethodName() != null) {
-			s += "\t\t@Override\n" +
+			s += "\n" +
+			     "\t\t@Override\n" +
 			     "\t\tpublic String getTag() {\n" +
 			     "\t\t\treturn String.valueOf(mTarget." + field.getPresenterTagProviderMethodName() + "());\n" +
-			     "\t\t}\n" +
-			     "\t\n";
+			     "\t\t}\n";
 		}
 
 		s += "\t}\n" +

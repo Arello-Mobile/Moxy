@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.arellomobile.mvp.MoxyReflector;
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategy;
 
@@ -33,7 +34,7 @@ public class ViewCommands<View extends MvpView> {
 	}
 
 	private StateStrategy getStateStrategy(ViewCommand<View> viewCommand) {
-		StateStrategy stateStrategy = mStrategies.get(viewCommand.getStrategyType());
+		StateStrategy stateStrategy = (StateStrategy) MoxyReflector.getStrategy(viewCommand.getStrategyType());
 		if (stateStrategy == null) {
 			//noinspection TryWithIdenticalCatches
 			try {

@@ -52,6 +52,16 @@ public class PresenterInjectorRules extends AnnotationRule {
 				mErrorBuilder.append("Field " + annotatedField + " of " + annotatedField.getEnclosingElement().getSimpleName() + " can't be a " + modifier).append(". Use ").append(validModifiersToString()).append("\n");
 			}
 		}
+
+		Element enclosingElement = annotatedField.getEnclosingElement();
+		while (enclosingElement.getKind() == ElementKind.CLASS) {
+			if (!enclosingElement.getModifiers().contains(Modifier.PUBLIC)) {
+				mErrorBuilder.append(enclosingElement.getSimpleName() + " should be PUBLIC ");
+				break;
+			}
+
+			enclosingElement = enclosingElement.getEnclosingElement();
+		}
 	}
 
 	private void checkEnvironment(final Element annotatedField) {
@@ -126,10 +136,6 @@ public class PresenterInjectorRules extends AnnotationRule {
 		}
 
 		return "";
-	}
-
-	private void print(String s) {
-		MvpCompiler.getMessager().printMessage(Diagnostic.Kind.ERROR, s);
 	}
 
 	private Map<TypeParameterElement, TypeMirror> getChildInstanceOfClassFromGeneric(final TypeElement typeElement, final Class<?> aClass) {
