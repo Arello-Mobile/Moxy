@@ -76,7 +76,13 @@ public class MvpProcessor {
 	<Delegated> List<MvpPresenter<? super Delegated>> getMvpPresenters(Delegated delegated, String delegateTag) {
 		@SuppressWarnings("unchecked")
 		Class<? super Delegated> aClass = (Class<Delegated>) delegated.getClass();
-		List<Object> presenterBinders = MoxyReflector.getPresenterBinders(aClass);
+		List<Object> presenterBinders = null;
+
+		while (aClass != Object.class && presenterBinders == null) {
+			presenterBinders = MoxyReflector.getPresenterBinders(aClass);
+
+			aClass = aClass.getSuperclass();
+		}
 
 		if (presenterBinders == null || presenterBinders.isEmpty()) {
 			return Collections.emptyList();
