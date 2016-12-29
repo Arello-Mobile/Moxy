@@ -80,6 +80,10 @@ public class MvpCompiler extends AbstractProcessor {
 
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+		if (annotations.isEmpty()) {
+			return false;
+		}
+
 		try {
 			return throwableProcess(roundEnv);
 		} catch (RuntimeException e) {
@@ -88,7 +92,7 @@ public class MvpCompiler extends AbstractProcessor {
 			getMessager().printMessage(Diagnostic.Kind.ERROR, "Moxy compilation failed; see the compiler error output for details (" + e + ")");
 		}
 
-		return false;
+		return true;
 	}
 
 	private boolean throwableProcess(RoundEnvironment roundEnv) {
