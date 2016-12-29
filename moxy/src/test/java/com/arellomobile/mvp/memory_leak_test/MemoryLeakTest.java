@@ -14,7 +14,6 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -33,8 +32,6 @@ public class MemoryLeakTest {
 		viewImplementation.delegate = new MvpDelegate<>(viewImplementation);
 
 		viewImplementation.delegate.onCreate(new Bundle());
-
-		assertNotNull(viewImplementation.presenter);
 
 		viewImplementation.delegate.onDestroy();
 
