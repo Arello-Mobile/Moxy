@@ -22,9 +22,9 @@ public abstract class PresenterField<Presenter extends MvpPresenter<? extends Vi
 		this.presenterClass = presenterClass;
 	}
 
-	public abstract void setValue(MvpPresenter presenter);
+	public abstract void bind(Object target, MvpPresenter presenter);
 
-	public String getTag() {
+	public String getTag(Object delegated) {
 		return tag != null ? tag : getClass().getSimpleName();
 	}
 
@@ -40,5 +40,5 @@ public abstract class PresenterField<Presenter extends MvpPresenter<? extends Vi
 		return presenterClass;
 	}
 
-	public abstract MvpPresenter<?> providePresenter();
+	public abstract MvpPresenter<?> providePresenter(Object delegated);
 }

@@ -11,11 +11,5 @@ import com.arellomobile.mvp.presenter.PresenterField;
  * @author Alexander Blinov
  */
 public abstract class PresenterBinder<PresentersContainer> {
-	protected PresentersContainer mTarget;
-
-	public void setTarget(PresentersContainer presenterAggregator) {
-		mTarget = presenterAggregator;
-	}
-
 	public abstract List<PresenterField<?, ? super PresentersContainer>> getPresenterFields();
 }
