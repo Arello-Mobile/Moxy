@@ -113,12 +113,11 @@ def getBasePom() {
     }
 
     return basePom.withXml {
-        asNode().dependencies.'*'.findAll() {
-            it.version.text() == '4.0.+' && project.configurations.compile.allDependencies.find { dep ->
-                dep.name == it.artifactId.text()
-            }
-        }.each() {
-            it.version*.value = '[4.0,)'
+        asNode().dependencies.'*'.findAll {
+            it.artifactId.text().contains('moxy')
+        }.each {
+            it.groupId*.value = targetGroupId
+            it.version*.value = targetVersionName
         }
     }
 }

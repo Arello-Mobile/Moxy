@@ -111,15 +111,11 @@ def getBasePom(String libName) {
     }
 
     return basePom.withXml {
-        asNode().dependencies.'*'.findAll() {
-            it.version.text() == 'unspecified' && project.configurations.compile.allDependencies.find { dep ->
-                dep.name == it.artifactId.text()
-            }
-        }.each() {
-            it.scope*.value = 'compile'
-            it.groupId*.value = 'com.arello-mobile'
-            it.artifactId*.value = libName
-            it.version*.value = '${project.version}'
+        asNode().dependencies.'*'.findAll {
+            it.artifactId.text().contains('moxy')
+        }.each {
+            it.groupId*.value = targetGroupId
+            it.version*.value = targetVersionName
         }
     }
 
