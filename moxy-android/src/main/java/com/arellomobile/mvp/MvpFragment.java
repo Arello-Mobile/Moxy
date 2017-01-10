@@ -16,6 +16,7 @@ import android.util.Log;
 @SuppressWarnings("ConstantConditions")
 public class MvpFragment extends Fragment {
 
+	private boolean mIsStateSaved;
 	private MvpDelegate<? extends MvpFragment> mMvpDelegate;
 
 	public void onCreate(Bundle savedInstanceState) {
@@ -27,11 +28,15 @@ public class MvpFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 
+		mIsStateSaved = false;
+
 		getMvpDelegate().onAttach();
 	}
 
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
+
+		mIsStateSaved = true;
 
 		getMvpDelegate().onSaveInstanceState(outState);
 		getMvpDelegate().onDetach();
@@ -56,7 +61,22 @@ public class MvpFragment extends Fragment {
 	public void onDestroy() {
 		super.onDestroy();
 
-		if (!getActivity().isChangingConfigurations()) {
+		if (mIsStateSaved) {
+			mIsStateSaved = false;
+			return;
+		}
+
+		boolean anyParentIsRemoving = false;
+
+		if (Build.VERSION.SDK_INT >= 17) {
+			Fragment parent = getParentFragment();
+			while (!anyParentIsRemoving && parent != null) {
+				anyParentIsRemoving = parent.isRemoving();
+				parent = parent.getParentFragment();
+			}
+		}
+
+		if (isRemoving() || anyParentIsRemoving || getActivity().isFinishing()) {
 			getMvpDelegate().onDestroy();
 		}
 	}

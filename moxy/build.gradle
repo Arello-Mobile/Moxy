@@ -225,13 +225,13 @@ assemble.dependsOn copyVersion
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compileOnly 'com.google.android:android:4.0.1.2'
-    javadocDeps 'com.google.android:android:4.0.1.2'
+    compileOnly 'com.google.android:android:1.6_r2'
+    javadocDeps 'com.google.android:android:1.6_r2'
     compileOnly project(':stub-reflector')
     javadocDeps project(':stub-reflector')
 
     testCompile project(':moxy-compiler')
-    testCompile 'com.google.android:android:4.0.1.2'
+    testCompile 'com.google.android:android:1.5_r3'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.10.19'
     testCompile "org.robolectric:robolectric:3.0"
