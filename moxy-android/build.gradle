@@ -236,8 +236,8 @@ dependencies {
     compile project(':moxy')
     runtime project(':moxy')
     javadocDeps project(':moxy')
-    compileOnly 'com.google.android:android:1.6_r2'
-    javadocDeps 'com.google.android:android:1.6_r2'
+    compileOnly 'com.google.android:android:4.0.1.2'
+    javadocDeps 'com.google.android:android:4.0.1.2'
     compileOnly project(':stub-android')
     javadocDeps project(':stub-android')
 }

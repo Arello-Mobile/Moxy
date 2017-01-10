@@ -1,22 +1,22 @@
-package com.arellomobile.mvp;
+package com.example.moxy.fragment.sample;
 
-import android.app.Fragment;
-import android.os.Build;
+import com.arellomobile.mvp.MvpDelegate;
+
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.Fragment;
 
 /**
  * Date: 19-Dec-15
  * Time: 13:25
  *
- * @author Yuri Shmakov
  * @author Alexander Blinov
+ * @author Yuri Shmakov
  * @author Konstantin Tckhovrebov
  */
-@SuppressWarnings("ConstantConditions")
-public class MvpFragment extends Fragment {
+@SuppressWarnings({"ConstantConditions", "unused"})
+public class MvpAppCompatFragment extends Fragment {
 
-	private MvpDelegate<? extends MvpFragment> mMvpDelegate;
+	private MvpDelegate<? extends MvpAppCompatFragment> mMvpDelegate;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

@@ -1,14 +1,13 @@
-package android.support.v7.app;
+package android.app;
 
 import android.os.Bundle;
 
 /**
- * Date: 30-Sen-16
- * Time: 07:04
+ * Date: 10-Jan-17
  *
- * @author Yuri Shmakov
+ * @author Alexander Blinov
  */
-public class AppCompatActivity {
+public class Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		throw new RuntimeException("Stub!");
 	}
