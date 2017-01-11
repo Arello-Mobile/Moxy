@@ -69,12 +69,12 @@ public class SignInActivity extends MvpAppCompatActivity implements SignInView, 
 	}
 
 	@Override
-	public void showProgress() {
+	public void startSignIn() {
 		toggleProgressVisibility(true);
 	}
 
 	@Override
-	public void hideProgress() {
+	public void finishSignIn() {
 		toggleProgressVisibility(false);
 	}
 
@@ -84,7 +84,7 @@ public class SignInActivity extends MvpAppCompatActivity implements SignInView, 
 	}
 
 	@Override
-	public void showError(String message) {
+	public void failedSignIn(String message) {
 		mErrorDialog.setMessage(message);
 		mErrorDialog.show();
 	}
@@ -100,7 +100,7 @@ public class SignInActivity extends MvpAppCompatActivity implements SignInView, 
 	}
 
 	@Override
-	public void showError(Integer emailError, Integer passwordError) {
+	public void showFormError(Integer emailError, Integer passwordError) {
 		if (emailError != null) {
 			mEmailView.setError(getString(emailError));
 		}

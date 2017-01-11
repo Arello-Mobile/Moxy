@@ -9,35 +9,36 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+
 import static org.mockito.Mockito.verify;
 
 public final class HomePresenterTest {
 
-    @Mock
-    HomeView homeView;
+	@Mock
+	HomeView homeView;
 
-    @Mock
-    HomeView$$State homeViewState;
+	@Mock
+	HomeView$$State homeViewState;
 
-    private HomePresenter presenter;
+	private HomePresenter presenter;
 
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        presenter = new HomePresenter();
-        presenter.attachView(homeView);
-        presenter.setViewState(homeViewState);
-    }
+	@Before
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+		presenter = new HomePresenter();
+		presenter.attachView(homeView);
+		presenter.setViewState(homeViewState);
+	}
 
-    @Test
-    public void details_shouldShowDetailsContainer() {
-        Repository emptyRepository = emptyRepository();
-        presenter.onRepositorySelection(0, emptyRepository);
-        verify(homeViewState).showDetailsContainer();
-        verify(homeViewState).showDetails(0, emptyRepository);
-    }
+	@Test
+	public void details_shouldShowDetailsContainer() {
+		Repository emptyRepository = emptyRepository();
+		presenter.onRepositorySelection(0, emptyRepository);
+		verify(homeViewState).showDetailsContainer();
+		verify(homeViewState).showDetails(0, emptyRepository);
+	}
 
-    private Repository emptyRepository() {
-        return new Repository();
-    }
+	private Repository emptyRepository() {
+		return new Repository();
+	}
 }

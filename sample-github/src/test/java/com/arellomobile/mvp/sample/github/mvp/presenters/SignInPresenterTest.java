@@ -1,5 +1,7 @@
 package com.arellomobile.mvp.sample.github.mvp.presenters;
 
+import java.util.concurrent.TimeUnit;
+
 import android.content.Context;
 import android.util.Base64;
 
@@ -23,6 +25,13 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RuntimeEnvironment;
 
 import rx.Observable;
+import rx.Scheduler;
+import rx.android.plugins.RxAndroidPlugins;
+import rx.android.plugins.RxAndroidSchedulersHook;
+import rx.plugins.RxJavaPlugins;
+import rx.plugins.RxJavaSchedulersHook;
+import rx.schedulers.Schedulers;
+
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -31,89 +40,110 @@ import static org.mockito.Mockito.when;
 @RunWith(GithubSampleTestRunner.class)
 public final class SignInPresenterTest {
 
-    @Rule
-    public TestComponentRule testComponentRule = new TestComponentRule(testAppComponent());
+	@Mock
+	GithubService githubService;
+	@Rule
+	public TestComponentRule testComponentRule = new TestComponentRule(testAppComponent());
+	@Mock
+	SignInView$$State signInViewState;
 
-    @Mock
-    GithubService githubService;
+	private SignInPresenter presenter;
 
-    @Mock
-    SignInView$$State signInViewState;
+	@Before
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+		presenter = new SignInPresenter();
+		presenter.setViewState(signInViewState);
 
-    private SignInPresenter presenter;
+		RxJavaPlugins.getInstance().reset();
+		RxJavaPlugins.getInstance().registerSchedulersHook(new RxJavaSchedulersHook() {
+			@Override
+			public Scheduler getIOScheduler() {
+				return Schedulers.immediate();
+			}
+		});
+		RxAndroidPlugins.getInstance().reset();
+		RxAndroidPlugins.getInstance().registerSchedulersHook(new RxAndroidSchedulersHook() {
+			@Override
+			public Scheduler getMainThreadScheduler() {
+				return Schedulers.immediate();
+			}
+		});
+	}
 
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        presenter = new SignInPresenter();
-        presenter.setViewState(signInViewState);
-    }
+	@Test
+	public void signin_shouldSignSuccessfull() {
+		String token = token();
+		when(githubService.signIn(token)).thenReturn(Observable.just(new User()));
 
-    @Test
-    public void signin_shouldSignSuccessfull() {
-        String token = token();
-        when(githubService.signIn(token)).thenReturn(Observable.just(new User()));
+		presenter.signIn(email(), password());
 
-        presenter.signIn(email(), password());
+		try {
+			TimeUnit.SECONDS.sleep(1);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
-        Assert.assertEquals(token, AuthUtils.getToken());
-        isSignInAndHideShowProgressCalled();
-        verify(signInViewState).successSignIn();
-    }
+		Assert.assertEquals(token, AuthUtils.getToken());
+		isSignInAndHideShowProgressCalled();
+		verify(signInViewState).successSignIn();
+	}
 
-    @Test
-    public void signin_shouldShowError() {
-        when(githubService.signIn(token())).thenReturn(Observable.error(new Throwable()));
+	@Test
+	public void signin_shouldShowError() {
+		when(githubService.signIn(token())).thenReturn(Observable.error(new Throwable()));
 
-        presenter.signIn(email(), password());
+		presenter.signIn(email(), password());
 
-        Assert.assertEquals("", "");
+		Assert.assertEquals("", "");
 
-        isSignInAndHideShowProgressCalled();
-        verify(signInViewState).showError(anyString());
-    }
+		isSignInAndHideShowProgressCalled();
+		verify(signInViewState).failedSignIn(anyString());
+	}
 
-    @Test
-    public void signin_shouldShowPasswordAndEmailEmptyErros() {
-        presenter.signIn(null, null);
-        verify(signInViewState).showError(R.string.error_field_required, R.string.error_invalid_password);
-    }
+	@Test
+	public void signin_shouldShowPasswordAndEmailEmptyErros() {
+		presenter.signIn(null, null);
+		verify(signInViewState).showFormError(R.string.error_field_required, R.string.error_invalid_password);
+	}
 
-    @Test
-    public void signin_shouldOnErrorCancel() {
-        presenter.onErrorCancel();
-        verify(signInViewState).hideError();
-    }
+	@Test
+	public void signin_shouldOnErrorCancel() {
+		presenter.onErrorCancel();
+		verify(signInViewState).hideError();
+	}
 
-    private void isSignInAndHideShowProgressCalled() {
-        verify(signInViewState).showError(null, null);
-        verify(signInViewState).showProgress();
-        verify(signInViewState).hideProgress();
-        verify(githubService).signIn(token());
-    }
+	private void isSignInAndHideShowProgressCalled() {
+		verify(signInViewState).showFormError(null, null);
+		verify(signInViewState).startSignIn();
+		verify(signInViewState).finishSignIn();
+		verify(githubService).signIn(token());
+	}
 
-    private AppComponent testAppComponent() {
-        return new TestComponent() {
-            @Override public Context getContext() {
-                return RuntimeEnvironment.application;
-            }
+	private AppComponent testAppComponent() {
+		return new TestComponent() {
+			@Override
+			public Context getContext() {
+				return RuntimeEnvironment.application;
+			}
 
-            @Override public void inject(SignInPresenter presenter) {
-                presenter.mGithubService = githubService;
-            }
-        };
-    }
+			@Override
+			public void inject(SignInPresenter presenter) {
+				presenter.mGithubService = githubService;
+			}
+		};
+	}
 
-    private String token() {
-        String credentials = String.format("%s:%s", email(), password());
-        return "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-    }
+	private String token() {
+		String credentials = String.format("%s:%s", email(), password());
+		return "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+	}
 
-    private String email() {
-        return "test@test.ru";
-    }
+	private String email() {
+		return "test@test.ru";
+	}
 
-    private String password() {
-        return "password";
-    }
+	private String password() {
+		return "password";
+	}
 }

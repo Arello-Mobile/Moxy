@@ -12,38 +12,39 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+
 import static org.mockito.Mockito.verify;
 
 @RunWith(GithubSampleTestRunner.class)
 public class SplashPresenterTest {
 
-    @Rule
-    public TestComponentRule testComponentRule = new TestComponentRule();
+	@Rule
+	public TestComponentRule testComponentRule = new TestComponentRule();
 
-    @Mock
-    SplashView splashView;
+	@Mock
+	SplashView splashView;
 
-    private SplashPresenter presenter;
+	private SplashPresenter presenter;
 
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        presenter = new SplashPresenter();
-        presenter.getAttachedViews().add(splashView);
-    }
+	@Before
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+		presenter = new SplashPresenter();
+		presenter.getAttachedViews().add(splashView);
+	}
 
-    @Test
-    public void splash_shouldAuthorizedStateFalse() {
-        AuthUtils.setToken(null);
-        presenter.checkAuthorized();
-        verify(splashView).setAuthorized(false);
-    }
+	@Test
+	public void splash_shouldAuthorizedStateFalse() {
+		AuthUtils.setToken(null);
+		presenter.attachView(splashView);
+		verify(splashView).setAuthorized(false);
+	}
 
-    @Test
-    public void splash_shouldAuthorizedStateTrue() {
-        AuthUtils.setToken("token");
-        presenter.checkAuthorized();
-        verify(splashView).setAuthorized(true);
-    }
+	@Test
+	public void splash_shouldAuthorizedStateTrue() {
+		AuthUtils.setToken("token");
+		presenter.attachView(splashView);
+		verify(splashView).setAuthorized(true);
+	}
 
 }

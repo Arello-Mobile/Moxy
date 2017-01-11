@@ -12,33 +12,34 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 
 @RunWith(GithubSampleTestRunner.class)
 public final class SignOutPresenterTest {
 
-    @Rule
-    public TestComponentRule testComponentRule = new TestComponentRule();
+	@Rule
+	public TestComponentRule testComponentRule = new TestComponentRule();
 
-    @Mock
-    SignOutView$$State signOutViewState;
+	@Mock
+	SignOutView$$State signOutViewState;
 
-    private SignOutPresenter presenter;
+	private SignOutPresenter presenter;
 
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        presenter = new SignOutPresenter();
-        presenter.setViewState(signOutViewState);
-        AuthUtils.setToken("some token");
-    }
+	@Before
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+		presenter = new SignOutPresenter();
+		presenter.setViewState(signOutViewState);
+		AuthUtils.setToken("some token");
+	}
 
-    @Test
-    public void signout_shouldSingOut() {
-        presenter.signOut();
+	@Test
+	public void signout_shouldSingOut() {
+		presenter.signOut();
 
-        verify(signOutViewState).signOut();
-        assertEquals("", AuthUtils.getToken());
-    }
+		verify(signOutViewState).signOut();
+		assertEquals("", AuthUtils.getToken());
+	}
 }

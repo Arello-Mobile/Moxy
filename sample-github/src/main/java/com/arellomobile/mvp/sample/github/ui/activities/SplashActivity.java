@@ -9,6 +9,7 @@ import com.arellomobile.mvp.sample.github.mvp.presenters.SplashPresenter;
 import com.arellomobile.mvp.sample.github.mvp.views.SplashView;
 
 public class SplashActivity extends MvpAppCompatActivity implements SplashView {
+
 	@InjectPresenter
 	SplashPresenter mSplashPresenter;
 
@@ -16,20 +17,13 @@ public class SplashActivity extends MvpAppCompatActivity implements SplashView {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// By default view attaches to presenter in onStart() method,
+		// By default view attaches to presenter in onResume() method,
 		// but we attach it manually for earlier check authorization state.
 		getMvpDelegate().onAttach();
-
-		mSplashPresenter.checkAuthorized();
 	}
 
 	@Override
 	public void setAuthorized(boolean isAuthorized) {
-		startActivityForResult(new Intent(this, isAuthorized ? HomeActivity.class : SignInActivity.class), 0);
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		finish();
+		startActivity(new Intent(this, isAuthorized ? HomeActivity.class : SignInActivity.class));
 	}
 }
