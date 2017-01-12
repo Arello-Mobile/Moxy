@@ -29,11 +29,10 @@ Our goal is generate this class set using Android Studio Templates
 <h4><b>Template settings</b></h4>
 
 Adding Moxy templates to Android Studio:
-<ul>
-	<li> Download templates from [Github](https://github.com/Arello-Mobile/Moxy/tree/master/moxy-templates) or directly [using link](https://drive.google.com/file/d/0B0bXlVHPiZVXY2FVQkNLc1lMbW8/view?usp=sharing)
-	<li> Copy files to ANDROID_STUDIO_DIR/plugins/android/lib/templates/activities</li>
-	<li>Restart Android Studio</li>
-</ul>
+* Download templates for **Java** from [Github](https://github.com/Arello-Mobile/Moxy/tree/master/moxy-templates/Java) or directly [using link](https://drive.google.com/file/d/0B0bXlVHPiZVXY2FVQkNLc1lMbW8/view?usp=sharing)
+* Or download templates for **Kotlin** from [Github](https://github.com/Arello-Mobile/Moxy/tree/master/moxy-templates/Kotlin)
+* Copy files to ANDROID_STUDIO_DIR/plugins/android/lib/templates/activities
+* Restart Android Studio
 
 Managing hot keys for templates quick access:
 <ul>
@@ -46,10 +45,9 @@ Managing hot keys for templates quick access:
 
 <h4><b>Temlates using</b></h4>
 
-<ul>
-	<li>Click your root package and then press Alt + A.</li>
-	<li>In Activity Name box enter "MyFirstMoxyActivity"</li>
-</ul>
+* Click your **ROOT** package and then press Alt + A.
+* In Activity Name box enter "MyFirstMoxyActivity"
+
 Other fields will fill automaticly
 
  ![Activity template](https://raw.githubusercontent.com/Arello-Mobile/Moxy/master/moxy-templates/images/activity_template.jpg)
