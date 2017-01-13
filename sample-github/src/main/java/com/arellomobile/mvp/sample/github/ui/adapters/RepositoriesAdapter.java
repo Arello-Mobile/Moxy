@@ -173,7 +173,7 @@ public class RepositoriesAdapter extends MvpBaseAdapter implements RepositoryLik
 
 		void bind(int position, Repository repository) {
 			if (getMvpDelegate() != null) {
-				getMvpDelegate().onSaveInstanceState(getMvpDelegate().getChildrenSaveState());
+				getMvpDelegate().onSaveInstanceState();
 				getMvpDelegate().onDetach();
 				getMvpDelegate().onDestroyView();
 				mMvpDelegate = null;
@@ -181,7 +181,7 @@ public class RepositoriesAdapter extends MvpBaseAdapter implements RepositoryLik
 
 			mRepository = repository;
 
-			getMvpDelegate().onCreate(getMvpDelegate().getChildrenSaveState());
+			getMvpDelegate().onCreate();
 			getMvpDelegate().onAttach();
 
 			view.setBackgroundResource(position == mSelection ? R.color.colorAccent : android.R.color.transparent);
