@@ -1,5 +1,6 @@
 package com.arellomobile.mvp;
 
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,7 +12,7 @@ import android.os.Bundle;
  * @author Konstantin Tckhovrebov
  */
 @SuppressWarnings("ConstantConditions")
-public class MvpDialogFragment extends Fragment {
+public class MvpDialogFragment extends DialogFragment {
 
 	private boolean mIsStateSaved;
 	private MvpDelegate<? extends MvpDialogFragment> mMvpDelegate;
