@@ -1,14 +1,12 @@
 package com.arellomobile.mvp.sample.github.ui.activities;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -22,7 +20,7 @@ import butterknife.ButterKnife;
 /**
  * A login screen that offers login via email/password.
  */
-public class SignInActivity extends MvpAppCompatActivity implements SignInView, DialogInterface.OnCancelListener {
+public class SignInActivity extends MvpAppCompatActivity implements SignInView {
 	@InjectPresenter
 	SignInPresenter mSignInPresenter;
 
@@ -32,8 +30,6 @@ public class SignInActivity extends MvpAppCompatActivity implements SignInView, 
 	EditText mPasswordView;
 	@BindView(R.id.email_sign_in_button)
 	Button mSignInButton;
-	@BindView(R.id.activity_sign_in_linear_layout_container)
-	LinearLayout mContainer;
 	@BindView(R.id.login_form)
 	View mLoginFormView;
 	@BindView(R.id.login_progress)
@@ -57,11 +53,6 @@ public class SignInActivity extends MvpAppCompatActivity implements SignInView, 
 		});
 
 		mSignInButton.setOnClickListener(view -> attemptLogin());
-
-		mErrorDialog = new AlertDialog.Builder(this)
-				.setTitle(R.string.app_name)
-				.setOnCancelListener(this)
-				.create();
 	}
 
 	private void attemptLogin() {
@@ -85,28 +76,30 @@ public class SignInActivity extends MvpAppCompatActivity implements SignInView, 
 
 	@Override
 	public void failedSignIn(String message) {
-		mErrorDialog.setMessage(message);
-		mErrorDialog.show();
-	}
-
-	@Override
-	public void onCancel(DialogInterface dialog) {
-		mSignInPresenter.onErrorCancel();
+		mErrorDialog = new AlertDialog.Builder(this)
+				.setTitle(R.string.app_name)
+				.setMessage(message)
+				.setOnCancelListener(dialog -> mSignInPresenter.onErrorCancel())
+				.show();
 	}
 
 	@Override
 	public void hideError() {
-		mErrorDialog.cancel();
+		if (mErrorDialog != null && mErrorDialog.isShowing()) {
+			mErrorDialog.cancel();
+		}
+	}
+
+	@Override
+	public void hideFormError() {
+		mEmailView.setError(null);
+		mPasswordView.setError(null);
 	}
 
 	@Override
 	public void showFormError(Integer emailError, Integer passwordError) {
-		if (emailError != null) {
-			mEmailView.setError(getString(emailError));
-		}
-		if (passwordError != null) {
-			mPasswordView.setError(getString(passwordError));
-		}
+		mEmailView.setError(emailError == null ? null : getString(emailError));
+		mPasswordView.setError(passwordError == null ? null : getString(passwordError));
 	}
 
 	@Override
@@ -119,7 +112,7 @@ public class SignInActivity extends MvpAppCompatActivity implements SignInView, 
 
 	@Override
 	protected void onDestroy() {
-		if (mErrorDialog != null) {
+		if (mErrorDialog != null && mErrorDialog.isShowing()) {
 			mErrorDialog.setOnCancelListener(null);
 			mErrorDialog.dismiss();
 		}

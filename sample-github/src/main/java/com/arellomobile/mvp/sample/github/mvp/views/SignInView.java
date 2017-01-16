@@ -21,6 +21,8 @@ public interface SignInView extends MvpView {
 
 	void hideError();
 
+	void hideFormError();
+
 	void showFormError(Integer emailError, Integer passwordError);
 
 	@StateStrategyType(SkipStrategy.class)

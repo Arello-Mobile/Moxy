@@ -36,7 +36,7 @@ public class SignInPresenter extends BasePresenter<SignInView> {
 		Integer emailError = null;
 		Integer passwordError = null;
 
-		getViewState().showFormError(null, null);
+		getViewState().hideFormError();
 
 		if (TextUtils.isEmpty(email)) {
 			emailError = R.string.error_field_required;

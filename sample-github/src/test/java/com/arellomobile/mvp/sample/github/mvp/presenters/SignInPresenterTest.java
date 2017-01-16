@@ -79,7 +79,7 @@ public final class SignInPresenterTest {
 		presenter.signIn(email(), password());
 
 		try {
-			TimeUnit.SECONDS.sleep(1);
+			TimeUnit.MILLISECONDS.sleep(500);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -94,6 +94,12 @@ public final class SignInPresenterTest {
 		when(githubService.signIn(token())).thenReturn(Observable.error(new Throwable()));
 
 		presenter.signIn(email(), password());
+
+		try {
+			TimeUnit.MILLISECONDS.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
 		Assert.assertEquals("", "");
 
@@ -114,7 +120,7 @@ public final class SignInPresenterTest {
 	}
 
 	private void isSignInAndHideShowProgressCalled() {
-		verify(signInViewState).showFormError(null, null);
+		verify(signInViewState).hideFormError();
 		verify(signInViewState).startSignIn();
 		verify(signInViewState).finishSignIn();
 		verify(githubService).signIn(token());
