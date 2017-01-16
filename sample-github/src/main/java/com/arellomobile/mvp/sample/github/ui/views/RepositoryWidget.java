@@ -10,7 +10,7 @@ import com.arellomobile.mvp.MvpDelegate;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.arellomobile.mvp.sample.github.mvp.models.Repository;
-import com.arellomobile.mvp.sample.github.mvp.presenters.RepositoryWidgetPresenter;
+import com.arellomobile.mvp.sample.github.mvp.presenters.RepositoryPresenter;
 import com.arellomobile.mvp.sample.github.mvp.views.RepositoryView;
 
 /**
@@ -28,7 +28,7 @@ public class RepositoryWidget extends TextView implements RepositoryView {
 	private Repository mRepository;
 
 	@InjectPresenter
-	RepositoryWidgetPresenter mRepositoryPresenter;
+	RepositoryPresenter mRepositoryPresenter;
 
 	public RepositoryWidget(Context context) {
 		super(context);
@@ -48,8 +48,8 @@ public class RepositoryWidget extends TextView implements RepositoryView {
 	}
 
 	@ProvidePresenter
-	RepositoryWidgetPresenter provideRepositoryPresenter() {
-		return new RepositoryWidgetPresenter();
+	RepositoryPresenter provideRepositoryPresenter() {
+		return new RepositoryPresenter(mRepository);
 	}
 
 	public void initWidget(MvpDelegate parentDelegate, Repository repository) {
@@ -58,8 +58,6 @@ public class RepositoryWidget extends TextView implements RepositoryView {
 
 		getMvpDelegate().onCreate();
 		getMvpDelegate().onAttach();
-
-		mRepositoryPresenter.setRepository(mRepository);
 	}
 
 	public MvpDelegate getMvpDelegate() {
