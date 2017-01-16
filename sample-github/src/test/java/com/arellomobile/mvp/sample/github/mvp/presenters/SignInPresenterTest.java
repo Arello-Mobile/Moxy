@@ -79,7 +79,7 @@ public final class SignInPresenterTest {
 		presenter.signIn(email(), password());
 
 		try {
-			TimeUnit.MILLISECONDS.sleep(500);
+			TimeUnit.MILLISECONDS.sleep(100);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -96,7 +96,7 @@ public final class SignInPresenterTest {
 		presenter.signIn(email(), password());
 
 		try {
-			TimeUnit.MILLISECONDS.sleep(500);
+			TimeUnit.MILLISECONDS.sleep(100);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

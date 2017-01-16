@@ -29,25 +29,28 @@ public class RepositoryPresenterTest {
 	RepositoryView$$State repositoryViewState;
 
 	private RepositoryPresenter presenter;
+	private Repository repository;
 
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
-		presenter = new RepositoryPresenter();
+
+		repository = new Repository();
+
+		presenter = new RepositoryPresenter(repository);
 		presenter.setViewState(repositoryViewState);
 	}
 
 	@Test
-	public void repository_shouldShowRepository() {
-		Repository repository = repository();
-		presenter.setRepository(repository);
+	public void repository_shouldShwRepository() {
+		presenter.onFirstViewAttach();
+
 		verify(repositoryViewState).showRepository(repository);
 		verify(repositoryViewState, never()).updateLike(anyBoolean(), anyBoolean());
 	}
 
 	@Test
 	public void repository_shouldSetLikeTrueForRepository() {
-		presenter.setRepository(repository());
 		presenter.updateLikes(Collections.singletonList(0), Collections.singletonList(0));
 
 		verify(repositoryViewState).updateLike(true, true);
@@ -55,14 +58,9 @@ public class RepositoryPresenterTest {
 
 	@Test
 	public void repository_shouldSetLikeFalseForRepository() {
-		presenter.setRepository(repository());
 		presenter.updateLikes(Collections.singletonList(1), Collections.singletonList(1));
 
 		verify(repositoryViewState).updateLike(false, false);
-	}
-
-	private Repository repository() {
-		return new Repository();
 	}
 
 }

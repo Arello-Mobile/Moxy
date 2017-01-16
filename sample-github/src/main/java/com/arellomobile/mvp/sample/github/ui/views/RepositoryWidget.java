@@ -52,7 +52,7 @@ public class RepositoryWidget extends TextView implements RepositoryView {
 		return new RepositoryWidgetPresenter();
 	}
 
-	public void setRepository(MvpDelegate parentDelegate, Repository repository) {
+	public void initWidget(MvpDelegate parentDelegate, Repository repository) {
 		mParentDelegate = parentDelegate;
 		mRepository = repository;
 

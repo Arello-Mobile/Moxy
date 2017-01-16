@@ -1,8 +1,9 @@
 package com.arellomobile.mvp.sample.github.mvp.views;
 
-import com.arellomobile.mvp.sample.github.mvp.models.Repository;
 import com.arellomobile.mvp.MvpView;
-import com.arellomobile.mvp.viewstate.strategy.SkipStrategy;
+import com.arellomobile.mvp.sample.github.mvp.models.Repository;
+import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
+import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 
 /**
@@ -11,9 +12,12 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
  *
  * @author Yuri Shmakov
  */
+@StateStrategyType(AddToEndSingleStrategy.class)
 public interface HomeView extends MvpView {
-	@StateStrategyType(SkipStrategy.class)
-	void showDetails(int position, Repository repository);
-
 	void showDetailsContainer();
+
+	void setSelection(int position);
+
+	@StateStrategyType(OneExecutionStateStrategy.class)
+	void showDetails(int position, Repository repository);
 }

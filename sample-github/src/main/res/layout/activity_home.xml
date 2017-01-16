@@ -34,15 +34,16 @@
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
 					android:choiceMode="singleChoice"
+					android:dividerHeight="1dp"
 					tools:ignore="NestedScrolling" />
 
 				<TextView
 					android:id="@+id/activity_home_text_view_no_repositories"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
-					android:visibility="gone"
 					android:gravity="center"
-					android:text="No repositories" />
+					android:text="No repositories"
+					android:visibility="gone" />
 
 				<ProgressBar
 					android:id="@+id/activity_home_progress_bar_repositories"
@@ -62,6 +63,14 @@
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
 		android:layout_weight="1"
-		android:visibility="gone"/>
+		android:visibility="gone">
+
+		<View
+			android:layout_width="match_parent"
+			android:layout_height="1dp"
+			android:layout_gravity="top"
+			android:background="?android:attr/listDivider" />
+
+	</FrameLayout>
 
 </LinearLayout>

@@ -19,6 +19,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import rx.Observable;
+import rx.Scheduler;
+import rx.android.plugins.RxAndroidPlugins;
+import rx.android.plugins.RxAndroidSchedulersHook;
+import rx.plugins.RxJavaPlugins;
+import rx.plugins.RxJavaSchedulersHook;
+import rx.schedulers.Schedulers;
 
 
 import static org.mockito.Matchers.anyInt;
@@ -44,11 +50,26 @@ public class RepositoriesPresenterTest {
 		MockitoAnnotations.initMocks(this);
 		presenter = new RepositoriesPresenter();
 		presenter.setViewState(repositoriesViewState);
+
+		RxJavaPlugins.getInstance().reset();
+		RxJavaPlugins.getInstance().registerSchedulersHook(new RxJavaSchedulersHook() {
+			@Override
+			public Scheduler getIOScheduler() {
+				return Schedulers.immediate();
+			}
+		});
+		RxAndroidPlugins.getInstance().reset();
+		RxAndroidPlugins.getInstance().registerSchedulersHook(new RxAndroidSchedulersHook() {
+			@Override
+			public Scheduler getMainThreadScheduler() {
+				return Schedulers.immediate();
+			}
+		});
 	}
 
 	@Test
 	public void repositories_shouldCloseError() {
-		presenter.closeError();
+		presenter.onErrorCancel();
 		verify(repositoriesViewState).hideError();
 	}
 
@@ -59,7 +80,6 @@ public class RepositoriesPresenterTest {
 		when(githubService.getUserRepos(anyString(), anyInt(), anyInt())).thenReturn(Observable.just(repositories));
 
 		presenter.onFirstViewAttach();
-		verify(repositoriesViewState).hideError();
 		verify(repositoriesViewState).onStartLoading();
 		verify(repositoriesViewState, never()).showRefreshing();
 		verify(repositoriesViewState).showListProgress();
@@ -73,7 +93,6 @@ public class RepositoriesPresenterTest {
 		when(githubService.getUserRepos(anyString(), anyInt(), anyInt())).thenReturn(Observable.just(repositories));
 
 		presenter.loadNextRepositories(10);
-		verify(repositoriesViewState).hideError();
 		verify(repositoriesViewState).onStartLoading();
 		verify(repositoriesViewState, never()).showListProgress();
 		verify(repositoriesViewState, never()).hideListProgress();
@@ -87,7 +106,6 @@ public class RepositoriesPresenterTest {
 		when(githubService.getUserRepos(anyString(), anyInt(), anyInt())).thenReturn(Observable.error(someError));
 
 		presenter.loadNextRepositories(10);
-		verify(repositoriesViewState).hideError();
 		verify(repositoriesViewState).onStartLoading();
 		verify(repositoriesViewState).onFinishLoading();
 		verify(repositoriesViewState).showError(someError.toString());
