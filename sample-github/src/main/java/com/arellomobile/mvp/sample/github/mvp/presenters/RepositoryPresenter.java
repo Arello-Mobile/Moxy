@@ -15,24 +15,22 @@ import com.arellomobile.mvp.sample.github.mvp.views.RepositoryView;
  */
 @InjectViewState
 public class RepositoryPresenter extends MvpPresenter<RepositoryView> {
-	private boolean mIsInitialized = false;
+
 	private Repository mRepository;
 	private List<Integer> mInProgress;
 	private List<Integer> mLikedIds;
 
-	public RepositoryPresenter() {
+	public RepositoryPresenter(Repository repository) {
 		super();
-	}
-
-	public void setRepository(Repository repository) {
-		if (mIsInitialized) {
-			return;
-		}
-		mIsInitialized = true;
 
 		mRepository = repository;
+	}
 
-		getViewState().showRepository(repository);
+	@Override
+	protected void onFirstViewAttach() {
+		super.onFirstViewAttach();
+
+		getViewState().showRepository(mRepository);
 
 		updateLikes(mInProgress, mLikedIds);
 	}

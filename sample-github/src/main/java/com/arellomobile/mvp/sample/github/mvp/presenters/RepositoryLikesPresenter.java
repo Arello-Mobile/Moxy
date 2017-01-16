@@ -4,12 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.arellomobile.mvp.sample.github.app.GithubApp;
-import com.arellomobile.mvp.sample.github.mvp.views.RepositoryLikesView;
 import com.arellomobile.mvp.InjectViewState;
-import com.squareup.otto.Bus;
-
-import javax.inject.Inject;
+import com.arellomobile.mvp.sample.github.mvp.views.RepositoryLikesView;
 
 import rx.Observable;
 import rx.Subscription;
@@ -26,17 +22,8 @@ import rx.schedulers.Schedulers;
 public class RepositoryLikesPresenter extends BasePresenter<RepositoryLikesView> {
 	public static final String TAG = "RepositoryLikesPresenter";
 
-	@Inject
-	Bus mBus;
-
 	private List<Integer> mInProgress = new ArrayList<>();
 	private List<Integer> mLikedIds = new ArrayList<>();
-
-	public RepositoryLikesPresenter() {
-		GithubApp.getAppComponent().inject(this);
-
-		mBus.register(this);
-	}
 
 	public void toggleLike(int id) {
 		if (mInProgress.contains(id)) {
@@ -90,11 +77,5 @@ public class RepositoryLikesPresenter extends BasePresenter<RepositoryLikesView>
 
 		mInProgress.remove(Integer.valueOf(id));
 		getViewState().updateLikes(mInProgress, mLikedIds);
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		mBus.unregister(this);
 	}
 }

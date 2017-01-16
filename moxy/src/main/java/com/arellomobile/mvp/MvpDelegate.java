@@ -133,6 +133,10 @@ public class MvpDelegate<Delegated> {
 	 */
 	public void onDetach() {
 		for (MvpPresenter<? super Delegated> presenter : mPresenters) {
+			if (!mIsAttached && !presenter.getAttachedViews().contains(mDelegated)) {
+				continue;
+			}
+
 			presenter.detachView(mDelegated);
 		}
 

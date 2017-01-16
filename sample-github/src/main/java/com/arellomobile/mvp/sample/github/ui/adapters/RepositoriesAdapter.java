@@ -10,17 +10,16 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.arellomobile.mvp.MvpDelegate;
+import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.PresenterType;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.arellomobile.mvp.sample.github.R;
 import com.arellomobile.mvp.sample.github.mvp.models.Repository;
 import com.arellomobile.mvp.sample.github.mvp.presenters.RepositoryLikesPresenter;
 import com.arellomobile.mvp.sample.github.mvp.presenters.RepositoryPresenter;
 import com.arellomobile.mvp.sample.github.mvp.views.RepositoryLikesView;
 import com.arellomobile.mvp.sample.github.mvp.views.RepositoryView;
-import com.arellomobile.mvp.MvpDelegate;
-import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.presenter.PresenterType;
-import com.arellomobile.mvp.presenter.ProvidePresenter;
-import com.arellomobile.mvp.presenter.ProvidePresenterTag;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,7 +32,7 @@ import butterknife.ButterKnife;
  */
 public class RepositoriesAdapter extends MvpBaseAdapter implements RepositoryLikesView {
 	public static final int REPOSITORY_VIEW_TYPE = 0;
-	public static final int PROGRESS_VIEW_TYPE = 1;
+	private static final int PROGRESS_VIEW_TYPE = 1;
 
 	@InjectPresenter(type = PresenterType.WEAK, tag = RepositoryLikesPresenter.TAG)
 	RepositoryLikesPresenter mRepositoryLikesPresenter;
@@ -140,30 +139,23 @@ public class RepositoriesAdapter extends MvpBaseAdapter implements RepositoryLik
 
 	public class RepositoryHolder implements RepositoryView {
 
-		@InjectPresenter(type = PresenterType.WEAK)
+		@InjectPresenter
 		RepositoryPresenter mRepositoryPresenter;
 
 		private Repository mRepository;
-
-		@ProvidePresenterTag(presenterClass = RepositoryPresenter.class, type = PresenterType.WEAK)
-		String provideRepositoryPresenterTag() {
-			return String.valueOf(mRepository.getId());
-		}
-
-		@ProvidePresenter(type = PresenterType.WEAK)
-		RepositoryPresenter provideRepositoryPresenter() {
-			RepositoryPresenter repositoryPresenter = new RepositoryPresenter();
-			repositoryPresenter.setRepository(mRepository);
-			return repositoryPresenter;
-		}
-
-		View view;
 
 		@BindView(R.id.item_repository_text_view_name)
 		TextView nameTextView;
 		@BindView(R.id.item_repository_image_button_like)
 		ImageButton likeImageButton;
+		View view;
+
 		private MvpDelegate mMvpDelegate;
+
+		@ProvidePresenter
+		RepositoryPresenter provideRepositoryPresenter() {
+			return new RepositoryPresenter(mRepository);
+		}
 
 		RepositoryHolder(View view) {
 			this.view = view;

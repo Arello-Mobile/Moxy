@@ -2,18 +2,18 @@ package com.arellomobile.mvp.sample.github.mvp.presenters;
 
 import java.util.List;
 
+import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.sample.github.app.GithubApi;
 import com.arellomobile.mvp.sample.github.app.GithubApp;
+import com.arellomobile.mvp.sample.github.common.Utils;
 import com.arellomobile.mvp.sample.github.mvp.GithubService;
 import com.arellomobile.mvp.sample.github.mvp.models.Repository;
 import com.arellomobile.mvp.sample.github.mvp.views.RepositoriesView;
-import com.arellomobile.mvp.InjectViewState;
 
 import javax.inject.Inject;
 
 import rx.Observable;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Date: 22.01.2016
@@ -54,14 +54,14 @@ public class RepositoriesPresenter extends BasePresenter<RepositoriesView> {
 		}
 		mIsInLoading = true;
 
-		getViewState().hideError();
 		getViewState().onStartLoading();
 
 		showProgress(isPageLoading, isRefreshing);
 
 		final Observable<List<Repository>> observable = mGithubService.getUserRepos("JakeWharton", page, GithubApi.PAGE_SIZE);
 
-		Subscription subscription = observable.observeOn(AndroidSchedulers.mainThread())
+		Subscription subscription = observable
+				.compose(Utils.applySchedulers())
 				.subscribe(repositories -> {
 					onLoadingFinish(isPageLoading, isRefreshing);
 					onLoadingSuccess(isPageLoading, repositories);
@@ -117,7 +117,7 @@ public class RepositoriesPresenter extends BasePresenter<RepositoriesView> {
 		}
 	}
 
-	public void closeError() {
+	public void onErrorCancel() {
 		getViewState().hideError();
 	}
 }

@@ -23,6 +23,15 @@ public class MvpAppCompatFragment extends Fragment {
 		getMvpDelegate().onCreate(savedInstanceState);
 	}
 
+	@Override
+	public void onStart() {
+		super.onStart();
+
+		mIsStateSaved = false;
+
+		getMvpDelegate().onAttach();
+	}
+
 	public void onResume() {
 		super.onResume();
 

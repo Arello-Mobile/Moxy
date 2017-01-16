@@ -5,7 +5,6 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -78,11 +77,6 @@ public class HomeActivity extends MvpAppCompatActivity implements SignOutView, R
 
 			mHomePresenter.onRepositorySelection(position, mRepositoriesAdapter.getItem(position));
 		});
-
-		mErrorDialog = new AlertDialog.Builder(this)
-				.setTitle(R.string.app_name)
-				.setOnCancelListener(dialog -> mRepositoriesPresenter.closeError())
-				.create();
 	}
 
 	@Override
@@ -145,14 +139,19 @@ public class HomeActivity extends MvpAppCompatActivity implements SignOutView, R
 
 	@Override
 	public void showError(String message) {
-		mErrorDialog.setMessage(message);
-		mErrorDialog.show();
+		mErrorDialog = new AlertDialog.Builder(this)
+				.setTitle(R.string.app_name)
+				.setMessage(message)
+				.setOnCancelListener(dialog -> mRepositoriesPresenter.onErrorCancel())
+				.show();
 	}
 
 
 	@Override
 	public void hideError() {
-		mErrorDialog.hide();
+		if (mErrorDialog != null && mErrorDialog.isShowing()) {
+			mErrorDialog.hide();
+		}
 	}
 
 	@Override
@@ -175,22 +174,30 @@ public class HomeActivity extends MvpAppCompatActivity implements SignOutView, R
 	}
 
 	@Override
+	public void setSelection(int position) {
+		mRepositoriesAdapter.setSelection(position);
+	}
+
+	@Override
 	public void showDetails(int position, Repository repository) {
-		DetailsFragment detailsFragment = (DetailsFragment) getSupportFragmentManager().findFragmentById(R.id.activity_home_frame_layout_details);
-
-		FragmentTransaction transaction = getSupportFragmentManager()
+		getSupportFragmentManager()
 				.beginTransaction()
-				.replace(R.id.activity_home_frame_layout_details, DetailsFragment.getInstance(repository));
-
-		if (detailsFragment != null) {
-			transaction.addToBackStack(null);
-		}
-
-		transaction.commit();
+				.replace(R.id.activity_home_frame_layout_details, DetailsFragment.getInstance(repository))
+				.commit();
 	}
 
 	@Override
 	public void onScrollToBottom() {
 		mRepositoriesPresenter.loadNextRepositories(mRepositoriesAdapter.getRepositoriesCount());
+	}
+
+	@Override
+	protected void onDestroy() {
+		if (mErrorDialog != null && mErrorDialog.isShowing()) {
+			mErrorDialog.setOnCancelListener(null);
+			mErrorDialog.dismiss();
+		}
+
+		super.onDestroy();
 	}
 }

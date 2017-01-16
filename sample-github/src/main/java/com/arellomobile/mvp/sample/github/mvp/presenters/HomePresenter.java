@@ -16,6 +16,8 @@ public class HomePresenter extends MvpPresenter<HomeView> {
 	public void onRepositorySelection(int position, Repository repository) {
 		getViewState().showDetailsContainer();
 
+		getViewState().setSelection(position);
+
 		getViewState().showDetails(position, repository);
 	}
 }

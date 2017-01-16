@@ -23,6 +23,13 @@ public class MvpAppCompatActivity extends AppCompatActivity {
 	}
 
 	@Override
+	protected void onStart() {
+		super.onStart();
+
+		getMvpDelegate().onAttach();
+	}
+
+	@Override
 	protected void onResume() {
 		super.onResume();
 

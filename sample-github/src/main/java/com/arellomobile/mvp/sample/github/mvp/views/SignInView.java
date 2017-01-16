@@ -13,15 +13,17 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
  */
 @StateStrategyType(AddToEndSingleStrategy.class)
 public interface SignInView extends MvpView {
-	void showProgress();
+	void startSignIn();
 
-	void hideProgress();
+	void finishSignIn();
 
-	void showError(String message);
+	void failedSignIn(String message);
 
 	void hideError();
 
-	void showError(Integer emailError, Integer passwordError);
+	void hideFormError();
+
+	void showFormError(Integer emailError, Integer passwordError);
 
 	@StateStrategyType(SkipStrategy.class)
 	void successSignIn();

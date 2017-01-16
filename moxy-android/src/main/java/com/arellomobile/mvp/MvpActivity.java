@@ -22,6 +22,13 @@ public class MvpActivity extends Activity {
 	}
 
 	@Override
+	protected void onStart() {
+		super.onStart();
+
+		getMvpDelegate().onAttach();
+	}
+
+	@Override
 	protected void onResume() {
 		super.onResume();
 

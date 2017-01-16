@@ -13,7 +13,6 @@ import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
-import com.arellomobile.mvp.presenter.ProvidePresenterTag;
 import com.arellomobile.mvp.sample.github.R;
 import com.arellomobile.mvp.sample.github.mvp.models.Repository;
 import com.arellomobile.mvp.sample.github.mvp.presenters.RepositoryLikesPresenter;
@@ -34,31 +33,24 @@ import butterknife.ButterKnife;
 public class DetailsFragment extends MvpAppCompatFragment implements RepositoryView, RepositoryLikesView {
 	public static final String ARGS_REPOSITORY = "argsRepository";
 
-	@InjectPresenter(type = PresenterType.WEAK)
+	@InjectPresenter
 	RepositoryPresenter mRepositoryPresenter;
-
-	private Repository mRepository;
-
-	@ProvidePresenterTag(presenterClass = RepositoryPresenter.class, type = PresenterType.WEAK)
-	String provideRepositoryPresenterTag() {
-		mRepository = (Repository) getArguments().get(ARGS_REPOSITORY);
-		return String.valueOf(mRepository.getId());
-	}
-
-	@ProvidePresenter(type = PresenterType.WEAK)
-	RepositoryPresenter provideRepositoryPresenter() {
-		RepositoryPresenter repositoryPresenter = new RepositoryPresenter();
-		repositoryPresenter.setRepository(mRepository);
-		return repositoryPresenter;
-	}
-
 	@InjectPresenter(type = PresenterType.WEAK, tag = RepositoryLikesPresenter.TAG)
 	RepositoryLikesPresenter mRepositoryLikesPresenter;
+
+	private Repository mRepository;
 
 	@BindView(R.id.fragment_repository_details_text_view_title)
 	RepositoryWidget mTitleTextView;
 	@BindView(R.id.fragment_repository_details_image_button_like)
 	ImageButton mLikeImageButton;
+
+	@ProvidePresenter
+	RepositoryPresenter provideRepositoryPresenter() {
+		mRepository = (Repository) getArguments().get(ARGS_REPOSITORY);
+
+		return new RepositoryPresenter(mRepository);
+	}
 
 	public static DetailsFragment getInstance(Repository repository) {
 		DetailsFragment fragment = new DetailsFragment();
@@ -86,10 +78,6 @@ public class DetailsFragment extends MvpAppCompatFragment implements RepositoryV
 		mLikeImageButton.setOnClickListener(likeImageButton -> mRepositoryLikesPresenter.toggleLike(mRepository.getId()));
 	}
 
-	public void setRepository(Repository repository) {
-		mRepositoryPresenter.setRepository(repository);
-	}
-
 	@Override
 	public void updateLikes(List<Integer> inProgress, List<Integer> likedIds) {
 		mRepositoryPresenter.updateLikes(inProgress, likedIds);
@@ -99,7 +87,7 @@ public class DetailsFragment extends MvpAppCompatFragment implements RepositoryV
 	public void showRepository(Repository repository) {
 		mRepository = repository;
 
-		mTitleTextView.setRepository(getMvpDelegate(), repository);
+		mTitleTextView.initWidget(getMvpDelegate(), repository);
 	}
 
 	@Override

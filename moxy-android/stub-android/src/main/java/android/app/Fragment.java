@@ -12,6 +12,10 @@ public class Fragment {
 		throw new RuntimeException("Stub!");
 	}
 
+	public void onStart() {
+		throw new RuntimeException("Stub!");
+	}
+
 	public void onResume() {
 		throw new RuntimeException("Stub!");
 	}
