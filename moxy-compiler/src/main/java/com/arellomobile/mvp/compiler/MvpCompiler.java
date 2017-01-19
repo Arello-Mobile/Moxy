@@ -125,9 +125,7 @@ public class MvpCompiler extends AbstractProcessor {
 	private void generateDummyMoxyReflector() {
 		generateMoxyReflector(Collections.<String>emptyList(), Collections.<TypeElement>emptySet(), Collections.<String>emptySet());
 	}
-	private void generateMoxyReflector(final List<String> presenterClassNames,
-																		 final Set<TypeElement> presentersContainers,
-																		 final Set<String> strategyClasses) {
+	private void generateMoxyReflector(final List<String> presenterClassNames, final Set<TypeElement> presentersContainers, final Set<String> strategyClasses) {
 		String moxyReflector = MoxyReflectorGenerator.generate(presenterClassNames, presentersContainers, strategyClasses);
 
 		ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
