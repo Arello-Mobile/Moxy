@@ -1,18 +1,19 @@
 package com.arellomobile.mvp.compiler;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.arellomobile.mvp.GenerateViewState;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.google.auto.service.AutoService;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Messager;
@@ -41,6 +42,9 @@ import static javax.lang.model.SourceVersion.latestSupported;
 @SuppressWarnings("unused")
 @AutoService(Processor.class)
 public class MvpCompiler extends AbstractProcessor {
+
+	private static final String OVERRIDE_CANONICAL_NAME = Override.class.getCanonicalName();
+
 	private static Messager sMessager;
 	private static Types sTypeUtils;
 	private static Elements sElementUtils;
@@ -69,7 +73,7 @@ public class MvpCompiler extends AbstractProcessor {
 	@Override
 	public Set<String> getSupportedAnnotationTypes() {
 		Set<String> supportedAnnotationTypes = new HashSet<>();
-		Collections.addAll(supportedAnnotationTypes, InjectPresenter.class.getCanonicalName(), InjectViewState.class.getCanonicalName(), GenerateViewState.class.getCanonicalName());
+		Collections.addAll(supportedAnnotationTypes, InjectPresenter.class.getCanonicalName(), InjectViewState.class.getCanonicalName(), GenerateViewState.class.getCanonicalName(), Override.class.getCanonicalName());
 		return supportedAnnotationTypes;
 	}
 
@@ -80,14 +84,17 @@ public class MvpCompiler extends AbstractProcessor {
 
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-		if (annotations.isEmpty()) {
+		final boolean empty = annotations.isEmpty();
+		final boolean nothingExceptOverride = annotations.size() == 1 && annotations.iterator().next().toString().equals(OVERRIDE_CANONICAL_NAME);
+		if (empty || nothingExceptOverride) {
+			generateDummyMoxyReflector();
 			return false;
 		}
 
 		try {
 			return throwableProcess(roundEnv);
 		} catch (RuntimeException e) {
-			getMessager().printMessage(Diagnostic.Kind.OTHER, "Moxy compilation failed. Could you copy stack trace above and write us (or make issue on Githhub)?");
+			getMessager().printMessage(Diagnostic.Kind.ERROR, "Moxy compilation failed. Could you copy stack trace above and write us (or make issue on Githhub)?");
 			e.printStackTrace();
 			getMessager().printMessage(Diagnostic.Kind.ERROR, "Moxy compilation failed; see the compiler error output for details (" + e + ")");
 		}
@@ -110,15 +117,24 @@ public class MvpCompiler extends AbstractProcessor {
 			generateCode(ElementKind.INTERFACE, viewStateClassGenerator, usedView);
 		}
 
-		String moxyReflector = MoxyReflectorGenerator.generate(viewStateProviderClassGenerator.getPresenterClassNames(), presenterBinderClassGenerator.getPresentersContainers(), viewStateClassGenerator.getStrategyClasses());
+		generateMoxyReflector(viewStateProviderClassGenerator.getPresenterClassNames(), presenterBinderClassGenerator.getPresentersContainers(), viewStateClassGenerator.getStrategyClasses());
+
+		return true;
+	}
+
+	private void generateDummyMoxyReflector() {
+		generateMoxyReflector(Collections.<String>emptyList(), Collections.<TypeElement>emptySet(), Collections.<String>emptySet());
+	}
+	private void generateMoxyReflector(final List<String> presenterClassNames,
+																		 final Set<TypeElement> presentersContainers,
+																		 final Set<String> strategyClasses) {
+		String moxyReflector = MoxyReflectorGenerator.generate(presenterClassNames, presentersContainers, strategyClasses);
 
 		ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
 		classGeneratingParams.setName("com.arellomobile.mvp.MoxyReflector");
 		classGeneratingParams.setBody(moxyReflector);
 
 		createSourceFile(classGeneratingParams);
-
-		return true;
 	}
 
 
