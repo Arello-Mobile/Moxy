@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.arellomobile.mvp.GenerateViewState;
@@ -44,6 +45,7 @@ public class MvpCompiler extends AbstractProcessor {
 	private static Messager sMessager;
 	private static Types sTypeUtils;
 	private static Elements sElementUtils;
+	private static Map<String, String> sOptions;
 
 	@Override
 	public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -52,6 +54,7 @@ public class MvpCompiler extends AbstractProcessor {
 		sMessager = processingEnv.getMessager();
 		sTypeUtils = processingEnv.getTypeUtils();
 		sElementUtils = processingEnv.getElementUtils();
+		sOptions = processingEnv.getOptions();
 	}
 
 	public static Messager getMessager() {
@@ -103,7 +106,7 @@ public class MvpCompiler extends AbstractProcessor {
 		processInjectors(roundEnv, InjectViewState.class, ElementKind.CLASS, viewStateProviderClassGenerator);
 		processInjectors(roundEnv, InjectPresenter.class, ElementKind.FIELD, presenterBinderClassGenerator);
 
-		ViewStateClassGenerator viewStateClassGenerator = new ViewStateClassGenerator();
+		ViewStateClassGenerator viewStateClassGenerator = new ViewStateClassGenerator(sOptions);
 		Set<TypeElement> usedViews = viewStateProviderClassGenerator.getUsedViews();
 
 		for (TypeElement usedView : usedViews) {

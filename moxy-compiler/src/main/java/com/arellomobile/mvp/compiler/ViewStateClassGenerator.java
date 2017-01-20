@@ -26,7 +26,6 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
 import javax.tools.Diagnostic;
 
-
 import static com.arellomobile.mvp.compiler.Util.fillGenerics;
 
 /**
@@ -38,12 +37,15 @@ import static com.arellomobile.mvp.compiler.Util.fillGenerics;
 final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 	public static final String STATE_STRATEGY_TYPE_ANNOTATION = StateStrategyType.class.getName();
 	public static final String DEFAULT_STATE_STRATEGY = AddToEndStrategy.class.getName() + ".class";
+	private static final String DEFAULT_STATE_STRATEGY_OPTION = "defaultStateStrategy";
 
 	private String mViewClassName;
 	private Set<String> mStrategyClasses;
+	private Map<String, String> mOptions;
 
-	public ViewStateClassGenerator() {
+	public ViewStateClassGenerator(Map<String, String> options) {
 		mStrategyClasses = new HashSet<>();
+		mOptions = options;
 	}
 
 	public boolean generate(TypeElement typeElement, List<ClassGeneratingParams> classGeneratingParamsList) {
@@ -235,7 +237,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 				MvpCompiler.getMessager().printMessage(Diagnostic.Kind.ERROR, "You are trying generate ViewState for " + typeElement.getSimpleName() + ". But " + typeElement.getSimpleName() + " contains non-void method \"" + methodElement.getSimpleName() + "\" that return type is " + methodElement.getReturnType() + ". See more here: https://github.com/Arello-Mobile/Moxy/issues/2");
 			}
 
-			String strategyClass = defaultStrategy != null ? defaultStrategy : DEFAULT_STATE_STRATEGY;
+			String strategyClass = defaultStrategy != null ? defaultStrategy : getDefaultStateStrategy();
 			String methodTag = "\"" + methodElement.getSimpleName() + "\"";
 			for (AnnotationMirror annotationMirror : methodElement.getAnnotationMirrors()) {
 				if (!annotationMirror.getAnnotationType().asElement().toString().equals(STATE_STRATEGY_TYPE_ANNOTATION)) {
@@ -379,6 +381,13 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 			           "\t}\n";
 		}
 		return builder;
+	}
+
+	private String getDefaultStateStrategy() {
+		if (mOptions.containsKey(DEFAULT_STATE_STRATEGY_OPTION)) {
+			return mOptions.get(DEFAULT_STATE_STRATEGY_OPTION).concat(".class");
+		}
+		return DEFAULT_STATE_STRATEGY;
 	}
 
 	public String getStateStrategyType(TypeElement typeElement) {
