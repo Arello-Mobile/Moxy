@@ -1,8 +1,5 @@
 package com.arellomobile.mvp.sample.github.ui.adapters;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +17,9 @@ import com.arellomobile.mvp.sample.github.mvp.presenters.RepositoryLikesPresente
 import com.arellomobile.mvp.sample.github.mvp.presenters.RepositoryPresenter;
 import com.arellomobile.mvp.sample.github.mvp.views.RepositoryLikesView;
 import com.arellomobile.mvp.sample.github.mvp.views.RepositoryView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -137,25 +137,21 @@ public class RepositoriesAdapter extends MvpBaseAdapter implements RepositoryLik
 		return convertView;
 	}
 
+	public interface OnScrollToBottomListener {
+		void onScrollToBottom();
+	}
+
 	public class RepositoryHolder implements RepositoryView {
 
 		@InjectPresenter
 		RepositoryPresenter mRepositoryPresenter;
-
-		private Repository mRepository;
-
 		@BindView(R.id.item_repository_text_view_name)
 		TextView nameTextView;
 		@BindView(R.id.item_repository_image_button_like)
 		ImageButton likeImageButton;
 		View view;
-
+		private Repository  mRepository;
 		private MvpDelegate mMvpDelegate;
-
-		@ProvidePresenter
-		RepositoryPresenter provideRepositoryPresenter() {
-			return new RepositoryPresenter(mRepository);
-		}
 
 		RepositoryHolder(View view) {
 			this.view = view;
@@ -163,11 +159,15 @@ public class RepositoriesAdapter extends MvpBaseAdapter implements RepositoryLik
 			ButterKnife.bind(this, view);
 		}
 
+		@ProvidePresenter
+		RepositoryPresenter provideRepositoryPresenter() {
+			return new RepositoryPresenter(mRepository);
+		}
+
 		void bind(int position, Repository repository) {
 			if (getMvpDelegate() != null) {
 				getMvpDelegate().onSaveInstanceState();
 				getMvpDelegate().onDetach();
-				getMvpDelegate().onDestroyView();
 				mMvpDelegate = null;
 			}
 
@@ -203,14 +203,11 @@ public class RepositoriesAdapter extends MvpBaseAdapter implements RepositoryLik
 
 			if (mMvpDelegate == null) {
 				mMvpDelegate = new MvpDelegate<>(this);
+				mMvpDelegate.setDestroyViewOnDetach(true);
 				mMvpDelegate.setParentDelegate(RepositoriesAdapter.this.getMvpDelegate(), String.valueOf(mRepository.getId()));
 
 			}
 			return mMvpDelegate;
 		}
-	}
-
-	public interface OnScrollToBottomListener {
-		void onScrollToBottom();
 	}
 }
