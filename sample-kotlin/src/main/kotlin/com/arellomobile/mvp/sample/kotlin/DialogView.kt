@@ -10,7 +10,7 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
  * @author Yuri Shmakov
  */
 @StateStrategyType(AddToEndSingleStrategy::class)
-interface DialogView : MvpView {
-    fun showDialog()
+interface DialogView<T, R: Number> : MvpView {
+    fun showDialog(title: T, code: R)
     fun hideDialog()
 }

@@ -9,10 +9,10 @@ import com.arellomobile.mvp.presenter.PresenterType
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.arellomobile.mvp.presenter.ProvidePresenterTag
 
-class MainActivity : MvpAppCompatActivity(), DialogView {
+class MainActivity : MvpAppCompatActivity(), DialogView<String, Int> {
 
     @InjectPresenter(type = PresenterType.GLOBAL)
-    lateinit var dialogPresenter: DialogPresenter
+    lateinit var dialogPresenter: DialogPresenter<String>
 
     var alertDialog: AlertDialog? = null
 
@@ -20,19 +20,19 @@ class MainActivity : MvpAppCompatActivity(), DialogView {
     fun provideDialogPresenterTag(): String = "Hello"
 
     @ProvidePresenter(type = PresenterType.GLOBAL)
-    fun provideDialogPresenter(): DialogPresenter = DialogPresenter()
+    fun provideDialogPresenter() = DialogPresenter<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        findViewById(R.id.activity_main).setOnClickListener { dialogPresenter.onShowDialogClick() }
+        findViewById(R.id.activity_main).setOnClickListener { dialogPresenter.onShowDialogClick("123") }
     }
 
-    override fun showDialog() {
+    override fun showDialog(title: String, code: Int) {
         alertDialog = AlertDialog.Builder(this)
-                .setTitle("Title")
-                .setMessage("Message")
+                .setTitle(title)
+                .setMessage("$code")
                 .setOnDismissListener { dialogPresenter.onHideDialog() }
                 .show()
     }
