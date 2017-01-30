@@ -68,6 +68,11 @@ public class MvpAppCompatFragment extends Fragment {
 	public void onDestroy() {
 		super.onDestroy();
 
+        if (getActivity().isFinishing()) {
+            getMvpDelegate().onDestroy();
+            return;
+        }
+
 		if (mIsStateSaved) {
 			mIsStateSaved = false;
 			return;
@@ -80,7 +85,7 @@ public class MvpAppCompatFragment extends Fragment {
 			parent = parent.getParentFragment();
 		}
 
-		if (isRemoving() || anyParentIsRemoving || getActivity().isFinishing()) {
+		if (isRemoving() || anyParentIsRemoving) {
 			getMvpDelegate().onDestroy();
 		}
 	}

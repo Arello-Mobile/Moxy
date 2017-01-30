@@ -3,7 +3,6 @@ package com.arellomobile.mvp;
 import android.app.Fragment;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 
 /**
  * Date: 19-Dec-15
@@ -70,6 +69,11 @@ public class MvpFragment extends Fragment {
 	public void onDestroy() {
 		super.onDestroy();
 
+        if (getActivity().isFinishing()) {
+            getMvpDelegate().onDestroy();
+            return;
+        }
+
 		if (mIsStateSaved) {
 			mIsStateSaved = false;
 			return;
@@ -85,7 +89,7 @@ public class MvpFragment extends Fragment {
 			}
 		}
 
-		if (isRemoving() || anyParentIsRemoving || getActivity().isFinishing()) {
+		if (isRemoving() || anyParentIsRemoving) {
 			getMvpDelegate().onDestroy();
 		}
 	}
