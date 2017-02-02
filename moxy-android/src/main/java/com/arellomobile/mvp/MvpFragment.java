@@ -71,8 +71,8 @@ public class MvpFragment extends Fragment {
 
 		//We leave the screen and respectively all fragments will be destroyed
 		if (getActivity().isFinishing()) {
-		    getMvpDelegate().onDestroy();
-		    return;
+			getMvpDelegate().onDestroy();
+			return;
 		}
 
 		// When we rotate device isRemoving() return true for fragment placed in backstack
