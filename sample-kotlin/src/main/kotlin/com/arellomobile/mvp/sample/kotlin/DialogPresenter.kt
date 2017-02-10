@@ -9,9 +9,9 @@ import com.arellomobile.mvp.MvpPresenter
  * @author Yuri Shmakov
  */
 @InjectViewState
-class DialogPresenter<T> : MvpPresenter<DialogView<T, Int>>() {
-    fun onShowDialogClick(data: T) {
-        viewState.showDialog(data, 123)
+class DialogPresenter : MvpPresenter<DialogView>() {
+    fun onShowDialogClick() {
+        viewState.showDialog()
     }
 
     fun onHideDialog() {

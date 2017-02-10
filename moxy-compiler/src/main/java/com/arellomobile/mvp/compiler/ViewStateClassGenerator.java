@@ -50,7 +50,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 		String generic = Util.getClassGenerics(typeElement);
 		String interfaceGeneric = "";
 		if (!typeElement.getTypeParameters().isEmpty()) {
-			interfaceGeneric = "<" + join(",",typeElement.getTypeParameters()) + ">";
+			interfaceGeneric = "<" + join(",", typeElement.getTypeParameters()) + ">";
 		}
 
 		String fullClassName = Util.getFullClassName(typeElement);
