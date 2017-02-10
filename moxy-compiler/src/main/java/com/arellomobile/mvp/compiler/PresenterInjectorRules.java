@@ -70,7 +70,7 @@ public class PresenterInjectorRules extends AnnotationRule {
 		}
 
 		TypeElement typeElement = (TypeElement) ((DeclaredType) annotatedField.asType()).asElement();
-		String viewClassFromGeneric = getViewClassFromGeneric(typeElement);
+		String viewClassFromGeneric = getViewClassFromGeneric(typeElement, (DeclaredType) annotatedField.asType());
 
 		Collection<TypeMirror> viewsType = getViewsType((TypeElement) ((DeclaredType) annotatedField.getEnclosingElement().asType()).asElement());
 
@@ -87,8 +87,8 @@ public class PresenterInjectorRules extends AnnotationRule {
 		}
 	}
 
-	private String getViewClassFromGeneric(TypeElement typeElement) {
-		TypeMirror superclass = typeElement.asType();
+	private String getViewClassFromGeneric(TypeElement typeElement, DeclaredType declaredType) {
+		TypeMirror superclass = declaredType;
 		Map<TypeParameterElement, TypeMirror> mTypedMap = Collections.emptyMap();
 
 		if (!typeElement.getTypeParameters().isEmpty()) {
