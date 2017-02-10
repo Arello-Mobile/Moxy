@@ -41,11 +41,9 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 
 	private String mViewClassName;
 	private Set<String> mStrategyClasses;
-	private Map<String, String> mOptions;
 
-	public ViewStateClassGenerator(Map<String, String> options) {
+	public ViewStateClassGenerator() {
 		mStrategyClasses = new HashSet<>();
-		mOptions = options;
 	}
 
 	public boolean generate(TypeElement typeElement, List<ClassGeneratingParams> classGeneratingParamsList) {
@@ -384,9 +382,6 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 	}
 
 	private String getDefaultStateStrategy() {
-		if (mOptions.containsKey(DEFAULT_STATE_STRATEGY_OPTION)) {
-			return mOptions.get(DEFAULT_STATE_STRATEGY_OPTION).concat(".class");
-		}
 		return DEFAULT_STATE_STRATEGY;
 	}
 
