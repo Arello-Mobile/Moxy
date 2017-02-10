@@ -63,7 +63,6 @@ public class MvpProcessor {
 		return presenter;
 	}
 
-
 	/**
 	 * <p>Gets presenters {@link java.util.List} annotated with {@link com.arellomobile.mvp.presenter.InjectPresenter} for view.</p>
 	 * <p>See full info about getting presenter instance in {@link #getMvpPresenter}</p>
@@ -74,6 +73,10 @@ public class MvpProcessor {
 	 * @return presenters list for specifies presenters container
 	 */
 	<Delegated> List<MvpPresenter<? super Delegated>> getMvpPresenters(Delegated delegated, String delegateTag) {
+		if (!hasMoxyReflector()) {
+			return Collections.emptyList();
+		}
+
 		@SuppressWarnings("unchecked")
 		Class<? super Delegated> aClass = (Class<Delegated>) delegated.getClass();
 		List<Object> presenterBinders = null;
@@ -107,5 +110,24 @@ public class MvpProcessor {
 		}
 
 		return presenters;
+	}
+
+	private static Boolean hasMoxyReflector = null;
+
+	// Check is it have generated MoxyReflector without usage of reflection API
+	private static boolean hasMoxyReflector() {
+		if (hasMoxyReflector != null) {
+			return hasMoxyReflector;
+		}
+
+		try {
+			new MoxyReflector();
+
+			hasMoxyReflector = true;
+		} catch (NoClassDefFoundError error) {
+			hasMoxyReflector = false;
+		}
+
+		return hasMoxyReflector;
 	}
 }

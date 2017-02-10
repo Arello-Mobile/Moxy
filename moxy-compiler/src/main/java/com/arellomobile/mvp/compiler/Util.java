@@ -110,6 +110,12 @@ final class Util {
 		return packageName + className.replaceAll("\\.", "\\$");
 	}
 
+	/**
+	 * Returns string representation of type parameters
+	 * For example, A<T, N extends Number> -> "<T, N extends Number>"
+	 * @param typeElement
+	 * @return
+	 */
 	public static String getClassGenerics(TypeElement typeElement) {
 		String generic = "";
 

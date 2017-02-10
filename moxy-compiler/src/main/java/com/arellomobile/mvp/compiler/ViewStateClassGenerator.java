@@ -41,18 +41,16 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 
 	private String mViewClassName;
 	private Set<String> mStrategyClasses;
-	private Map<String, String> mOptions;
 
-	public ViewStateClassGenerator(Map<String, String> options) {
+	public ViewStateClassGenerator() {
 		mStrategyClasses = new HashSet<>();
-		mOptions = options;
 	}
 
 	public boolean generate(TypeElement typeElement, List<ClassGeneratingParams> classGeneratingParamsList) {
 		String generic = Util.getClassGenerics(typeElement);
 		String interfaceGeneric = "";
 		if (!typeElement.getTypeParameters().isEmpty()) {
-			interfaceGeneric = "<" + typeElement.getTypeParameters() + ">";
+			interfaceGeneric = "<" + join(",", typeElement.getTypeParameters()) + ">";
 		}
 
 		String fullClassName = Util.getFullClassName(typeElement);
@@ -60,7 +58,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 		ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
 		classGeneratingParams.setName(fullClassName + MvpProcessor.VIEW_STATE_SUFFIX);
 
-		mViewClassName = getClassName(typeElement);
+		mViewClassName = getClassName(typeElement) + interfaceGeneric;
 
 		String builder = "package " + fullClassName.substring(0, fullClassName.lastIndexOf(".")) + ";\n" +
 		                 "\n" +
@@ -73,7 +71,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 		                 "import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy;\n" +
 		                 "import com.arellomobile.mvp.viewstate.strategy.StateStrategy;\n" +
 		                 "\n" +
-		                 "public class " + fullClassName.substring(fullClassName.lastIndexOf(".") + 1) + "$$State" + generic + " extends MvpViewState<" + mViewClassName + "> implements " + mViewClassName + interfaceGeneric + " {\n" +
+		                 "public class " + fullClassName.substring(fullClassName.lastIndexOf(".") + 1) + "$$State" + generic + " extends MvpViewState<" + mViewClassName + "> implements " + mViewClassName + " {\n" +
 		                 "\tprivate ViewCommands<" + mViewClassName + "> mViewCommands = new ViewCommands<>();\n" +
 		                 "\n" +
 		                 "\t@Override\n" +
@@ -334,15 +332,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 	}
 
 	private String getClassName(TypeElement typeElement) {
-		String name = typeElement.getSimpleName().toString();
-
-		Element enclosingElement = typeElement.getEnclosingElement();
-		while (enclosingElement != null && enclosingElement.getKind() == ElementKind.CLASS) {
-			name = enclosingElement.getSimpleName() + "." + name;
-			enclosingElement = enclosingElement.getEnclosingElement();
-		}
-
-		return name;
+		return typeElement.getQualifiedName().toString();
 	}
 
 	private String generateLocalViewCommand(String viewClassName, String builder, List<Method> methods) {
@@ -384,9 +374,6 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 	}
 
 	private String getDefaultStateStrategy() {
-		if (mOptions.containsKey(DEFAULT_STATE_STRATEGY_OPTION)) {
-			return mOptions.get(DEFAULT_STATE_STRATEGY_OPTION).concat(".class");
-		}
 		return DEFAULT_STATE_STRATEGY;
 	}
 
