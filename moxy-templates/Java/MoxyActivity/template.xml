@@ -58,7 +58,8 @@
         id="createProvidesMethod"
         name="Create Custom Provides Presenter Method?"
         type="boolean"
-        default="true"
+        visibility="includePresenter"
+        default="false"
         help="Generate a method for provides presenter" />
 
     <parameter
