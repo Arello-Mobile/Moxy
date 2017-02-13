@@ -9,8 +9,8 @@ import ${packageName}.presentation.presenter${dotSubpackage}.${presenterName};
 
 import ${superClassFqcn};
 
-<#if applicationPackage??>
-import ${applicationPackage}.R;
+<#if packageName??>
+import ${packageName}.R;
 </#if>
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
