@@ -55,6 +55,13 @@
         help="Generate a presenter for the activity" />
 
     <parameter
+        id="createProvidesMethod"
+        name="Create Custom Provides Presenter Method?"
+        type="boolean"
+        default="true"
+        help="Generate a method for provides presenter" />
+
+    <parameter
         id="superClass"
         name="Base Activity"
         type="enum"
