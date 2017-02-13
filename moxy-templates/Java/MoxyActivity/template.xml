@@ -53,14 +53,17 @@
         type="boolean"
         default="true"
         help="Generate a presenter for the activity" />
-        
+
     <parameter
-        id="extendsBaseActivity"
-        name="extends from Base Activity"
-        type="boolean"
-        default="true"
-        help="extends from your_package_name/ui/activity/BaseActivity otherwise MvpActivity" />
-        
+        id="superClass"
+        name="Base Activity"
+        type="enum"
+        default="baseActivity"
+        help="if choose BaseActivity, please add your_package_name/ui/activity/BaseActivity otherwise MvpActivity" >
+        <option id="baseActivity">BaseActivity</option>
+        <option id="appCompat">MvpAppCompatActivity</option>
+        <option id="activity">MvpActivity</option>
+    </parameter>
 
     <parameter
         id="activityName"
