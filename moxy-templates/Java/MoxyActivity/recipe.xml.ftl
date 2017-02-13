@@ -28,6 +28,6 @@
     </#if>
 
     <merge from="AndroidManifest.xml.ftl"
-             to="${escapeXmlAttribute(manifestDir)}/AndroidManifest.xml" />
+             to="${escapeXmlAttribute(manifestOut)}/AndroidManifest.xml" />
                                       
 </recipe>
