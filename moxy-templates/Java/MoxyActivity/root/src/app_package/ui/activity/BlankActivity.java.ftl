@@ -14,11 +14,22 @@ import ${packageName}.R;
 </#if>
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
+<#if createProvidesMethod>
+import com.arellomobile.mvp.presenter.ProvidePresenter;
+</#if>
 
 public class ${className} extends ${superClassName} implements ${viewName} {
     public static final String TAG = "${className}";
 	@InjectPresenter
 	${presenterName} m${presenterName};
+
+    <#if createProvidesMethod>
+    @ProvidePresenter
+    ${presenterName} provide() {
+        //TODO provide your ${presenterName} here;
+        return null;
+    }
+    </#if>
 
 	<#if includeFactory>
     public static Intent getIntent(final Context context) {
