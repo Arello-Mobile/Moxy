@@ -7,19 +7,29 @@ import android.os.Bundle;
 import ${packageName}.presentation.view${dotSubpackage}.${viewName};
 import ${packageName}.presentation.presenter${dotSubpackage}.${presenterName};
 
-<#if extendsBaseActivity><#if applicationPackage??>import ${applicationPackage}.ui.activity.BaseActivity;</#if><#else></#if>
-<#if extendsBaseActivity!!>import com.arellomobile.mvp.MvpActivity;</#if>
+import ${superClassFqcn};
 
-<#if applicationPackage??>
-import ${applicationPackage}.R;
+<#if packageName??>
+import ${packageName}.R;
 </#if>
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
+<#if createProvidesMethod>
+import com.arellomobile.mvp.presenter.ProvidePresenter;
+</#if>
 
-public class ${className} extends MvpActivity implements ${viewName} {
+public class ${className} extends ${superClassName} implements ${viewName} {
     public static final String TAG = "${className}";
 	@InjectPresenter
 	${presenterName} m${presenterName};
+
+    <#if createProvidesMethod>
+    @ProvidePresenter
+    ${presenterName} provide() {
+        //TODO provide your ${presenterName} here;
+        return null;
+    }
+    </#if>
 
 	<#if includeFactory>
     public static Intent getIntent(final Context context) {

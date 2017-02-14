@@ -53,14 +53,25 @@
         type="boolean"
         default="true"
         help="Generate a presenter for the activity" />
-        
+
     <parameter
-        id="extendsBaseActivity"
-        name="extends from Base Activity"
+        id="createProvidesMethod"
+        name="Create Custom Provides Presenter Method?"
         type="boolean"
-        default="true"
-        help="extends from your_package_name/ui/activity/BaseActivity otherwise MvpActivity" />
-        
+        visibility="includePresenter"
+        default="false"
+        help="Generate a method for provides presenter" />
+
+    <parameter
+        id="superClass"
+        name="Base Activity"
+        type="enum"
+        default="baseActivity"
+        help="if choose BaseActivity, please add your_package_name/ui/activity/BaseActivity otherwise MvpActivity" >
+        <option id="baseActivity">BaseActivity</option>
+        <option id="appCompat">MvpAppCompatActivity</option>
+        <option id="activity">MvpActivity</option>
+    </parameter>
 
     <parameter
         id="activityName"
