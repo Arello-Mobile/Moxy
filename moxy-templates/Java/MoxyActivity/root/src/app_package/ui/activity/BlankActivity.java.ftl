@@ -25,9 +25,8 @@ public class ${className} extends ${superClassName} implements ${viewName} {
 
     <#if createProvidesMethod>
     @ProvidePresenter
-    ${presenterName} provide() {
-        //TODO provide your ${presenterName} here;
-        return null;
+    ${presenterName} providePresenter() {
+        return new ${presenterName}();
     }
     </#if>
 
