@@ -16,7 +16,7 @@
     <global id="useSupport" type="boolean" value="${(minApiLevel lt 11)?string}" />
     <global id="resOut" value="${resDir}" />
     <global id="srcOut" value="${srcDir}/${slashedPackageName(packageName)}" />
-    <global id="relativePackage" value=".ui.activity" />
+    <global id="relativePackage" value=".ui.fragment" />
     <global id="subpackage" value="<#if useSubPackage>${subPackage}/<#else></#if>" />
     <global id="dotSubpackage" value="<#if useSubPackage>.${subPackage}<#else></#if>" />
 </globals>
