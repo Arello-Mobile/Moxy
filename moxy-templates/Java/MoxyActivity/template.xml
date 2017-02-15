@@ -18,7 +18,8 @@
         constraints="class|nonempty|unique"
         default="BlankActivity"
         help="The name of the activity class to create" />
-     <parameter
+
+    <parameter
         id="useSubPackage"
         name="Use sub package?"
         type="boolean"
@@ -109,13 +110,13 @@
         visibility="includePresenter"
         suggest="${underscoreToCamelCase(classToResource(className))}Presenter"
         help="The name of the presenter interface to create" />
-    
 
     <thumbs>
         <thumb>template_moxy_activity.png</thumb>
     </thumbs>
 
     <globals file="globals.xml.ftl" />
+
     <execute file="recipe.xml.ftl" />
 
 </template>
