@@ -19,7 +19,7 @@
         default="BlankFragment"
         help="The name of the fragment class to create" />
 
-     <parameter
+    <parameter
         id="useSubPackage"
         name="Use sub package?"
         type="boolean"
