@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <recipe>
 
-    <#if useSupport><dependency mavenUrl="com.android.support:support-v4:19.+"/></#if>
-
     <#if includeLayout>
         <instantiate from="res/layout/activity_blank.xml.ftl"
                        to="${escapeXmlAttribute(resOut)}/layout/${escapeXmlAttribute(activityName)}.xml" />
@@ -30,6 +28,6 @@
     </#if>
 
     <merge from="AndroidManifest.xml.ftl"
-             to="${escapeXmlAttribute(manifestDir)}/AndroidManifest.xml" />
+             to="${escapeXmlAttribute(manifestOut)}/AndroidManifest.xml" />
                                       
 </recipe>

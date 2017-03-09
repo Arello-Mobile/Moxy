@@ -1,35 +1,26 @@
 package com.arellomobile.mvp;
 
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 
 /**
- * Date: 19-Dec-15
- * Time: 13:25
+ * Date: 17-Dec-16
+ * Time: 21:58
  *
- * @author Alexander Blinov
- * @author Yuri Shmakov
  * @author Konstantin Tckhovrebov
  */
-@SuppressWarnings({"ConstantConditions", "unused"})
-public class MvpAppCompatFragment extends Fragment {
+@SuppressWarnings("ConstantConditions")
+public class MvpDialogFragment extends DialogFragment {
 
 	private boolean mIsStateSaved;
-	private MvpDelegate<? extends MvpAppCompatFragment> mMvpDelegate;
+	private MvpDelegate<? extends MvpDialogFragment> mMvpDelegate;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		getMvpDelegate().onCreate(savedInstanceState);
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
-
-		mIsStateSaved = false;
-
-		getMvpDelegate().onAttach();
 	}
 
 	public void onResume() {
@@ -83,10 +74,13 @@ public class MvpAppCompatFragment extends Fragment {
 
 		// See https://github.com/Arello-Mobile/Moxy/issues/24
 		boolean anyParentIsRemoving = false;
-		Fragment parent = getParentFragment();
-		while (!anyParentIsRemoving && parent != null) {
-			anyParentIsRemoving = parent.isRemoving();
-			parent = parent.getParentFragment();
+
+		if (Build.VERSION.SDK_INT >= 17) {
+			Fragment parent = getParentFragment();
+			while (!anyParentIsRemoving && parent != null) {
+				anyParentIsRemoving = parent.isRemoving();
+				parent = parent.getParentFragment();
+			}
 		}
 
 		if (isRemoving() || anyParentIsRemoving) {

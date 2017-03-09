@@ -82,7 +82,11 @@ final class Util {
 					result += "<" + s + ">";
 				}
 			} else if (param instanceof TypeVariable) {
-				result += types.get(param.toString());
+				String type = types.get(param.toString());
+				if (type == null) {
+					type = param.toString();
+				}
+				result += type;
 			} else {
 				result += param;
 			}
@@ -110,6 +114,12 @@ final class Util {
 		return packageName + className.replaceAll("\\.", "\\$");
 	}
 
+	/**
+	 * Returns string representation of type parameters
+	 * For example, A<T, N extends Number> -> "<T, N extends Number>"
+	 * @param typeElement
+	 * @return
+	 */
 	public static String getClassGenerics(TypeElement typeElement) {
 		String generic = "";
 

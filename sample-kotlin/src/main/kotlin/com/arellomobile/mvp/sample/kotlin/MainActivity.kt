@@ -20,7 +20,7 @@ class MainActivity : MvpAppCompatActivity(), DialogView {
     fun provideDialogPresenterTag(): String = "Hello"
 
     @ProvidePresenter(type = PresenterType.GLOBAL)
-    fun provideDialogPresenter(): DialogPresenter = DialogPresenter()
+    fun provideDialogPresenter() = DialogPresenter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

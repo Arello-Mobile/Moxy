@@ -2,34 +2,24 @@ package com.arellomobile.mvp;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatDialogFragment;
 
 /**
- * Date: 19-Dec-15
- * Time: 13:25
+ * Date: 17-Dec-16
+ * Time: 21:55
  *
- * @author Alexander Blinov
- * @author Yuri Shmakov
  * @author Konstantin Tckhovrebov
  */
 @SuppressWarnings({"ConstantConditions", "unused"})
-public class MvpAppCompatFragment extends Fragment {
+public class MvpAppCompatDialogFragment extends AppCompatDialogFragment {
 
 	private boolean mIsStateSaved;
-	private MvpDelegate<? extends MvpAppCompatFragment> mMvpDelegate;
+	private MvpDelegate<? extends MvpAppCompatDialogFragment> mMvpDelegate;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		getMvpDelegate().onCreate(savedInstanceState);
-	}
-
-	@Override
-	public void onStart() {
-		super.onStart();
-
-		mIsStateSaved = false;
-
-		getMvpDelegate().onAttach();
 	}
 
 	public void onResume() {
