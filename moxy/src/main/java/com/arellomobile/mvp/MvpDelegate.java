@@ -1,11 +1,11 @@
 package com.arellomobile.mvp;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.os.Bundle;
 
 import com.arellomobile.mvp.presenter.PresenterType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Date: 18-Dec-15
@@ -32,16 +32,16 @@ import com.arellomobile.mvp.presenter.PresenterType;
  */
 public class MvpDelegate<Delegated> {
 	private static final String KEY_TAG = "com.arellomobile.mvp.MvpDelegate.KEY_TAG";
-
+	private final Delegated mDelegated;
 	private String mKeyTag = KEY_TAG;
 	private String mDelegateTag;
-	private final Delegated mDelegated;
 	private boolean mIsAttached;
 	private MvpDelegate mParentDelegate;
 	private List<MvpPresenter<? super Delegated>> mPresenters;
 	private List<MvpDelegate> mChildDelegates;
 	private Bundle mBundle;
 	private Bundle mChildKeyTagsBundle;
+	private boolean mDestroyViewOnDetach = false;
 
 	public MvpDelegate(Delegated delegated) {
 		mDelegated = delegated;
@@ -61,6 +61,10 @@ public class MvpDelegate<Delegated> {
 		mKeyTag = mParentDelegate.mKeyTag + "$" + childId;
 
 		delegate.addChildDelegate(this);
+	}
+
+	public void setDestroyViewOnDetach(final boolean destroyViewOnDetach) {
+		this.mDestroyViewOnDetach = destroyViewOnDetach;
 	}
 
 	private void addChildDelegate(MvpDelegate delegate) {
@@ -138,12 +142,18 @@ public class MvpDelegate<Delegated> {
 			}
 
 			presenter.detachView(mDelegated);
+			if (mDestroyViewOnDetach) {
+				presenter.destroyView(mDelegated);
+			}
 		}
 
 		mIsAttached = false;
 
 		for (MvpDelegate<?> childDelegate : mChildDelegates) {
 			childDelegate.onDetach();
+			if (mDestroyViewOnDetach) {
+				childDelegate.onDestroyView();
+			}
 		}
 	}
 
