@@ -59,11 +59,20 @@ public class MvpDialogFragment extends DialogFragment {
 	public void onDestroy() {
 		super.onDestroy();
 
+		//We leave the screen and respectively all fragments will be destroyed
+		if (getActivity().isFinishing()) {
+			getMvpDelegate().onDestroy();
+			return;
+		}
+
+		// When we rotate device isRemoving() return true for fragment placed in backstack
+		// http://stackoverflow.com/questions/34649126/fragment-back-stack-and-isremoving
 		if (mIsStateSaved) {
 			mIsStateSaved = false;
 			return;
 		}
 
+		// See https://github.com/Arello-Mobile/Moxy/issues/24
 		boolean anyParentIsRemoving = false;
 
 		if (Build.VERSION.SDK_INT >= 17) {
@@ -74,7 +83,7 @@ public class MvpDialogFragment extends DialogFragment {
 			}
 		}
 
-		if (isRemoving() || anyParentIsRemoving || getActivity().isFinishing()) {
+		if (isRemoving() || anyParentIsRemoving) {
 			getMvpDelegate().onDestroy();
 		}
 	}

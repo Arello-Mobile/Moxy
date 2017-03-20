@@ -13,76 +13,85 @@ import android.support.v7.app.AppCompatDialogFragment;
 @SuppressWarnings({"ConstantConditions", "unused"})
 public class MvpAppCompatDialogFragment extends AppCompatDialogFragment {
 
-    private boolean mIsStateSaved;
-    private MvpDelegate<? extends MvpAppCompatDialogFragment> mMvpDelegate;
+	private boolean mIsStateSaved;
+	private MvpDelegate<? extends MvpAppCompatDialogFragment> mMvpDelegate;
 
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-        getMvpDelegate().onCreate(savedInstanceState);
-    }
+		getMvpDelegate().onCreate(savedInstanceState);
+	}
 
-    public void onResume() {
-        super.onResume();
+	public void onResume() {
+		super.onResume();
 
-        mIsStateSaved = false;
+		mIsStateSaved = false;
 
-        getMvpDelegate().onAttach();
-    }
+		getMvpDelegate().onAttach();
+	}
 
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
 
-        mIsStateSaved = true;
+		mIsStateSaved = true;
 
-        getMvpDelegate().onSaveInstanceState(outState);
-        getMvpDelegate().onDetach();
-    }
+		getMvpDelegate().onSaveInstanceState(outState);
+		getMvpDelegate().onDetach();
+	}
 
-    @Override
-    public void onStop() {
-        super.onStop();
+	@Override
+	public void onStop() {
+		super.onStop();
 
-        getMvpDelegate().onDetach();
-    }
+		getMvpDelegate().onDetach();
+	}
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
 
-        getMvpDelegate().onDetach();
-        getMvpDelegate().onDestroyView();
-    }
+		getMvpDelegate().onDetach();
+		getMvpDelegate().onDestroyView();
+	}
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
 
-        if (mIsStateSaved) {
-            mIsStateSaved = false;
-            return;
-        }
+		//We leave the screen and respectively all fragments will be destroyed
+		if (getActivity().isFinishing()) {
+			getMvpDelegate().onDestroy();
+			return;
+		}
 
-        boolean anyParentIsRemoving = false;
-        Fragment parent = getParentFragment();
-        while (!anyParentIsRemoving && parent != null) {
-            anyParentIsRemoving = parent.isRemoving();
-            parent = parent.getParentFragment();
-        }
+		// When we rotate device isRemoving() return true for fragment placed in backstack
+		// http://stackoverflow.com/questions/34649126/fragment-back-stack-and-isremoving
+		if (mIsStateSaved) {
+			mIsStateSaved = false;
+			return;
+		}
 
-        if (isRemoving() || anyParentIsRemoving || getActivity().isFinishing()) {
-            getMvpDelegate().onDestroy();
-        }
-    }
+		// See https://github.com/Arello-Mobile/Moxy/issues/24
+		boolean anyParentIsRemoving = false;
+		Fragment parent = getParentFragment();
+		while (!anyParentIsRemoving && parent != null) {
+			anyParentIsRemoving = parent.isRemoving();
+			parent = parent.getParentFragment();
+		}
 
-    /**
-     * @return The {@link MvpDelegate} being used by this Fragment.
-     */
-    public MvpDelegate getMvpDelegate() {
-        if (mMvpDelegate == null) {
-            mMvpDelegate = new MvpDelegate<>(this);
-        }
+		if (isRemoving() || anyParentIsRemoving) {
+			getMvpDelegate().onDestroy();
+		}
+	}
 
-        return mMvpDelegate;
-    }
+	/**
+	 * @return The {@link MvpDelegate} being used by this Fragment.
+	 */
+	public MvpDelegate getMvpDelegate() {
+		if (mMvpDelegate == null) {
+			mMvpDelegate = new MvpDelegate<>(this);
+		}
+
+		return mMvpDelegate;
+	}
 }

@@ -82,7 +82,11 @@ final class Util {
 					result += "<" + s + ">";
 				}
 			} else if (param instanceof TypeVariable) {
-				result += types.get(param.toString());
+				String type = types.get(param.toString());
+				if (type == null) {
+					type = param.toString();
+				}
+				result += type;
 			} else {
 				result += param;
 			}
