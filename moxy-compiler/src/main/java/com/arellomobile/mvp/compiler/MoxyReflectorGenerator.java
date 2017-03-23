@@ -2,6 +2,7 @@ package com.arellomobile.mvp.compiler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,7 +45,7 @@ public class MoxyReflectorGenerator {
 			extendingMap.put(presentersContainer, parent);
 		}
 
-		Map<TypeElement, List<TypeElement>> elementListMap = new HashMap<>();
+		Map<TypeElement, List<TypeElement>> elementListMap = new LinkedHashMap<>();
 
 		for (TypeElement presentersContainer : presentersContainers) {
 			ArrayList<TypeElement> typeElements = new ArrayList<>();

@@ -2,7 +2,7 @@ package com.arellomobile.mvp.compiler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -43,7 +43,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 	private Set<String> mStrategyClasses;
 
 	public ViewStateClassGenerator() {
-		mStrategyClasses = new HashSet<>();
+		mStrategyClasses = new LinkedHashSet<>();
 	}
 
 	public boolean generate(TypeElement typeElement, List<ClassGeneratingParams> classGeneratingParamsList) {
