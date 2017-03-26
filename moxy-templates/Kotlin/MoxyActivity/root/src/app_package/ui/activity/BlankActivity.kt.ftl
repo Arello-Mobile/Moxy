@@ -30,7 +30,7 @@ class ${className} : ${superClassName}(), ${viewName} {
     <#if createProvidesMethod>
         @ProvidePresenter
         fun providePresenter() : ${presenterName} = ${presenterName}()
-        </#if>
+    </#if>
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
