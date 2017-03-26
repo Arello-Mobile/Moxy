@@ -3,18 +3,20 @@ package ${packageName}.ui.activity${dotSubpackage}
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-<#if !extendsBaseActivity>
-import com.arellomobile.mvp.MvpActivity
-</#if>
+
 import com.arellomobile.mvp.presenter.InjectPresenter
 import ${packageName}.R
 import ${packageName}.presentation.view${dotSubpackage}.${viewName}
 import ${packageName}.presentation.presenter${dotSubpackage}.${presenterName}
-<#if extendsBaseActivity>
-import ${packageName}.ui.activity.BaseActivity
+
+import ${superClassFqcn};
+
+<#if createProvidesMethod>
+import com.arellomobile.mvp.presenter.ProvidePresenter;
 </#if>
 
-class ${className} : <#if extendsBaseActivity>BaseActivity()<#else>MvpActivity()</#if>, ${viewName} {
+
+class ${className} : ${superClassName}(), ${viewName} {
     companion object {
         const val TAG = "${className}"
 	<#if includeFactory>
@@ -24,6 +26,11 @@ class ${className} : <#if extendsBaseActivity>BaseActivity()<#else>MvpActivity()
 
 	@InjectPresenter
 	lateinit var m${presenterName}: ${presenterName}
+
+    <#if createProvidesMethod>
+        @ProvidePresenter
+        fun providePresenter() : ${presenterName} = ${presenterName}()
+        </#if>
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
