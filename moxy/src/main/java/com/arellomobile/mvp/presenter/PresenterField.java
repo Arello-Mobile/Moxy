@@ -9,7 +9,7 @@ import com.arellomobile.mvp.*;
  * @author Alexander Blinov
  * @author Yuri Shmakov
  */
-public abstract class PresenterField<Presenter extends MvpPresenter<? extends View>, View extends MvpView> {
+public abstract class PresenterField<PresentersContainer> {
 	protected final String tag;
 	protected final PresenterType presenterType;
 	protected final String presenterId;
@@ -22,9 +22,9 @@ public abstract class PresenterField<Presenter extends MvpPresenter<? extends Vi
 		this.presenterClass = presenterClass;
 	}
 
-	public abstract void bind(Object target, MvpPresenter presenter);
+	public abstract void bind(PresentersContainer container, MvpPresenter presenter);
 
-	public String getTag(Object delegated) {
+	public String getTag(PresentersContainer delegated) {
 		return tag != null ? tag : getClass().getSimpleName();
 	}
 
@@ -40,5 +40,5 @@ public abstract class PresenterField<Presenter extends MvpPresenter<? extends Vi
 		return presenterClass;
 	}
 
-	public abstract MvpPresenter<?> providePresenter(Object delegated);
+	public abstract MvpPresenter<?> providePresenter(PresentersContainer delegated);
 }
