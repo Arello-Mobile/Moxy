@@ -77,20 +77,6 @@ Base modules integration:
 dependencies {
   ...
   compile 'com.arello-mobile:moxy:1.4.6'
-  provided 'com.arello-mobile:moxy-compiler:1.4.6'
-}
-```
-If you want to see generated code, use `apt` instead of `provided` dependency type:
-```groovy
-dependencies {
-  ...
-  apt 'com.arello-mobile:moxy-compiler:1.4.6'
-}
-```
-Note: if you use gradle plugin verion 2.2.2 and above, so you can use `annotationProcessor` instead of `apt`:
-```groovy
-dependencies {
-  ...
   annotationProcessor 'com.arello-mobile:moxy-compiler:1.4.6'
 }
 ```
