@@ -43,7 +43,7 @@ public class MvpProcessor {
 		}
 
 		//noinspection unchecked
-		MvpPresenter<? super Delegated> presenter = presenterStore.get(type, tag, presenterClass);
+		MvpPresenter<? super Delegated> presenter = presenterStore.get(tag);
 		if (presenter != null) {
 			return presenter;
 		}
@@ -58,7 +58,7 @@ public class MvpProcessor {
 		presenter.setPresenterType(type);
 		presenter.setTag(tag);
 		presenter.setPresenterClass(presenterClass);
-		presenterStore.add(type, tag, presenterClass, presenter);
+		presenterStore.add(tag, presenter);
 
 		return presenter;
 	}

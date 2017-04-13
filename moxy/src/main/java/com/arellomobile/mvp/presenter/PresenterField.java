@@ -24,8 +24,10 @@ public abstract class PresenterField<PresentersContainer> {
 
 	public abstract void bind(PresentersContainer container, MvpPresenter presenter);
 
+	// Delegated may be used from generated code if user plane to generate tag at runtime
+	@SuppressWarnings("UnusedParameters")
 	public String getTag(PresentersContainer delegated) {
-		return tag != null ? tag : getClass().getSimpleName();
+		return tag;
 	}
 
 	public PresenterType getPresenterType() {

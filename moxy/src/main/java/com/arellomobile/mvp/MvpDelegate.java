@@ -2,6 +2,7 @@ package com.arellomobile.mvp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import android.os.Bundle;
 
@@ -112,7 +113,6 @@ public class MvpDelegate<Delegated> {
 	 * presenters</p>
 	 */
 	public void onAttach() {
-
 		for (MvpPresenter<? super Delegated> presenter : mPresenters) {
 			if (mIsAttached && presenter.getAttachedViews().contains(mDelegated)) {
 				continue;
@@ -167,16 +167,13 @@ public class MvpDelegate<Delegated> {
 		PresentersCounter presentersCounter = MvpFacade.getInstance().getPresentersCounter();
 		PresenterStore presenterStore = MvpFacade.getInstance().getPresenterStore();
 
-		for (MvpPresenter<?> presenter : mPresenters) {
+		Set<MvpPresenter> allChildPresenters = presentersCounter.getAll(mDelegateTag);
+		for (MvpPresenter presenter : allChildPresenters) {
 			boolean isRejected = presentersCounter.rejectPresenter(presenter, mDelegateTag);
 			if (isRejected && presenter.getPresenterType() != PresenterType.GLOBAL) {
-				presenterStore.remove(presenter.getPresenterType(), presenter.getTag(), presenter.getPresenterClass());
+				presenterStore.remove(presenter.getTag());
 				presenter.onDestroy();
 			}
-		}
-
-		for (MvpDelegate<?> childDelegate : mChildDelegates) {
-			childDelegate.onDestroy();
 		}
 	}
 
@@ -201,6 +198,7 @@ public class MvpDelegate<Delegated> {
 	 * @param outState out state from Android component
 	 */
 	public void onSaveInstanceState(Bundle outState) {
+		outState.putAll(mBundle);
 		outState.putAll(mChildKeyTagsBundle);
 		outState.putString(mKeyTag, mDelegateTag);
 
@@ -214,11 +212,13 @@ public class MvpDelegate<Delegated> {
 	}
 
 	/**
-	 * @return generated tag in format: Delegated_class_full_name$MvpDelegate@hashCode
+	 * @return generated tag in format: &lt;parent_delegate_tag&gt; &lt;delegated_class_full_name&gt;$MvpDelegate@&lt;hashCode&gt;
 	 * <p>
-	 * example: com.arellomobile.com.arellomobile.mvp.sample.SampleFragment$MvpDelegate@32649b0
+	 * example: com.arellomobile.mvp.sample.SampleFragment$MvpDelegate@32649b0
 	 */
 	private String generateTag() {
-		return mDelegated.getClass().getName() + "$" + getClass().getSimpleName() + toString().replace(getClass().getName(), "");
+		String tag = mParentDelegate != null ? mParentDelegate.mDelegateTag  + " " : "";
+		tag += mDelegated.getClass().getSimpleName() + "$" + getClass().getSimpleName() + toString().replace(getClass().getName(), "");
+		return tag;
 	}
 }
