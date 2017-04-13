@@ -296,7 +296,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 
 			List<Argument> arguments = new ArrayList<>();
 			for (VariableElement parameter : parameters) {
-				arguments.add(new Argument(fillGenerics(methodTypes, parameter.asType()), parameter.toString()));
+				arguments.add(new Argument(fillGenerics(methodTypes, parameter.asType()), parameter.toString(), parameter.getAnnotationMirrors()));
 			}
 
 			List<String> throwTypes = new ArrayList<>();
@@ -452,15 +452,17 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 	private static class Argument {
 		String type;
 		String name;
+		List<? extends AnnotationMirror> annotations;
 
-		public Argument(String type, String name) {
+		public Argument(String type, String name, List<? extends AnnotationMirror> annotations) {
 			this.type = type;
 			this.name = name;
+			this.annotations = annotations;
 		}
 
 		@Override
 		public String toString() {
-			return type + " " + name;
+			return join(" ", annotations) + " " + type + " " + name;
 		}
 
 		@Override

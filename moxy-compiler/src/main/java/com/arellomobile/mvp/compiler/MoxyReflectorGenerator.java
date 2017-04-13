@@ -1,6 +1,8 @@
 package com.arellomobile.mvp.compiler;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,6 +75,8 @@ public class MoxyReflectorGenerator {
 		                 "\tstatic {\n" +
 		                 "\t\tsViewStateProviders = new HashMap<>();\n";
 
+		Collections.sort(presenterClassNames);
+
 		for (String presenterClassName : presenterClassNames) {
 			  builder += "\t\tsViewStateProviders.put(" + presenterClassName + ".class, new " + presenterClassName + MvpProcessor.VIEW_STATE_PROVIDER_SUFFIX + "());\n";
 		}
@@ -80,7 +84,15 @@ public class MoxyReflectorGenerator {
 		      builder += "\t\t\n"+
 		                 "\t\tsPresenterBinders = new HashMap<>();\n";
 
-		for (Map.Entry<TypeElement, List<TypeElement>> keyValue : elementListMap.entrySet()) {
+		List<Map.Entry<TypeElement, List<TypeElement>>> elementListMapEntries = new ArrayList<>(elementListMap.entrySet());
+		Collections.sort(elementListMapEntries, new Comparator<Map.Entry<TypeElement, List<TypeElement>>>() {
+			@Override
+			public int compare(Map.Entry<TypeElement, List<TypeElement>> entry1, Map.Entry<TypeElement, List<TypeElement>> entry2) {
+				return entry1.getKey().getQualifiedName().toString().compareTo(entry2.getKey().getQualifiedName().toString());
+			}
+		});
+
+		for (Map.Entry<TypeElement, List<TypeElement>> keyValue : elementListMapEntries) {
 			  builder += "\t\tsPresenterBinders.put(" + keyValue.getKey().getQualifiedName() + ".class, Arrays.<Object>asList(";
 
 			boolean isFirst = true;
@@ -99,7 +111,10 @@ public class MoxyReflectorGenerator {
 		      builder += "\t\t\n" +
 				         "\t\tsStrategies = new HashMap<>();\n";
 
-		for (String strategyClass : strategyClasses) {
+		List<String> strategyClassesList = new ArrayList<>(strategyClasses);
+		Collections.sort(strategyClassesList);
+
+		for (String strategyClass : strategyClassesList) {
 			  builder += "\t\tsStrategies.put(" + strategyClass + ", new " + strategyClass.substring(0, strategyClass.lastIndexOf('.')) + "());\n";
 		}
 
