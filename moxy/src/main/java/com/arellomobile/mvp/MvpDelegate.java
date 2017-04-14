@@ -33,6 +33,7 @@ import com.arellomobile.mvp.presenter.PresenterType;
  */
 public class MvpDelegate<Delegated> {
 	private static final String KEY_TAG = "com.arellomobile.mvp.MvpDelegate.KEY_TAG";
+	public static final String MOXY_DELEGATE_TAGS_KEY = "MoxyDelegateBundle";
 
 	private String mKeyTag = KEY_TAG;
 	private String mDelegateTag;
@@ -42,12 +43,10 @@ public class MvpDelegate<Delegated> {
 	private List<MvpPresenter<? super Delegated>> mPresenters;
 	private List<MvpDelegate> mChildDelegates;
 	private Bundle mBundle;
-	private Bundle mChildKeyTagsBundle;
 
 	public MvpDelegate(Delegated delegated) {
 		mDelegated = delegated;
 		mChildDelegates = new ArrayList<>();
-		mChildKeyTagsBundle = new Bundle();
 	}
 
 	public void setParentDelegate(MvpDelegate delegate, String childId) {
@@ -55,7 +54,7 @@ public class MvpDelegate<Delegated> {
 			throw new IllegalStateException("You should call setParentDelegate() before first onCreate()");
 		}
 		if (mChildDelegates != null && mChildDelegates.size() > 0) {
-			throw new IllegalStateException("You could not set parent delegate when it already has child presenters");
+			throw new IllegalStateException("You could not set parent delegate when there are already has child presenters");
 		}
 
 		mParentDelegate = delegate;
@@ -88,6 +87,10 @@ public class MvpDelegate<Delegated> {
 	 * @param bundle with saved state
 	 */
 	public void onCreate(Bundle bundle) {
+		if (mParentDelegate == null && bundle != null) {
+			bundle = bundle.getBundle(MOXY_DELEGATE_TAGS_KEY);
+		}
+
 		mIsAttached = false;
 		mBundle = bundle != null ? bundle : new Bundle();
 
@@ -183,13 +186,11 @@ public class MvpDelegate<Delegated> {
 	 */
 	public void onSaveInstanceState() {
 		Bundle bundle = new Bundle();
-		if (mParentDelegate != null) {
-			bundle = mParentDelegate.mChildKeyTagsBundle;
+		if (mParentDelegate != null && mParentDelegate.mBundle != null) {
+			bundle = mParentDelegate.mBundle;
 		}
 
 		onSaveInstanceState(bundle);
-
-		mParentDelegate.mBundle.putAll(bundle);
 	}
 
 	/**
@@ -198,8 +199,13 @@ public class MvpDelegate<Delegated> {
 	 * @param outState out state from Android component
 	 */
 	public void onSaveInstanceState(Bundle outState) {
+		if (mParentDelegate == null) {
+			Bundle moxyDelegateBundle = new Bundle();
+			outState.putBundle(MOXY_DELEGATE_TAGS_KEY, moxyDelegateBundle);
+			outState = moxyDelegateBundle;
+		}
+
 		outState.putAll(mBundle);
-		outState.putAll(mChildKeyTagsBundle);
 		outState.putString(mKeyTag, mDelegateTag);
 
 		for (MvpDelegate childDelegate : mChildDelegates) {
