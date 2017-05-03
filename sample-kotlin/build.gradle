@@ -40,9 +40,9 @@ android {
 dependencies {
     compile 'com.android.support:appcompat-v7:25.0.0'
 
-    compile 'com.arello-mobile:moxy:1.5.1'
-    compile 'com.arello-mobile:moxy-app-compat:1.5.1'
-    kapt 'com.arello-mobile:moxy-compiler:1.5.1'
+    compile 'com.arello-mobile:moxy:1.5.2'
+    compile 'com.arello-mobile:moxy-app-compat:1.5.2'
+    kapt 'com.arello-mobile:moxy-compiler:1.5.2'
 
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
