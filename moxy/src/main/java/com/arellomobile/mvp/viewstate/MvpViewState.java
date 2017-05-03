@@ -1,7 +1,6 @@
 package com.arellomobile.mvp.viewstate;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,6 +16,7 @@ import com.arellomobile.mvp.MvpView;
  */
 @SuppressWarnings("WeakerAccess")
 public abstract class MvpViewState<View extends MvpView> {
+	protected ViewCommands<View> mViewCommands = new ViewCommands<>();
 	protected Set<View> mViews;
 	protected Set<View> mInRestoreState;
 	protected Map<View, Set<ViewCommand<View>>> mViewStates;
@@ -33,7 +33,13 @@ public abstract class MvpViewState<View extends MvpView> {
 	 * @param view mvp view to restore state
 	 * @param currentState commands that was applied already
 	 */
-	protected abstract void restoreState(View view, Set<ViewCommand<View>> currentState);
+	protected void restoreState(View view, Set<ViewCommand<View>> currentState) {
+		if (mViewCommands.isEmpty()) {
+			return;
+		}
+
+		mViewCommands.reapply(view, currentState);
+	}
 
 	/**
 	 * Attach view to view state and apply saves state
@@ -53,7 +59,12 @@ public abstract class MvpViewState<View extends MvpView> {
 
 		mInRestoreState.add(view);
 
-		restoreState(view, getCurrentState(view));
+		Set<ViewCommand<View>> currentState = mViewStates.get(view);
+		currentState = currentState == null ? Collections.<ViewCommand<View>>emptySet() : currentState;
+
+		restoreState(view, currentState);
+
+		mViewStates.remove(view);
 
 		mInRestoreState.remove(view);
 	}
@@ -68,24 +79,14 @@ public abstract class MvpViewState<View extends MvpView> {
 	public void detachView(View view) {
 		mViews.remove(view);
 		mInRestoreState.remove(view);
+
+		Set<ViewCommand<View>> currentState = Collections.newSetFromMap(new WeakHashMap<ViewCommand<View>, Boolean>());
+		currentState.addAll(mViewCommands.getCurrentState());
+		mViewStates.put(view, currentState);
 	}
 
 	public void destroyView(View view) {
 		mViewStates.remove(view);
-	}
-
-	/**
-	 * @param view target view
-	 * @return commands that was applied already
-	 */
-	protected Set<ViewCommand<View>> getCurrentState(View view) {
-		Set<ViewCommand<View>> currentState = mViewStates.get(view);
-		if (currentState == null) {
-			currentState = new HashSet<>();
-			mViewStates.put(view, currentState);
-		}
-
-		return currentState;
 	}
 
 	/**

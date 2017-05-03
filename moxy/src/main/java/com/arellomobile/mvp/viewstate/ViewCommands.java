@@ -68,4 +68,8 @@ public class ViewCommands<View extends MvpView> {
 			afterApply(command);
 		}
 	}
+
+	public List<ViewCommand<View>> getCurrentState() {
+		return mState;
+	}
 }
