@@ -55,6 +55,8 @@ public class MvpAppCompatActivity extends AppCompatActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 
+		getMvpDelegate().onDestroyView();
+
 		if (isFinishing()) {
 			getMvpDelegate().onDestroy();
 		}

@@ -54,6 +54,8 @@ public class MvpActivity extends Activity {
 	protected void onDestroy() {
 		super.onDestroy();
 
+		getMvpDelegate().onDestroyView();
+
 		if (isFinishing()) {
 			getMvpDelegate().onDestroy();
 		}
