@@ -24,7 +24,10 @@ import javax.lang.model.type.TypeMirror;
 
 public class MoxyReflectorGenerator {
 
-	public static String generate(List<String> presenterClassNames, Set<TypeElement> presentersContainers, Set<String> strategyClasses) {
+	public static String generate(List<String> presenterClassNames,
+	                              Set<TypeElement> presentersContainers,
+	                              Set<String> strategyClasses,
+	                              List<String> additionalMoxyReflectorsPackages) {
 		Map<TypeElement, TypeElement> extendingMap = new HashMap<>();
 
 		for (TypeElement presentersContainer : presentersContainers) {
@@ -118,6 +121,16 @@ public class MoxyReflectorGenerator {
 			  builder += "\t\tsStrategies.put(" + strategyClass + ", new " + strategyClass.substring(0, strategyClass.lastIndexOf('.')) + "());\n";
 		}
 
+		Collections.sort(additionalMoxyReflectorsPackages);
+
+		for (String moxyReflectorPackage : additionalMoxyReflectorsPackages) {
+		      builder += "\t\t\n";
+		      builder += "\t\tsViewStateProviders.putAll(" + moxyReflectorPackage + ".MoxyReflector.getViewStateProviders());\n";
+		      builder += "\t\tsPresenterBinders.putAll(" + moxyReflectorPackage + ".MoxyReflector.getPresenterBinders());\n";
+		      builder += "\t\tsStrategies.putAll(" + moxyReflectorPackage + ".MoxyReflector.getStrategies());\n";
+		}
+
+
               builder += "\t}\n" +
 		                 "\t\n" +
 		                 "\tpublic static Object getViewState(Class<?> presenterClass) {\n" +
@@ -132,6 +145,7 @@ public class MoxyReflectorGenerator {
 		                 "\tpublic static List<Object> getPresenterBinders(Class<?> delegated) {\n" +
 		                 "\t\treturn sPresenterBinders.get(delegated);\n" +
 		                 "\t}\n" +
+		                 "\n" +
 		                 "\tpublic static Object getStrategy(Class<?> strategyClass) {\n" +
 		                 "\t\treturn sStrategies.get(strategyClass);\n" +
 		                 "\t}\n" +
