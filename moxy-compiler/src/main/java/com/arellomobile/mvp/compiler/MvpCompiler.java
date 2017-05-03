@@ -120,33 +120,24 @@ public class MvpCompiler extends AbstractProcessor {
 
 		String moxyReflectorPackage = sOptions.get("moxyReflectorPackage");
 
-		if (moxyReflectorPackage == null || "".equals(moxyReflectorPackage)) {
-			List<String> packages = getAdditionalMoxyReflectorPackages(roundEnv);
-
-			String moxyReflector = MoxyReflectorGenerator.generate(
-					viewStateProviderClassGenerator.getPresenterClassNames(),
-					presenterBinderClassGenerator.getPresentersContainers(),
-					viewStateClassGenerator.getStrategyClasses(),
-					packages);
-
-			ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
-			classGeneratingParams.setName("com.arellomobile.mvp.MoxyReflector");
-			classGeneratingParams.setBody(moxyReflector);
-
-			createSourceFile(classGeneratingParams);
-		} else {
-			String moxyReflector = AdditionalMoxyReflectorGenerator.generate(
-					moxyReflectorPackage,
-					viewStateProviderClassGenerator.getPresenterClassNames(),
-					presenterBinderClassGenerator.getPresentersContainers(),
-					viewStateClassGenerator.getStrategyClasses());
-
-			ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
-			classGeneratingParams.setName(moxyReflectorPackage + ".MoxyReflector");
-			classGeneratingParams.setBody(moxyReflector);
-
-			createSourceFile(classGeneratingParams);
+		if (moxyReflectorPackage == null) {
+			moxyReflectorPackage = "com.arellomobile.mvp";
 		}
+
+		List<String> additionalMoxyReflectorPackages = getAdditionalMoxyReflectorPackages(roundEnv);
+
+		String moxyReflector = MoxyReflectorGenerator.generate(
+				moxyReflectorPackage,
+				viewStateProviderClassGenerator.getPresenterClassNames(),
+				presenterBinderClassGenerator.getPresentersContainers(),
+				viewStateClassGenerator.getStrategyClasses(),
+				additionalMoxyReflectorPackages);
+
+		ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
+		classGeneratingParams.setName(moxyReflectorPackage + ".MoxyReflector");
+		classGeneratingParams.setBody(moxyReflector);
+
+		createSourceFile(classGeneratingParams);
 
 		return true;
 	}

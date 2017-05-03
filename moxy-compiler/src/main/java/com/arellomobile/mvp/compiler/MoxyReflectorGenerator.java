@@ -24,7 +24,8 @@ import javax.lang.model.type.TypeMirror;
 
 public class MoxyReflectorGenerator {
 
-	public static String generate(List<String> presenterClassNames,
+	public static String generate(String moxyReflectorPackage,
+	                              List<String> presenterClassNames,
 	                              Set<TypeElement> presentersContainers,
 	                              Set<String> strategyClasses,
 	                              List<String> additionalMoxyReflectorsPackages) {
@@ -63,7 +64,7 @@ public class MoxyReflectorGenerator {
 			}
 		}
 
-		String builder = "package com.arellomobile.mvp;\n" +
+		String builder = "package " + moxyReflectorPackage + ";\n" +
 		                 "\n" +
 		                 "import java.util.Arrays;\n" +
 		                 "import java.util.HashMap;\n" +
@@ -123,16 +124,17 @@ public class MoxyReflectorGenerator {
 
 		Collections.sort(additionalMoxyReflectorsPackages);
 
-		for (String moxyReflectorPackage : additionalMoxyReflectorsPackages) {
+		for (String pkg : additionalMoxyReflectorsPackages) {
 		      builder += "\t\t\n";
-		      builder += "\t\tsViewStateProviders.putAll(" + moxyReflectorPackage + ".MoxyReflector.getViewStateProviders());\n";
-		      builder += "\t\tsPresenterBinders.putAll(" + moxyReflectorPackage + ".MoxyReflector.getPresenterBinders());\n";
-		      builder += "\t\tsStrategies.putAll(" + moxyReflectorPackage + ".MoxyReflector.getStrategies());\n";
+		      builder += "\t\tsViewStateProviders.putAll(" + pkg + ".MoxyReflector.getViewStateProviders());\n";
+		      builder += "\t\tsPresenterBinders.putAll(" + pkg + ".MoxyReflector.getPresenterBinders());\n";
+		      builder += "\t\tsStrategies.putAll(" + pkg + ".MoxyReflector.getStrategies());\n";
 		}
 
+		      builder += "\t}\n";
 
-              builder += "\t}\n" +
-		                 "\t\n" +
+		if (moxyReflectorPackage.equals("com.arellomobile.mvp")) {
+              builder += "\t\n" +
 		                 "\tpublic static Object getViewState(Class<?> presenterClass) {\n" +
 		                 "\t\tViewStateProvider viewStateProvider = (ViewStateProvider) sViewStateProviders.get(presenterClass);\n" +
 		                 "\t\tif (viewStateProvider == null) {\n" +
@@ -150,7 +152,21 @@ public class MoxyReflectorGenerator {
 		                 "\t\treturn sStrategies.get(strategyClass);\n" +
 		                 "\t}\n" +
 		                 "}\n";
-
+		} else {
+		      builder += "\t\n" +
+					     "\tpublic static Map<Class<?>, Object> getViewStateProviders() {\n" +
+					     "\t\treturn sViewStateProviders;\n" +
+					     "\t}\n" +
+				         "\n" +
+					     "\tpublic static Map<Class<?>, List<Object>> getPresenterBinders() {\n" +
+					     "\t\treturn sPresenterBinders;\n" +
+					     "\t}\n" +
+				         "\n" +
+					     "\tpublic static Map<Class<?>, Object> getStrategies() {\n" +
+					     "\t\treturn sStrategies;\n" +
+					     "\t}\n" +
+				         "}\n";
+		}
 		return builder;
 	}
 }
