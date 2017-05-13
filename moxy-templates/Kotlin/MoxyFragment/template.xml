@@ -2,7 +2,7 @@
 <template
     format="4"
     revision="1"
-    name="Moxy fragment"
+    name="Moxy fragment Kotlin"
     description="Moxy MVP fragment constructor"
     minApi="7"
     minBuildApi="8">
