@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <template
-    name="Moxy activity"
+    name="Moxy activity Kotlin"
     description="MVP activity constructor"
     format="4"
     minApi="9"
