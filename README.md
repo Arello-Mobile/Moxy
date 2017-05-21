@@ -1,17 +1,17 @@
 # Moxy
 [![Maven Central](https://img.shields.io/maven-central/v/com.arello-mobile/moxy.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.arello-mobile%22%20AND%20(a%3A%22moxy%22%20OR%20a%3A%22moxy-compiler%22%20OR%20a%3A%22moxy-android%22%20OR%20a%3A%22moxy-app-compat%22)) [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
 
-Moxy is a library that help to use MVP pattern when you do the Android Application. _Without problems of lifecycle and boilerplate code!_
+Moxy is a library that helps to use MVP pattern when you do the Android Application. _Without problems of lifecycle and boilerplate code!_
 
-Main idea of using Moxy:
+The main idea of using Moxy:
 ![schematic_using](https://habrastorage.org/files/a2e/b51/8b4/a2eb518b465a4df9b47e68794519270d.gif)
 See what's happening here in the [wiki](https://github.com/Arello-Mobile/Moxy/wiki).
 
 ## Capabilities
 
-Moxy has a few killer features on other ways:
+Moxy has a few killer features in other ways:
 - _Presenter_ stay alive when _Activity_ recreated(it simplify work with multithreading)
-- Automatically restore all what user see when _Activity_ recreated(including dynamic content is added)
+- Automatically restore all that user see when _Activity_ recreated(including dynamic content is added)
 - Capability to changes of many _Views_ from one _Presenter_
 
 ## Sample
@@ -61,7 +61,7 @@ public class HelloWorldActivity extends MvpAppCompatActivity implements HelloWor
 For all information check [Moxy Wiki](https://github.com/Arello-Mobile/Moxy/wiki)
 
 ## Android studio templates
-In order to avoid boilerplate code creating for binding activity,fragments and its presentation part, we propose to use Android Studio templates for Moxy. 
+In order to avoid boilerplate code creating for binding activity, fragments and its presentation part, we propose to use Android Studio templates for Moxy. 
 
 Templates located in [/moxy-templates](https://github.com/Arello-Mobile/Moxy/tree/master/moxy-templates)
 
@@ -87,7 +87,7 @@ dependencies {
   compile 'com.arello-mobile:moxy-android:1.5.2'
 }
 ```
-If you are planing to use AppCompat, then you can use `MvpAppCompatActivity` and `MvpAppCompatFragment`. Then add this:
+If you are planning to use AppCompat, then you can use `MvpAppCompatActivity` and `MvpAppCompatFragment`. Then add this:
 ```groovy
 dependencies {
   ...
