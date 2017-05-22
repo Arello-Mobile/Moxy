@@ -1,7 +1,7 @@
 package com.arellomobile.mvp.compiler;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -57,7 +57,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 	private final Set<TypeElement> mPresentersContainers;
 
 	public PresenterBinderClassGenerator() {
-		mPresentersContainers = new HashSet<>();
+		mPresentersContainers = new LinkedHashSet<>();
 	}
 
 	public boolean generate(VariableElement variableElement, List<ClassGeneratingParams> classGeneratingParamsList) {
