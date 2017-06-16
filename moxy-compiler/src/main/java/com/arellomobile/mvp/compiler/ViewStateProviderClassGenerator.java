@@ -1,5 +1,20 @@
 package com.arellomobile.mvp.compiler;
 
+import com.arellomobile.mvp.DefaultView;
+import com.arellomobile.mvp.DefaultViewState;
+import com.arellomobile.mvp.InjectViewState;
+import com.arellomobile.mvp.MvpPresenter;
+import com.arellomobile.mvp.MvpProcessor;
+import com.arellomobile.mvp.MvpView;
+import com.arellomobile.mvp.ViewStateProvider;
+import com.arellomobile.mvp.viewstate.MvpViewState;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.WildcardTypeName;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -8,12 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.arellomobile.mvp.DefaultView;
-import com.arellomobile.mvp.DefaultViewState;
-import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.MvpPresenter;
-import com.arellomobile.mvp.MvpProcessor;
-
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.DeclaredType;
@@ -21,7 +31,6 @@ import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
-
 
 import static com.arellomobile.mvp.compiler.Util.fillGenerics;
 
@@ -32,24 +41,44 @@ import static com.arellomobile.mvp.compiler.Util.fillGenerics;
  * @author Alexander Blinov
  */
 final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement> {
-	public static final String MVP_PRESENTER_CLASS = MvpPresenter.class.getCanonicalName();
+	private static final String MVP_PRESENTER_CLASS = MvpPresenter.class.getCanonicalName();
 
-	private Set<TypeElement> mUsedViews;
-	private List<String> mPresenterClassNames;
+	private final Set<TypeElement> mUsedViews = new HashSet<>();
+	private final List<String> mPresenterClassNames = new ArrayList<>();
 
-	public ViewStateProviderClassGenerator() {
-		mUsedViews = new HashSet<>();
-		mPresenterClassNames = new ArrayList<>();
+	public Set<TypeElement> getUsedViews() {
+		return mUsedViews;
+	}
+
+	public List<String> getPresenterClassNames() {
+		return mPresenterClassNames;
 	}
 
 	@Override
 	public boolean generate(TypeElement typeElement, List<ClassGeneratingParams> classGeneratingParamsList) {
-		String fullPresenterClassName = typeElement.toString();
+		ClassName presenterName = ClassName.get(typeElement);
 
-		mPresenterClassNames.add(fullPresenterClassName);
+		mPresenterClassNames.add(presenterName.reflectionName());
 
-		final String presenterClassName = fullPresenterClassName.substring(fullPresenterClassName.lastIndexOf(".") + 1);
+		ClassName viewStateProviderName = ClassName.get(presenterName.packageName(), presenterName.simpleName() + MvpProcessor.VIEW_STATE_PROVIDER_SUFFIX);
 
+		TypeSpec typeSpec = TypeSpec.classBuilder(viewStateProviderName)
+				.addModifiers(Modifier.PUBLIC)
+				.superclass(ViewStateProvider.class)
+				.addMethod(generateGetViewStateMethod(presenterName, getViewStateClassName(typeElement)))
+				.build();
+
+		JavaFile javaFile = JavaFile.builder(presenterName.packageName(), typeSpec).build();
+
+		ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
+		classGeneratingParams.setName(javaFile.typeSpec.name);
+		classGeneratingParams.setBody(javaFile.toString());
+		classGeneratingParamsList.add(classGeneratingParams);
+
+		return true;
+	}
+
+	private ClassName getViewStateClassName(TypeElement typeElement) {
 		String viewState = getViewStateClassFromAnnotationParams(typeElement);
 		if (viewState == null) {
 			String view = getViewClassFromAnnotationParams(typeElement);
@@ -73,29 +102,11 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement> 
 			}
 		}
 
-		String builder = "package " + fullPresenterClassName.substring(0, fullPresenterClassName.lastIndexOf(".")) + ";\n" +
-		                 "\n" +
-		                 "import com.arellomobile.mvp.ViewStateProvider;\n" +
-		                 "import com.arellomobile.mvp.MvpView;\n" +
-		                 "import com.arellomobile.mvp.viewstate.MvpViewState;\n" +
-		                 "\npublic class " + presenterClassName + MvpProcessor.VIEW_STATE_PROVIDER_SUFFIX + " extends ViewStateProvider {\n" +
-		                 "\t\n" +
-		                 "\t@Override\n" +
-		                 "\tpublic MvpViewState<? extends MvpView> getViewState() {\n";
-		if (viewState == null) {
-			builder += "\t\tthrow new RuntimeException(" + fullPresenterClassName + " should has view\");\n";
+		if (viewState != null) {
+			return ClassName.bestGuess(viewState);
 		} else {
-			builder += "\t\treturn new " + viewState + "();\n";
+			return null;
 		}
-		builder += "\t}\n" +
-		           "}";
-
-		ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
-		classGeneratingParams.setName(fullPresenterClassName + MvpProcessor.VIEW_STATE_PROVIDER_SUFFIX);
-		classGeneratingParams.setBody(builder);
-		classGeneratingParamsList.add(classGeneratingParams);
-
-		return true;
 	}
 
 	private String getViewClassFromAnnotationParams(TypeElement typeElement) {
@@ -178,11 +189,17 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement> 
 		return "";
 	}
 
-	public Set<TypeElement> getUsedViews() {
-		return mUsedViews;
-	}
+	private MethodSpec generateGetViewStateMethod(ClassName presenter, ClassName viewState) {
+		MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("getViewState");
+		methodBuilder.addModifiers(Modifier.PUBLIC);
+		methodBuilder.returns(ParameterizedTypeName.get(ClassName.get(MvpViewState.class), WildcardTypeName.subtypeOf(MvpView.class)));
 
-	public List<String> getPresenterClassNames() {
-		return mPresenterClassNames;
+		if (viewState == null) {
+			methodBuilder.addStatement("throw new RuntimeException($S)", presenter.reflectionName() + " should has view");
+		} else {
+			methodBuilder.addStatement("return new $T()", viewState);
+		}
+
+		return methodBuilder.build();
 	}
 }
