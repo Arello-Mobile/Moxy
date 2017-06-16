@@ -95,7 +95,7 @@ public class MvpCompiler extends AbstractProcessor {
 		try {
 			return throwableProcess(roundEnv);
 		} catch (RuntimeException e) {
-			getMessager().printMessage(Diagnostic.Kind.OTHER, "Moxy compilation failed. Could you copy stack trace above and write us (or make issue on Githhub)?");
+			getMessager().printMessage(Diagnostic.Kind.OTHER, "Moxy compilation failed. Could you copy stack trace above and write us (or make issue on Github)?");
 			e.printStackTrace();
 			getMessager().printMessage(Diagnostic.Kind.ERROR, "Moxy compilation failed; see the compiler error output for details (" + e + ")");
 		}
@@ -108,14 +108,13 @@ public class MvpCompiler extends AbstractProcessor {
 
 		ViewStateProviderClassGenerator viewStateProviderClassGenerator = new ViewStateProviderClassGenerator();
 		PresenterBinderClassGenerator presenterBinderClassGenerator = new PresenterBinderClassGenerator();
+		ViewStateClassGenerator viewStateClassGenerator = new ViewStateClassGenerator();
+
 		processInjectors(roundEnv, InjectViewState.class, ElementKind.CLASS, viewStateProviderClassGenerator);
 		processInjectors(roundEnv, InjectPresenter.class, ElementKind.FIELD, presenterBinderClassGenerator);
 
-		ViewStateClassGenerator viewStateClassGenerator = new ViewStateClassGenerator();
-		Set<TypeElement> usedViews = viewStateProviderClassGenerator.getUsedViews();
-
-		for (TypeElement usedView : usedViews) {
-			generateCode(ElementKind.INTERFACE, viewStateClassGenerator, usedView);
+		for (TypeElement usedView : viewStateProviderClassGenerator.getUsedViews()) {
+			generateCode(usedView, ElementKind.INTERFACE, viewStateClassGenerator);
 		}
 
 		String moxyReflectorPackage = sOptions.get("moxyReflectorPackage");
@@ -171,16 +170,17 @@ public class MvpCompiler extends AbstractProcessor {
 	}
 
 	private void processInjectors(final RoundEnvironment roundEnv, Class<? extends Annotation> clazz, ElementKind kind, ClassGenerator classGenerator) {
-		for (Element annotatedElements : roundEnv.getElementsAnnotatedWith(clazz)) {
-			if (annotatedElements.getKind() != kind) {
-				getMessager().printMessage(Diagnostic.Kind.ERROR, annotatedElements + " must be " + kind.name() + ", or not mark it as @" + clazz.getSimpleName());
+		for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(clazz)) {
+			if (annotatedElement.getKind() != kind) {
+				getMessager().printMessage(Diagnostic.Kind.ERROR,
+						annotatedElement + " must be " + kind.name() + ", or not mark it as @" + clazz.getSimpleName());
 			}
 
-			generateCode(kind, classGenerator, annotatedElements);
+			generateCode(annotatedElement, kind, classGenerator);
 		}
 	}
 
-	private void generateCode(ElementKind kind, ClassGenerator classGenerator, Element element) {
+	private void generateCode(Element element, ElementKind kind, ClassGenerator classGenerator) {
 		if (element.getKind() != kind) {
 			getMessager().printMessage(Diagnostic.Kind.ERROR, element + " must be " + kind.name());
 		}
