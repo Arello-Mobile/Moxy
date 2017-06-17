@@ -60,18 +60,18 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement> 
 
 		mPresenterClassNames.add(presenterName.reflectionName());
 
-		ClassName viewStateProviderName = ClassName.get(presenterName.packageName(), presenterName.simpleName() + MvpProcessor.VIEW_STATE_PROVIDER_SUFFIX);
-
-		TypeSpec typeSpec = TypeSpec.classBuilder(viewStateProviderName)
+		TypeSpec typeSpec = TypeSpec.classBuilder(presenterName.simpleName() + MvpProcessor.VIEW_STATE_PROVIDER_SUFFIX)
 				.addModifiers(Modifier.PUBLIC)
 				.superclass(ViewStateProvider.class)
 				.addMethod(generateGetViewStateMethod(presenterName, getViewStateClassName(typeElement)))
 				.build();
 
-		JavaFile javaFile = JavaFile.builder(presenterName.packageName(), typeSpec).build();
+		JavaFile javaFile = JavaFile.builder(presenterName.packageName(), typeSpec)
+				.indent("\t")
+				.build();
 
 		ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
-		classGeneratingParams.setName(javaFile.typeSpec.name);
+		classGeneratingParams.setName(presenterName.reflectionName() + MvpProcessor.VIEW_STATE_PROVIDER_SUFFIX);
 		classGeneratingParams.setBody(javaFile.toString());
 		classGeneratingParamsList.add(classGeneratingParams);
 
