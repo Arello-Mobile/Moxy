@@ -190,4 +190,8 @@ final class Util {
 		}
 		return sb.toString();
 	}
+
+	public static String decapitalizeString(String string) {
+		return string == null || string.isEmpty() ? "" : string.length() == 1 ? string.toLowerCase() : Character.toLowerCase(string.charAt(0)) + string.substring(1);
+	}
 }

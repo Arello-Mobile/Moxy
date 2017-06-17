@@ -1,5 +1,9 @@
 package com.arellomobile.mvp.compiler;
 
+import com.arellomobile.mvp.MvpProcessor;
+import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy;
+import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,10 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-
-import com.arellomobile.mvp.MvpProcessor;
-import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy;
-import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
@@ -26,8 +26,9 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
 import javax.tools.Diagnostic;
 
-
+import static com.arellomobile.mvp.compiler.Util.decapitalizeString;
 import static com.arellomobile.mvp.compiler.Util.fillGenerics;
+import static com.arellomobile.mvp.compiler.Util.join;
 
 /**
  * Date: 18.12.2015
@@ -36,15 +37,18 @@ import static com.arellomobile.mvp.compiler.Util.fillGenerics;
  * @author Yuri Shmakov
  */
 final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
-	public static final String STATE_STRATEGY_TYPE_ANNOTATION = StateStrategyType.class.getName();
-	public static final String DEFAULT_STATE_STRATEGY = AddToEndStrategy.class.getName() + ".class";
-	private static final String DEFAULT_STATE_STRATEGY_OPTION = "defaultStateStrategy";
+	private static final String STATE_STRATEGY_TYPE_ANNOTATION = StateStrategyType.class.getName();
+	private static final String DEFAULT_STATE_STRATEGY = AddToEndStrategy.class.getName() + ".class";
 
 	private String mViewClassName;
 	private Set<String> mStrategyClasses;
 
 	public ViewStateClassGenerator() {
 		mStrategyClasses = new HashSet<>();
+	}
+
+	public Set<String> getStrategyClasses() {
+		return mStrategyClasses;
 	}
 
 	public boolean generate(TypeElement typeElement, List<ClassGeneratingParams> classGeneratingParamsList) {
@@ -229,7 +233,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 				MvpCompiler.getMessager().printMessage(Diagnostic.Kind.ERROR, "You are trying generate ViewState for " + typeElement.getSimpleName() + ". But " + typeElement.getSimpleName() + " contains non-void method \"" + methodElement.getSimpleName() + "\" that return type is " + methodElement.getReturnType() + ". See more here: https://github.com/Arello-Mobile/Moxy/issues/2");
 			}
 
-			String strategyClass = defaultStrategy != null ? defaultStrategy : getDefaultStateStrategy();
+			String strategyClass = defaultStrategy != null ? defaultStrategy : DEFAULT_STATE_STRATEGY;
 			String methodTag = "\"" + methodElement.getSimpleName() + "\"";
 			for (AnnotationMirror annotationMirror : methodElement.getAnnotationMirrors()) {
 				if (!annotationMirror.getAnnotationType().asElement().toString().equals(STATE_STRATEGY_TYPE_ANNOTATION)) {
@@ -366,11 +370,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 		return builder;
 	}
 
-	private String getDefaultStateStrategy() {
-		return DEFAULT_STATE_STRATEGY;
-	}
-
-	public String getStateStrategyType(TypeElement typeElement) {
+	private String getStateStrategyType(TypeElement typeElement) {
 		for (AnnotationMirror annotationMirror : typeElement.getAnnotationMirrors()) {
 			if (!annotationMirror.getAnnotationType().asElement().toString().equals(STATE_STRATEGY_TYPE_ANNOTATION)) {
 				continue;
@@ -476,27 +476,5 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 		public int hashCode() {
 			return type != null ? type.hashCode() : 0;
 		}
-	}
-
-	public static String join(CharSequence delimiter, Iterable tokens) {
-		StringBuilder sb = new StringBuilder();
-		boolean firstTime = true;
-		for (Object token : tokens) {
-			if (firstTime) {
-				firstTime = false;
-			} else {
-				sb.append(delimiter);
-			}
-			sb.append(token);
-		}
-		return sb.toString();
-	}
-
-	public static String decapitalizeString(String string) {
-		return string == null || string.isEmpty() ? "" : string.length() == 1 ? string.toLowerCase() : Character.toLowerCase(string.charAt(0)) + string.substring(1);
-	}
-
-	public Set<String> getStrategyClasses() {
-		return mStrategyClasses;
 	}
 }
