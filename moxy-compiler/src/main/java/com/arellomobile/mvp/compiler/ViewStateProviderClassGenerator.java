@@ -121,7 +121,8 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement> 
 				value = mte.getTypeMirror();
 			}
 
-			mvpViewClassName = Util.getFullClassName(value);
+			// bug?
+			mvpViewClassName = Util.getFullClassName(value); // + MvpProcessor.VIEW_STATE_SUFFIX
 		}
 
 		if (mvpViewClassName.isEmpty() || DefaultView.class.getName().equals(mvpViewClassName)) {
