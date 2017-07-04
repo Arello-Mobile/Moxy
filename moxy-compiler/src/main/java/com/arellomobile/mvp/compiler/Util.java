@@ -20,6 +20,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.DeclaredType;
@@ -27,7 +30,6 @@ import javax.lang.model.type.IntersectionType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
 import javax.lang.model.type.WildcardType;
-import javax.tools.Diagnostic;
 
 /**
  * Utilities for handling types in annotation processors
@@ -149,6 +151,29 @@ final class Util {
 		}
 
 		return generic;
+	}
+
+	public static TypeMirror getAnnotationValueAsType(AnnotationMirror annotationMirror, String key) {
+		if (annotationMirror == null) return null;
+
+		AnnotationValue av = getAnnotationValue(annotationMirror, key);
+
+		if (av != null) {
+			return (TypeMirror) av.getValue();
+		} else {
+			return null;
+		}
+	}
+
+	public static AnnotationValue getAnnotationValue(AnnotationMirror annotationMirror, String key) {
+		if (annotationMirror == null) return null;
+
+		for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : annotationMirror.getElementValues().entrySet()) {
+			if (entry.getKey().getSimpleName().toString().equals(key)) {
+				return entry.getValue();
+			}
+		}
+		return null;
 	}
 
 	/**

@@ -21,15 +21,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
-import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
@@ -45,7 +44,7 @@ import static com.arellomobile.mvp.compiler.Util.join;
  */
 final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 	private static final String STATE_STRATEGY_TYPE_ANNOTATION = StateStrategyType.class.getName();
-	private static final String DEFAULT_STATE_STRATEGY = AddToEndStrategy.class.getName() + ".class";
+	private static final TypeName DEFAULT_STATE_STRATEGY = TypeName.get(AddToEndStrategy.class);
 
 	private String mViewClassName;
 	private Set<String> mStrategyClasses;
@@ -64,13 +63,13 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 
 		List<ViewMethod> methods = new ArrayList<>();
 
-		String interfaceStateStrategyType = getInterfaceStateStrategyType(typeElement);
+		TypeName interfaceStateStrategyType = getInterfaceStateStrategyType(typeElement);
 
 		// Get methods for input class
-		getMethods(typeElement, interfaceStateStrategyType, new ArrayList<ViewMethod>(), methods);
+		getMethods(typeElement, interfaceStateStrategyType, new ArrayList<>(), methods);
 
 		// Add methods from super interfaces
-		methods.addAll(iterateInterfaces(0, typeElement, interfaceStateStrategyType, methods, new ArrayList<ViewMethod>()));
+		methods.addAll(iterateInterfaces(0, typeElement, interfaceStateStrategyType, methods, new ArrayList<>()));
 
 		// Allow methods be with same names
 		Map<String, Integer> methodsCounter = new HashMap<>();
@@ -107,7 +106,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 	}
 
 	private List<ViewMethod> getMethods(TypeElement typeElement,
-	                                    String defaultStrategy,
+	                                    TypeName defaultStrategy,
 	                                    List<ViewMethod> rootMethods,
 	                                    List<ViewMethod> superinterfacesMethods) {
 		for (Element element : typeElement.getEnclosedElements()) {
@@ -125,27 +124,18 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 				MvpCompiler.getMessager().printMessage(Diagnostic.Kind.ERROR, "You are trying generate ViewState for " + typeElement.getSimpleName() + ". But " + typeElement.getSimpleName() + " contains non-void method \"" + methodElement.getSimpleName() + "\" that return type is " + methodElement.getReturnType() + ". See more here: https://github.com/Arello-Mobile/Moxy/issues/2");
 			}
 
-			String strategyClass = defaultStrategy != null ? defaultStrategy : DEFAULT_STATE_STRATEGY;
+			TypeName strategyClass = defaultStrategy != null ? defaultStrategy : DEFAULT_STATE_STRATEGY;
 			String methodTag = methodElement.getSimpleName().toString();
 			for (AnnotationMirror annotationMirror : methodElement.getAnnotationMirrors()) {
-				if (!annotationMirror.getAnnotationType().asElement().toString().equals(STATE_STRATEGY_TYPE_ANNOTATION)) {
-					continue;
-				}
-
-				for (ExecutableElement executableElement : annotationMirror.getElementValues().keySet()) {
-					String key = executableElement.getSimpleName().toString();
-
-					if ("value".equals(key)) {
-						strategyClass = annotationMirror.getElementValues().get(executableElement).toString();
-					} else if ("tag".equals(key)) {
-						methodTag = annotationMirror.getElementValues().get(executableElement).toString();
-					}
+				if (annotationMirror.getAnnotationType().asElement().toString().equals(STATE_STRATEGY_TYPE_ANNOTATION)) {
+					strategyClass = TypeName.get(Util.getAnnotationValueAsType(annotationMirror, "value"));
+					methodTag = Util.getAnnotationValue(annotationMirror, "tag").toString();
 				}
 			}
 
-			mStrategyClasses.add(strategyClass);
+			mStrategyClasses.add(strategyClass.toString() + ".class");
 
-			final ViewMethod method = new ViewMethod(methodElement, ClassName.bestGuess(strategyClass.substring(0, strategyClass.lastIndexOf('.'))), methodTag);
+			final ViewMethod method = new ViewMethod(methodElement, strategyClass, methodTag);
 
 			if (rootMethods.contains(method)) {
 				continue;
@@ -155,15 +145,18 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 				final ViewMethod existingMethod = superinterfacesMethods.get(superinterfacesMethods.indexOf(method));
 
 				if (!existingMethod.strategyClassName.equals(method.strategyClassName)) {
-					throw new IllegalStateException("Both " + existingMethod.getEnclosedClassName()
-							+ " and " + method.getEnclosedClassName()
-							+ " has method " + method.name
-							+ "(" + method.parameterSpecs.toString().substring(1, method.parameterSpecs.toString().length() - 1) + ")" +
+					throw new IllegalStateException("Both " + existingMethod.getEnclosedClassName() +
+							" and " + method.getEnclosedClassName() +
+							" has method " + method.name + "(" + method.parameterSpecs.toString().substring(1, method.parameterSpecs.toString().length() - 1) + ")" +
 							" with difference strategies." +
 							" Override this method in " + mViewClassName + " or make strategies equals");
 				}
 				if (!existingMethod.tag.equals(method.tag)) {
-					throw new IllegalStateException("Both " + existingMethod.getEnclosedClassName() + " and " + method.getEnclosedClassName() + " has method " + method.name + "(" + method.parameterSpecs.toString().substring(1, method.parameterSpecs.toString().length() - 1) + ") with difference tags. Override this method in " + mViewClassName + " or make tags equals");
+					throw new IllegalStateException("Both " + existingMethod.getEnclosedClassName() +
+							" and " + method.getEnclosedClassName() +
+							" has method " + method.name + "(" + method.parameterSpecs.toString().substring(1, method.parameterSpecs.toString().length() - 1) + ")" +
+							" with difference tags." +
+							" Override this method in " + mViewClassName + " or make tags equals");
 				}
 
 				continue;
@@ -177,7 +170,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 
 	private List<ViewMethod> iterateInterfaces(int level,
 	                                           TypeElement parentElement,
-	                                           String parentDefaultStrategy,
+	                                           TypeName parentDefaultStrategy,
 	                                           List<ViewMethod> rootMethods,
 	                                           List<ViewMethod> superinterfacesMethods) {
 		for (TypeMirror typeMirror : parentElement.getInterfaces()) {
@@ -190,7 +183,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 				throw new IllegalArgumentException("Code generation for interface " + anInterface.getSimpleName() + " failed. Simplify your generics.");
 			}
 
-			String defaultStrategy = parentDefaultStrategy != null ? parentDefaultStrategy : getInterfaceStateStrategyType(anInterface);
+			TypeName defaultStrategy = parentDefaultStrategy != null ? parentDefaultStrategy : getInterfaceStateStrategyType(anInterface);
 
 			getMethods(anInterface, defaultStrategy, rootMethods, superinterfacesMethods);
 
@@ -200,19 +193,10 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 		return superinterfacesMethods;
 	}
 
-	private String getInterfaceStateStrategyType(TypeElement typeElement) {
+	private TypeName getInterfaceStateStrategyType(TypeElement typeElement) {
 		for (AnnotationMirror annotationMirror : typeElement.getAnnotationMirrors()) {
-			if (!annotationMirror.getAnnotationType().asElement().toString().equals(STATE_STRATEGY_TYPE_ANNOTATION)) {
-				continue;
-			}
-
-			final Map<? extends ExecutableElement, ? extends AnnotationValue> elementValues = annotationMirror.getElementValues();
-			final Set<? extends ExecutableElement> keySet = elementValues.keySet();
-
-			for (ExecutableElement key : keySet) {
-				if ("value".equals(key.getSimpleName().toString())) {
-					return elementValues.get(key).toString();
-				}
+			if (annotationMirror.getAnnotationType().asElement().toString().equals(STATE_STRATEGY_TYPE_ANNOTATION)) {
+				return TypeName.get(Util.getAnnotationValueAsType(annotationMirror, "value"));
 			}
 		}
 
@@ -228,11 +212,8 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 		TypeSpec.Builder classBuilder = TypeSpec.classBuilder(viewName + MvpProcessor.VIEW_STATE_SUFFIX)
 				.addModifiers(Modifier.PUBLIC)
 				.superclass(ParameterizedTypeName.get(ClassName.get(MvpViewState.class), viewTypeName))
-				.addSuperinterface(viewTypeName);
-
-		for (TypeVariableName name : typeVariables) {
-			classBuilder.addTypeVariable(name);
-		}
+				.addSuperinterface(viewTypeName)
+				.addTypeVariables(typeVariables);
 
 		for (ViewMethod method : methods) {
 			TypeSpec commandClass = generateCommandClass(method, viewTypeName);
@@ -246,22 +227,16 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 	}
 
 	private TypeSpec generateCommandClass(ViewMethod method, TypeName viewTypeName) {
-		List<String> argumentNames = new ArrayList<>();
-		for (ParameterSpec parameter : method.parameterSpecs) {
-			argumentNames.add(parameter.name);
-		}
-
-		List<TypeName> thrownTypes = new ArrayList<>(method.element.getThrownTypes().size());
-		for (TypeMirror typeMirror : method.element.getThrownTypes()) {
-			thrownTypes.add(TypeName.get(typeMirror));
-		}
+		String argumentsString = method.parameterSpecs.stream()
+				.map(parameterSpec -> parameterSpec.name)
+				.collect(Collectors.joining(", "));
 
 		MethodSpec applyMethod = MethodSpec.methodBuilder("apply")
-				.addModifiers(Modifier.PUBLIC)
-				.addExceptions(thrownTypes)
 				.addAnnotation(Override.class)
+				.addModifiers(Modifier.PUBLIC)
 				.addParameter(viewTypeName, "mvpView")
-				.addStatement("mvpView.$L($L)", method.name, join(", ", argumentNames))
+				.addExceptions(method.exceptions)
+				.addStatement("mvpView.$L($L)", method.name, argumentsString)
 				.build();
 
 		TypeSpec.Builder classBuilder = TypeSpec.classBuilder(method.getCommandClassName())
@@ -299,7 +274,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 				.addStatement("return")
 				.endControlFlow()
 				.addCode("\n")
-				.beginControlFlow("for($L view : mViews)", viewTypeName)
+				.beginControlFlow("for($T view : mViews)", viewTypeName)
 				.addStatement("view.$L($L)", method.name, argumentsString)
 				.endControlFlow()
 				.addCode("\n")
@@ -312,7 +287,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 
 		MethodSpec.Builder builder = MethodSpec.constructorBuilder()
 				.addParameters(parameters)
-				.addStatement("super($S, $T.class);", method.tag, method.strategyClassName);
+				.addStatement("super($S, $T.class)", method.tag, method.strategyClassName);
 
 		if (parameters.size() > 0) {
 			builder.addCode("\n");
@@ -328,26 +303,31 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 	private static class ViewMethod {
 		final ExecutableElement element;
 		final String name;
-		final ClassName strategyClassName;
+		final TypeName strategyClassName;
 		final String tag;
 		final List<ParameterSpec> parameterSpecs;
+		final List<TypeName> exceptions;
 
 		String uniqueName;
 
 		ViewMethod(ExecutableElement methodElement,
-		           ClassName strategyClassName,
+		           TypeName strategyClassName,
 		           String tag) {
 			this.element = methodElement;
 			this.strategyClassName = strategyClassName;
 			this.tag = tag;
 			this.name = methodElement.getSimpleName().toString();
 
-			parameterSpecs = new ArrayList<>(methodElement.getParameters().size());
-			for (VariableElement element : methodElement.getParameters()) {
-				parameterSpecs.add(ParameterSpec.get(element));
-			}
+			this.parameterSpecs = methodElement.getParameters()
+					.stream()
+					.map(ParameterSpec::get)
+					.collect(Collectors.toList());
 
-			uniqueName = name;
+			this.exceptions = element.getThrownTypes().stream()
+					.map(TypeName::get)
+					.collect(Collectors.toList());
+
+			this.uniqueName = this.name;
 		}
 
 		String getCommandClassName() {

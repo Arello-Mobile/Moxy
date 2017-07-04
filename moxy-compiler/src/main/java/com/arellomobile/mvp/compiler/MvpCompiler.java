@@ -43,6 +43,8 @@ import static javax.lang.model.SourceVersion.latestSupported;
 @SuppressWarnings("unused")
 @AutoService(Processor.class)
 public class MvpCompiler extends AbstractProcessor {
+	private static final String OPTION_MOXY_REFLECTOR_PACKAGE = "moxyReflectorPackage";
+
 	private static Messager sMessager;
 	private static Types sTypeUtils;
 	private static Elements sElementUtils;
@@ -68,6 +70,11 @@ public class MvpCompiler extends AbstractProcessor {
 		sTypeUtils = processingEnv.getTypeUtils();
 		sElementUtils = processingEnv.getElementUtils();
 		sOptions = processingEnv.getOptions();
+	}
+
+	@Override
+	public Set<String> getSupportedOptions() {
+		return Collections.singleton(OPTION_MOXY_REFLECTOR_PACKAGE);
 	}
 
 	@Override
@@ -117,7 +124,7 @@ public class MvpCompiler extends AbstractProcessor {
 			generateCode(usedView, ElementKind.INTERFACE, viewStateClassGenerator);
 		}
 
-		String moxyReflectorPackage = sOptions.get("moxyReflectorPackage");
+		String moxyReflectorPackage = sOptions.get(OPTION_MOXY_REFLECTOR_PACKAGE);
 
 		if (moxyReflectorPackage == null) {
 			moxyReflectorPackage = "com.arellomobile.mvp";
