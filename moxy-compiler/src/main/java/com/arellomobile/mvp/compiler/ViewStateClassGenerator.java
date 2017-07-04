@@ -90,10 +90,9 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 		String viewSimpleName = join("$", viewClassName.simpleNames());
 		String packageName = viewClassName.packageName();
 
-		List<TypeVariableName> typeVariables = new ArrayList<>(typeElement.getTypeParameters().size());
-		for (TypeParameterElement typeName : typeElement.getTypeParameters()) {
-			typeVariables.add(TypeVariableName.get(typeName));
-		}
+		List<TypeVariableName> typeVariables = typeElement.getTypeParameters().stream()
+				.map(TypeVariableName::get)
+				.collect(Collectors.toList());
 
 		JavaFile javaFile = generateFile(viewTypeName, viewSimpleName, packageName, typeVariables, methods);
 
@@ -144,7 +143,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 			if (superinterfacesMethods.contains(method)) {
 				final ViewMethod existingMethod = superinterfacesMethods.get(superinterfacesMethods.indexOf(method));
 
-				if (!existingMethod.strategyClassName.equals(method.strategyClassName)) {
+				if (!existingMethod.strategy.equals(method.strategy)) {
 					throw new IllegalStateException("Both " + existingMethod.getEnclosedClassName() +
 							" and " + method.getEnclosedClassName() +
 							" has method " + method.name + "(" + method.parameterSpecs.toString().substring(1, method.parameterSpecs.toString().length() - 1) + ")" +
@@ -227,16 +226,12 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 	}
 
 	private TypeSpec generateCommandClass(ViewMethod method, TypeName viewTypeName) {
-		String argumentsString = method.parameterSpecs.stream()
-				.map(parameterSpec -> parameterSpec.name)
-				.collect(Collectors.joining(", "));
-
 		MethodSpec applyMethod = MethodSpec.methodBuilder("apply")
 				.addAnnotation(Override.class)
 				.addModifiers(Modifier.PUBLIC)
 				.addParameter(viewTypeName, "mvpView")
 				.addExceptions(method.exceptions)
-				.addStatement("mvpView.$L($L)", method.name, argumentsString)
+				.addStatement("mvpView.$L($L)", method.name, method.argumentsString)
 				.build();
 
 		TypeSpec.Builder classBuilder = TypeSpec.classBuilder(method.getCommandClassName())
@@ -252,22 +247,16 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 	}
 
 	private MethodSpec generateMethod(ViewMethod method, TypeName viewTypeName, TypeSpec commandClass) {
-		List<String> argumentNames = new ArrayList<>();
-		for (ParameterSpec parameter : method.parameterSpecs) {
-			argumentNames.add(parameter.name);
-		}
-		String argumentsString = join(", ", argumentNames);
-
 		String commandFieldName = decapitalizeString(method.getCommandClassName());
 
 		// Add salt if contains argument with same name
 		Random random = new Random();
-		while (argumentNames.contains(commandFieldName)) {
+		while (method.argumentsString.contains(commandFieldName)) {
 			commandFieldName += random.nextInt(10);
 		}
 
 		return MethodSpec.overriding(method.element)
-				.addStatement("$1N $2L = new $1N($3L)", commandClass, commandFieldName, argumentsString)
+				.addStatement("$1N $2L = new $1N($3L)", commandClass, commandFieldName, method.argumentsString)
 				.addStatement("mViewCommands.beforeApply($L)", commandFieldName)
 				.addCode("\n")
 				.beginControlFlow("if (mViews == null || mViews.isEmpty())")
@@ -275,7 +264,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 				.endControlFlow()
 				.addCode("\n")
 				.beginControlFlow("for($T view : mViews)", viewTypeName)
-				.addStatement("view.$L($L)", method.name, argumentsString)
+				.addStatement("view.$L($L)", method.name, method.argumentsString)
 				.endControlFlow()
 				.addCode("\n")
 				.addStatement("mViewCommands.afterApply($L)", commandFieldName)
@@ -287,7 +276,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 
 		MethodSpec.Builder builder = MethodSpec.constructorBuilder()
 				.addParameters(parameters)
-				.addStatement("super($S, $T.class)", method.tag, method.strategyClassName);
+				.addStatement("super($S, $T.class)", method.tag, method.strategy);
 
 		if (parameters.size() > 0) {
 			builder.addCode("\n");
@@ -303,20 +292,21 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 	private static class ViewMethod {
 		final ExecutableElement element;
 		final String name;
-		final TypeName strategyClassName;
+		final TypeName strategy;
 		final String tag;
 		final List<ParameterSpec> parameterSpecs;
 		final List<TypeName> exceptions;
+		final String argumentsString;
 
 		String uniqueName;
 
 		ViewMethod(ExecutableElement methodElement,
-		           TypeName strategyClassName,
+		           TypeName strategy,
 		           String tag) {
 			this.element = methodElement;
-			this.strategyClassName = strategyClassName;
-			this.tag = tag;
 			this.name = methodElement.getSimpleName().toString();
+			this.strategy = strategy;
+			this.tag = tag;
 
 			this.parameterSpecs = methodElement.getParameters()
 					.stream()
@@ -326,6 +316,10 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 			this.exceptions = element.getThrownTypes().stream()
 					.map(TypeName::get)
 					.collect(Collectors.toList());
+
+			this.argumentsString = parameterSpecs.stream()
+					.map(parameterSpec -> parameterSpec.name)
+					.collect(Collectors.joining(", "));
 
 			this.uniqueName = this.name;
 		}
