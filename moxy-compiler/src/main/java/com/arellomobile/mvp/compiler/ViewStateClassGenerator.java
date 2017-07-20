@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
@@ -127,8 +128,15 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 			String methodTag = methodElement.getSimpleName().toString();
 			for (AnnotationMirror annotationMirror : methodElement.getAnnotationMirrors()) {
 				if (annotationMirror.getAnnotationType().asElement().toString().equals(STATE_STRATEGY_TYPE_ANNOTATION)) {
-					strategyClass = TypeName.get(Util.getAnnotationValueAsType(annotationMirror, "value"));
-					methodTag = Util.getAnnotationValue(annotationMirror, "tag").toString();
+					TypeMirror type = Util.getAnnotationValueAsType(annotationMirror, "value");
+					if (type != null) {
+						strategyClass = TypeName.get(type);
+					}
+
+					AnnotationValue tagValue = Util.getAnnotationValue(annotationMirror, "tag");
+					if (tagValue != null) {
+						methodTag = tagValue.toString();
+					}
 				}
 			}
 
@@ -195,7 +203,10 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 	private TypeName getInterfaceStateStrategyType(TypeElement typeElement) {
 		for (AnnotationMirror annotationMirror : typeElement.getAnnotationMirrors()) {
 			if (annotationMirror.getAnnotationType().asElement().toString().equals(STATE_STRATEGY_TYPE_ANNOTATION)) {
-				return TypeName.get(Util.getAnnotationValueAsType(annotationMirror, "value"));
+				TypeMirror value = Util.getAnnotationValueAsType(annotationMirror, "value");
+				if (value != null) {
+					return TypeName.get(value);
+				}
 			}
 		}
 

@@ -154,8 +154,6 @@ final class Util {
 	}
 
 	public static TypeMirror getAnnotationValueAsType(AnnotationMirror annotationMirror, String key) {
-		if (annotationMirror == null) return null;
-
 		AnnotationValue av = getAnnotationValue(annotationMirror, key);
 
 		if (av != null) {
@@ -173,6 +171,7 @@ final class Util {
 				return entry.getValue();
 			}
 		}
+
 		return null;
 	}
 
