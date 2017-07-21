@@ -17,14 +17,18 @@
 package com.arellomobile.mvp.compiler;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.IntersectionType;
 import javax.lang.model.type.TypeMirror;
@@ -37,7 +41,7 @@ import javax.lang.model.type.WildcardType;
  * @author Yuri Shmakov
  */
 @SuppressWarnings("WeakerAccess")
-final class Util {
+public final class Util {
 	public static String fillGenerics(Map<String, String> types, TypeMirror param) {
 		return fillGenerics(types, Collections.singletonList(param));
 	}
@@ -119,6 +123,7 @@ final class Util {
 	/**
 	 * Returns string representation of type parameters
 	 * For example, A<T, N extends Number> -> "<T, N extends Number>"
+	 *
 	 * @param typeElement
 	 * @return
 	 */
@@ -153,11 +158,30 @@ final class Util {
 		return generic;
 	}
 
+	public static AnnotationMirror getAnnotation(Element element, String annotationClass) {
+		for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
+			if (annotationMirror.getAnnotationType().asElement().toString().equals(annotationClass))
+				return annotationMirror;
+		}
+
+		return null;
+	}
+
 	public static TypeMirror getAnnotationValueAsType(AnnotationMirror annotationMirror, String key) {
 		AnnotationValue av = getAnnotationValue(annotationMirror, key);
 
 		if (av != null) {
 			return (TypeMirror) av.getValue();
+		} else {
+			return null;
+		}
+	}
+
+	public static String getAnnotationValueAsString(AnnotationMirror annotationMirror, String key) {
+		AnnotationValue av = getAnnotationValue(annotationMirror, key);
+
+		if (av != null) {
+			return av.getValue().toString();
 		} else {
 			return null;
 		}
@@ -173,6 +197,33 @@ final class Util {
 		}
 
 		return null;
+	}
+
+	public static Map<String, AnnotationValue> getAnnotationValues(AnnotationMirror annotationMirror) {
+		if (annotationMirror == null) return Collections.emptyMap();
+
+		Map<String, AnnotationValue> result = new HashMap<>();
+
+		for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : annotationMirror.getElementValues().entrySet()) {
+			String key = entry.getKey().getSimpleName().toString();
+			if (entry.getValue() != null) {
+				result.put(key, entry.getValue());
+			}
+		}
+
+		return result;
+	}
+
+	public static boolean hasEmptyConstructor(TypeElement element) {
+		for (Element enclosedElement : element.getEnclosedElements()) {
+			if (enclosedElement.getKind() == ElementKind.CONSTRUCTOR) {
+				List<? extends VariableElement> parameters = ((ExecutableElement) enclosedElement).getParameters();
+				if (parameters == null || parameters.isEmpty()) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
