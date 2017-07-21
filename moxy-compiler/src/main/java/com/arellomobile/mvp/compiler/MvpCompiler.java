@@ -3,6 +3,7 @@ package com.arellomobile.mvp.compiler;
 import com.arellomobile.mvp.GenerateViewState;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.RegisterMoxyReflectorPackages;
+import com.arellomobile.mvp.compiler.presenterbinder.PresenterBinderClassGenerator;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.google.auto.service.AutoService;
 

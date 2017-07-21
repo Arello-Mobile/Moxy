@@ -6,7 +6,7 @@ package com.arellomobile.mvp.compiler;
  *
  * @author Alexander Blinov
  */
-final class ClassGeneratingParams {
+public final class ClassGeneratingParams {
 	private String mName;
 	private String mBody;
 

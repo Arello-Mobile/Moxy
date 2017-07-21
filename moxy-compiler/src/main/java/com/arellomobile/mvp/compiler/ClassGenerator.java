@@ -8,8 +8,8 @@ import java.util.List;
  *
  * @author Alexander Blinov
  */
-abstract class ClassGenerator<ElementType> {
-	abstract boolean generate(ElementType element, List<ClassGeneratingParams> classGeneratingParamsList);
+public abstract class ClassGenerator<ElementType> {
+	protected abstract boolean generate(ElementType element, List<ClassGeneratingParams> classGeneratingParamsList);
 
 	@SuppressWarnings("unused")
 	protected static String print(String builder, final String string) {

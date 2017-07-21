@@ -123,7 +123,6 @@ public final class Util {
 	/**
 	 * Returns string representation of type parameters
 	 * For example, A<T, N extends Number> -> "<T, N extends Number>"
-	 *
 	 * @param typeElement
 	 * @return
 	 */
