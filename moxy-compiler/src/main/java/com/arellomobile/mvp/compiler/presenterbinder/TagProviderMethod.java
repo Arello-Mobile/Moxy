@@ -21,19 +21,19 @@ class TagProviderMethod {
 		this.presenterId = presenterId;
 	}
 
-	public TypeMirror getPresenterClass() {
+	TypeMirror getPresenterClass() {
 		return presenterClass;
 	}
 
-	public String getMethodName() {
+	String getMethodName() {
 		return methodName;
 	}
 
-	public PresenterType getType() {
+	PresenterType getType() {
 		return type;
 	}
 
-	public String getPresenterId() {
+	String getPresenterId() {
 		return presenterId;
 	}
 }

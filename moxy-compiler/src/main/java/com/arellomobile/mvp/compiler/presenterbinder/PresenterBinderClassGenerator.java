@@ -90,21 +90,17 @@ public final class PresenterBinderClassGenerator extends ClassGenerator<Variable
 		final TypeElement presentersContainer = (TypeElement) enclosingElement;
 		mPresentersContainers.add(presentersContainer);
 
-		final ClassName presentersContainerClassName = ClassName.get(presentersContainer);
+		final ClassName targetClassName = ClassName.get(presentersContainer);
 
-		final String containerSimpleName = join("$", presentersContainerClassName.simpleNames());
-		final String containerPackageName = presentersContainerClassName.packageName();
-
+		// gather presenter fields info
 		List<TargetPresenterField> fields = collectFields(presentersContainer);
 		bindProvidersToFields(fields, collectPresenterProviders(presentersContainer));
 		bindTagProvidersToFields(fields, collectTagProviders(presentersContainer));
 
-		JavaFile javaFile = generateFile(presentersContainerClassName, containerSimpleName,
-				containerPackageName, fields);
+		JavaFile javaFile = generateFile(targetClassName, fields);
 
 		ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
-		classGeneratingParams.setName(containerPackageName + "." + containerSimpleName +
-				MvpProcessor.PRESENTER_BINDER_SUFFIX);
+		classGeneratingParams.setName(targetClassName.reflectionName() + MvpProcessor.PRESENTER_BINDER_SUFFIX);
 		classGeneratingParams.setBody(javaFile.toString());
 		classGeneratingParamsList.add(classGeneratingParams);
 
@@ -275,27 +271,29 @@ public final class PresenterBinderClassGenerator extends ClassGenerator<Variable
 		}
 	}
 
-	private static JavaFile generateFile(ClassName presentersContainerClassName,
-	                                     String containerSimpleName,
-	                                     String containerPackageName,
+
+	private static JavaFile generateFile(ClassName targetClassName,
 	                                     List<TargetPresenterField> fields) {
+		final String containerSimpleName = join("$", targetClassName.simpleNames());
+		final String containerPackageName = targetClassName.packageName();
+
 		TypeSpec.Builder classBuilder = TypeSpec.classBuilder(containerSimpleName + MvpProcessor.PRESENTER_BINDER_SUFFIX)
 				.addModifiers(Modifier.PUBLIC)
-				.superclass(ParameterizedTypeName.get(ClassName.get(PresenterBinder.class), presentersContainerClassName));
+				.superclass(ParameterizedTypeName.get(ClassName.get(PresenterBinder.class), targetClassName));
 
 		for (TargetPresenterField field : fields) {
-			classBuilder.addType(generatePresenterBinderClass(field, presentersContainerClassName));
+			classBuilder.addType(generatePresenterBinderClass(field, targetClassName));
 		}
 
-		classBuilder.addMethod(generateGetPresentersMethod(fields, presentersContainerClassName));
+		classBuilder.addMethod(generateGetPresentersMethod(fields, targetClassName));
 
 		return JavaFile.builder(containerPackageName, classBuilder.build())
 				.indent("\t")
 				.build();
 	}
 
-	private static MethodSpec generateGetPresentersMethod(final List<TargetPresenterField> fields,
-	                                                      final ClassName containerClassName) {
+	private static MethodSpec generateGetPresentersMethod(List<TargetPresenterField> fields,
+	                                                      ClassName containerClassName) {
 		MethodSpec.Builder builder = MethodSpec.methodBuilder("getPresenterFields")
 				.addModifiers(Modifier.PUBLIC)
 				.returns(ParameterizedTypeName.get(
@@ -315,8 +313,8 @@ public final class PresenterBinderClassGenerator extends ClassGenerator<Variable
 		return builder.build();
 	}
 
-	private static TypeSpec generatePresenterBinderClass(final TargetPresenterField field,
-	                                                     final ClassName targetClassName) {
+	private static TypeSpec generatePresenterBinderClass(TargetPresenterField field,
+	                                                     ClassName targetClassName) {
 		String tag = field.getTag();
 		if (tag == null) tag = field.getName();
 
@@ -335,15 +333,31 @@ public final class PresenterBinderClassGenerator extends ClassGenerator<Variable
 						field.getTypeName())
 				.build());
 
-		classBuilder.addMethod(MethodSpec.methodBuilder("bind")
+		classBuilder.addMethod(generateBindMethod(field, targetClassName));
+		classBuilder.addMethod(generateProvidePresenterMethod(field, targetClassName));
+
+		String tagProviderMethodName = field.getPresenterTagProviderMethodName();
+		if (tagProviderMethodName != null) {
+			classBuilder.addMethod(generateGetTagMethod(tagProviderMethodName, targetClassName));
+		}
+
+		return classBuilder.build();
+	}
+
+	private static MethodSpec generateBindMethod(TargetPresenterField field,
+	                                             ClassName targetClassName) {
+		return MethodSpec.methodBuilder("bind")
 				.addAnnotation(Override.class)
 				.addModifiers(Modifier.PUBLIC)
 				.addParameter(targetClassName, "target")
 				.addParameter(MvpPresenter.class, "presenter")
 				.addStatement("target.$L = ($T) presenter", field.getName(), field.getTypeName())
-				.build());
+				.build();
+	}
 
-		MethodSpec.Builder providePresenterBuilder = MethodSpec.methodBuilder("providePresenter")
+	private static MethodSpec generateProvidePresenterMethod(TargetPresenterField field,
+	                                                         ClassName targetClassName) {
+		MethodSpec.Builder builder = MethodSpec.methodBuilder("providePresenter")
 				.addAnnotation(Override.class)
 				.addModifiers(Modifier.PUBLIC)
 				.returns(ParameterizedTypeName.get(
@@ -351,34 +365,31 @@ public final class PresenterBinderClassGenerator extends ClassGenerator<Variable
 				.addParameter(targetClassName, "delegated");
 
 		if (field.getPresenterProviderMethodName() != null) {
-			providePresenterBuilder
+			builder
 					.addStatement("return delegated.$L()", field.getPresenterProviderMethodName());
 		} else {
 			boolean hasEmptyConstructor = Util.hasEmptyConstructor((TypeElement) ((DeclaredType) field.getClazz()).asElement());
 
 			if (hasEmptyConstructor) {
-				providePresenterBuilder.addStatement("return new $T()", field.getTypeName());
+				builder.addStatement("return new $T()", field.getTypeName());
 			} else {
-				providePresenterBuilder.addStatement(
-						"throw new IllegalStateException(\"$L has not default constructor. " +
-								"You can apply @ProvidePresenter to some method which will construct Presenter. " +
-								"Also you can make it default constructor\")", field.getTypeName());
+				builder.addStatement(
+						"throw new IllegalStateException($S + $S)",
+						field.getClazz(), " has not default constructor. You can apply @ProvidePresenter to some method which will construct Presenter. Also you can make it default constructor");
 			}
 		}
 
-		classBuilder.addMethod(providePresenterBuilder.build());
+		return builder.build();
+	}
 
-		if (field.getPresenterTagProviderMethodName() != null) {
-			classBuilder.addMethod(MethodSpec.methodBuilder("getTag")
-					.addAnnotation(Override.class)
-					.addModifiers(Modifier.PUBLIC)
-					.returns(String.class)
-					.addParameter(targetClassName, "delegated")
-					.addStatement("return String.valueOf(delegated.$L())", field.getPresenterTagProviderMethodName())
-					.build());
-		}
-
-		return classBuilder.build();
+	private static MethodSpec generateGetTagMethod(String tagProviderMethodName,
+	                                               ClassName targetClassName) {
+		return MethodSpec.methodBuilder("getTag")
+				.addAnnotation(Override.class)
+				.addModifiers(Modifier.PUBLIC)
+				.returns(String.class)
+				.addParameter(targetClassName, "delegated")
+				.addStatement("return String.valueOf(delegated.$L())", tagProviderMethodName)
+				.build();
 	}
 }
-
