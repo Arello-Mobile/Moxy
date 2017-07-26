@@ -10,24 +10,27 @@ class TargetPresenterField {
 	private final TypeMirror clazz;
 	private final TypeName typeName;
 	private final String name;
-	private final PresenterType type;
+	private final PresenterType presenterType;
 	private final String tag;
 	private final String presenterId;
 
 	private String presenterProviderMethodName;
 	private String presenterTagProviderMethodName;
 
-	TargetPresenterField(TypeMirror clazz, String name, String type, String tag, String presenterId) {
+	TargetPresenterField(TypeMirror clazz,
+	                     String name,
+	                     String presenterType,
+	                     String tag,
+	                     String presenterId) {
 		this.clazz = clazz;
 		this.typeName = TypeName.get(clazz);
 		this.name = name;
 		this.tag = tag;
 
-
-		if (type == null) {
-			this.type = PresenterType.LOCAL;
+		if (presenterType == null) {
+			this.presenterType = PresenterType.LOCAL;
 		} else {
-			this.type = PresenterType.valueOf(type);
+			this.presenterType = PresenterType.valueOf(presenterType);
 		}
 
 		this.presenterId = presenterId;
@@ -53,8 +56,8 @@ class TargetPresenterField {
 		return name;
 	}
 
-	PresenterType getType() {
-		return type;
+	PresenterType getPresenterType() {
+		return presenterType;
 	}
 
 	String getPresenterId() {

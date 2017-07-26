@@ -135,7 +135,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 
 					AnnotationValue tagValue = Util.getAnnotationValue(annotationMirror, "tag");
 					if (tagValue != null) {
-						methodTag = tagValue.toString();
+						methodTag = tagValue.getValue().toString();
 					}
 				}
 			}
@@ -274,7 +274,7 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 				.addStatement("return")
 				.endControlFlow()
 				.addCode("\n")
-				.beginControlFlow("for($T view : mViews)", viewTypeName)
+				.beginControlFlow("for ($T view : mViews)", viewTypeName)
 				.addStatement("view.$L($L)", method.name, method.argumentsString)
 				.endControlFlow()
 				.addCode("\n")

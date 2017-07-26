@@ -220,7 +220,7 @@ public final class PresenterBinderClassGenerator extends ClassGenerator<Variable
 
 			for (TargetPresenterField field : fields) {
 				if ((field.getClazz()).equals(providerTypeMirror)) {
-					if (field.getType() != presenterProvider.getPresenterType()) {
+					if (field.getPresenterType() != presenterProvider.getPresenterType()) {
 						continue;
 					}
 
@@ -253,7 +253,7 @@ public final class PresenterBinderClassGenerator extends ClassGenerator<Variable
 		for (TagProviderMethod tagProvider : tagProviders) {
 			for (TargetPresenterField field : fields) {
 				if ((field.getClazz()).equals(tagProvider.getPresenterClass())) {
-					if (field.getType() != tagProvider.getType()) {
+					if (field.getPresenterType() != tagProvider.getType()) {
 						continue;
 					}
 
@@ -295,6 +295,7 @@ public final class PresenterBinderClassGenerator extends ClassGenerator<Variable
 	private static MethodSpec generateGetPresentersMethod(List<TargetPresenterField> fields,
 	                                                      ClassName containerClassName) {
 		MethodSpec.Builder builder = MethodSpec.methodBuilder("getPresenterFields")
+				.addAnnotation(Override.class)
 				.addModifiers(Modifier.PUBLIC)
 				.returns(ParameterizedTypeName.get(
 						ClassName.get(List.class), ParameterizedTypeName.get(
@@ -327,8 +328,8 @@ public final class PresenterBinderClassGenerator extends ClassGenerator<Variable
 				.addModifiers(Modifier.PUBLIC)
 				.addStatement("super($S, $T.$L, $S, $T.class)",
 						tag,
-						field.getType().getDeclaringClass(),
-						field.getType().name(),
+						field.getPresenterType().getDeclaringClass(),
+						field.getPresenterType().name(),
 						field.getPresenterId(),
 						field.getTypeName())
 				.build());
