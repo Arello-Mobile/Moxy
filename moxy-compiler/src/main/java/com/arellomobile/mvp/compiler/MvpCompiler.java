@@ -3,9 +3,11 @@ package com.arellomobile.mvp.compiler;
 import com.arellomobile.mvp.GenerateViewState;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.RegisterMoxyReflectorPackages;
+import com.arellomobile.mvp.compiler.presenterbinder.InjectPresenterProcessor;
 import com.arellomobile.mvp.compiler.presenterbinder.PresenterBinderClassGenerator;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.google.auto.service.AutoService;
+import com.squareup.javapoet.JavaFile;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -115,11 +117,16 @@ public class MvpCompiler extends AbstractProcessor {
 		checkInjectors(roundEnv, InjectPresenter.class, new PresenterInjectorRules(ElementKind.FIELD, Modifier.PUBLIC, Modifier.DEFAULT));
 
 		ViewStateProviderClassGenerator viewStateProviderClassGenerator = new ViewStateProviderClassGenerator();
+
+		InjectPresenterProcessor injectPresenterProcessor = new InjectPresenterProcessor();
 		PresenterBinderClassGenerator presenterBinderClassGenerator = new PresenterBinderClassGenerator();
+
 		ViewStateClassGenerator viewStateClassGenerator = new ViewStateClassGenerator();
 
+
 		processInjectors(roundEnv, InjectViewState.class, ElementKind.CLASS, viewStateProviderClassGenerator);
-		processInjectors(roundEnv, InjectPresenter.class, ElementKind.FIELD, presenterBinderClassGenerator);
+		processInjectors(roundEnv, InjectPresenter.class, ElementKind.FIELD,
+				injectPresenterProcessor, presenterBinderClassGenerator);
 
 		for (TypeElement usedView : viewStateProviderClassGenerator.getUsedViews()) {
 			generateCode(usedView, ElementKind.INTERFACE, viewStateClassGenerator);
@@ -136,7 +143,7 @@ public class MvpCompiler extends AbstractProcessor {
 		String moxyReflector = MoxyReflectorGenerator.generate(
 				moxyReflectorPackage,
 				viewStateProviderClassGenerator.getPresenterClassNames(),
-				presenterBinderClassGenerator.getPresentersContainers(),
+				injectPresenterProcessor.getPresentersContainers(),
 				viewStateClassGenerator.getStrategyClasses(),
 				additionalMoxyReflectorPackages);
 
@@ -177,6 +184,7 @@ public class MvpCompiler extends AbstractProcessor {
 		}
 	}
 
+	@Deprecated
 	private void processInjectors(final RoundEnvironment roundEnv, Class<? extends Annotation> clazz, ElementKind kind, ClassGenerator classGenerator) {
 		for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(clazz)) {
 			if (annotatedElement.getKind() != kind) {
@@ -185,6 +193,36 @@ public class MvpCompiler extends AbstractProcessor {
 			}
 
 			generateCode(annotatedElement, kind, classGenerator);
+		}
+	}
+
+	private <E extends Element, R> void processInjectors(
+			RoundEnvironment roundEnv,
+			Class<? extends Annotation> clazz,
+			ElementKind kind,
+			ElementProcessor<E, R> processor,
+			FileGenerator<R> classGenerator
+	) {
+		for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(clazz)) {
+			if (annotatedElement.getKind() != kind) {
+				getMessager().printMessage(Diagnostic.Kind.ERROR,
+						annotatedElement + " must be " + kind.name() + ", or not mark it as @" + clazz.getSimpleName());
+			}
+
+			//noinspection unchecked
+			R result = processor.process((E) annotatedElement);
+
+			if (result == null) continue;
+
+			List<JavaFile> files = classGenerator.generate(result);
+
+			for (JavaFile file : files) {
+				try {
+					file.writeTo(processingEnv.getFiler());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
