@@ -92,8 +92,7 @@ public class InjectViewStateProcessor extends ElementProcessor<TypeElement, Pres
 				value = mte.getTypeMirror();
 			}
 
-			// bug?
-			mvpViewClassName = Util.getFullClassName(value); // + MvpProcessor.VIEW_STATE_SUFFIX
+			mvpViewClassName = Util.getFullClassName(value);
 		}
 
 		if (mvpViewClassName.isEmpty() || DefaultView.class.getName().equals(mvpViewClassName)) {
