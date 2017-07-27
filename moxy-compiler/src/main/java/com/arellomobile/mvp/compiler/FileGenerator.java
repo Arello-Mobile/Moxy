@@ -11,6 +11,6 @@ import java.util.List;
  * @author Evgeny Kursakov
  */
 public abstract class FileGenerator<T> {
-	protected abstract List<JavaFile> generate(T input);
+	public abstract List<JavaFile> generate(T input);
 }
 

@@ -53,7 +53,7 @@ import static com.arellomobile.mvp.compiler.Util.join;
 public final class PresenterBinderClassGenerator extends FileGenerator<TargetClassInfo> {
 
 	@Override
-	protected List<JavaFile> generate(TargetClassInfo targetClassInfo) {
+	public List<JavaFile> generate(TargetClassInfo targetClassInfo) {
 		ClassName targetClassName = targetClassInfo.getName();
 		List<TargetPresenterField> fields = targetClassInfo.getFields();
 

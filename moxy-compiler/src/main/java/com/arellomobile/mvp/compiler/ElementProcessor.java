@@ -9,5 +9,5 @@ import javax.lang.model.element.Element;
  * @author Evgeny Kursakov
  */
 public abstract class ElementProcessor<E extends Element, R> {
-	protected abstract R process(E element);
+	public abstract R process(E element);
 }
