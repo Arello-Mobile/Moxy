@@ -8,6 +8,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenterTag;
 import com.squareup.javapoet.ClassName;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,10 +27,10 @@ public class InjectPresenterProcessor extends ElementProcessor<VariableElement, 
 	private static final String PROVIDE_PRESENTER_ANNOTATION = ProvidePresenter.class.getName();
 	private static final String PROVIDE_PRESENTER_TAG_ANNOTATION = ProvidePresenterTag.class.getName();
 
-	private final Set<TypeElement> presentersContainers = new HashSet<>();
+	private final List<TypeElement> presentersContainers = new ArrayList<>();
 
-	public Set<TypeElement> getPresentersContainers() {
-		return presentersContainers;
+	public List<TypeElement> getPresentersContainers() {
+		return new ArrayList<>(presentersContainers);
 	}
 
 	@Override

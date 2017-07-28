@@ -32,20 +32,20 @@ public class InjectViewStateProcessor extends ElementProcessor<TypeElement, Pres
 	private static final String MVP_PRESENTER_CLASS = MvpPresenter.class.getCanonicalName();
 
 	private final Set<TypeElement> usedViews = new HashSet<>();
-	private final List<String> presenterClassNames = new ArrayList<>();
+	private final List<ClassName> presenterClassNames = new ArrayList<>();
 
 	public Set<TypeElement> getUsedViews() {
 		return usedViews;
 	}
 
-	public List<String> getPresenterClassNames() {
+	public List<ClassName> getPresenterClassNames() {
 		return presenterClassNames;
 	}
 
 	@Override
 	public PresenterInfo process(TypeElement element) {
 		ClassName presenterName = ClassName.get(element);
-		presenterClassNames.add(presenterName.reflectionName());
+		presenterClassNames.add(presenterName);
 		return new PresenterInfo(presenterName, getViewStateClassName(element));
 	}
 

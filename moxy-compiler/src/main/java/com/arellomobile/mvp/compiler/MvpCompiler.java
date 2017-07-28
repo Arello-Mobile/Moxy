@@ -5,6 +5,7 @@ import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.RegisterMoxyReflectorPackages;
 import com.arellomobile.mvp.compiler.presenterbinder.InjectPresenterProcessor;
 import com.arellomobile.mvp.compiler.presenterbinder.PresenterBinderClassGenerator;
+import com.arellomobile.mvp.compiler.reflector.MoxyReflectorGenerator;
 import com.arellomobile.mvp.compiler.viewstate.ViewInterfaceProcessor;
 import com.arellomobile.mvp.compiler.viewstate.ViewStateClassGenerator;
 import com.arellomobile.mvp.compiler.viewstateprovider.InjectViewStateProcessor;
@@ -50,6 +51,8 @@ import static javax.lang.model.SourceVersion.latestSupported;
 @SuppressWarnings("unused")
 @AutoService(Processor.class)
 public class MvpCompiler extends AbstractProcessor {
+	public static final String MOXY_REFLECTOR_DEFAULT_PACKAGE = "com.arellomobile.mvp";
+
 	private static final String OPTION_MOXY_REFLECTOR_PACKAGE = "moxyReflectorPackage";
 
 	private static Messager sMessager;
@@ -142,23 +145,19 @@ public class MvpCompiler extends AbstractProcessor {
 		String moxyReflectorPackage = sOptions.get(OPTION_MOXY_REFLECTOR_PACKAGE);
 
 		if (moxyReflectorPackage == null) {
-			moxyReflectorPackage = "com.arellomobile.mvp";
+			moxyReflectorPackage = MOXY_REFLECTOR_DEFAULT_PACKAGE;
 		}
 
 		List<String> additionalMoxyReflectorPackages = getAdditionalMoxyReflectorPackages(roundEnv);
 
-		String moxyReflector = MoxyReflectorGenerator.generate(
+		JavaFile moxyReflector = MoxyReflectorGenerator.generate(
 				moxyReflectorPackage,
 				injectViewStateProcessor.getPresenterClassNames(),
 				injectPresenterProcessor.getPresentersContainers(),
 				viewInterfaceProcessor.getStrategyClasses(),
 				additionalMoxyReflectorPackages);
 
-		ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
-		classGeneratingParams.setName(moxyReflectorPackage + ".MoxyReflector");
-		classGeneratingParams.setBody(moxyReflector);
-
-		createSourceFile(classGeneratingParams);
+		createSourceFile(moxyReflector);
 
 		return true;
 	}
@@ -225,20 +224,6 @@ public class MvpCompiler extends AbstractProcessor {
 
 		for (JavaFile file : classGenerator.generate(result)) {
 			createSourceFile(file);
-		}
-	}
-
-	@Deprecated
-	private void createSourceFile(ClassGeneratingParams classGeneratingParams) {
-		try {
-			JavaFileObject f = processingEnv.getFiler().createSourceFile(classGeneratingParams.getName());
-
-			Writer w = f.openWriter();
-			w.write(classGeneratingParams.getBody());
-			w.flush();
-			w.close();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 

@@ -20,10 +20,12 @@ import java.util.stream.Collectors;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 
@@ -35,13 +37,13 @@ import javax.tools.Diagnostic;
  */
 public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewInterfaceInfo> {
 	private static final String STATE_STRATEGY_TYPE_ANNOTATION = StateStrategyType.class.getName();
-	private static final TypeName DEFAULT_STATE_STRATEGY = TypeName.get(AddToEndStrategy.class);
+	private static final ClassName DEFAULT_STATE_STRATEGY = ClassName.get(AddToEndStrategy.class);
 
 	private String mViewClassName;
-	private Set<String> mStrategyClasses = new HashSet<>();
+	private Set<ClassName> mStrategyClasses = new HashSet<>();
 
-	public Set<String> getStrategyClasses() {
-		return mStrategyClasses;
+	public List<ClassName> getStrategyClasses() {
+		return new ArrayList<>(mStrategyClasses);
 	}
 
 	@Override
@@ -51,7 +53,7 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 
 		List<ViewMethod> methods = new ArrayList<>();
 
-		TypeName interfaceStateStrategyType = getInterfaceStateStrategyType(element);
+		ClassName interfaceStateStrategyType = getInterfaceStateStrategyType(element);
 
 		// Get methods for input class
 		getMethods(element, interfaceStateStrategyType, new ArrayList<>(), methods);
@@ -83,37 +85,40 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 
 
 	private List<ViewMethod> getMethods(TypeElement typeElement,
-	                                    TypeName defaultStrategy,
+	                                    ClassName defaultStrategy,
 	                                    List<ViewMethod> rootMethods,
 	                                    List<ViewMethod> superinterfacesMethods) {
 		for (Element element : typeElement.getEnclosedElements()) {
-			if (!(element instanceof ExecutableElement)) {
+			if (element.getKind() != ElementKind.METHOD) {
 				continue;
 			}
 
 			final ExecutableElement methodElement = (ExecutableElement) element;
 
-			if (!methodElement.getReturnType().toString().equals("void")) {
+			if (methodElement.getReturnType().getKind() != TypeKind.VOID) {
 				MvpCompiler.getMessager().printMessage(Diagnostic.Kind.ERROR, "You are trying generate ViewState for " + typeElement.getSimpleName() + ". But " + typeElement.getSimpleName() + " contains non-void method \"" + methodElement.getSimpleName() + "\" that return type is " + methodElement.getReturnType() + ". See more here: https://github.com/Arello-Mobile/Moxy/issues/2");
 			}
 
-			TypeName strategyClass = defaultStrategy != null ? defaultStrategy : DEFAULT_STATE_STRATEGY;
-			String methodTag = methodElement.getSimpleName().toString();
-			for (AnnotationMirror annotationMirror : methodElement.getAnnotationMirrors()) {
-				if (annotationMirror.getAnnotationType().asElement().toString().equals(STATE_STRATEGY_TYPE_ANNOTATION)) {
-					TypeMirror type = Util.getAnnotationValueAsType(annotationMirror, "value");
-					if (type != null) {
-						strategyClass = TypeName.get(type);
-					}
+			AnnotationMirror annotation = Util.getAnnotation(methodElement, STATE_STRATEGY_TYPE_ANNOTATION);
 
-					AnnotationValue tagValue = Util.getAnnotationValue(annotationMirror, "tag");
-					if (tagValue != null) {
-						methodTag = tagValue.getValue().toString();
-					}
-				}
+			TypeMirror strategyClassValue = Util.getAnnotationValueAsType(annotation, "value");
+			AnnotationValue tagValue = Util.getAnnotationValue(annotation, "tag");
+
+			ClassName strategyClass;
+			if (strategyClassValue != null) {
+				strategyClass = ClassName.get(((TypeElement) ((DeclaredType) strategyClassValue).asElement()));
+			} else {
+				strategyClass = defaultStrategy != null ? defaultStrategy : DEFAULT_STATE_STRATEGY;
 			}
 
-			mStrategyClasses.add(strategyClass.toString() + ".class");
+			String methodTag;
+			if (tagValue != null) {
+				methodTag = tagValue.getValue().toString();
+			} else {
+				methodTag = methodElement.getSimpleName().toString();
+			}
+
+			mStrategyClasses.add(strategyClass);
 
 			final ViewMethod method = new ViewMethod(methodElement, strategyClass, methodTag);
 
@@ -150,7 +155,7 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 
 	private List<ViewMethod> iterateInterfaces(int level,
 	                                           TypeElement parentElement,
-	                                           TypeName parentDefaultStrategy,
+	                                           ClassName parentDefaultStrategy,
 	                                           List<ViewMethod> rootMethods,
 	                                           List<ViewMethod> superinterfacesMethods) {
 		for (TypeMirror typeMirror : parentElement.getInterfaces()) {
@@ -163,7 +168,7 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 				throw new IllegalArgumentException("Code generation for interface " + anInterface.getSimpleName() + " failed. Simplify your generics.");
 			}
 
-			TypeName defaultStrategy = parentDefaultStrategy != null ? parentDefaultStrategy : getInterfaceStateStrategyType(anInterface);
+			ClassName defaultStrategy = parentDefaultStrategy != null ? parentDefaultStrategy : getInterfaceStateStrategyType(anInterface);
 
 			getMethods(anInterface, defaultStrategy, rootMethods, superinterfacesMethods);
 
@@ -173,16 +178,13 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 		return superinterfacesMethods;
 	}
 
-	private TypeName getInterfaceStateStrategyType(TypeElement typeElement) {
-		for (AnnotationMirror annotationMirror : typeElement.getAnnotationMirrors()) {
-			if (annotationMirror.getAnnotationType().asElement().toString().equals(STATE_STRATEGY_TYPE_ANNOTATION)) {
-				TypeMirror value = Util.getAnnotationValueAsType(annotationMirror, "value");
-				if (value != null) {
-					return TypeName.get(value);
-				}
-			}
+	private ClassName getInterfaceStateStrategyType(TypeElement typeElement) {
+		AnnotationMirror annotation = Util.getAnnotation(typeElement, STATE_STRATEGY_TYPE_ANNOTATION);
+		TypeMirror value = Util.getAnnotationValueAsType(annotation, "value");
+		if (value != null && value.getKind() == TypeKind.DECLARED) {
+			return ClassName.get((TypeElement) ((DeclaredType) value).asElement());
+		} else {
+			return null;
 		}
-
-		return null;
 	}
 }

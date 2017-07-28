@@ -120,43 +120,6 @@ public final class Util {
 		return packageName + className.replaceAll("\\.", "\\$");
 	}
 
-	/**
-	 * Returns string representation of type parameters
-	 * For example, A<T, N extends Number> -> "<T, N extends Number>"
-	 * @param typeElement
-	 * @return
-	 */
-	public static String getClassGenerics(TypeElement typeElement) {
-		String generic = "";
-
-		if (!typeElement.getTypeParameters().isEmpty()) {
-			generic = "<";
-			boolean isFirstType = true;
-
-			for (TypeParameterElement typeParameterElement : typeElement.getTypeParameters()) {
-				if (!isFirstType) {
-					generic += ", ";
-				}
-				isFirstType = false;
-
-				generic += typeParameterElement;
-
-				List<? extends TypeMirror> bounds = typeParameterElement.getBounds();
-				if (!bounds.isEmpty()) {
-					if (bounds.size() == 1 && bounds.get(0).toString().equals(Object.class.getCanonicalName())) {
-						continue;
-					}
-
-					generic += " extends " + join(" & ", bounds);
-				}
-			}
-
-			generic += ">";
-		}
-
-		return generic;
-	}
-
 	public static AnnotationMirror getAnnotation(Element element, String annotationClass) {
 		for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
 			if (annotationMirror.getAnnotationType().asElement().toString().equals(annotationClass))
