@@ -8,10 +8,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenterTag;
 import com.squareup.javapoet.ClassName;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;

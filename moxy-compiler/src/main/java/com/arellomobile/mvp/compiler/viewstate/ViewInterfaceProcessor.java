@@ -6,7 +6,6 @@ import com.arellomobile.mvp.compiler.Util;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeVariableName;
 
 import java.util.ArrayList;

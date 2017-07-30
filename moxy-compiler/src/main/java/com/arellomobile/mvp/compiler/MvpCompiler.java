@@ -15,7 +15,6 @@ import com.google.auto.service.AutoService;
 import com.squareup.javapoet.JavaFile;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +36,6 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
-import javax.tools.JavaFileObject;
 
 import static javax.lang.model.SourceVersion.latestSupported;
 
@@ -190,13 +188,11 @@ public class MvpCompiler extends AbstractProcessor {
 		}
 	}
 
-	private <E extends Element, R> void processInjectors(
-			RoundEnvironment roundEnv,
-			Class<? extends Annotation> clazz,
-			ElementKind kind,
-			ElementProcessor<E, R> processor,
-			FileGenerator<R> classGenerator
-	) {
+	private <E extends Element, R> void processInjectors(RoundEnvironment roundEnv,
+	                                                     Class<? extends Annotation> clazz,
+	                                                     ElementKind kind,
+	                                                     ElementProcessor<E, R> processor,
+	                                                     FileGenerator<R> classGenerator) {
 		for (Element element : roundEnv.getElementsAnnotatedWith(clazz)) {
 			if (element.getKind() != kind) {
 				getMessager().printMessage(Diagnostic.Kind.ERROR,
@@ -207,12 +203,10 @@ public class MvpCompiler extends AbstractProcessor {
 		}
 	}
 
-	private <E extends Element, R> void generateCode(
-			Element element,
-			ElementKind kind,
-			ElementProcessor<E, R> processor,
-			FileGenerator<R> classGenerator
-	) {
+	private <E extends Element, R> void generateCode(Element element,
+	                                                 ElementKind kind,
+	                                                 ElementProcessor<E, R> processor,
+	                                                 FileGenerator<R> classGenerator) {
 		if (element.getKind() != kind) {
 			getMessager().printMessage(Diagnostic.Kind.ERROR, element + " must be " + kind.name());
 		}
