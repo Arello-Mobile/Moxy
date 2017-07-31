@@ -17,7 +17,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
@@ -36,12 +35,12 @@ import javax.tools.Diagnostic;
  */
 public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewInterfaceInfo> {
 	private static final String STATE_STRATEGY_TYPE_ANNOTATION = StateStrategyType.class.getName();
-	private static final ClassName DEFAULT_STATE_STRATEGY = ClassName.get(AddToEndStrategy.class);
+	private static final TypeElement DEFAULT_STATE_STRATEGY = MvpCompiler.getElementUtils().getTypeElement(AddToEndStrategy.class.getCanonicalName());
 
 	private String mViewClassName;
-	private Set<ClassName> mStrategyClasses = new HashSet<>();
+	private Set<TypeElement> mStrategyClasses = new HashSet<>();
 
-	public List<ClassName> getStrategyClasses() {
+	public List<TypeElement> getStrategyClasses() {
 		return new ArrayList<>(mStrategyClasses);
 	}
 
@@ -52,7 +51,7 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 
 		List<ViewMethod> methods = new ArrayList<>();
 
-		ClassName interfaceStateStrategyType = getInterfaceStateStrategyType(element);
+		TypeElement interfaceStateStrategyType = getInterfaceStateStrategyType(element);
 
 		// Get methods for input class
 		getMethods(element, interfaceStateStrategyType, new ArrayList<>(), methods);
@@ -84,7 +83,7 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 
 
 	private List<ViewMethod> getMethods(TypeElement typeElement,
-	                                    ClassName defaultStrategy,
+	                                    TypeElement defaultStrategy,
 	                                    List<ViewMethod> rootMethods,
 	                                    List<ViewMethod> superinterfacesMethods) {
 		for (Element element : typeElement.getEnclosedElements()) {
@@ -100,19 +99,19 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 
 			AnnotationMirror annotation = Util.getAnnotation(methodElement, STATE_STRATEGY_TYPE_ANNOTATION);
 
-			TypeMirror strategyClassValue = Util.getAnnotationValueAsType(annotation, "value");
-			AnnotationValue tagValue = Util.getAnnotationValue(annotation, "tag");
+			TypeMirror strategyClassFromAnnotation = Util.getAnnotationValueAsTypeMirror(annotation, "value");
+			String tagFromAnnotation = Util.getAnnotationValueAsString(annotation, "tag");
 
-			ClassName strategyClass;
-			if (strategyClassValue != null) {
-				strategyClass = ClassName.get(((TypeElement) ((DeclaredType) strategyClassValue).asElement()));
+			TypeElement strategyClass;
+			if (strategyClassFromAnnotation != null) {
+				strategyClass = (TypeElement) ((DeclaredType) strategyClassFromAnnotation).asElement();
 			} else {
 				strategyClass = defaultStrategy != null ? defaultStrategy : DEFAULT_STATE_STRATEGY;
 			}
 
 			String methodTag;
-			if (tagValue != null) {
-				methodTag = tagValue.getValue().toString();
+			if (tagFromAnnotation != null) {
+				methodTag = tagFromAnnotation;
 			} else {
 				methodTag = methodElement.getSimpleName().toString();
 			}
@@ -154,7 +153,7 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 
 	private List<ViewMethod> iterateInterfaces(int level,
 	                                           TypeElement parentElement,
-	                                           ClassName parentDefaultStrategy,
+	                                           TypeElement parentDefaultStrategy,
 	                                           List<ViewMethod> rootMethods,
 	                                           List<ViewMethod> superinterfacesMethods) {
 		for (TypeMirror typeMirror : parentElement.getInterfaces()) {
@@ -167,7 +166,7 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 				throw new IllegalArgumentException("Code generation for interface " + anInterface.getSimpleName() + " failed. Simplify your generics.");
 			}
 
-			ClassName defaultStrategy = parentDefaultStrategy != null ? parentDefaultStrategy : getInterfaceStateStrategyType(anInterface);
+			TypeElement defaultStrategy = parentDefaultStrategy != null ? parentDefaultStrategy : getInterfaceStateStrategyType(anInterface);
 
 			getMethods(anInterface, defaultStrategy, rootMethods, superinterfacesMethods);
 
@@ -177,11 +176,11 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 		return superinterfacesMethods;
 	}
 
-	private ClassName getInterfaceStateStrategyType(TypeElement typeElement) {
+	private TypeElement getInterfaceStateStrategyType(TypeElement typeElement) {
 		AnnotationMirror annotation = Util.getAnnotation(typeElement, STATE_STRATEGY_TYPE_ANNOTATION);
-		TypeMirror value = Util.getAnnotationValueAsType(annotation, "value");
+		TypeMirror value = Util.getAnnotationValueAsTypeMirror(annotation, "value");
 		if (value != null && value.getKind() == TypeKind.DECLARED) {
-			return ClassName.get((TypeElement) ((DeclaredType) value).asElement());
+			return (TypeElement) ((DeclaredType) value).asElement();
 		} else {
 			return null;
 		}

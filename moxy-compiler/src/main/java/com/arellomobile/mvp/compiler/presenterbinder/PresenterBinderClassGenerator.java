@@ -3,7 +3,7 @@ package com.arellomobile.mvp.compiler.presenterbinder;
 import com.arellomobile.mvp.MvpPresenter;
 import com.arellomobile.mvp.MvpProcessor;
 import com.arellomobile.mvp.PresenterBinder;
-import com.arellomobile.mvp.compiler.FileGenerator;
+import com.arellomobile.mvp.compiler.JavaFilesGenerator;
 import com.arellomobile.mvp.compiler.Util;
 import com.arellomobile.mvp.presenter.PresenterField;
 import com.squareup.javapoet.ClassName;
@@ -20,8 +20,6 @@ import java.util.List;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
-
-import static com.arellomobile.mvp.compiler.Util.join;
 
 /**
  * 18.12.2015
@@ -50,14 +48,14 @@ import static com.arellomobile.mvp.compiler.Util.join;
  * @author Yuri Shmakov
  * @author Alexander Blinov
  */
-public final class PresenterBinderClassGenerator extends FileGenerator<TargetClassInfo> {
+public final class PresenterBinderClassGenerator extends JavaFilesGenerator<TargetClassInfo> {
 
 	@Override
 	public List<JavaFile> generate(TargetClassInfo targetClassInfo) {
 		ClassName targetClassName = targetClassInfo.getName();
 		List<TargetPresenterField> fields = targetClassInfo.getFields();
 
-		final String containerSimpleName = join("$", targetClassName.simpleNames());
+		final String containerSimpleName = String.join("$", targetClassName.simpleNames());
 
 		TypeSpec.Builder classBuilder = TypeSpec.classBuilder(containerSimpleName + MvpProcessor.PRESENTER_BINDER_SUFFIX)
 				.addModifiers(Modifier.PUBLIC)
@@ -84,9 +82,9 @@ public final class PresenterBinderClassGenerator extends FileGenerator<TargetCla
 						ClassName.get(List.class), ParameterizedTypeName.get(
 								ClassName.get(PresenterField.class), containerClassName)));
 
-		builder.addStatement(
-				"List<PresenterField<$T>> presenters = new $T<>()",
-				containerClassName, ArrayList.class);
+		builder.addStatement("$T<$T<$T>> presenters = new $T<>($L)",
+				List.class, PresenterField.class, containerClassName,
+				ArrayList.class, fields.size());
 
 		for (TargetPresenterField field : fields) {
 			builder.addStatement("presenters.add(new $L())", field.getGeneratedClassName());
@@ -159,7 +157,7 @@ public final class PresenterBinderClassGenerator extends FileGenerator<TargetCla
 				builder.addStatement("return new $T()", field.getTypeName());
 			} else {
 				builder.addStatement(
-						"throw new IllegalStateException($S + $S)",
+						"throw new $T($S + $S)", IllegalStateException.class,
 						field.getClazz(), " has not default constructor. You can apply @ProvidePresenter to some method which will construct Presenter. Also you can make it default constructor");
 			}
 		}

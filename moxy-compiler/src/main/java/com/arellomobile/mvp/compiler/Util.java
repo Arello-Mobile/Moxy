@@ -27,7 +27,6 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.IntersectionType;
@@ -129,7 +128,7 @@ public final class Util {
 		return null;
 	}
 
-	public static TypeMirror getAnnotationValueAsType(AnnotationMirror annotationMirror, String key) {
+	public static TypeMirror getAnnotationValueAsTypeMirror(AnnotationMirror annotationMirror, String key) {
 		AnnotationValue av = getAnnotationValue(annotationMirror, key);
 
 		if (av != null) {
@@ -186,46 +185,6 @@ public final class Util {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Returns a string containing the tokens joined by delimiters.
-	 *
-	 * @param tokens an array objects to be joined. Strings will be formed from
-	 *               the objects by calling object.toString().
-	 */
-	public static String join(CharSequence delimiter, Object[] tokens) {
-		StringBuilder sb = new StringBuilder();
-		boolean firstTime = true;
-		for (Object token : tokens) {
-			if (firstTime) {
-				firstTime = false;
-			} else {
-				sb.append(delimiter);
-			}
-			sb.append(token);
-		}
-		return sb.toString();
-	}
-
-	/**
-	 * Returns a string containing the tokens joined by delimiters.
-	 *
-	 * @param tokens an array objects to be joined. Strings will be formed from
-	 *               the objects by calling object.toString().
-	 */
-	public static String join(CharSequence delimiter, Iterable tokens) {
-		StringBuilder sb = new StringBuilder();
-		boolean firstTime = true;
-		for (Object token : tokens) {
-			if (firstTime) {
-				firstTime = false;
-			} else {
-				sb.append(delimiter);
-			}
-			sb.append(token);
-		}
-		return sb.toString();
 	}
 
 	public static String decapitalizeString(String string) {

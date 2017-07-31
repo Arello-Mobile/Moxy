@@ -1,7 +1,7 @@
 package com.arellomobile.mvp.compiler.viewstate;
 
 import com.arellomobile.mvp.MvpProcessor;
-import com.arellomobile.mvp.compiler.FileGenerator;
+import com.arellomobile.mvp.compiler.JavaFilesGenerator;
 import com.arellomobile.mvp.viewstate.MvpViewState;
 import com.arellomobile.mvp.viewstate.ViewCommand;
 import com.squareup.javapoet.ClassName;
@@ -26,7 +26,7 @@ import static com.arellomobile.mvp.compiler.Util.decapitalizeString;
  *
  * @author Yuri Shmakov
  */
-public final class ViewStateClassGenerator extends FileGenerator<ViewInterfaceInfo> {
+public final class ViewStateClassGenerator extends JavaFilesGenerator<ViewInterfaceInfo> {
 
 	@Override
 	public List<JavaFile> generate(ViewInterfaceInfo viewInterfaceInfo) {

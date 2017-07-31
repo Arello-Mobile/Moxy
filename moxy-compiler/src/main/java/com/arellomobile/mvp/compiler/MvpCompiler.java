@@ -192,7 +192,7 @@ public class MvpCompiler extends AbstractProcessor {
 	                                                     Class<? extends Annotation> clazz,
 	                                                     ElementKind kind,
 	                                                     ElementProcessor<E, R> processor,
-	                                                     FileGenerator<R> classGenerator) {
+	                                                     JavaFilesGenerator<R> classGenerator) {
 		for (Element element : roundEnv.getElementsAnnotatedWith(clazz)) {
 			if (element.getKind() != kind) {
 				getMessager().printMessage(Diagnostic.Kind.ERROR,
@@ -206,7 +206,7 @@ public class MvpCompiler extends AbstractProcessor {
 	private <E extends Element, R> void generateCode(Element element,
 	                                                 ElementKind kind,
 	                                                 ElementProcessor<E, R> processor,
-	                                                 FileGenerator<R> classGenerator) {
+	                                                 JavaFilesGenerator<R> classGenerator) {
 		if (element.getKind() != kind) {
 			getMessager().printMessage(Diagnostic.Kind.ERROR, element + " must be " + kind.name());
 		}

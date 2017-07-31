@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @author Evgeny Kursakov
  */
-public abstract class FileGenerator<T> {
+public abstract class JavaFilesGenerator<T> {
 	public abstract List<JavaFile> generate(T input);
 }
 

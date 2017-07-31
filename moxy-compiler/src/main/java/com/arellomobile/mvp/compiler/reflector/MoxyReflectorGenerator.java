@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.lang.model.element.Modifier;
@@ -27,7 +28,6 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
 import static com.arellomobile.mvp.compiler.MvpCompiler.MOXY_REFLECTOR_DEFAULT_PACKAGE;
-import static com.arellomobile.mvp.compiler.Util.join;
 
 /**
  * Date: 07.12.2016
@@ -42,31 +42,25 @@ public class MoxyReflectorGenerator {
 
 	private static final TypeName CLASS_WILDCARD_TYPE_NAME
 			= ParameterizedTypeName.get(ClassName.get(Class.class), WildcardTypeName.subtypeOf(TypeName.OBJECT));
-	private static final ParameterizedTypeName LIST_OF_OBJECT_TYPE_NAME
+	private static final TypeName LIST_OF_OBJECT_TYPE_NAME
 			= ParameterizedTypeName.get(ClassName.get(List.class), TypeName.OBJECT);
-	private static final ParameterizedTypeName MAP_CLASS_TO_OBJECT_TYPE_NAME
+	private static final TypeName MAP_CLASS_TO_OBJECT_TYPE_NAME
 			= ParameterizedTypeName.get(ClassName.get(Map.class), CLASS_WILDCARD_TYPE_NAME, TypeName.OBJECT);
-	private static final ParameterizedTypeName MAP_CLASS_TO_LIST_OF_OBJECT_TYPE_NAME
+	private static final TypeName MAP_CLASS_TO_LIST_OF_OBJECT_TYPE_NAME
 			= ParameterizedTypeName.get(ClassName.get(Map.class), CLASS_WILDCARD_TYPE_NAME, LIST_OF_OBJECT_TYPE_NAME);
 
 	public static JavaFile generate(String destinationPackage,
-	                                List<ClassName> presenterClassNames,
+	                                List<TypeElement> presenterClassNames,
 	                                List<TypeElement> presentersContainers,
-	                                List<ClassName> strategyClasses,
+	                                List<TypeElement> strategyClasses,
 	                                List<String> additionalMoxyReflectorsPackages) {
-		// sort to preserve order between compilations
-		Map<TypeElement, List<TypeElement>> presenterBinders = getPresenterBinders(presentersContainers);
-		Collections.sort(presenterClassNames);
-		Collections.sort(strategyClasses);
-		Collections.sort(additionalMoxyReflectorsPackages);
-
 		TypeSpec.Builder classBuilder = TypeSpec.classBuilder("MoxyReflector")
 				.addModifiers(Modifier.PUBLIC, Modifier.FINAL)
 				.addField(MAP_CLASS_TO_OBJECT_TYPE_NAME, "sViewStateProviders", Modifier.PRIVATE, Modifier.STATIC)
 				.addField(MAP_CLASS_TO_LIST_OF_OBJECT_TYPE_NAME, "sPresenterBinders", Modifier.PRIVATE, Modifier.STATIC)
 				.addField(MAP_CLASS_TO_OBJECT_TYPE_NAME, "sStrategies", Modifier.PRIVATE, Modifier.STATIC);
 
-		classBuilder.addStaticBlock(generateStaticInitializer(presenterClassNames, presenterBinders,
+		classBuilder.addStaticBlock(generateStaticInitializer(presenterClassNames, presentersContainers,
 				strategyClasses, additionalMoxyReflectorsPackages));
 
 		if (destinationPackage.equals(MOXY_REFLECTOR_DEFAULT_PACKAGE)) {
@@ -121,63 +115,73 @@ public class MoxyReflectorGenerator {
 				.build();
 	}
 
-	private static CodeBlock generateStaticInitializer(List<ClassName> presenterClassNames, Map<TypeElement, List<TypeElement>> presenterBinders, List<ClassName> strategyClasses, List<String> additionalMoxyReflectorsPackages) {
-		CodeBlock.Builder staticBlockBuilder = CodeBlock.builder();
+	private static CodeBlock generateStaticInitializer(List<TypeElement> presenterClassNames,
+	                                                   List<TypeElement> presentersContainers,
+	                                                   List<TypeElement> strategyClasses,
+	                                                   List<String> additionalMoxyReflectorsPackages) {
+		// sort to preserve order of statements between compilations
+		Map<TypeElement, List<TypeElement>> presenterBinders = getPresenterBinders(presentersContainers);
+		Collections.sort(presenterClassNames, TYPE_ELEMENT_COMPARATOR);
+		Collections.sort(strategyClasses, TYPE_ELEMENT_COMPARATOR);
+		Collections.sort(additionalMoxyReflectorsPackages);
 
-		staticBlockBuilder.addStatement("sViewStateProviders = new $T<>()", HashMap.class);
-		for (ClassName presenter : presenterClassNames) {
-			ClassName viewStateProvider = presenter.peerClass(presenter.simpleName() + MvpProcessor.VIEW_STATE_PROVIDER_SUFFIX);
-			staticBlockBuilder.addStatement("sViewStateProviders.put($T.class, new $T())", presenter, viewStateProvider);
+		CodeBlock.Builder builder = CodeBlock.builder();
+
+		builder.addStatement("sViewStateProviders = new $T<>()", HashMap.class);
+		for (TypeElement presenter : presenterClassNames) {
+			ClassName presenterClassName = ClassName.get(presenter);
+			ClassName viewStateProvider = ClassName.get(presenterClassName.packageName(),
+					String.join("$", presenterClassName.simpleNames()) + MvpProcessor.VIEW_STATE_PROVIDER_SUFFIX);
+			builder.addStatement("sViewStateProviders.put($T.class, new $T())", presenterClassName, viewStateProvider);
 		}
 
-		staticBlockBuilder.add("\n");
+		builder.add("\n");
 
-		staticBlockBuilder.addStatement("sPresenterBinders = new $T<>()", HashMap.class);
+		builder.addStatement("sPresenterBinders = new $T<>()", HashMap.class);
 		for (Map.Entry<TypeElement, List<TypeElement>> keyValue : presenterBinders.entrySet()) {
-			staticBlockBuilder.add("sPresenterBinders.put($T.class, $T.<Object>asList(", keyValue.getKey(), Arrays.class);
+			builder.add("sPresenterBinders.put($T.class, $T.<Object>asList(", keyValue.getKey(), Arrays.class);
 
 			boolean isFirst = true;
 			for (TypeElement typeElement : keyValue.getValue()) {
 				ClassName className = ClassName.get(typeElement);
-				String presenterBinderName = join("$", className.simpleNames()) + MvpProcessor.PRESENTER_BINDER_SUFFIX;
+				String presenterBinderName = String.join("$", className.simpleNames()) + MvpProcessor.PRESENTER_BINDER_SUFFIX;
 
 				if (isFirst) {
 					isFirst = false;
 				} else {
-					staticBlockBuilder.add(", ");
+					builder.add(", ");
 				}
-				staticBlockBuilder.add("new $T()", ClassName.get(className.packageName(), presenterBinderName));
+				builder.add("new $T()", ClassName.get(className.packageName(), presenterBinderName));
 			}
 
-			staticBlockBuilder.add("));\n");
+			builder.add("));\n");
 		}
 
-		staticBlockBuilder.add("\n");
+		builder.add("\n");
 
-		staticBlockBuilder.addStatement("sStrategies = new $T<>()", HashMap.class);
-
-		for (ClassName strategyClass : strategyClasses) {
-			staticBlockBuilder.addStatement("sStrategies.put($1T.class, new $1T())", strategyClass);
+		builder.addStatement("sStrategies = new $T<>()", HashMap.class);
+		for (TypeElement strategyClass : strategyClasses) {
+			builder.addStatement("sStrategies.put($1T.class, new $1T())", strategyClass);
 		}
 
 		for (String pkg : additionalMoxyReflectorsPackages) {
 			ClassName moxyReflector = ClassName.get(pkg, "MoxyReflector");
 
-			staticBlockBuilder.add("\n");
-			staticBlockBuilder.addStatement("sViewStateProviders.putAll($T.getViewStateProviders())", moxyReflector);
-			staticBlockBuilder.addStatement("sPresenterBinders.putAll($T.getPresenterBinders())", moxyReflector);
-			staticBlockBuilder.addStatement("sStrategies.putAll($T.getStrategies())", moxyReflector);
+			builder.add("\n");
+			builder.addStatement("sViewStateProviders.putAll($T.getViewStateProviders())", moxyReflector);
+			builder.addStatement("sPresenterBinders.putAll($T.getPresenterBinders())", moxyReflector);
+			builder.addStatement("sStrategies.putAll($T.getStrategies())", moxyReflector);
 		}
 
-		return staticBlockBuilder.build();
+		return builder.build();
 	}
 
 	/**
 	 * Collects presenter binders from superclasses that are also presenter containers.
 	 *
-	 * @return mapping between presenter container and list of corresponding binders
+	 * @return sorted map between presenter container and list of corresponding binders
 	 */
-	private static Map<TypeElement, List<TypeElement>> getPresenterBinders(List<TypeElement> presentersContainers) {
+	private static SortedMap<TypeElement, List<TypeElement>> getPresenterBinders(List<TypeElement> presentersContainers) {
 		Map<TypeElement, TypeElement> extendingMap = new HashMap<>();
 
 		for (TypeElement presentersContainer : presentersContainers) {
@@ -200,7 +204,7 @@ public class MoxyReflectorGenerator {
 		}
 
 		// TreeMap for sorting
-		Map<TypeElement, List<TypeElement>> elementListMap = new TreeMap<>(TYPE_ELEMENT_COMPARATOR);
+		SortedMap<TypeElement, List<TypeElement>> elementListMap = new TreeMap<>(TYPE_ELEMENT_COMPARATOR);
 
 		for (TypeElement presentersContainer : presentersContainers) {
 			ArrayList<TypeElement> typeElements = new ArrayList<>();

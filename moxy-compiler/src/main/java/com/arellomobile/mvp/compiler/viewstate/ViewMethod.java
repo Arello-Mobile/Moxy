@@ -18,7 +18,7 @@ import javax.lang.model.element.TypeElement;
 class ViewMethod {
 	private final ExecutableElement element;
 	private final String name;
-	private final TypeName strategy;
+	private final TypeElement strategy;
 	private final String tag;
 	private final List<ParameterSpec> parameterSpecs;
 	private final List<TypeName> exceptions;
@@ -27,7 +27,7 @@ class ViewMethod {
 	private String uniqueSuffix;
 
 	ViewMethod(ExecutableElement methodElement,
-	           TypeName strategy,
+	           TypeElement strategy,
 	           String tag) {
 		this.element = methodElement;
 		this.name = methodElement.getSimpleName().toString();
@@ -58,7 +58,7 @@ class ViewMethod {
 		return name;
 	}
 
-	public TypeName getStrategy() {
+	public TypeElement getStrategy() {
 		return strategy;
 	}
 

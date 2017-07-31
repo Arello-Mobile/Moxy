@@ -3,7 +3,7 @@ package com.arellomobile.mvp.compiler.viewstateprovider;
 import com.arellomobile.mvp.MvpProcessor;
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.ViewStateProvider;
-import com.arellomobile.mvp.compiler.FileGenerator;
+import com.arellomobile.mvp.compiler.JavaFilesGenerator;
 import com.arellomobile.mvp.viewstate.MvpViewState;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
@@ -23,7 +23,7 @@ import javax.lang.model.element.Modifier;
  *
  * @author Alexander Blinov
  */
-public final class ViewStateProviderClassGenerator extends FileGenerator<PresenterInfo> {
+public final class ViewStateProviderClassGenerator extends JavaFilesGenerator<PresenterInfo> {
 
 	@Override
 	public List<JavaFile> generate(PresenterInfo presenterInfo) {
@@ -42,9 +42,10 @@ public final class ViewStateProviderClassGenerator extends FileGenerator<Present
 
 
 	private MethodSpec generateGetViewStateMethod(ClassName presenter, ClassName viewState) {
-		MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("getViewState");
-		methodBuilder.addModifiers(Modifier.PUBLIC);
-		methodBuilder.returns(ParameterizedTypeName.get(ClassName.get(MvpViewState.class), WildcardTypeName.subtypeOf(MvpView.class)));
+		MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("getViewState")
+				.addAnnotation(Override.class)
+				.addModifiers(Modifier.PUBLIC)
+				.returns(ParameterizedTypeName.get(ClassName.get(MvpViewState.class), WildcardTypeName.subtypeOf(MvpView.class)));
 
 		if (viewState == null) {
 			methodBuilder.addStatement("throw new RuntimeException($S)", presenter.reflectionName() + " should has view");
