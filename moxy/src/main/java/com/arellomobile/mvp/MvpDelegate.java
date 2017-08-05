@@ -2,6 +2,7 @@ package com.arellomobile.mvp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import android.os.Bundle;
 
@@ -32,6 +33,7 @@ import com.arellomobile.mvp.presenter.PresenterType;
  */
 public class MvpDelegate<Delegated> {
 	private static final String KEY_TAG = "com.arellomobile.mvp.MvpDelegate.KEY_TAG";
+	public static final String MOXY_DELEGATE_TAGS_KEY = "MoxyDelegateBundle";
 
 	private String mKeyTag = KEY_TAG;
 	private String mDelegateTag;
@@ -41,12 +43,10 @@ public class MvpDelegate<Delegated> {
 	private List<MvpPresenter<? super Delegated>> mPresenters;
 	private List<MvpDelegate> mChildDelegates;
 	private Bundle mBundle;
-	private Bundle mChildKeyTagsBundle;
 
 	public MvpDelegate(Delegated delegated) {
 		mDelegated = delegated;
 		mChildDelegates = new ArrayList<>();
-		mChildKeyTagsBundle = new Bundle();
 	}
 
 	public void setParentDelegate(MvpDelegate delegate, String childId) {
@@ -54,7 +54,7 @@ public class MvpDelegate<Delegated> {
 			throw new IllegalStateException("You should call setParentDelegate() before first onCreate()");
 		}
 		if (mChildDelegates != null && mChildDelegates.size() > 0) {
-			throw new IllegalStateException("You could not set parent delegate when it already has child presenters");
+			throw new IllegalStateException("You could not set parent delegate when there are already has child presenters");
 		}
 
 		mParentDelegate = delegate;
@@ -87,6 +87,10 @@ public class MvpDelegate<Delegated> {
 	 * @param bundle with saved state
 	 */
 	public void onCreate(Bundle bundle) {
+		if (mParentDelegate == null && bundle != null) {
+			bundle = bundle.getBundle(MOXY_DELEGATE_TAGS_KEY);
+		}
+
 		mIsAttached = false;
 		mBundle = bundle != null ? bundle : new Bundle();
 
@@ -112,7 +116,6 @@ public class MvpDelegate<Delegated> {
 	 * presenters</p>
 	 */
 	public void onAttach() {
-
 		for (MvpPresenter<? super Delegated> presenter : mPresenters) {
 			if (mIsAttached && presenter.getAttachedViews().contains(mDelegated)) {
 				continue;
@@ -167,16 +170,13 @@ public class MvpDelegate<Delegated> {
 		PresentersCounter presentersCounter = MvpFacade.getInstance().getPresentersCounter();
 		PresenterStore presenterStore = MvpFacade.getInstance().getPresenterStore();
 
-		for (MvpPresenter<?> presenter : mPresenters) {
+		Set<MvpPresenter> allChildPresenters = presentersCounter.getAll(mDelegateTag);
+		for (MvpPresenter presenter : allChildPresenters) {
 			boolean isRejected = presentersCounter.rejectPresenter(presenter, mDelegateTag);
 			if (isRejected && presenter.getPresenterType() != PresenterType.GLOBAL) {
-				presenterStore.remove(presenter.getPresenterType(), presenter.getTag(), presenter.getPresenterClass());
+				presenterStore.remove(presenter.getTag());
 				presenter.onDestroy();
 			}
-		}
-
-		for (MvpDelegate<?> childDelegate : mChildDelegates) {
-			childDelegate.onDestroy();
 		}
 	}
 
@@ -186,13 +186,11 @@ public class MvpDelegate<Delegated> {
 	 */
 	public void onSaveInstanceState() {
 		Bundle bundle = new Bundle();
-		if (mParentDelegate != null) {
-			bundle = mParentDelegate.mChildKeyTagsBundle;
+		if (mParentDelegate != null && mParentDelegate.mBundle != null) {
+			bundle = mParentDelegate.mBundle;
 		}
 
 		onSaveInstanceState(bundle);
-
-		mParentDelegate.mBundle.putAll(bundle);
 	}
 
 	/**
@@ -201,7 +199,13 @@ public class MvpDelegate<Delegated> {
 	 * @param outState out state from Android component
 	 */
 	public void onSaveInstanceState(Bundle outState) {
-		outState.putAll(mChildKeyTagsBundle);
+		if (mParentDelegate == null) {
+			Bundle moxyDelegateBundle = new Bundle();
+			outState.putBundle(MOXY_DELEGATE_TAGS_KEY, moxyDelegateBundle);
+			outState = moxyDelegateBundle;
+		}
+
+		outState.putAll(mBundle);
 		outState.putString(mKeyTag, mDelegateTag);
 
 		for (MvpDelegate childDelegate : mChildDelegates) {
@@ -214,11 +218,13 @@ public class MvpDelegate<Delegated> {
 	}
 
 	/**
-	 * @return generated tag in format: Delegated_class_full_name$MvpDelegate@hashCode
+	 * @return generated tag in format: &lt;parent_delegate_tag&gt; &lt;delegated_class_full_name&gt;$MvpDelegate@&lt;hashCode&gt;
 	 * <p>
-	 * example: com.arellomobile.com.arellomobile.mvp.sample.SampleFragment$MvpDelegate@32649b0
+	 * example: com.arellomobile.mvp.sample.SampleFragment$MvpDelegate@32649b0
 	 */
 	private String generateTag() {
-		return mDelegated.getClass().getName() + "$" + getClass().getSimpleName() + toString().replace(getClass().getName(), "");
+		String tag = mParentDelegate != null ? mParentDelegate.mDelegateTag  + " " : "";
+		tag += mDelegated.getClass().getSimpleName() + "$" + getClass().getSimpleName() + toString().replace(getClass().getName(), "");
+		return tag;
 	}
 }

@@ -1,6 +1,8 @@
 package com.arellomobile.mvp.compiler;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +24,11 @@ import javax.lang.model.type.TypeMirror;
 
 public class MoxyReflectorGenerator {
 
-	public static String generate(List<String> presenterClassNames, Set<TypeElement> presentersContainers, Set<String> strategyClasses) {
+	public static String generate(String moxyReflectorPackage,
+	                              List<String> presenterClassNames,
+	                              Set<TypeElement> presentersContainers,
+	                              Set<String> strategyClasses,
+	                              List<String> additionalMoxyReflectorsPackages) {
 		Map<TypeElement, TypeElement> extendingMap = new HashMap<>();
 
 		for (TypeElement presentersContainer : presentersContainers) {
@@ -58,7 +64,7 @@ public class MoxyReflectorGenerator {
 			}
 		}
 
-		String builder = "package com.arellomobile.mvp;\n" +
+		String builder = "package " + moxyReflectorPackage + ";\n" +
 		                 "\n" +
 		                 "import java.util.Arrays;\n" +
 		                 "import java.util.HashMap;\n" +
@@ -73,6 +79,8 @@ public class MoxyReflectorGenerator {
 		                 "\tstatic {\n" +
 		                 "\t\tsViewStateProviders = new HashMap<>();\n";
 
+		Collections.sort(presenterClassNames);
+
 		for (String presenterClassName : presenterClassNames) {
 			  builder += "\t\tsViewStateProviders.put(" + presenterClassName + ".class, new " + presenterClassName + MvpProcessor.VIEW_STATE_PROVIDER_SUFFIX + "());\n";
 		}
@@ -80,7 +88,15 @@ public class MoxyReflectorGenerator {
 		      builder += "\t\t\n"+
 		                 "\t\tsPresenterBinders = new HashMap<>();\n";
 
-		for (Map.Entry<TypeElement, List<TypeElement>> keyValue : elementListMap.entrySet()) {
+		List<Map.Entry<TypeElement, List<TypeElement>>> elementListMapEntries = new ArrayList<>(elementListMap.entrySet());
+		Collections.sort(elementListMapEntries, new Comparator<Map.Entry<TypeElement, List<TypeElement>>>() {
+			@Override
+			public int compare(Map.Entry<TypeElement, List<TypeElement>> entry1, Map.Entry<TypeElement, List<TypeElement>> entry2) {
+				return entry1.getKey().getQualifiedName().toString().compareTo(entry2.getKey().getQualifiedName().toString());
+			}
+		});
+
+		for (Map.Entry<TypeElement, List<TypeElement>> keyValue : elementListMapEntries) {
 			  builder += "\t\tsPresenterBinders.put(" + keyValue.getKey().getQualifiedName() + ".class, Arrays.<Object>asList(";
 
 			boolean isFirst = true;
@@ -99,12 +115,26 @@ public class MoxyReflectorGenerator {
 		      builder += "\t\t\n" +
 				         "\t\tsStrategies = new HashMap<>();\n";
 
-		for (String strategyClass : strategyClasses) {
+		List<String> strategyClassesList = new ArrayList<>(strategyClasses);
+		Collections.sort(strategyClassesList);
+
+		for (String strategyClass : strategyClassesList) {
 			  builder += "\t\tsStrategies.put(" + strategyClass + ", new " + strategyClass.substring(0, strategyClass.lastIndexOf('.')) + "());\n";
 		}
 
-              builder += "\t}\n" +
-		                 "\t\n" +
+		Collections.sort(additionalMoxyReflectorsPackages);
+
+		for (String pkg : additionalMoxyReflectorsPackages) {
+		      builder += "\t\t\n";
+		      builder += "\t\tsViewStateProviders.putAll(" + pkg + ".MoxyReflector.getViewStateProviders());\n";
+		      builder += "\t\tsPresenterBinders.putAll(" + pkg + ".MoxyReflector.getPresenterBinders());\n";
+		      builder += "\t\tsStrategies.putAll(" + pkg + ".MoxyReflector.getStrategies());\n";
+		}
+
+		      builder += "\t}\n";
+
+		if (moxyReflectorPackage.equals("com.arellomobile.mvp")) {
+              builder += "\t\n" +
 		                 "\tpublic static Object getViewState(Class<?> presenterClass) {\n" +
 		                 "\t\tViewStateProvider viewStateProvider = (ViewStateProvider) sViewStateProviders.get(presenterClass);\n" +
 		                 "\t\tif (viewStateProvider == null) {\n" +
@@ -117,11 +147,26 @@ public class MoxyReflectorGenerator {
 		                 "\tpublic static List<Object> getPresenterBinders(Class<?> delegated) {\n" +
 		                 "\t\treturn sPresenterBinders.get(delegated);\n" +
 		                 "\t}\n" +
+		                 "\n" +
 		                 "\tpublic static Object getStrategy(Class<?> strategyClass) {\n" +
 		                 "\t\treturn sStrategies.get(strategyClass);\n" +
 		                 "\t}\n" +
 		                 "}\n";
-
+		} else {
+		      builder += "\t\n" +
+					     "\tpublic static Map<Class<?>, Object> getViewStateProviders() {\n" +
+					     "\t\treturn sViewStateProviders;\n" +
+					     "\t}\n" +
+				         "\n" +
+					     "\tpublic static Map<Class<?>, List<Object>> getPresenterBinders() {\n" +
+					     "\t\treturn sPresenterBinders;\n" +
+					     "\t}\n" +
+				         "\n" +
+					     "\tpublic static Map<Class<?>, Object> getStrategies() {\n" +
+					     "\t\treturn sStrategies;\n" +
+					     "\t}\n" +
+				         "}\n";
+		}
 		return builder;
 	}
 }

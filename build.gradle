@@ -6,7 +6,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:2.3.1'
         classpath 'me.tatarka:gradle-retrolambda:3.2.4'
     }
 }
@@ -19,8 +19,8 @@ allprojects {
 }
 
 ext {
-    targetVersionCode = 39
-    targetVersionName = "1.4.6"
+    targetVersionCode = 43
+    targetVersionName = "1.5.3"
 }
 
 task clean(type: Delete) {

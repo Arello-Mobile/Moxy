@@ -326,8 +326,8 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 	}
 
 	private static String generateGetPresentersMethod(final String builder, final List<Field> fields, String parentClassName) {
-		String s = "\tpublic List<PresenterField<?, ? super " + parentClassName + ">> getPresenterFields() {\n" +
-		           "\t\tList<PresenterField<?, ? super " + parentClassName + ">> presenters = new ArrayList<>();\n" +
+		String s = "\tpublic List<PresenterField<" + parentClassName + ">> getPresenterFields() {\n" +
+		           "\t\tList<PresenterField<" + parentClassName + ">> presenters = new ArrayList<>();\n" +
 		           "\n";
 
 
@@ -345,21 +345,23 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 
 	private static String generatePresenterBinderClass(final String builder, String targetClass, final Field field) {
 		TypeElement clazz = (TypeElement) ((DeclaredType) field.getClazz()).asElement();
-		String s = "\tpublic class " + field.getGeneratedClassName() + " extends PresenterField {\n" +
+		String tag = field.getTag();
+		tag = tag != null ? tag : "\"" + field.getName() + "\"";
+		String s = "\tpublic class " + field.getGeneratedClassName() + " extends PresenterField<" + targetClass + "> {\n" +
 		           "\t\tpublic " + field.getGeneratedClassName() + "() {\n" +
-		           "\t\t\tsuper(" + field.getTag() + ", PresenterType." + field.getType().name() + ", " + field.getPresenterId() + ", " + clazz + ".class);\n" +
+		           "\t\t\tsuper(" + tag + ", PresenterType." + field.getType().name() + ", " + field.getPresenterId() + ", " + clazz + ".class);\n" +
 		           "\t\t}\n" +
 		           "\n" +
 		           "\t\t@Override\n" +
-		           "\t\tpublic void bind(Object target, MvpPresenter presenter) {\n" +
-		           "\t\t\t((" + targetClass + ") target)." + field.getName() + " = (" + clazz.getQualifiedName() + ") presenter;\n" +
+		           "\t\tpublic void bind(" + targetClass + " target, MvpPresenter presenter) {\n" +
+		           "\t\t\ttarget." + field.getName() + " = (" + clazz.getQualifiedName() + ") presenter;\n" +
 		           "\t\t}\n";
 
 			s += "\n" +
 			     "\t\t@Override\n" +
-			     "\t\tpublic MvpPresenter<?> providePresenter(Object delegated) {\n";
+			     "\t\tpublic MvpPresenter<?> providePresenter(" + targetClass + " delegated) {\n";
 		if (field.getPresenterProviderMethodName() != null) {
-			s+= "\t\t\treturn ((" + targetClass + ") delegated)." + field.getPresenterProviderMethodName() + "();\n";
+			s+= "\t\t\treturn delegated." + field.getPresenterProviderMethodName() + "();\n";
 		} else {
 			boolean hasEmptyConstructor = false;
 			List<? extends Element> enclosedElements = clazz.getEnclosedElements();
@@ -383,8 +385,8 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		if (field.getPresenterTagProviderMethodName() != null) {
 			s += "\n" +
 			     "\t\t@Override\n" +
-			     "\t\tpublic String getTag(Object delegated) {\n" +
-			     "\t\t\treturn String.valueOf(((" + targetClass + ") delegated)." + field.getPresenterTagProviderMethodName() + "());\n" +
+			     "\t\tpublic String getTag(" + targetClass + " delegated) {\n" +
+			     "\t\t\treturn String.valueOf(delegated." + field.getPresenterTagProviderMethodName() + "());\n" +
 			     "\t\t}\n";
 		}
 

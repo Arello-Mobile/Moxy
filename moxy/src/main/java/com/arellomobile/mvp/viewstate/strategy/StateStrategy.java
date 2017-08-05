@@ -6,6 +6,13 @@ import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.ViewCommand;
 
 /**
+ * Cautions:
+ * <ul>
+ *     <li>Don't rearrange current state</li>
+ *     <li>Don't insert commands inside existing current state – only put to end of it</li>
+ *     <li>Be careful if remove commands by another type. If you make it, be sure that inside your view method you fully override view changes</li>
+ * </ul>
+ *
  * Date: 17.12.2015
  * Time: 11:21
  *
