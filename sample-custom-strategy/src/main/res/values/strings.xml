@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">sample-custom-strategy</string>
+    <string name="fragment_launch_text_beverage_section">Beverage section</string>
+    <string name="fragment_launch_edit_text_sugar">Sugar count</string>
+    <string name="fragment_launch_toggle_lemon">Toggle lemon</string>
+    <string name="fragment_launch_sugar_apply">Apply</string>
+    <string name="fragment_launch_beverage_clear">Clean beverage</string>
+
+    <string name="fragment_launch_burger_section">Burger section</string>
+    <string name="fragment_launch_toggle_bread_type">Toggle Bread Type</string>
+    <string name="fragment_launch_toggle_cheese">Toggle Cheese</string>
+    <string name="fragment_launch_burger_clear">Clear burger</string>
+
+    <string name="fragment_launch_result_section">Result section</string>
+    <string name="bread_regex" >Bread type: %1$s</string>
+    <string name="cheese_regex" >Have cheese: %1$s</string>
+    <string name="sugar_regex" >Sugar count: %1$d</string>
+    <string name="lemon_regex" >Have lemon: %1$s</string>
+    <string name="fragment_launch_make_order">Make order</string>
+    <string name="order_made">Заказан отправлен в обработку</string>
+</resources>
