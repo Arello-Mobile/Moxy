@@ -1,8 +1,9 @@
 buildscript {
-    ext.kotlin_version = '1.0.5'
+    ext.kotlin_version = '1.1.51'
     repositories {
         jcenter()
         mavenCentral()
+        google()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -11,15 +12,17 @@ buildscript {
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 26
     buildToolsVersion '26.0.2'
 
     defaultConfig {
-        applicationId "com.arellomobile.mvp.sample.kotlin"
-        minSdkVersion 16
-        targetSdkVersion 25
+        applicationId "com.redmadrobot.sample_custom_strategy"
+        minSdkVersion 21
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
 
@@ -38,7 +41,8 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:appcompat-v7:26.1.0'
+    compile 'com.android.support:design:26.1.0'
 
     compile 'com.arello-mobile:moxy:1.5.3'
     compile 'com.arello-mobile:moxy-app-compat:1.5.3'
