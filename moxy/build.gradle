@@ -236,9 +236,5 @@ dependencies {
     testCompile deps.android
     testCompile deps.robolectric
     testCompile deps.compiletesting
-    testCompile deps.asm
     testCompile project(':moxy-compiler')
-
-    // workaround to use test resources (https://stackoverflow.com/q/24870464)
-    testRuntime files(sourceSets.test.output.resourcesDir)
 }
