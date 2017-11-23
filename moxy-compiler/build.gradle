@@ -247,10 +247,21 @@ assemble.dependsOn copyVersion
 
 dependencies {
     compile project(':moxy')
-    runtime project(':moxy')
+    compile deps.javapoet
+
+    compileOnly deps.autocommon
+    compileOnly deps.autoservice
+    compileOnly deps.guava
+
     javadocDeps project(':moxy')
-    javadocDeps 'com.squareup:javapoet:1.0.0'
-    javadocDeps 'com.google.auto.service:auto-service:1.0-rc2'
-    compile 'com.google.auto.service:auto-service:1.0-rc2'
-    compile 'com.squareup:javapoet:1.0.0'
+    javadocDeps deps.javapoet
+    javadocDeps deps.autoservice
+
+    testCompile deps.junit
+    testCompile deps.truth
+    testCompile deps.compiletesting
+    testCompile deps.asm
+
+    // workaround to use test resources (https://stackoverflow.com/q/24870464)
+    testRuntime files(sourceSets.test.output.resourcesDir)
 }

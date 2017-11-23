@@ -232,10 +232,11 @@ assemble.dependsOn copyVersion
 
 dependencies {
     compile project(':moxy')
-    runtime project(':moxy')
-    javadocDeps project(':moxy')
-    compileOnly 'com.google.android:android:2.1_r1'
-    javadocDeps 'com.google.android:android:2.1_r1'
+
+    compileOnly deps.android
     compileOnly project(':stub-appcompat')
+
+    javadocDeps project(':moxy')
+    javadocDeps deps.android
     javadocDeps project(':stub-appcompat')
 }
