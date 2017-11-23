@@ -42,7 +42,9 @@ public abstract class CompilerTest {
 			String actualFileText = getBytecodeString(actualFile);
 			String exceptedFileText = getBytecodeString(exceptedFile);
 
-			assertThat(actualFileText).isEqualTo(exceptedFileText);
+			assertThat(actualFileText)
+					.named("Bytecode for file %s not equal to excepted", actualFile.getName())
+					.isEqualTo(exceptedFileText);
 		}
 	}
 
