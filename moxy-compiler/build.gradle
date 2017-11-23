@@ -14,10 +14,8 @@ configurations {
     javadocDeps
 }
 
-// This is important even if Android Studio claims it isn't
-// used. Android can't interpret Java 8 byte code.
-sourceCompatibility = JavaVersion.VERSION_1_7
-targetCompatibility = JavaVersion.VERSION_1_7
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 task clearPublishDir(type: Delete) {
     delete publishDir
