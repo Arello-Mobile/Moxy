@@ -24,18 +24,20 @@ import static com.google.testing.compile.Compiler.javac;
  * @author Evgeny Kursakov
  */
 public abstract class CompilerTest {
-	protected Compilation compileSourcesWithProcessor(JavaFileObject... sources) {
+	protected Compilation compileSources(JavaFileObject... sources) {
 		return javac()
-				.withProcessors(new MvpCompiler())
-				.withOptions("-Xlint:-processing")
+				.withOptions("-implicit:none") // don't process or generate classes for implicitly found sources
 				.compile(sources);
 	}
 
-	protected Compilation compileSources(JavaFileObject... sources) {
-		return javac().compile(sources);
+	protected Compilation compileSourcesWithProcessor(JavaFileObject... sources) {
+		return javac()
+				.withOptions("-implicit:none") // TODO: enable lint (-Xlint:processing)
+				.withProcessors(new MvpCompiler())
+				.compile(sources);
 	}
 
-	protected void assertOutputFilesEquals(List<JavaFileObject> actualGeneratedFiles, List<JavaFileObject> exceptedGeneratedFiles) throws Exception {
+	protected void assertExceptedFilesGenerated(List<JavaFileObject> actualGeneratedFiles, List<JavaFileObject> exceptedGeneratedFiles) throws Exception {
 		for (JavaFileObject exceptedClass : exceptedGeneratedFiles) {
 			final String fileName = exceptedClass.getName();
 
