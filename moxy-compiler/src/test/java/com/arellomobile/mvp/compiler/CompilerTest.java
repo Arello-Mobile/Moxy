@@ -66,7 +66,7 @@ public abstract class CompilerTest {
 		}
 	}
 
-	protected JavaFileObject sourceByClassName(String className) {
+	protected JavaFileObject getSourceFile(String className) {
 		return JavaFileObjects.forResource(className.replace('.', '/') + ".java");
 	}
 

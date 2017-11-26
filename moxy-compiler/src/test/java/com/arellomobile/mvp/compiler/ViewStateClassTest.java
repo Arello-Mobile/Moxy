@@ -1,17 +1,15 @@
 package com.arellomobile.mvp.compiler;
 
+import com.arellomobile.mvp.MvpProcessor;
 import com.google.testing.compile.Compilation;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.Arrays;
-
 import javax.tools.JavaFileObject;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
-import static com.google.testing.compile.JavaFileObjects.forResource;
 import static com.google.testing.compile.JavaFileObjects.forSourceString;
 
 /**
@@ -20,29 +18,27 @@ import static com.google.testing.compile.JavaFileObjects.forSourceString;
 @RunWith(Parameterized.class)
 public class ViewStateClassTest extends CompilerTest {
 
-	private final String viewClassName;
-	private final String exceptedViewStateResourceName;
-
-	public ViewStateClassTest(String viewClassName, String exceptedViewStateResourceName) {
-		this.viewClassName = viewClassName;
-		this.exceptedViewStateResourceName = exceptedViewStateResourceName;
-	}
+	@Parameterized.Parameter
+	public String viewClassName;
 
 	@Parameterized.Parameters(name = "{0}")
-	public static Iterable<Object[]> data() {
-		return Arrays.asList(new Object[][]{
-				{"view.EmptyView", "view/EmptyView$$State.java"},
-				{"view.SimpleView", "view/SimpleView$$State.java"},
-				{"view.OverloadingView", "view/OverloadingView$$State.java"},
-				{"view.StrategiesView", "view/StrategiesView$$State.java"},
-				{"view.GenericView", "view/GenericView$$State.java"},
-		});
+	public static String[] data() {
+		return new String[]{
+				"view.EmptyView",
+				"view.SimpleView",
+				"view.OverloadingView",
+				"view.StrategiesView",
+				"view.GenericView",
+		};
 	}
 
 	@Test
 	public void test() throws Exception {
-		Compilation presenterCompilation = compileSourcesWithProcessor(createDummyPresenter(viewClassName));
-		Compilation exceptedViewStateCompilation = compileSources(forResource(exceptedViewStateResourceName));
+		JavaFileObject presenter = createDummyPresenter(viewClassName);
+		JavaFileObject exceptedViewState = getSourceFile(viewClassName + MvpProcessor.VIEW_STATE_SUFFIX);
+
+		Compilation presenterCompilation = compileSourcesWithProcessor(presenter);
+		Compilation exceptedViewStateCompilation = compileSources(exceptedViewState);
 
 		assertThat(presenterCompilation).succeededWithoutWarnings();
 		assertExceptedFilesGenerated(presenterCompilation.generatedFiles(), exceptedViewStateCompilation.generatedFiles());

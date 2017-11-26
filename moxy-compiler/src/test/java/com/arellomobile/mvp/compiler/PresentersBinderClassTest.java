@@ -1,12 +1,13 @@
 package com.arellomobile.mvp.compiler;
 
+import com.arellomobile.mvp.MvpProcessor;
 import com.google.testing.compile.Compilation;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.Arrays;
+import javax.tools.JavaFileObject;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
 
@@ -16,26 +17,24 @@ import static com.google.testing.compile.CompilationSubject.assertThat;
 @RunWith(Parameterized.class)
 public class PresentersBinderClassTest extends CompilerTest {
 
-	private final String targetResourceName;
-	private final String exceptedPresentersBinderResourceName;
-
-	public PresentersBinderClassTest(String targetResourceName, String exceptedPresentersBinderResourceName) {
-		this.targetResourceName = targetResourceName;
-		this.exceptedPresentersBinderResourceName = exceptedPresentersBinderResourceName;
-	}
+	@Parameterized.Parameter
+	public String targetClassName;
 
 	@Parameterized.Parameters(name = "{0}")
-	public static Iterable<Object[]> data() {
-		return Arrays.asList(new Object[][]{
-				{"target.SimpleInjectPresenterTarget", "target/SimpleInjectPresenterTarget$$PresentersBinder.java"},
-				{"target.SimpleProvidePresenterTarget", "target/SimpleProvidePresenterTarget$$PresentersBinder.java"},
-		});
+	public static String[] data() {
+		return new String[]{
+				"target.SimpleInjectPresenterTarget",
+				"target.SimpleProvidePresenterTarget",
+		};
 	}
 
 	@Test
 	public void test() throws Exception {
-		Compilation targetCompilation = compileSourcesWithProcessor(sourceByClassName(targetResourceName));
-		Compilation exceptedPresentersBinderCompilation = compileSources(sourceByClassName(exceptedPresentersBinderResourceName));
+		JavaFileObject target = getSourceFile(targetClassName);
+		JavaFileObject exceptedPresentersBinder = getSourceFile(targetClassName + MvpProcessor.PRESENTER_BINDER_SUFFIX);
+
+		Compilation targetCompilation = compileSourcesWithProcessor(target);
+		Compilation exceptedPresentersBinderCompilation = compileSources(exceptedPresentersBinder);
 
 		assertThat(targetCompilation).succeededWithoutWarnings();
 		assertExceptedFilesGenerated(targetCompilation.generatedFiles(), exceptedPresentersBinderCompilation.generatedFiles());
