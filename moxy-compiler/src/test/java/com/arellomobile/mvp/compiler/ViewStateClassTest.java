@@ -4,8 +4,11 @@ import com.google.testing.compile.Compilation;
 
 import org.junit.Test;
 
+import javax.tools.JavaFileObject;
+
 import static com.google.testing.compile.CompilationSubject.assertThat;
 import static com.google.testing.compile.JavaFileObjects.forResource;
+import static com.google.testing.compile.JavaFileObjects.forSourceString;
 
 /**
  * @author Evgeny Kursakov
@@ -13,41 +16,56 @@ import static com.google.testing.compile.JavaFileObjects.forResource;
 public class ViewStateClassTest extends CompilerTest {
 
 	@Test
-	public void simpleView() throws Exception {
-		Compilation compilation = compileSourcesWithProcessor(
-				forResource("view/SimpleView.java"),
-				forResource("presenter/SimpleViewPresenter.java")
+	public void emptyView() {
+		assertViewStateGenerated(
+				forResource("view/EmptyView.java"),
+				createDummyPresenter("view.EmptyView"),
+				forResource("view/EmptyView$$State.java")
 		);
+	}
 
-		assertThat(compilation).succeededWithoutWarnings();
-		assertFilesGenerated(compilation,
+	@Test
+	public void simpleView() {
+		assertViewStateGenerated(
+				forResource("view/SimpleView.java"),
+				createDummyPresenter("view.SimpleView"),
 				forResource("view/SimpleView$$State.java")
 		);
 	}
 
 	@Test
-	public void overloading() throws Exception {
-		Compilation compilation = compileSourcesWithProcessor(
+	public void overloading() {
+		assertViewStateGenerated(
 				forResource("view/OverloadingView.java"),
-				forResource("presenter/OverloadingViewPresenter.java")
-		);
-
-		assertThat(compilation).succeededWithoutWarnings();
-		assertFilesGenerated(compilation,
+				createDummyPresenter("view.OverloadingView"),
 				forResource("view/OverloadingView$$State.java")
 		);
 	}
 
 	@Test
-	public void strategies() throws Exception {
-		Compilation compilation = compileSourcesWithProcessor(
+	public void strategies() {
+		assertViewStateGenerated(
 				forResource("view/StrategiesView.java"),
-				forResource("presenter/StrategiesViewPresenter.java")
-		);
-
-		assertThat(compilation).succeededWithoutWarnings();
-		assertFilesGenerated(compilation,
+				createDummyPresenter("view.StrategiesView"),
 				forResource("view/StrategiesView$$State.java")
 		);
+	}
+
+	private JavaFileObject createDummyPresenter(String viewClass) {
+		return forSourceString("presenter.EmptyPresenter", "" +
+				"package presenter;\n" +
+				"import com.arellomobile.mvp.InjectViewState;\n" +
+				"import com.arellomobile.mvp.MvpPresenter;\n" +
+				"@InjectViewState\n" +
+				"public class EmptyPresenter extends MvpPresenter<" + viewClass + "> {}");
+	}
+
+	private void assertViewStateGenerated(JavaFileObject view,
+	                                      JavaFileObject presenter,
+	                                      JavaFileObject exceptedViewState) {
+		Compilation compilation = compileSourcesWithProcessor(view, presenter);
+
+		assertThat(compilation).succeededWithoutWarnings();
+		assertGeneratedFilesEquals(compilation.generatedFiles(), compileSources(view, exceptedViewState).generatedFiles());
 	}
 }

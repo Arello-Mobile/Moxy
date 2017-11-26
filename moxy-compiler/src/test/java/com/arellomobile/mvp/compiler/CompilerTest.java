@@ -2,6 +2,8 @@ package com.arellomobile.mvp.compiler;
 
 import com.google.testing.compile.Compilation;
 
+import junit.framework.AssertionFailedError;
+
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.util.TraceClassVisitor;
 
@@ -26,32 +28,37 @@ public abstract class CompilerTest {
 				.compile(sources);
 	}
 
-	protected void assertFilesGenerated(
-			Compilation compilation,
-			JavaFileObject... exceptedSources
-	) throws Exception {
-		List<JavaFileObject> generatedFiles = compilation.generatedFiles();
-		List<JavaFileObject> exceptedFiles = javac().compile(exceptedSources).generatedFiles();
+	protected Compilation compileSources(JavaFileObject... sources) {
+		return javac().compile(sources);
+	}
 
-		for (final JavaFileObject exceptedFile : exceptedFiles) {
-			JavaFileObject actualFile = generatedFiles.stream()
-					.filter(input -> exceptedFile.toUri().equals(input.toUri()))
+	protected void assertGeneratedFilesEquals(List<JavaFileObject> actualGeneratedFiles, List<JavaFileObject> exceptedGeneratedFiles) {
+		for (JavaFileObject exceptedFile : exceptedGeneratedFiles) {
+			final String fileName = exceptedFile.getName();
+
+			JavaFileObject actualFile = actualGeneratedFiles.stream()
+					.filter(input -> fileName.equals(input.getName()))
 					.findFirst()
-					.get();
+					.orElseThrow(() -> new AssertionFailedError("File " + fileName + " is not generated"));
 
 			String actualFileText = getBytecodeString(actualFile);
 			String exceptedFileText = getBytecodeString(exceptedFile);
 
 			assertThat(actualFileText)
-					.named("Bytecode for file %s not equal to excepted", actualFile.getName())
+					.named("Bytecode for file %s not equal to excepted", fileName)
 					.isEqualTo(exceptedFileText);
 		}
 	}
 
-	private String getBytecodeString(JavaFileObject file) throws IOException {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ClassReader classReader = new ClassReader(file.openInputStream());
-		classReader.accept(new TraceClassVisitor(new PrintWriter(out)), ClassReader.SKIP_DEBUG);
-		return out.toString();
+	private String getBytecodeString(JavaFileObject file) {
+		try {
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			ClassReader classReader = new ClassReader(file.openInputStream());
+			TraceClassVisitor classVisitor = new TraceClassVisitor(new PrintWriter(out));
+			classReader.accept(classVisitor, ClassReader.SKIP_DEBUG); // skip debug info (line numbers)
+			return out.toString();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
