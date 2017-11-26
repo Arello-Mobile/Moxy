@@ -16,7 +16,7 @@ import static com.google.testing.compile.JavaFileObjects.forSourceString;
 public class ViewStateClassTest extends CompilerTest {
 
 	@Test
-	public void emptyView() {
+	public void emptyView() throws Exception {
 		assertViewStateGenerated(
 				forResource("view/EmptyView.java"),
 				createDummyPresenter("view.EmptyView"),
@@ -25,7 +25,7 @@ public class ViewStateClassTest extends CompilerTest {
 	}
 
 	@Test
-	public void simpleView() {
+	public void simpleView() throws Exception {
 		assertViewStateGenerated(
 				forResource("view/SimpleView.java"),
 				createDummyPresenter("view.SimpleView"),
@@ -34,7 +34,7 @@ public class ViewStateClassTest extends CompilerTest {
 	}
 
 	@Test
-	public void overloading() {
+	public void overloading() throws Exception {
 		assertViewStateGenerated(
 				forResource("view/OverloadingView.java"),
 				createDummyPresenter("view.OverloadingView"),
@@ -43,11 +43,20 @@ public class ViewStateClassTest extends CompilerTest {
 	}
 
 	@Test
-	public void strategies() {
+	public void strategies() throws Exception {
 		assertViewStateGenerated(
 				forResource("view/StrategiesView.java"),
 				createDummyPresenter("view.StrategiesView"),
 				forResource("view/StrategiesView$$State.java")
+		);
+	}
+
+	@Test
+	public void generics() throws Exception {
+		assertViewStateGenerated(
+				forResource("view/GenericView.java"),
+				createDummyPresenter("view.GenericView"),
+				forResource("view/GenericView$$State.java")
 		);
 	}
 
@@ -62,10 +71,10 @@ public class ViewStateClassTest extends CompilerTest {
 
 	private void assertViewStateGenerated(JavaFileObject view,
 	                                      JavaFileObject presenter,
-	                                      JavaFileObject exceptedViewState) {
+	                                      JavaFileObject exceptedViewState) throws Exception {
 		Compilation compilation = compileSourcesWithProcessor(view, presenter);
 
 		assertThat(compilation).succeededWithoutWarnings();
-		assertGeneratedFilesEquals(compilation.generatedFiles(), compileSources(view, exceptedViewState).generatedFiles());
+		assertOutputFilesEquals(compilation.generatedFiles(), compileSources(view, exceptedViewState).generatedFiles());
 	}
 }
