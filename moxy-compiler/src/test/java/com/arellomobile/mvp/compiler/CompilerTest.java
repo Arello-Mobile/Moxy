@@ -2,6 +2,7 @@ package com.arellomobile.mvp.compiler;
 
 import com.google.common.base.Joiner;
 import com.google.testing.compile.Compilation;
+import com.google.testing.compile.JavaFileObjects;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.ComparisonFailure;
@@ -63,6 +64,10 @@ public abstract class CompilerTest {
 				), exceptedBytecode, actualBytecode);
 			}
 		}
+	}
+
+	protected JavaFileObject sourceByClassName(String className) {
+		return JavaFileObjects.forResource(className.replace('.', '/') + ".java");
 	}
 
 	private String getBytecodeString(JavaFileObject file) throws IOException {
