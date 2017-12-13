@@ -15,7 +15,7 @@ import static com.google.testing.compile.CompilationSubject.assertThat;
  * @author Evgeny Kursakov
  */
 @RunWith(Parameterized.class)
-public class PresentersBinderClassTest extends CompilerTest {
+public class PresentersBinderTest extends CompilerTest {
 
 	@Parameterized.Parameter
 	public String targetClassName;
