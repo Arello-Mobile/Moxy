@@ -1,6 +1,5 @@
 package com.arellomobile.mvp.sample.kotlin
 
-
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import com.arellomobile.mvp.MvpAppCompatActivity
@@ -8,6 +7,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.PresenterType
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.arellomobile.mvp.presenter.ProvidePresenterTag
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : MvpAppCompatActivity(), DialogView {
 
@@ -26,19 +26,19 @@ class MainActivity : MvpAppCompatActivity(), DialogView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        findViewById(R.id.activity_main).setOnClickListener { dialogPresenter.onShowDialogClick() }
+        rootView.setOnClickListener { dialogPresenter.onShowDialogClick() }
     }
 
     override fun showDialog() {
         alertDialog = AlertDialog.Builder(this)
-                .setTitle("Title")
-                .setMessage("Message")
-                .setOnDismissListener { dialogPresenter.onHideDialog() }
-                .show()
+            .setTitle("Title")
+            .setMessage("Message")
+            .setOnDismissListener { dialogPresenter.onHideDialog() }
+            .show()
     }
 
     override fun hideDialog() {
-        alertDialog?.setOnDismissListener {  }
+        alertDialog?.setOnDismissListener { }
         alertDialog?.cancel()
     }
 
