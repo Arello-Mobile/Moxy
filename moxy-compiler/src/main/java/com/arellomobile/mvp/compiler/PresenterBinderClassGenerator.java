@@ -350,7 +350,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		String s = "\tpublic class " + field.getGeneratedClassName() + " extends PresenterField<" + targetClass + "> {\n" +
 		           "\t\tpublic " + field.getGeneratedClassName() + "() {\n" +
 		           "\t\t\tsuper(" + tag + ", PresenterType." + field.getType().name() + ", " + field.getPresenterId() + ", " + clazz + ".class);\n" +
-			   "\t\t}\n" +
+		           "\t\t}\n" +
 		           "\n" +
 		           "\t\t@Override\n" +
 		           "\t\tpublic void bind(" + targetClass + " target, MvpPresenter presenter) {\n" +
