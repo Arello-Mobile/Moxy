@@ -22,6 +22,7 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.tools.Diagnostic;
 
 /**
  * 18.12.2015
@@ -345,6 +346,10 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 
 	private static String generatePresenterBinderClass(final String builder, String targetClass, final Field field) {
 		TypeElement clazz = (TypeElement) ((DeclaredType) field.getClazz()).asElement();
+		//todo
+		MvpCompiler.getMessager().printMessage(Diagnostic.Kind.WARNING, "clazz = " + clazz);
+		MvpCompiler.getMessager().printMessage(Diagnostic.Kind.WARNING, "clazz.getTypeParameters() = " + clazz.getTypeParameters());
+
 		String tag = field.getTag();
 		tag = tag != null ? tag : "\"" + field.getName() + "\"";
 		String s = "\tpublic class " + field.getGeneratedClassName() + " extends PresenterField<" + targetClass + "> {\n" +
