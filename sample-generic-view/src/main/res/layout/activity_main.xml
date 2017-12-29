@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:id="@+id/rootView"
     android:layout_height="match_parent"
-    tools:context="ru.kuchanov.samplegenericview.MainActivity"
+    tools:context="ru.kuchanov.samplegenericview.ui.activity.MainActivity"
     >
 
     <TextView
