@@ -7,4 +7,7 @@ import com.arellomobile.mvp.MvpView
  *
  * for Moxy
  */
-interface GenericView<T> : MvpView
+interface GenericView<T> : MvpView {
+
+    fun showType(param: T)
+}

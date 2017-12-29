@@ -11,4 +11,6 @@ import ru.kuchanov.samplegenericview.mvp.view.GenericView
  */
 @InjectViewState
 class GenericPresenter<T> : MvpPresenter<GenericView<T>>() {
+
+    fun doSmth(param:T) = viewState.showType(param)
 }
