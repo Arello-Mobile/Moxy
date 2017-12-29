@@ -345,23 +345,11 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 
 	private static String generatePresenterBinderClass(final String builder, String targetClass, final Field field) {
 		TypeElement clazz = (TypeElement) ((DeclaredType) field.getClazz()).asElement();
-
-		//fixme - awful variant with instance creating
-		String workingVariant = "(Class<ru.kuchanov.samplegenericview.mvp.presenter.GenericPresenter<ru.kuchanov.samplegenericview.model.MyModel>>)new ru.kuchanov.samplegenericview.mvp.presenter.GenericPresenter<ru.kuchanov.samplegenericview.model.MyModel>().getClass()";
-
 		String tag = field.getTag();
 		tag = tag != null ? tag : "\"" + field.getName() + "\"";
 		String s = "\tpublic class " + field.getGeneratedClassName() + " extends PresenterField<" + targetClass + "> {\n" +
 		           "\t\tpublic " + field.getGeneratedClassName() + "() {\n" +
-//		           "\t\t\tsuper(" + tag + ", PresenterType." + field.getType().name() + ", " + field.getPresenterId() + ", " + clazz + ".class);\n" +
-
-//			    "\t\t\tsuper(" + tag + ", PresenterType." + field.getType().name() + ", " + field.getPresenterId() + ", " + clazz +"<ru.kuchanov.samplegenericview.model.MyModel>"+ ".class);\n" +
-
-			   //fixme - awful variant with instance creating
-			   /////working variant
-			     "\t\t\tsuper(" + tag + ", PresenterType." + field.getType().name() + ", " + field.getPresenterId() + ", " + workingVariant + ");\n" +
-			   /////
-
+		           "\t\t\tsuper(" + tag + ", PresenterType." + field.getType().name() + ", " + field.getPresenterId() + ", " + clazz + ".class);\n" +
 			   "\t\t}\n" +
 		           "\n" +
 		           "\t\t@Override\n" +
