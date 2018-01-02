@@ -25,6 +25,7 @@ public class PresentersBinderTest extends CompilerTest {
 		return new String[]{
 				"target.SimpleInjectPresenterTarget",
 				"target.SimpleProvidePresenterTarget",
+				"target.GenericPresenterTarget", // issue #166
 		};
 	}
 

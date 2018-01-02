@@ -24,6 +24,7 @@ public class ViewStateProviderTest extends CompilerTest {
 	public static String[] data() {
 		return new String[]{
 				"presenter.EmptyViewPresenter",
+				"presenter.GenericPresenter",
 		};
 	}
 
