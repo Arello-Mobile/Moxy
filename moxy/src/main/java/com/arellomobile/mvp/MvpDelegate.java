@@ -67,6 +67,33 @@ public class MvpDelegate<Delegated> {
 		mChildDelegates.add(delegate);
 	}
 
+	private void removeChildDelegate(MvpDelegate delegate) {
+		mChildDelegates.remove(delegate);
+	}
+
+	public void removeParentDelegate() {
+
+		if (mParentDelegate == null) {
+			throw new IllegalStateException("You should call removeParentDelegate() before first setParentDelegate()");
+		}
+
+		mParentDelegate.removeChildDelegate(this);
+		mParentDelegate = null;
+	}
+
+	public void removeAllChildDelegates()
+	{
+		// For avoiding ConcurrentModificationException when removing by removeChildDelegate()
+		List<MvpDelegate> childDelegatesClone = new ArrayList<MvpDelegate>(mChildDelegates.size());
+		childDelegatesClone.addAll(mChildDelegates);
+
+		for (MvpDelegate childDelegate : childDelegatesClone) {
+			childDelegate.removeParentDelegate();
+		}
+
+		mChildDelegates = new ArrayList<>();
+	}
+
 	/**
 	 * <p>Similar like {@link #onCreate(Bundle)}. But this method try to get saved
 	 * state from parent presenter before get presenters</p>
@@ -160,6 +187,10 @@ public class MvpDelegate<Delegated> {
 
 		for (MvpDelegate<?> childDelegate : mChildDelegates) {
 			childDelegate.onDestroyView();
+		}
+
+		if (mParentDelegate != null) {
+			removeParentDelegate();
 		}
 	}
 
