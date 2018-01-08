@@ -185,7 +185,11 @@ public class MvpDelegate<Delegated> {
 			presenter.destroyView(mDelegated);
 		}
 
-		for (MvpDelegate<?> childDelegate : mChildDelegates) {
+		// For avoiding ConcurrentModificationException when removing from mChildDelegates
+		List<MvpDelegate> childDelegatesClone = new ArrayList<MvpDelegate>(mChildDelegates.size());
+		childDelegatesClone.addAll(mChildDelegates);
+
+		for (MvpDelegate childDelegate : childDelegatesClone) {
 			childDelegate.onDestroyView();
 		}
 
