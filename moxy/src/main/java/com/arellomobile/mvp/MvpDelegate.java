@@ -71,14 +71,18 @@ public class MvpDelegate<Delegated> {
 		mChildDelegates.remove(delegate);
 	}
 
-	public void removeParentDelegate() {
+	/**
+	 * Free self link from children list (mChildDelegates) in parent delegate
+	 * property mParentDelegate stay keep link to parent delegate for access to
+	 * parent bundle for save state in {@link #onSaveInstanceState()}
+	 */
+	public void freeParentDelegate() {
 
 		if (mParentDelegate == null) {
-			throw new IllegalStateException("You should call removeParentDelegate() before first setParentDelegate()");
+			throw new IllegalStateException("You should call freeParentDelegate() before first setParentDelegate()");
 		}
 
 		mParentDelegate.removeChildDelegate(this);
-		mParentDelegate = null;
 	}
 
 	public void removeAllChildDelegates()
@@ -88,7 +92,7 @@ public class MvpDelegate<Delegated> {
 		childDelegatesClone.addAll(mChildDelegates);
 
 		for (MvpDelegate childDelegate : childDelegatesClone) {
-			childDelegate.removeParentDelegate();
+			childDelegate.freeParentDelegate();
 		}
 
 		mChildDelegates = new ArrayList<>();
@@ -194,7 +198,7 @@ public class MvpDelegate<Delegated> {
 		}
 
 		if (mParentDelegate != null) {
-			removeParentDelegate();
+			freeParentDelegate();
 		}
 	}
 
