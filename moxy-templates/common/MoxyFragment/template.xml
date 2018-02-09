@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<template
+    format="4"
+    revision="1"
+    name="Moxy fragment"
+    description="Moxy MVP fragment constructor"
+    minApi="7"
+    minBuildApi="8">
+
+    <category value="Moxy" />
+
+    <dependency name="android-support-v4" revision="8" />
+
+    <parameter
+        id="className"
+        name="Fragment Name"
+        type="string"
+        constraints="class|nonempty|unique"
+        default="BlankFragment"
+        help="The name of the fragment class to create" />
+
+    <parameter
+        id="useSubPackage"
+        name="Use sub package?"
+        type="boolean"
+        default="true"
+        help="Add generated classes to specified package" />
+        
+    <parameter
+        id="subPackage"
+        name="Package name"
+        type="string"
+        default="blank"
+        visibility="useSubPackage"
+        help="Package name" />
+
+    <parameter
+        id="superClass"
+        name="Base Fragment"
+        type="enum"
+        default="baseFragment"
+        help="if choose BaseFragment, please add your_package_name/ui/activity/BaseFragment otherwise MvpFragment" >
+        <option id="baseFragment">BaseFragment</option>
+        <option id="appCompat">MvpAppCompatFragment</option>
+        <option id="fragment">MvpFragment</option>
+    </parameter>
+
+    <parameter
+        id="includeLayout"
+        name="Create layout XML?"
+        type="boolean"
+        default="true"
+        help="Generate a layout XML for the fragment" />
+
+    <parameter
+        id="includeView"
+        name="Create View?"
+        type="boolean"
+        default="true"
+        help="Generate a view for the fragment" />
+
+    <parameter
+        id="includePresenter"
+        name="Create Presenter?"
+        type="boolean"
+        default="true"
+        help="Generate a presenter for the fragment" />
+
+    <parameter
+        id="createProvidesMethod"
+        name="Create Custom Provides Presenter Method?"
+        type="boolean"
+        visibility="includePresenter"
+        default="false"
+        help="Generate a method for provides presenter" />
+
+    <parameter
+        id="fragmentName"
+        name="Fragment Layout Name"
+        type="string"
+        constraints="layout|nonempty|unique"
+        default="fragment_blank"
+        visibility="includeLayout"
+        suggest="fragment_${classToResource(className)}"
+        help="The name of the layout to create" />
+
+    <parameter
+        id="includeFactory"
+        name="Include fragment factory method?"
+        type="boolean"
+        default="true"
+        help="Generate static fragment factory method for easy instantiation" />
+
+    <parameter
+        id="viewName"
+        name="View Name"
+        type="string"
+        constraints="class|nonempty|unique"
+        default="BlankView"
+        visibility="includeView"
+        suggest="${underscoreToCamelCase(classToResource(className))}View"
+        help="The name of the view interface to create" />
+
+    <parameter
+        id="presenterName"
+        name="Presenter Name"
+        type="string"
+        constraints="class|nonempty|unique"
+        default="BlankPresenter"
+        visibility="includePresenter"
+        suggest="${underscoreToCamelCase(classToResource(className))}Presenter"
+        help="The name of the presenter interface to create" />
+
+    <thumbs>
+        <thumb>template_moxy_fragment.png</thumb>
+    </thumbs>
+
+    <globals file="globals.xml.ftl" />
+    <execute file="recipe.xml.ftl" />
+
+</template>
