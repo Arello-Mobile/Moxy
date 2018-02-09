@@ -2,12 +2,14 @@
 <template
     format="4"
     revision="1"
-    name="Moxy fragment Kotlin"
+    name="Moxy fragment"
     description="Moxy MVP fragment constructor"
     minApi="7"
     minBuildApi="8">
 
     <category value="Moxy" />
+
+    <dependency name="android-support-v4" revision="8" />
 
     <parameter
         id="className"
@@ -17,7 +19,7 @@
         default="BlankFragment"
         help="The name of the fragment class to create" />
 
-     <parameter
+    <parameter
         id="useSubPackage"
         name="Use sub package?"
         type="boolean"
@@ -31,7 +33,18 @@
         default="blank"
         visibility="useSubPackage"
         help="Package name" />
-        
+
+    <parameter
+        id="superClass"
+        name="Base Fragment"
+        type="enum"
+        default="baseFragment"
+        help="if choose BaseFragment, please add your_package_name/ui/activity/BaseFragment otherwise MvpFragment" >
+        <option id="baseFragment">BaseFragment</option>
+        <option id="appCompat">MvpAppCompatFragment</option>
+        <option id="fragment">MvpFragment</option>
+    </parameter>
+
     <parameter
         id="includeLayout"
         name="Create layout XML?"
@@ -52,6 +65,14 @@
         type="boolean"
         default="true"
         help="Generate a presenter for the fragment" />
+
+    <parameter
+        id="createProvidesMethod"
+        name="Create Custom Provides Presenter Method?"
+        type="boolean"
+        visibility="includePresenter"
+        default="false"
+        help="Generate a method for provides presenter" />
 
     <parameter
         id="fragmentName"
