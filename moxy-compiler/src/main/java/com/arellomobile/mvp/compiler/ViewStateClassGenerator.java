@@ -16,6 +16,7 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
@@ -219,6 +220,10 @@ final class ViewStateClassGenerator extends ClassGenerator<TypeElement> {
 			}
 
 			final ExecutableElement methodElement = (ExecutableElement) element;
+
+			if (methodElement.getModifiers().contains(Modifier.STATIC)) {
+				continue;
+			}
 
 			if (!methodElement.getReturnType().toString().equals("void")) {
 				MvpCompiler.getMessager().printMessage(Diagnostic.Kind.ERROR, "You are trying generate ViewState for " + typeElement.getSimpleName() + ". But " + typeElement.getSimpleName() + " contains non-void method \"" + methodElement.getSimpleName() + "\" that return type is " + methodElement.getReturnType() + ". See more here: https://github.com/Arello-Mobile/Moxy/issues/2");
