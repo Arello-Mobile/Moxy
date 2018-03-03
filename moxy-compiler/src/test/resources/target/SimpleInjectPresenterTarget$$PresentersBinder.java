@@ -12,7 +12,7 @@ import presenter.EmptyViewPresenter;
 
 public class SimpleInjectPresenterTarget$$PresentersBinder extends PresenterBinder<SimpleInjectPresenterTarget> {
 	public List<PresenterField<SimpleInjectPresenterTarget>> getPresenterFields() {
-		List<PresenterField<SimpleInjectPresenterTarget>> presenters = new ArrayList<>();
+		List<PresenterField<SimpleInjectPresenterTarget>> presenters = new ArrayList<>(1);
 
 		presenters.add(new presenterBinder());
 
