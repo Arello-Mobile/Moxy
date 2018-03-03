@@ -20,6 +20,7 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.DeclaredType;
@@ -87,7 +88,7 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 	                                    List<ViewMethod> rootMethods,
 	                                    List<ViewMethod> superinterfacesMethods) {
 		for (Element element : typeElement.getEnclosedElements()) {
-			if (element.getKind() != ElementKind.METHOD) {
+			if (element.getKind() != ElementKind.METHOD || element.getModifiers().contains(Modifier.STATIC)) {
 				continue;
 			}
 
