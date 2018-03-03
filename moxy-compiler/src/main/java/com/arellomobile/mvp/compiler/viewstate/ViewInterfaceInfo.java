@@ -1,6 +1,9 @@
 package com.arellomobile.mvp.compiler.viewstate;
 
+import com.google.common.collect.Iterables;
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeVariableName;
 
 import java.util.List;
@@ -24,6 +27,14 @@ class ViewInterfaceInfo {
 
 	ClassName getName() {
 		return name;
+	}
+
+	TypeName getNameWithTypeVariables() {
+		if (typeVariables.isEmpty()) {
+			return name;
+		} else {
+			return ParameterizedTypeName.get(name, Iterables.toArray(typeVariables, TypeVariableName.class));
+		}
 	}
 
 	List<TypeVariableName> getTypeVariables() {

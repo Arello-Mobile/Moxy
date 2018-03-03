@@ -31,17 +31,18 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<ViewInterf
 	@Override
 	public List<JavaFile> generate(ViewInterfaceInfo viewInterfaceInfo) {
 		ClassName viewName = viewInterfaceInfo.getName();
+		TypeName nameWithTypeVariables = viewInterfaceInfo.getNameWithTypeVariables();
 
 		TypeSpec.Builder classBuilder = TypeSpec.classBuilder(viewName.simpleName() + MvpProcessor.VIEW_STATE_SUFFIX)
 				.addModifiers(Modifier.PUBLIC)
-				.superclass(ParameterizedTypeName.get(ClassName.get(MvpViewState.class), viewName))
-				.addSuperinterface(viewName)
+				.superclass(ParameterizedTypeName.get(ClassName.get(MvpViewState.class), nameWithTypeVariables))
+				.addSuperinterface(nameWithTypeVariables)
 				.addTypeVariables(viewInterfaceInfo.getTypeVariables());
 
 		for (ViewMethod method : viewInterfaceInfo.getMethods()) {
-			TypeSpec commandClass = generateCommandClass(method, viewName);
+			TypeSpec commandClass = generateCommandClass(method, nameWithTypeVariables);
 			classBuilder.addType(commandClass);
-			classBuilder.addMethod(generateMethod(method, viewName, commandClass));
+			classBuilder.addMethod(generateMethod(method, nameWithTypeVariables, commandClass));
 		}
 
 		JavaFile javaFile = JavaFile.builder(viewName.packageName(), classBuilder.build())
@@ -60,11 +61,13 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<ViewInterf
 				.build();
 
 		TypeSpec.Builder classBuilder = TypeSpec.classBuilder(method.getCommandClassName())
+				.addModifiers(Modifier.PUBLIC) // TODO: private and static
 				.superclass(ParameterizedTypeName.get(ClassName.get(ViewCommand.class), viewTypeName))
 				.addMethod(generateCommandConstructor(method))
 				.addMethod(applyMethod);
 
 		for (ParameterSpec parameter : method.getParameterSpecs()) {
+			// TODO: private field
 			classBuilder.addField(parameter.type, parameter.name, Modifier.PUBLIC, Modifier.FINAL);
 		}
 
@@ -72,6 +75,7 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<ViewInterf
 	}
 
 	private MethodSpec generateMethod(ViewMethod method, TypeName viewTypeName, TypeSpec commandClass) {
+		// TODO: String commandFieldName = "$cmd";
 		String commandFieldName = decapitalizeString(method.getCommandClassName());
 
 		// Add salt if contains argument with same name

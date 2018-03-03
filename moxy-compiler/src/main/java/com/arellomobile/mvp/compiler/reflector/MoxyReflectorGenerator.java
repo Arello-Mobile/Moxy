@@ -13,7 +13,6 @@ import com.squareup.javapoet.WildcardTypeName;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -37,16 +36,15 @@ import static com.arellomobile.mvp.compiler.MvpCompiler.MOXY_REFLECTOR_DEFAULT_P
  */
 
 public class MoxyReflectorGenerator {
-	private static final Comparator<TypeElement> TYPE_ELEMENT_COMPARATOR
-			= (e1, e2) -> e1.toString().compareTo(e2.toString());
+	private static final Comparator<TypeElement> TYPE_ELEMENT_COMPARATOR = Comparator.comparing(Object::toString);
 
-	private static final TypeName CLASS_WILDCARD_TYPE_NAME
+	private static final TypeName CLASS_WILDCARD_TYPE_NAME // Class<*>
 			= ParameterizedTypeName.get(ClassName.get(Class.class), WildcardTypeName.subtypeOf(TypeName.OBJECT));
-	private static final TypeName LIST_OF_OBJECT_TYPE_NAME
+	private static final TypeName LIST_OF_OBJECT_TYPE_NAME // List<Object>
 			= ParameterizedTypeName.get(ClassName.get(List.class), TypeName.OBJECT);
-	private static final TypeName MAP_CLASS_TO_OBJECT_TYPE_NAME
+	private static final TypeName MAP_CLASS_TO_OBJECT_TYPE_NAME // Map<Class<*>, Object>
 			= ParameterizedTypeName.get(ClassName.get(Map.class), CLASS_WILDCARD_TYPE_NAME, TypeName.OBJECT);
-	private static final TypeName MAP_CLASS_TO_LIST_OF_OBJECT_TYPE_NAME
+	private static final TypeName MAP_CLASS_TO_LIST_OF_OBJECT_TYPE_NAME // Map<Class<*>, List<Object>>
 			= ParameterizedTypeName.get(ClassName.get(Map.class), CLASS_WILDCARD_TYPE_NAME, LIST_OF_OBJECT_TYPE_NAME);
 
 	public static JavaFile generate(String destinationPackage,
@@ -60,8 +58,7 @@ public class MoxyReflectorGenerator {
 				.addField(MAP_CLASS_TO_LIST_OF_OBJECT_TYPE_NAME, "sPresenterBinders", Modifier.PRIVATE, Modifier.STATIC)
 				.addField(MAP_CLASS_TO_OBJECT_TYPE_NAME, "sStrategies", Modifier.PRIVATE, Modifier.STATIC);
 
-		classBuilder.addStaticBlock(generateStaticInitializer(presenterClassNames, presentersContainers,
-				strategyClasses, additionalMoxyReflectorsPackages));
+		classBuilder.addStaticBlock(generateStaticInitializer(presenterClassNames, presentersContainers, strategyClasses, additionalMoxyReflectorsPackages));
 
 		if (destinationPackage.equals(MOXY_REFLECTOR_DEFAULT_PACKAGE)) {
 			classBuilder.addMethod(MethodSpec.methodBuilder("getViewState")
@@ -121,9 +118,9 @@ public class MoxyReflectorGenerator {
 	                                                   List<String> additionalMoxyReflectorsPackages) {
 		// sort to preserve order of statements between compilations
 		Map<TypeElement, List<TypeElement>> presenterBinders = getPresenterBinders(presentersContainers);
-		Collections.sort(presenterClassNames, TYPE_ELEMENT_COMPARATOR);
-		Collections.sort(strategyClasses, TYPE_ELEMENT_COMPARATOR);
-		Collections.sort(additionalMoxyReflectorsPackages);
+		presenterClassNames.sort(TYPE_ELEMENT_COMPARATOR);
+		strategyClasses.sort(TYPE_ELEMENT_COMPARATOR);
+		additionalMoxyReflectorsPackages.sort(Comparator.naturalOrder());
 
 		CodeBlock.Builder builder = CodeBlock.builder();
 

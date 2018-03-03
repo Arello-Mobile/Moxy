@@ -50,31 +50,31 @@ class ViewMethod {
 		this.uniqueSuffix = "";
 	}
 
-	public ExecutableElement getElement() {
+	ExecutableElement getElement() {
 		return element;
 	}
 
-	public String getName() {
+	String getName() {
 		return name;
 	}
 
-	public TypeElement getStrategy() {
+	TypeElement getStrategy() {
 		return strategy;
 	}
 
-	public String getTag() {
+	String getTag() {
 		return tag;
 	}
 
-	public List<ParameterSpec> getParameterSpecs() {
+	List<ParameterSpec> getParameterSpecs() {
 		return parameterSpecs;
 	}
 
-	public List<TypeName> getExceptions() {
+	List<TypeName> getExceptions() {
 		return exceptions;
 	}
 
-	public String getArgumentsString() {
+	String getArgumentsString() {
 		return argumentsString;
 	}
 
@@ -87,11 +87,11 @@ class ViewMethod {
 		return typeElement.getQualifiedName().toString();
 	}
 
-	public String getUniqueSuffix() {
+	String getUniqueSuffix() {
 		return uniqueSuffix;
 	}
 
-	public void setUniqueSuffix(String uniqueSuffix) {
+	void setUniqueSuffix(String uniqueSuffix) {
 		this.uniqueSuffix = uniqueSuffix;
 	}
 
