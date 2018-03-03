@@ -29,6 +29,7 @@ public class ViewStateTest extends CompilerTest {
 				"view.OverloadingView",
 				"view.StrategiesView",
 				"view.GenericView",
+				"view.GenericMethodsView",
 		};
 	}
 
