@@ -30,6 +30,8 @@ public class ViewStateTest extends CompilerTest {
 				"view.StrategiesView",
 				"view.GenericView",
 				"view.GenericMethodsView",
+				"view.strategies_inheritance.ChildView",
+				"view.strategies_inheritance.ParentView",
 		};
 	}
 
