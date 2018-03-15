@@ -62,6 +62,7 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<ViewInterf
 
 		TypeSpec.Builder classBuilder = TypeSpec.classBuilder(method.getCommandClassName())
 				.addModifiers(Modifier.PUBLIC) // TODO: private and static
+				.addTypeVariables(method.getTypeVariables())
 				.superclass(ParameterizedTypeName.get(ClassName.get(ViewCommand.class), viewTypeName))
 				.addMethod(generateCommandConstructor(method))
 				.addMethod(applyMethod);

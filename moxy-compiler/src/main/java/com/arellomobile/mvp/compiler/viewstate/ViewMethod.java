@@ -2,6 +2,7 @@ package com.arellomobile.mvp.compiler.viewstate;
 
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeVariableName;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,6 +23,7 @@ class ViewMethod {
 	private final String tag;
 	private final List<ParameterSpec> parameterSpecs;
 	private final List<TypeName> exceptions;
+	private final List<TypeVariableName> typeVariables;
 	private final String argumentsString;
 
 	private String uniqueSuffix;
@@ -39,8 +41,13 @@ class ViewMethod {
 				.map(ParameterSpec::get)
 				.collect(Collectors.toList());
 
-		this.exceptions = element.getThrownTypes().stream()
+		this.exceptions = methodElement.getThrownTypes().stream()
 				.map(TypeName::get)
+				.collect(Collectors.toList());
+
+		this.typeVariables = methodElement.getTypeParameters()
+				.stream()
+				.map(TypeVariableName::get)
 				.collect(Collectors.toList());
 
 		this.argumentsString = parameterSpecs.stream()
@@ -72,6 +79,10 @@ class ViewMethod {
 
 	List<TypeName> getExceptions() {
 		return exceptions;
+	}
+
+	List<TypeVariableName> getTypeVariables() {
+		return typeVariables;
 	}
 
 	String getArgumentsString() {
