@@ -113,15 +113,13 @@ class ViewMethod {
 
 		ViewMethod that = (ViewMethod) o;
 
-		if (element != null ? !element.equals(that.element) : that.element != null) return false;
-		return uniqueSuffix != null ? uniqueSuffix.equals(that.uniqueSuffix) : that.uniqueSuffix == null;
-
+		return name.equals(that.name) && parameterSpecs.equals(that.parameterSpecs);
 	}
 
 	@Override
 	public int hashCode() {
-		int result = element != null ? element.hashCode() : 0;
-		result = 31 * result + (uniqueSuffix != null ? uniqueSuffix.hashCode() : 0);
+		int result = name.hashCode();
+		result = 31 * result + parameterSpecs.hashCode();
 		return result;
 	}
 }
