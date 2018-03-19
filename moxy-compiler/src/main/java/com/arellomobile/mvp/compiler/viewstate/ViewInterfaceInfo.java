@@ -7,6 +7,9 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeVariableName;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.lang.model.element.TypeElement;
 
 /**
  * Date: 27-Jul-2017
@@ -19,10 +22,13 @@ class ViewInterfaceInfo {
 	private final List<TypeVariableName> typeVariables;
 	private final List<ViewMethod> methods;
 
-	ViewInterfaceInfo(ClassName name, List<TypeVariableName> typeVariables, List<ViewMethod> methods) {
-		this.name = name;
-		this.typeVariables = typeVariables;
+	ViewInterfaceInfo(TypeElement name, List<ViewMethod> methods) {
+		this.name = ClassName.get(name);
 		this.methods = methods;
+
+		this.typeVariables = name.getTypeParameters().stream()
+				.map(TypeVariableName::get)
+				.collect(Collectors.toList());
 	}
 
 	ClassName getName() {

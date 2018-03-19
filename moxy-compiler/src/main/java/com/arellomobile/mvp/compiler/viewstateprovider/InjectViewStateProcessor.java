@@ -8,7 +8,6 @@ import com.arellomobile.mvp.MvpProcessor;
 import com.arellomobile.mvp.compiler.ElementProcessor;
 import com.arellomobile.mvp.compiler.MvpCompiler;
 import com.arellomobile.mvp.compiler.Util;
-import com.squareup.javapoet.ClassName;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,12 +43,11 @@ public class InjectViewStateProcessor extends ElementProcessor<TypeElement, Pres
 
 	@Override
 	public PresenterInfo process(TypeElement element) {
-		ClassName presenterName = ClassName.get(element);
 		presenterClassNames.add(element);
-		return new PresenterInfo(presenterName, getViewStateClassName(element));
+		return new PresenterInfo(element, getViewStateClassName(element));
 	}
 
-	private ClassName getViewStateClassName(TypeElement typeElement) {
+	private String getViewStateClassName(TypeElement typeElement) {
 		String viewState = getViewStateClassFromAnnotationParams(typeElement);
 		if (viewState == null) {
 			String view = getViewClassFromAnnotationParams(typeElement);
@@ -74,7 +72,7 @@ public class InjectViewStateProcessor extends ElementProcessor<TypeElement, Pres
 		}
 
 		if (viewState != null) {
-			return ClassName.bestGuess(viewState);
+			return viewState;
 		} else {
 			return null;
 		}

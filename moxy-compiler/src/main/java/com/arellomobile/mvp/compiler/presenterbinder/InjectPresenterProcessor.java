@@ -5,7 +5,6 @@ import com.arellomobile.mvp.compiler.Util;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenterTag;
-import com.squareup.javapoet.ClassName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +50,7 @@ public class InjectPresenterProcessor extends ElementProcessor<VariableElement, 
 		bindProvidersToFields(fields, collectPresenterProviders(presentersContainer));
 		bindTagProvidersToFields(fields, collectTagProviders(presentersContainer));
 
-		return new TargetClassInfo(ClassName.get(presentersContainer), fields);
+		return new TargetClassInfo(presentersContainer, fields);
 	}
 
 	private static List<TargetPresenterField> collectFields(TypeElement presentersContainer) {

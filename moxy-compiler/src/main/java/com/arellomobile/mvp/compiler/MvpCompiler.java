@@ -152,8 +152,9 @@ public class MvpCompiler extends AbstractProcessor {
 				moxyReflectorPackage,
 				injectViewStateProcessor.getPresenterClassNames(),
 				injectPresenterProcessor.getPresentersContainers(),
-				viewInterfaceProcessor.getStrategyClasses(),
-				additionalMoxyReflectorPackages);
+				viewInterfaceProcessor.getUsedStrategies(),
+				additionalMoxyReflectorPackages
+		);
 
 		createSourceFile(moxyReflector);
 

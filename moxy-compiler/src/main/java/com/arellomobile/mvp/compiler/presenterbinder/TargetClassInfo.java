@@ -4,12 +4,14 @@ import com.squareup.javapoet.ClassName;
 
 import java.util.List;
 
+import javax.lang.model.element.TypeElement;
+
 class TargetClassInfo {
 	private final ClassName name;
 	private final List<TargetPresenterField> fields;
 
-	TargetClassInfo(ClassName name, List<TargetPresenterField> fields) {
-		this.name = name;
+	TargetClassInfo(TypeElement name, List<TargetPresenterField> fields) {
+		this.name = ClassName.get(name);
 		this.fields = fields;
 	}
 

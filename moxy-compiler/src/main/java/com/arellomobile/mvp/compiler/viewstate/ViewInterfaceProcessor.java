@@ -5,8 +5,7 @@ import com.arellomobile.mvp.compiler.MvpCompiler;
 import com.arellomobile.mvp.compiler.Util;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.TypeVariableName;
+import com.squareup.javapoet.ParameterSpec;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,17 +37,16 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 	private static final String STATE_STRATEGY_TYPE_ANNOTATION = StateStrategyType.class.getName();
 	private static final TypeElement DEFAULT_STATE_STRATEGY = MvpCompiler.getElementUtils().getTypeElement(AddToEndStrategy.class.getCanonicalName());
 
-	private String mViewClassName;
-	private Set<TypeElement> mStrategyClasses = new HashSet<>();
+	private String viewClassName;
+	private Set<TypeElement> usedStrategies = new HashSet<>();
 
-	public List<TypeElement> getStrategyClasses() {
-		return new ArrayList<>(mStrategyClasses);
+	public List<TypeElement> getUsedStrategies() {
+		return new ArrayList<>(usedStrategies);
 	}
 
 	@Override
 	public ViewInterfaceInfo process(TypeElement element) {
-		ClassName viewName = ClassName.get(element);
-		mViewClassName = viewName.toString();
+		viewClassName = element.getSimpleName().toString();
 
 		List<ViewMethod> methods = new ArrayList<>();
 
@@ -75,19 +73,16 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 			methodsCounter.put(method.getName(), counter);
 		}
 
-		List<TypeVariableName> typeVariables = element.getTypeParameters().stream()
-				.map(TypeVariableName::get)
-				.collect(Collectors.toList());
-
-		return new ViewInterfaceInfo(viewName, typeVariables, methods);
+		return new ViewInterfaceInfo(element, methods);
 	}
 
 
-	private List<ViewMethod> getMethods(TypeElement typeElement,
-	                                    TypeElement defaultStrategy,
-	                                    List<ViewMethod> rootMethods,
-	                                    List<ViewMethod> superinterfacesMethods) {
+	private void getMethods(TypeElement typeElement,
+	                        TypeElement defaultStrategy,
+	                        List<ViewMethod> rootMethods,
+	                        List<ViewMethod> superinterfacesMethods) {
 		for (Element element : typeElement.getEnclosedElements()) {
+			// ignore all but non-static methods
 			if (element.getKind() != ElementKind.METHOD || element.getModifiers().contains(Modifier.STATIC)) {
 				continue;
 			}
@@ -95,13 +90,21 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 			final ExecutableElement methodElement = (ExecutableElement) element;
 
 			if (methodElement.getReturnType().getKind() != TypeKind.VOID) {
-				MvpCompiler.getMessager().printMessage(Diagnostic.Kind.ERROR, "You are trying generate ViewState for " + typeElement.getSimpleName() + ". But " + typeElement.getSimpleName() + " contains non-void method \"" + methodElement.getSimpleName() + "\" that return type is " + methodElement.getReturnType() + ". See more here: https://github.com/Arello-Mobile/Moxy/issues/2");
+				String message = String.format("You are trying generate ViewState for %s. " +
+								"But %s contains non-void method \"%s\" that return type is %s. " +
+								"See more here: https://github.com/Arello-Mobile/Moxy/issues/2",
+						typeElement.getSimpleName(),
+						typeElement.getSimpleName(),
+						methodElement.getSimpleName(),
+						methodElement.getReturnType()
+				);
+				MvpCompiler.getMessager().printMessage(Diagnostic.Kind.ERROR, message);
 			}
 
 			AnnotationMirror annotation = Util.getAnnotation(methodElement, STATE_STRATEGY_TYPE_ANNOTATION);
 
+			// get strategy from annotation
 			TypeMirror strategyClassFromAnnotation = Util.getAnnotationValueAsTypeMirror(annotation, "value");
-			String tagFromAnnotation = Util.getAnnotationValueAsString(annotation, "tag");
 
 			TypeElement strategyClass;
 			if (strategyClassFromAnnotation != null) {
@@ -110,6 +113,9 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 				strategyClass = defaultStrategy != null ? defaultStrategy : DEFAULT_STATE_STRATEGY;
 			}
 
+			// get tag from annotation
+			String tagFromAnnotation = Util.getAnnotationValueAsString(annotation, "tag");
+
 			String methodTag;
 			if (tagFromAnnotation != null) {
 				methodTag = tagFromAnnotation;
@@ -117,7 +123,8 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 				methodTag = methodElement.getSimpleName().toString();
 			}
 
-			mStrategyClasses.add(strategyClass);
+			// add strategy to list
+			usedStrategies.add(strategyClass);
 
 			final ViewMethod method = new ViewMethod(methodElement, strategyClass, methodTag);
 
@@ -126,30 +133,36 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 			}
 
 			if (superinterfacesMethods.contains(method)) {
-				final ViewMethod existingMethod = superinterfacesMethods.get(superinterfacesMethods.indexOf(method));
-
-				if (!existingMethod.getStrategy().equals(method.getStrategy())) {
-					throw new IllegalStateException("Both " + existingMethod.getEnclosedClassName() +
-							" and " + method.getEnclosedClassName() +
-							" has method " + method.getName() + "(" + method.getParameterSpecs().toString().substring(1, method.getParameterSpecs().toString().length() - 1) + ")" +
-							" with difference strategies." +
-							" Override this method in " + mViewClassName + " or make strategies equals");
-				}
-				if (!existingMethod.getTag().equals(method.getTag())) {
-					throw new IllegalStateException("Both " + existingMethod.getEnclosedClassName() +
-							" and " + method.getEnclosedClassName() +
-							" has method " + method.getName() + "(" + method.getParameterSpecs().toString().substring(1, method.getParameterSpecs().toString().length() - 1) + ")" +
-							" with difference tags." +
-							" Override this method in " + mViewClassName + " or make tags equals");
-				}
-
+				checkStrategyAndTagEquals(method, superinterfacesMethods.get(superinterfacesMethods.indexOf(method)));
 				continue;
 			}
 
 			superinterfacesMethods.add(method);
 		}
+	}
 
-		return superinterfacesMethods;
+	private void checkStrategyAndTagEquals(ViewMethod method, ViewMethod existingMethod) {
+		List<String> differentParts = new ArrayList<>();
+		if (!existingMethod.getStrategy().equals(method.getStrategy())) {
+			differentParts.add("strategies");
+		}
+		if (!existingMethod.getTag().equals(method.getTag())) {
+			differentParts.add("tags");
+		}
+
+		if (!differentParts.isEmpty()) {
+			String arguments = method.getParameterSpecs().stream()
+					.map(ParameterSpec::toString)
+					.collect(Collectors.joining(", "));
+
+			String parts = differentParts.stream().collect(Collectors.joining(" and "));
+
+			throw new IllegalStateException("Both " + existingMethod.getEnclosedClassName() +
+					" and " + method.getEnclosedClassName() +
+					" has method " + method.getName() + "(" + arguments + ")" +
+					" with different " + parts + "." +
+					" Override this method in " + viewClassName + " or make " + parts + " equals");
+		}
 	}
 
 	private List<ViewMethod> iterateInterfaces(int level,
