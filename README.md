@@ -102,9 +102,6 @@ dependencies {
   ...
   kapt 'com.arello-mobile:moxy-compiler:1.5.3'
 }
-kapt {
-    generateStubs = true
-}
 ```
 
 ## ProGuard
