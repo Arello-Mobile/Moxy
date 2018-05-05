@@ -96,14 +96,11 @@ dependencies {
 }
 ```
 ### Kotlin
-If you are using kotlin, use `kapt` instead of `provided`/`apt` dependency type and set `generateStubs` property of `kapt` to `true`:
+If you are using kotlin, use `kapt` instead of `provided`/`apt` dependency type:
 ```groovy
 dependencies {
   ...
   kapt 'com.arello-mobile:moxy-compiler:1.5.3'
-}
-kapt {
-    generateStubs = true
 }
 ```
 
