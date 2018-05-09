@@ -3,11 +3,18 @@ package com.arellomobile.mvp.compiler;
 import com.arellomobile.mvp.GenerateViewState;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.RegisterMoxyReflectorPackages;
+import com.arellomobile.mvp.compiler.presenterbinder.InjectPresenterProcessor;
+import com.arellomobile.mvp.compiler.presenterbinder.PresenterBinderClassGenerator;
+import com.arellomobile.mvp.compiler.reflector.MoxyReflectorGenerator;
+import com.arellomobile.mvp.compiler.viewstate.ViewInterfaceProcessor;
+import com.arellomobile.mvp.compiler.viewstate.ViewStateClassGenerator;
+import com.arellomobile.mvp.compiler.viewstateprovider.InjectViewStateProcessor;
+import com.arellomobile.mvp.compiler.viewstateprovider.ViewStateProviderClassGenerator;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.google.auto.service.AutoService;
+import com.squareup.javapoet.JavaFile;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +36,6 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
-import javax.tools.JavaFileObject;
 
 import static javax.lang.model.SourceVersion.latestSupported;
 
@@ -43,6 +49,10 @@ import static javax.lang.model.SourceVersion.latestSupported;
 @SuppressWarnings("unused")
 @AutoService(Processor.class)
 public class MvpCompiler extends AbstractProcessor {
+	public static final String MOXY_REFLECTOR_DEFAULT_PACKAGE = "com.arellomobile.mvp";
+
+	private static final String OPTION_MOXY_REFLECTOR_PACKAGE = "moxyReflectorPackage";
+
 	private static Messager sMessager;
 	private static Types sTypeUtils;
 	private static Elements sElementUtils;
@@ -71,6 +81,11 @@ public class MvpCompiler extends AbstractProcessor {
 	}
 
 	@Override
+	public Set<String> getSupportedOptions() {
+		return Collections.singleton(OPTION_MOXY_REFLECTOR_PACKAGE);
+	}
+
+	@Override
 	public Set<String> getSupportedAnnotationTypes() {
 		Set<String> supportedAnnotationTypes = new HashSet<>();
 		Collections.addAll(supportedAnnotationTypes,
@@ -95,7 +110,7 @@ public class MvpCompiler extends AbstractProcessor {
 		try {
 			return throwableProcess(roundEnv);
 		} catch (RuntimeException e) {
-			getMessager().printMessage(Diagnostic.Kind.OTHER, "Moxy compilation failed. Could you copy stack trace above and write us (or make issue on Githhub)?");
+			getMessager().printMessage(Diagnostic.Kind.OTHER, "Moxy compilation failed. Could you copy stack trace above and write us (or make issue on Github)?");
 			e.printStackTrace();
 			getMessager().printMessage(Diagnostic.Kind.ERROR, "Moxy compilation failed; see the compiler error output for details (" + e + ")");
 		}
@@ -106,38 +121,42 @@ public class MvpCompiler extends AbstractProcessor {
 	private boolean throwableProcess(RoundEnvironment roundEnv) {
 		checkInjectors(roundEnv, InjectPresenter.class, new PresenterInjectorRules(ElementKind.FIELD, Modifier.PUBLIC, Modifier.DEFAULT));
 
+		InjectViewStateProcessor injectViewStateProcessor = new InjectViewStateProcessor();
 		ViewStateProviderClassGenerator viewStateProviderClassGenerator = new ViewStateProviderClassGenerator();
+
+		InjectPresenterProcessor injectPresenterProcessor = new InjectPresenterProcessor();
 		PresenterBinderClassGenerator presenterBinderClassGenerator = new PresenterBinderClassGenerator();
-		processInjectors(roundEnv, InjectViewState.class, ElementKind.CLASS, viewStateProviderClassGenerator);
-		processInjectors(roundEnv, InjectPresenter.class, ElementKind.FIELD, presenterBinderClassGenerator);
 
+		ViewInterfaceProcessor viewInterfaceProcessor = new ViewInterfaceProcessor();
 		ViewStateClassGenerator viewStateClassGenerator = new ViewStateClassGenerator();
-		Set<TypeElement> usedViews = viewStateProviderClassGenerator.getUsedViews();
 
-		for (TypeElement usedView : usedViews) {
-			generateCode(ElementKind.INTERFACE, viewStateClassGenerator, usedView);
+		processInjectors(roundEnv, InjectViewState.class, ElementKind.CLASS,
+				injectViewStateProcessor, viewStateProviderClassGenerator);
+		processInjectors(roundEnv, InjectPresenter.class, ElementKind.FIELD,
+				injectPresenterProcessor, presenterBinderClassGenerator);
+
+		for (TypeElement usedView : injectViewStateProcessor.getUsedViews()) {
+			generateCode(usedView, ElementKind.INTERFACE,
+					viewInterfaceProcessor, viewStateClassGenerator);
 		}
 
-		String moxyReflectorPackage = sOptions.get("moxyReflectorPackage");
+		String moxyReflectorPackage = sOptions.get(OPTION_MOXY_REFLECTOR_PACKAGE);
 
 		if (moxyReflectorPackage == null) {
-			moxyReflectorPackage = "com.arellomobile.mvp";
+			moxyReflectorPackage = MOXY_REFLECTOR_DEFAULT_PACKAGE;
 		}
 
 		List<String> additionalMoxyReflectorPackages = getAdditionalMoxyReflectorPackages(roundEnv);
 
-		String moxyReflector = MoxyReflectorGenerator.generate(
+		JavaFile moxyReflector = MoxyReflectorGenerator.generate(
 				moxyReflectorPackage,
-				viewStateProviderClassGenerator.getPresenterClassNames(),
-				presenterBinderClassGenerator.getPresentersContainers(),
-				viewStateClassGenerator.getStrategyClasses(),
-				additionalMoxyReflectorPackages);
+				injectViewStateProcessor.getPresenterClassNames(),
+				injectPresenterProcessor.getPresentersContainers(),
+				viewInterfaceProcessor.getUsedStrategies(),
+				additionalMoxyReflectorPackages
+		);
 
-		ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
-		classGeneratingParams.setName(moxyReflectorPackage + ".MoxyReflector");
-		classGeneratingParams.setBody(moxyReflector);
-
-		createSourceFile(classGeneratingParams);
+		createSourceFile(moxyReflector);
 
 		return true;
 	}
@@ -170,43 +189,42 @@ public class MvpCompiler extends AbstractProcessor {
 		}
 	}
 
-	private void processInjectors(final RoundEnvironment roundEnv, Class<? extends Annotation> clazz, ElementKind kind, ClassGenerator classGenerator) {
-		for (Element annotatedElements : roundEnv.getElementsAnnotatedWith(clazz)) {
-			if (annotatedElements.getKind() != kind) {
-				getMessager().printMessage(Diagnostic.Kind.ERROR, annotatedElements + " must be " + kind.name() + ", or not mark it as @" + clazz.getSimpleName());
+	private <E extends Element, R> void processInjectors(RoundEnvironment roundEnv,
+	                                                     Class<? extends Annotation> clazz,
+	                                                     ElementKind kind,
+	                                                     ElementProcessor<E, R> processor,
+	                                                     JavaFilesGenerator<R> classGenerator) {
+		for (Element element : roundEnv.getElementsAnnotatedWith(clazz)) {
+			if (element.getKind() != kind) {
+				getMessager().printMessage(Diagnostic.Kind.ERROR,
+						element + " must be " + kind.name() + ", or not mark it as @" + clazz.getSimpleName());
 			}
 
-			generateCode(kind, classGenerator, annotatedElements);
+			generateCode(element, kind, processor, classGenerator);
 		}
 	}
 
-	private void generateCode(ElementKind kind, ClassGenerator classGenerator, Element element) {
+	private <E extends Element, R> void generateCode(Element element,
+	                                                 ElementKind kind,
+	                                                 ElementProcessor<E, R> processor,
+	                                                 JavaFilesGenerator<R> classGenerator) {
 		if (element.getKind() != kind) {
 			getMessager().printMessage(Diagnostic.Kind.ERROR, element + " must be " + kind.name());
 		}
 
-		List<ClassGeneratingParams> classGeneratingParamsList = new ArrayList<>();
-
 		//noinspection unchecked
-		final boolean generated = classGenerator.generate(element, classGeneratingParamsList);
+		R result = processor.process((E) element);
 
-		if (!generated) {
-			return;
-		}
+		if (result == null) return;
 
-		for (ClassGeneratingParams classGeneratingParams : classGeneratingParamsList) {
-			createSourceFile(classGeneratingParams);
+		for (JavaFile file : classGenerator.generate(result)) {
+			createSourceFile(file);
 		}
 	}
 
-	private void createSourceFile(ClassGeneratingParams classGeneratingParams) {
+	private void createSourceFile(JavaFile file) {
 		try {
-			JavaFileObject f = processingEnv.getFiler().createSourceFile(classGeneratingParams.getName());
-
-			Writer w = f.openWriter();
-			w.write(classGeneratingParams.getBody());
-			w.flush();
-			w.close();
+			file.writeTo(processingEnv.getFiler());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

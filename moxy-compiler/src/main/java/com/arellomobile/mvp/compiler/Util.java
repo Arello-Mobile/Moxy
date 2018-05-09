@@ -17,17 +17,22 @@
 package com.arellomobile.mvp.compiler;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.TypeParameterElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.IntersectionType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
 import javax.lang.model.type.WildcardType;
-import javax.tools.Diagnostic;
 
 /**
  * Utilities for handling types in annotation processors
@@ -35,7 +40,7 @@ import javax.tools.Diagnostic;
  * @author Yuri Shmakov
  */
 @SuppressWarnings("WeakerAccess")
-final class Util {
+public final class Util {
 	public static String fillGenerics(Map<String, String> types, TypeMirror param) {
 		return fillGenerics(types, Collections.singletonList(param));
 	}
@@ -114,80 +119,75 @@ final class Util {
 		return packageName + className.replaceAll("\\.", "\\$");
 	}
 
-	/**
-	 * Returns string representation of type parameters
-	 * For example, A<T, N extends Number> -> "<T, N extends Number>"
-	 * @param typeElement
-	 * @return
-	 */
-	public static String getClassGenerics(TypeElement typeElement) {
-		String generic = "";
-
-		if (!typeElement.getTypeParameters().isEmpty()) {
-			generic = "<";
-			boolean isFirstType = true;
-
-			for (TypeParameterElement typeParameterElement : typeElement.getTypeParameters()) {
-				if (!isFirstType) {
-					generic += ", ";
-				}
-				isFirstType = false;
-
-				generic += typeParameterElement;
-
-				List<? extends TypeMirror> bounds = typeParameterElement.getBounds();
-				if (!bounds.isEmpty()) {
-					if (bounds.size() == 1 && bounds.get(0).toString().equals(Object.class.getCanonicalName())) {
-						continue;
-					}
-
-					generic += " extends " + join(" & ", bounds);
-				}
-			}
-
-			generic += ">";
+	public static AnnotationMirror getAnnotation(Element element, String annotationClass) {
+		for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {
+			if (annotationMirror.getAnnotationType().asElement().toString().equals(annotationClass))
+				return annotationMirror;
 		}
 
-		return generic;
+		return null;
 	}
 
-	/**
-	 * Returns a string containing the tokens joined by delimiters.
-	 *
-	 * @param tokens an array objects to be joined. Strings will be formed from
-	 *               the objects by calling object.toString().
-	 */
-	public static String join(CharSequence delimiter, Object[] tokens) {
-		StringBuilder sb = new StringBuilder();
-		boolean firstTime = true;
-		for (Object token : tokens) {
-			if (firstTime) {
-				firstTime = false;
-			} else {
-				sb.append(delimiter);
-			}
-			sb.append(token);
+	public static TypeMirror getAnnotationValueAsTypeMirror(AnnotationMirror annotationMirror, String key) {
+		AnnotationValue av = getAnnotationValue(annotationMirror, key);
+
+		if (av != null) {
+			return (TypeMirror) av.getValue();
+		} else {
+			return null;
 		}
-		return sb.toString();
 	}
 
-	/**
-	 * Returns a string containing the tokens joined by delimiters.
-	 *
-	 * @param tokens an array objects to be joined. Strings will be formed from
-	 *               the objects by calling object.toString().
-	 */
-	public static String join(CharSequence delimiter, Iterable tokens) {
-		StringBuilder sb = new StringBuilder();
-		boolean firstTime = true;
-		for (Object token : tokens) {
-			if (firstTime) {
-				firstTime = false;
-			} else {
-				sb.append(delimiter);
-			}
-			sb.append(token);
+	public static String getAnnotationValueAsString(AnnotationMirror annotationMirror, String key) {
+		AnnotationValue av = getAnnotationValue(annotationMirror, key);
+
+		if (av != null) {
+			return av.getValue().toString();
+		} else {
+			return null;
 		}
-		return sb.toString();
+	}
+
+	public static AnnotationValue getAnnotationValue(AnnotationMirror annotationMirror, String key) {
+		if (annotationMirror == null) return null;
+
+		for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : annotationMirror.getElementValues().entrySet()) {
+			if (entry.getKey().getSimpleName().toString().equals(key)) {
+				return entry.getValue();
+			}
+		}
+
+		return null;
+	}
+
+	public static Map<String, AnnotationValue> getAnnotationValues(AnnotationMirror annotationMirror) {
+		if (annotationMirror == null) return Collections.emptyMap();
+
+		Map<String, AnnotationValue> result = new HashMap<>();
+
+		for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : annotationMirror.getElementValues().entrySet()) {
+			String key = entry.getKey().getSimpleName().toString();
+			if (entry.getValue() != null) {
+				result.put(key, entry.getValue());
+			}
+		}
+
+		return result;
+	}
+
+	public static boolean hasEmptyConstructor(TypeElement element) {
+		for (Element enclosedElement : element.getEnclosedElements()) {
+			if (enclosedElement.getKind() == ElementKind.CONSTRUCTOR) {
+				List<? extends VariableElement> parameters = ((ExecutableElement) enclosedElement).getParameters();
+				if (parameters == null || parameters.isEmpty()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public static String decapitalizeString(String string) {
+		return string == null || string.isEmpty() ? "" : string.length() == 1 ? string.toLowerCase() : Character.toLowerCase(string.charAt(0)) + string.substring(1);
 	}
 }
