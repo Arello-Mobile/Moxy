@@ -15,7 +15,7 @@ import static com.google.testing.compile.CompilationSubject.assertThat;
  * @author Evgeny Kursakov
  */
 @RunWith(Parameterized.class)
-public class PresentersBinderClassTest extends CompilerTest {
+public class PresentersBinderTest extends CompilerTest {
 
 	@Parameterized.Parameter
 	public String targetClassName;
@@ -25,6 +25,7 @@ public class PresentersBinderClassTest extends CompilerTest {
 		return new String[]{
 				"target.SimpleInjectPresenterTarget",
 				"target.SimpleProvidePresenterTarget",
+				// "target.GenericPresenterTarget", // failing, see issue #166
 		};
 	}
 

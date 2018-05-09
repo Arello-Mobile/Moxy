@@ -10,13 +10,13 @@ import org.junit.runners.Parameterized;
 import javax.tools.JavaFileObject;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
-import static com.google.testing.compile.JavaFileObjects.forSourceString;
+import static com.google.testing.compile.JavaFileObjects.forSourceLines;
 
 /**
  * @author Evgeny Kursakov
  */
 @RunWith(Parameterized.class)
-public class ViewStateClassTest extends CompilerTest {
+public class ViewStateTest extends CompilerTest {
 
 	@Parameterized.Parameter
 	public String viewClassName;
@@ -29,6 +29,10 @@ public class ViewStateClassTest extends CompilerTest {
 				"view.OverloadingView",
 				"view.StrategiesView",
 				"view.GenericView",
+				"view.GenericWithExtendsView",
+				"view.GenericMethodsView",
+				"view.strategies_inheritance.ChildView",
+				"view.strategies_inheritance.ParentView",
 		};
 	}
 
@@ -45,11 +49,12 @@ public class ViewStateClassTest extends CompilerTest {
 	}
 
 	private JavaFileObject createDummyPresenter(String viewClass) {
-		return forSourceString("presenter.DummyPresenter", "" +
-				"package presenter;\n" +
-				"import com.arellomobile.mvp.InjectViewState;\n" +
-				"import com.arellomobile.mvp.MvpPresenter;\n" +
-				"@InjectViewState\n" +
-				"public class DummyPresenter extends MvpPresenter<" + viewClass + "> {}");
+		return forSourceLines("presenter.DummyPresenter",
+				"package presenter;",
+				"import com.arellomobile.mvp.InjectViewState;",
+				"import com.arellomobile.mvp.MvpPresenter;",
+				"@InjectViewState",
+				"public class DummyPresenter extends MvpPresenter<" + viewClass + "> {}"
+		);
 	}
 }

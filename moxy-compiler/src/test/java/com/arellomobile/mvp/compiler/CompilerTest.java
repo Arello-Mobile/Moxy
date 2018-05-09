@@ -25,6 +25,7 @@ import static com.google.testing.compile.Compiler.javac;
  * @author Evgeny Kursakov
  */
 public abstract class CompilerTest {
+
 	protected Compilation compileSources(JavaFileObject... sources) {
 		return javac()
 				.withOptions("-implicit:none") // don't process or generate classes for implicitly found sources
@@ -38,6 +39,10 @@ public abstract class CompilerTest {
 				.compile(sources);
 	}
 
+	/**
+	 * Asserts that all files from {@code exceptedGeneratedFiles} exists in {@code actualGeneratedFiles}
+	 * and have equivalent bytecode
+	 */
 	protected void assertExceptedFilesGenerated(List<JavaFileObject> actualGeneratedFiles, List<JavaFileObject> exceptedGeneratedFiles) throws Exception {
 		for (JavaFileObject exceptedClass : exceptedGeneratedFiles) {
 			final String fileName = exceptedClass.getName();
@@ -66,6 +71,9 @@ public abstract class CompilerTest {
 		}
 	}
 
+	/**
+	 * Find .java file in resources by full qualified class name
+	 */
 	protected JavaFileObject getSourceFile(String className) {
 		return JavaFileObjects.forResource(className.replace('.', '/') + ".java");
 	}
@@ -79,6 +87,7 @@ public abstract class CompilerTest {
 	}
 
 	private JavaFileObject findSourceForClass(List<JavaFileObject> outputFiles, String classFileName) {
+		// TODO: more effective algorithm ;)
 		String sourceFile = classFileName
 				.replace(StandardLocation.CLASS_OUTPUT.getName(), StandardLocation.SOURCE_OUTPUT.getName())
 				.replace(".class", "");
