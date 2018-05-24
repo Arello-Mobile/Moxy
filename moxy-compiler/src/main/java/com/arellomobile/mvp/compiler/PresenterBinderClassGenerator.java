@@ -1,27 +1,32 @@
 package com.arellomobile.mvp.compiler;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.arellomobile.mvp.MvpProcessor;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenterTag;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.ElementKindVisitor6;
+import javax.tools.Diagnostic;
+
+import static com.arellomobile.mvp.compiler.Util.fillGenerics;
 
 /**
  * 18.12.2015
@@ -104,6 +109,8 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 
 		bindProvidersToFields(fields, presenterProviders);
 
+		checkAllFieldsWithoutDefaultConstructorsHasBoundedProviders(fields);
+
 		bindTagProvidersToFields(fields, tagProviders);
 
 		for (Field field : fields) {
@@ -120,6 +127,56 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		return true;
 	}
 
+	private void checkAllFieldsWithoutDefaultConstructorsHasBoundedProviders(final List<Field> fields)
+	{
+		for (Field field : fields){
+			if(!field.hasPresenterProviderMethod()){
+				TypeElement valueElement = (TypeElement) MvpCompiler.getTypeUtils().asElement( field.getClazz() );
+
+				if(!hasPublicDefaultConstructor(valueElement)){
+					MvpCompiler.getMessager().printMessage(Diagnostic.Kind.ERROR, "Unable to provide class instance via @InjectPresenter. Add default " +
+							"constructor or instance providing with @ProvidePresenter annotation", field.getElement());
+				}
+			}
+		}
+	}
+
+	/**
+	 * Checks that the given {@code TypeElement} has a public
+	 * default constructor.
+	 *
+	 * @param element The {@code TypeElement} to check.
+	 *
+	 * @return True if the given {@code TypeElement} has a public default constructor, false otherwise
+	 */
+	private boolean hasPublicDefaultConstructor(TypeElement element) {
+		return element.accept(
+				new ElementKindVisitor6<Boolean, Void>( Boolean.FALSE ) {
+
+					@Override
+					public Boolean visitTypeAsClass(TypeElement typeElement, Void aVoid) {
+						List<? extends Element> enclosedElements = typeElement.getEnclosedElements();
+						for ( Element enclosedElement : enclosedElements ) {
+							if ( enclosedElement.accept( this, aVoid ) ) {
+								return Boolean.TRUE;
+							}
+						}
+						return Boolean.FALSE;
+					}
+
+					@Override
+					public Boolean visitExecutableAsConstructor(ExecutableElement constructorElement, Void aVoid) {
+						if ( constructorElement.getModifiers().contains( Modifier.PUBLIC )
+								&& constructorElement.getParameters().isEmpty() ) {
+
+							return Boolean.TRUE;
+						}
+						return Boolean.FALSE;
+					}
+
+				}, null
+		);
+	}
 	private void bindProvidersToFields(List<Field> fields, List<PresenterProvider> presenterProviders) {
 		if (fields.isEmpty() || presenterProviders.isEmpty()) {
 			return;
@@ -129,7 +186,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 			TypeMirror providerTypeMirror = presenterProvider.mClazz.asElement().asType();
 
 			for (Field field : fields) {
-				if ((field.mClazz).equals(providerTypeMirror)) {
+				if (classExtendsOrImplements(field.mClazz,providerTypeMirror)) {
 					if (field.mType != presenterProvider.mType) {
 						continue;
 					}
@@ -151,7 +208,6 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 					field.setPresenterProviderMethodName(presenterProvider.mName);
 				}
 			}
-
 		}
 	}
 
@@ -162,7 +218,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		for (TagProvider tagProvider : tagProviders) {
 			TypeMirror providerTypeMirror = tagProvider.mPresenterClass.asElement().asType();
 			for (Field field : fields) {
-				if ((field.mClazz).equals(providerTypeMirror)) {
+				if (classExtendsOrImplements(field.mClazz,providerTypeMirror)) {
 					if (field.mType != tagProvider.mType) {
 						continue;
 					}
@@ -177,8 +233,33 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 					field.setPresenterTagProviderMethodName(tagProvider.mMethodName);
 				}
 			}
+		}
+	}
+
+	private boolean classExtendsOrImplements(TypeMirror injectorTypeMirror, TypeMirror provideTypeMirror){
+
+		TypeMirror providerSuperclass = MvpCompiler.getTypeUtils().asElement( provideTypeMirror ).asType();
+
+		final List<? extends TypeMirror> interfaces = ((TypeElement) ((DeclaredType) providerSuperclass).asElement()).getInterfaces();
+
+		for (TypeMirror typeMirror: interfaces){
+			if(injectorTypeMirror.equals(typeMirror)) {
+				return true;
+			}
+		}
+
+		while (providerSuperclass.getKind() != TypeKind.NONE)
+		{
+
+			if (provideTypeMirror.equals(injectorTypeMirror))
+				return true;
+
+			TypeElement superclassElement = (TypeElement) ((DeclaredType) providerSuperclass).asElement();
+
+			providerSuperclass = superclassElement.getSuperclass();
 
 		}
+		return false;
 	}
 
 	private List<Field> collectFields(TypeElement presentersContainer) {
@@ -216,7 +297,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 							presenterId = elementValues.get(executableElement).toString();
 						}
 					}
-					Field field = new Field(clazz, name, type, tag, presenterId);
+					Field field = new Field(element, clazz, name, type, tag, presenterId);
 					fields.add(field);
 					continue outer;
 				}
@@ -396,6 +477,7 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 	}
 
 	private static class Field {
+		private final Element mElement;
 		private final TypeMirror mClazz;
 		private final String mName;
 		private final PresenterType mType;
@@ -405,7 +487,8 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 		private String mPresenterProviderMethodName;
 		private String mPresenterTagProviderMethodName;
 
-		Field(final TypeMirror clazz, final String name, final String type, final String tag, String presenterId) {
+		Field(final Element element, final TypeMirror clazz, final String name, final String type, final String tag, String presenterId) {
+			mElement = element;
 			mClazz = clazz;
 			mName = name;
 			mTag = tag;
@@ -458,6 +541,15 @@ final class PresenterBinderClassGenerator extends ClassGenerator<VariableElement
 
 		public void setPresenterTagProviderMethodName(String presenterTagProviderMethodName) {
 			mPresenterTagProviderMethodName = presenterTagProviderMethodName;
+		}
+
+		public boolean hasPresenterProviderMethod(){
+			return mPresenterProviderMethodName!= null;
+		}
+
+		public Element getElement()
+		{
+			return mElement;
 		}
 
 		@Override

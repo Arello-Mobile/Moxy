@@ -68,6 +68,12 @@ public class PresenterInjectorRules extends AnnotationRule {
 		if (!(annotatedField.asType() instanceof DeclaredType)) {
 			return;
 		}
+		TypeElement valueElement = (TypeElement) MvpCompiler.getTypeUtils().asElement( annotatedField.asType() );
+
+		//no checks for interfaces
+		if ( valueElement.getKind().isInterface( ) ){
+			return;
+		}
 
 		TypeElement typeElement = (TypeElement) ((DeclaredType) annotatedField.asType()).asElement();
 		String viewClassFromGeneric = getViewClassFromGeneric(typeElement, (DeclaredType) annotatedField.asType());
@@ -126,7 +132,7 @@ public class PresenterInjectorRules extends AnnotationRule {
 				if (typeArguments.isEmpty() && typeParameters.isEmpty()) {
 					return ((DeclaredType) superclass).asElement().getSimpleName().toString();
 				}
-				// MvpPresenter is typed only on View class
+				// MvpPresenter is typed only on View class or without type and it is an interface
 				return fillGenerics(parentTypes, typeArguments);
 			}
 

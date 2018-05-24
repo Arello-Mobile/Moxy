@@ -12,7 +12,7 @@ import com.arellomobile.mvp.MvpPresenter;
  * @author Yuri Shmakov
  */
 @InjectViewState
-public class HomePresenter extends MvpPresenter<HomeView> {
+public class HomePresenter extends MvpPresenter<HomeView> implements IHomePresenter {
 	public void onRepositorySelection(int position, Repository repository) {
 		getViewState().showDetailsContainer();
 

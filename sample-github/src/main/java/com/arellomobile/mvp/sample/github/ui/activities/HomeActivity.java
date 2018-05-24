@@ -17,9 +17,11 @@ import android.widget.TextView;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.arellomobile.mvp.sample.github.R;
 import com.arellomobile.mvp.sample.github.mvp.models.Repository;
 import com.arellomobile.mvp.sample.github.mvp.presenters.HomePresenter;
+import com.arellomobile.mvp.sample.github.mvp.presenters.IHomePresenter;
 import com.arellomobile.mvp.sample.github.mvp.presenters.RepositoriesPresenter;
 import com.arellomobile.mvp.sample.github.mvp.presenters.SignOutPresenter;
 import com.arellomobile.mvp.sample.github.mvp.views.HomeView;
@@ -37,8 +39,14 @@ public class HomeActivity extends MvpAppCompatActivity implements SignOutView, R
 	SignOutPresenter mSignOutPresenter;
 	@InjectPresenter
 	RepositoriesPresenter mRepositoriesPresenter;
+
 	@InjectPresenter
-	HomePresenter mHomePresenter;
+	IHomePresenter mHomePresenter;
+
+	/*@ProvidePresenter
+	HomePresenter provideHomePresenter(){
+		return new HomePresenter();
+	}*/
 
 	@BindView(R.id.activity_home_toolbar)
 	Toolbar mToolbar;

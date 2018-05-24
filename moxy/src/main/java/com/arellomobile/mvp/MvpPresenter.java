@@ -15,14 +15,14 @@ import com.arellomobile.mvp.viewstate.MvpViewState;
  * @author Alexander Blinov
  * @author Konstantin Tckhovrebov
  */
-public abstract class MvpPresenter<View extends MvpView> {
+public abstract class MvpPresenter<View extends MvpView> implements IMvpPresenter {
 	private boolean mFirstLaunch = true;
 	private String mTag;
 	private PresenterType mPresenterType;
 	private Set<View> mViews;
 	private View mViewStateAsView;
 	private MvpViewState<View> mViewState;
-	private Class<? extends MvpPresenter<?>> mPresenterClass;
+	private Class<? extends IMvpPresenter> mPresenterClass;
 
 	public MvpPresenter() {
 		Binder.bind(this);
@@ -143,11 +143,11 @@ public abstract class MvpPresenter<View extends MvpView> {
 		mTag = tag;
 	}
 
-	void setPresenterClass(Class<? extends MvpPresenter<?>> presenterClass) {
+	void setPresenterClass(Class<? extends IMvpPresenter> presenterClass) {
 		mPresenterClass = presenterClass;
 	}
 
-	Class<? extends MvpPresenter<?>> getPresenterClass() {
+	Class<? extends IMvpPresenter> getPresenterClass() {
 		return mPresenterClass;
 	}
 
