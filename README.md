@@ -72,7 +72,7 @@ Templates located in [/moxy-templates](https://github.com/Arello-Mobile/Moxy/tre
 [FAQ](https://github.com/Arello-Mobile/Moxy/wiki/FAQ)
 
 ## Integration
-###  Version `1.5.4` unstable at the moment, use 1.5.3 instead
+###  Version `1.5.4` unstable at the moment, use `1.5.3` instead
 Base modules integration:
 ```groovy
 dependencies {
@@ -92,7 +92,7 @@ If you are planning to use AppCompat, then you can use `MvpAppCompatActivity` an
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy-app-compat:1.5.4'
+  compile 'com.arello-mobile:moxy-app-compat:1.5.3'
   compile 'com.android.support:appcompat-v7:$support_version'
 }
 ```
@@ -103,7 +103,7 @@ apply plugin: 'kotlin-kapt'
 
 dependencies {
   ...
-  kapt 'com.arello-mobile:moxy-compiler:1.5.4'
+  kapt 'com.arello-mobile:moxy-compiler:1.5.3'
 }
 ```
 
