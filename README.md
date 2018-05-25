@@ -72,19 +72,20 @@ Templates located in [/moxy-templates](https://github.com/Arello-Mobile/Moxy/tre
 [FAQ](https://github.com/Arello-Mobile/Moxy/wiki/FAQ)
 
 ## Integration
+###  Version `1.5.4` unstable at the moment, use 1.5.3 instead
 Base modules integration:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy:1.5.4'
-  annotationProcessor 'com.arello-mobile:moxy-compiler:1.5.4'
+  compile 'com.arello-mobile:moxy:1.5.3'
+  annotationProcessor 'com.arello-mobile:moxy-compiler:1.5.3'
 }
 ```
 For additional base view classes `MvpActivity` and `MvpFragment` add this:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy-android:1.5.4'
+  compile 'com.arello-mobile:moxy-android:1.5.3'
 }
 ```
 If you are planning to use AppCompat, then you can use `MvpAppCompatActivity` and `MvpAppCompatFragment`. Then add this:
