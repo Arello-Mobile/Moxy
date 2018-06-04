@@ -23,7 +23,6 @@ android {
     lintOptions {
         abortOnError false
     }
-
     compileOptions {
         targetCompatibility 1.8
         sourceCompatibility 1.8
@@ -32,8 +31,8 @@ android {
 
 def support = '27.1.1'
 def retrofit = '2.1.0'
-def dagger = '2.7'
-def butterKnife = "8.4.0"
+def dagger = '2.16'
+def butterKnife = "8.5.1"
 
 dependencies {
     testImplementation "junit:junit:4.12"
