@@ -44,9 +44,9 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'
 
-    implementation 'com.arello-mobile:moxy:1.5.4'
-    implementation 'com.arello-mobile:moxy-app-compat:1.5.4'
-    kapt 'com.arello-mobile:moxy-compiler:1.5.4'
+    implementation 'com.arello-mobile:moxy:1.5.5'
+    implementation 'com.arello-mobile:moxy-app-compat:1.5.5'
+    kapt 'com.arello-mobile:moxy-compiler:1.5.5'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
