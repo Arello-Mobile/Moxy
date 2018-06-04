@@ -7,8 +7,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0'
-        classpath 'me.tatarka:gradle-retrolambda:3.2.4'
+        classpath 'com.android.tools.build:gradle:3.1.2'
     }
 }
 
@@ -21,8 +20,8 @@ allprojects {
 }
 
 ext {
-    targetVersionCode = 44
-    targetVersionName = "1.5.4"
+    targetVersionCode = 45
+    targetVersionName = "1.5.5"
 
     deps = [
             android       : 'com.google.android:android:1.6_r2',

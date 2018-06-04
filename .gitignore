@@ -35,4 +35,7 @@ Android Studio modile config file
 captures/
 .idea/
 
+# Moxy artifacts
 VERSION
+artifacts/
+artifacts-maven/

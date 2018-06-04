@@ -31,7 +31,7 @@ task clearPublishDir(type: Delete) {
     delete publishDir
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
+task sourcesJar(type: Jar, dependsOn: jar) {
     classifier = 'sources'
     from sourceSets.main.allSource
 }
@@ -46,21 +46,23 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 task makeJar(type: Jar, dependsOn: classes) {
-    from('build/classes/main')
+    from('build/classes/java/main')
 }
 
 task prepareVersion() {
     def versionFile = new File(project.rootDir, versionFile)
     versionFile.write(targetVersionName)
 }
-task copyVersion << {
 
-    def versionFile = new File(project.rootDir, versionFile)
+task copyVersion {
+    doLast {
+        def versionFile = new File(project.rootDir, versionFile)
 
-    [publishDir, publishMavenDir].each { dest ->
-        copy {
-            from versionFile
-            into dest
+        [publishDir, publishMavenDir].each { dest ->
+            copy {
+                from versionFile
+                into dest
+            }
         }
     }
 }
@@ -122,95 +124,91 @@ def getBasePom() {
     }
 }
 
-task copyJars << {
+task copyJars {
+    doLast {
+        def buildDir = 'build/libs/'
+        copy {
+            from buildDir
+            into publishMavenDir
+        }
 
-    def buildDir = 'build/libs/'
-    copy {
-        from buildDir
-        into publishMavenDir
+        copy {
+            from(buildDir)
+                    {
+                        rename targetArtefactId + '(.*)', targetArtefactIdDev + '$1'
+                    }
+            into publishDir
+        }
     }
-
-    copy {
-        from(buildDir)
-                {
-                    rename targetArtefactId + '(.*)', targetArtefactIdDev + '$1'
-                }
-        into publishDir
-    }
-
 }
 
+task createPomXml {
+    doLast {
+        //creating local pom xml
+        getBasePom().withXml {
 
-
-
-task createPomXml << {
-
-    //creating local pom xml
-    getBasePom().withXml {
-
-        asNode().appendNode('build')
-                .appendNode('plugins')
-                .appendNode('plugin')
-                .with {
-            appendNode('groupId', 'org.apache.maven.plugins')
-            appendNode('artifactId', 'maven-gpg-plugin')
-            appendNode('version', '1.5')
-            appendNode('executions').with {
-                appendNode('execution').with {
-                    appendNode('id', 'sign-artifacts')
-                    appendNode('phase', 'verify')
-                    appendNode('goals').with {
-                        appendNode('goal', 'sign')
+            asNode().appendNode('build')
+                    .appendNode('plugins')
+                    .appendNode('plugin')
+                    .with {
+                appendNode('groupId', 'org.apache.maven.plugins')
+                appendNode('artifactId', 'maven-gpg-plugin')
+                appendNode('version', '1.5')
+                appendNode('executions').with {
+                    appendNode('execution').with {
+                        appendNode('id', 'sign-artifacts')
+                        appendNode('phase', 'verify')
+                        appendNode('goals').with {
+                            appendNode('goal', 'sign')
+                        }
                     }
                 }
+                appendNode('configuration')
+                        .appendNode('gpgArguments')
+                        .appendNode('arg', '--no-tty')
+
+
             }
-            appendNode('configuration')
-                    .appendNode('gpgArguments')
-                    .appendNode('arg', '--no-tty')
 
+            asNode().artifactId*.value = targetArtefactIdDev
 
-        }
+        }.writeTo(publishDir + "/" + targetArtefactIdDev + ".pom")
 
-        asNode().artifactId*.value = targetArtefactIdDev
+        // creating global poms xml
 
-    }.writeTo(publishDir + "/" + targetArtefactIdDev + ".pom")
+        getBasePom().withXml {
 
-    // creating global poms xml
-
-    getBasePom().withXml {
-
-        asNode().appendNode('build')
-                .appendNode('plugins')
-                .appendNode('plugin')
-                .with {
-            appendNode('groupId', 'org.sonatype.plugins')
-            appendNode('artifactId', 'nexus-staging-maven-plugin')
-            appendNode('version', '1.6.4')
-            appendNode('extensions', 'true')
-            appendNode('configuration').with {
-                appendNode('serverId', 'ossrh')
-                appendNode('nexusUrl', 'https://oss.sonatype.org/')
-                appendNode('autoReleaseAfterClose', 'false')
-            }
-        }
-        asNode().appendNode('distributionManagement').with {
-            appendNode('snapshotRepository')
+            asNode().appendNode('build')
+                    .appendNode('plugins')
+                    .appendNode('plugin')
                     .with {
-                appendNode('id', 'ossrh')
-                appendNode('url', 'https://oss.sonatype.org/content/repositories/snapshots')
+                appendNode('groupId', 'org.sonatype.plugins')
+                appendNode('artifactId', 'nexus-staging-maven-plugin')
+                appendNode('version', '1.6.4')
+                appendNode('extensions', 'true')
+                appendNode('configuration').with {
+                    appendNode('serverId', 'ossrh')
+                    appendNode('nexusUrl', 'https://oss.sonatype.org/')
+                    appendNode('autoReleaseAfterClose', 'false')
+                }
             }
-            appendNode('repository')
-                    .with {
-                appendNode('id', 'ossrh')
-                appendNode('url', 'https://oss.sonatype.org/service/local/staging/deploy/maven2/')
+            asNode().appendNode('distributionManagement').with {
+                appendNode('snapshotRepository')
+                        .with {
+                    appendNode('id', 'ossrh')
+                    appendNode('url', 'https://oss.sonatype.org/content/repositories/snapshots')
+                }
+                appendNode('repository')
+                        .with {
+                    appendNode('id', 'ossrh')
+                    appendNode('url', 'https://oss.sonatype.org/service/local/staging/deploy/maven2/')
+                }
             }
-        }
 
-    }.writeTo(publishMavenDir + "/pom.xml")
+        }.writeTo(publishMavenDir + "/pom.xml")
 
-    getBasePom()
-
-            .writeTo(publishMavenDir + "/" + targetArtefactId + ".pom")
+        getBasePom().writeTo(publishMavenDir + "/" + targetArtefactId + ".pom")
+    }
 }
 
 compileJava.dependsOn clearPublishDir
