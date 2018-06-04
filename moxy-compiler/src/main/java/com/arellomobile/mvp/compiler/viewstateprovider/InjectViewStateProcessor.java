@@ -1,4 +1,13 @@
-package com.arellomobile.mvp.compiler;
+package com.arellomobile.mvp.compiler.viewstateprovider;
+
+import com.arellomobile.mvp.DefaultView;
+import com.arellomobile.mvp.DefaultViewState;
+import com.arellomobile.mvp.InjectViewState;
+import com.arellomobile.mvp.MvpPresenter;
+import com.arellomobile.mvp.MvpProcessor;
+import com.arellomobile.mvp.compiler.ElementProcessor;
+import com.arellomobile.mvp.compiler.MvpCompiler;
+import com.arellomobile.mvp.compiler.Util;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,12 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.arellomobile.mvp.DefaultView;
-import com.arellomobile.mvp.DefaultViewState;
-import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.MvpPresenter;
-import com.arellomobile.mvp.MvpProcessor;
-
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.DeclaredType;
@@ -22,34 +25,29 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 
-
 import static com.arellomobile.mvp.compiler.Util.fillGenerics;
 
-/**
- * Date: 19-Jan-16
- * Time: 19:51
- *
- * @author Alexander Blinov
- */
-final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement> {
-	public static final String MVP_PRESENTER_CLASS = MvpPresenter.class.getCanonicalName();
+public class InjectViewStateProcessor extends ElementProcessor<TypeElement, PresenterInfo> {
+	private static final String MVP_PRESENTER_CLASS = MvpPresenter.class.getCanonicalName();
 
-	private Set<TypeElement> mUsedViews;
-	private List<String> mPresenterClassNames;
+	private final Set<TypeElement> usedViews = new HashSet<>();
+	private final List<TypeElement> presenterClassNames = new ArrayList<>();
 
-	public ViewStateProviderClassGenerator() {
-		mUsedViews = new HashSet<>();
-		mPresenterClassNames = new ArrayList<>();
+	public Set<TypeElement> getUsedViews() {
+		return usedViews;
+	}
+
+	public List<TypeElement> getPresenterClassNames() {
+		return presenterClassNames;
 	}
 
 	@Override
-	public boolean generate(TypeElement typeElement, List<ClassGeneratingParams> classGeneratingParamsList) {
-		String fullPresenterClassName = typeElement.toString();
+	public PresenterInfo process(TypeElement element) {
+		presenterClassNames.add(element);
+		return new PresenterInfo(element, getViewStateClassName(element));
+	}
 
-		mPresenterClassNames.add(fullPresenterClassName);
-
-		final String presenterClassName = fullPresenterClassName.substring(fullPresenterClassName.lastIndexOf(".") + 1);
-
+	private String getViewStateClassName(TypeElement typeElement) {
 		String viewState = getViewStateClassFromAnnotationParams(typeElement);
 		if (viewState == null) {
 			String view = getViewClassFromAnnotationParams(typeElement);
@@ -68,34 +66,16 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement> 
 					throw new IllegalArgumentException("View \"" + view + "\" for " + typeElement + " cannot be found");
 				}
 
-				mUsedViews.add(viewTypeElement);
+				usedViews.add(viewTypeElement);
 				viewState = Util.getFullClassName(viewTypeElement) + MvpProcessor.VIEW_STATE_SUFFIX;
 			}
 		}
 
-		String builder = "package " + fullPresenterClassName.substring(0, fullPresenterClassName.lastIndexOf(".")) + ";\n" +
-		                 "\n" +
-		                 "import com.arellomobile.mvp.ViewStateProvider;\n" +
-		                 "import com.arellomobile.mvp.MvpView;\n" +
-		                 "import com.arellomobile.mvp.viewstate.MvpViewState;\n" +
-		                 "\npublic class " + presenterClassName + MvpProcessor.VIEW_STATE_PROVIDER_SUFFIX + " extends ViewStateProvider {\n" +
-		                 "\t\n" +
-		                 "\t@Override\n" +
-		                 "\tpublic MvpViewState<? extends MvpView> getViewState() {\n";
-		if (viewState == null) {
-			builder += "\t\tthrow new RuntimeException(" + fullPresenterClassName + " should has view\");\n";
+		if (viewState != null) {
+			return viewState;
 		} else {
-			builder += "\t\treturn new " + viewState + "();\n";
+			return null;
 		}
-		builder += "\t}\n" +
-		           "}";
-
-		ClassGeneratingParams classGeneratingParams = new ClassGeneratingParams();
-		classGeneratingParams.setName(fullPresenterClassName + MvpProcessor.VIEW_STATE_PROVIDER_SUFFIX);
-		classGeneratingParams.setBody(builder);
-		classGeneratingParamsList.add(classGeneratingParams);
-
-		return true;
 	}
 
 	private String getViewClassFromAnnotationParams(TypeElement typeElement) {
@@ -176,13 +156,5 @@ final class ViewStateProviderClassGenerator extends ClassGenerator<TypeElement> 
 		}
 
 		return "";
-	}
-
-	public Set<TypeElement> getUsedViews() {
-		return mUsedViews;
-	}
-
-	public List<String> getPresenterClassNames() {
-		return mPresenterClassNames;
 	}
 }
