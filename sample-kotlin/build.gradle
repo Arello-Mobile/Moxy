@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.2.41'
+    ext.kotlin_version = '1.2.51'
     repositories {
         jcenter()
         mavenCentral()
@@ -41,11 +41,13 @@ android {
 }
 
 dependencies {
-    implementation 'com.android.support:appcompat-v7:26.1.0'
+    def supportVersion = '27.1.1'
+    implementation "com.android.support:appcompat-v7:$supportVersion"
 
-    implementation 'com.arello-mobile:moxy:1.5.5'
-    implementation 'com.arello-mobile:moxy-app-compat:1.5.5'
-    kapt 'com.arello-mobile:moxy-compiler:1.5.5'
+    implementation project(':moxy')
+    implementation project(':moxy-app-compat')
+
+    kapt project(':moxy-compiler')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
