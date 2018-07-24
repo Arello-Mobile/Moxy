@@ -1,4 +1,4 @@
-include ':moxy', ':stub-reflector', ':moxy-android', ':moxy-compiler', ':stub-android', ':moxy-app-compat', ':stub-appcompat'
+include ':moxy', ':stub-reflector', ':moxy-android', ':moxy-compiler', ':stub-android', ':moxy-app-compat', ':stub-appcompat', ':moxy-androidx-sapmle'
 include ':sample-github'
 include ':sample-kotlin'
 include ':sample-custom-strategy'
