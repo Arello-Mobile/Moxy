@@ -22,7 +22,7 @@ class LaunchFragment : MvpAppCompatFragment(), LaunchView {
 
     companion object {
 
-        val TAG = "LaunchFragment"
+        const val TAG = "LaunchFragment"
         private const val animationDuration: Long = 500
 
         private const val DEFAULT_COLOR = Color.TRANSPARENT
@@ -49,11 +49,11 @@ class LaunchFragment : MvpAppCompatFragment(), LaunchView {
         return LaunchPresenter()
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_launch, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        return inflater.inflate(R.layout.fragment_launch, container, false)!!
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
     }
