@@ -71,7 +71,7 @@ def getBasePom(String libName) {
             groupId targetGroupId
             artifactId targetArtefactId
             version targetVersionName
-            name 'Moxy-app-compat'
+            name 'Moxy-androidx'
             modelVersion = '4.0.0'
             description = 'Arello-Mobile MVP library for Android'
             url = 'https://www.arello-mobile.com/'
