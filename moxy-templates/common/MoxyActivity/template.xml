@@ -1,57 +1,59 @@
 <?xml version="1.0"?>
 <template
-    name="Moxy activity Kotlin"
-    description="MVP activity constructor"
     format="4"
-    minApi="9"
-    minBuildApi="14"
-    revision="1">
+    revision="1"
+    name="Moxy activity"
+    description="MVP activity constructor"
+    minApi="7"
+    minBuildApi="8">
 
-    <category value="Moxy"/>
+    <category value="Moxy" />
+
+    <dependency name="android-support-v4" revision="8" />
 
     <parameter
+        id="className"
         name="Activity Name"
+        type="string"
         constraints="class|nonempty|unique"
         default="BlankActivity"
-        help="The name of the activity class to create"
-        id="className"
-        type="string"/>
+        help="The name of the activity class to create" />
 
     <parameter
-        name="Use sub package?"
-        default="true"
-        help="Add generated classes to specified package"
         id="useSubPackage"
-        type="boolean"/>
-
+        name="Use sub package?"
+        type="boolean"
+        default="true"
+        help="Add generated classes to specified package" />
+        
     <parameter
-        name="Package name"
-        default="blank"
-        help="Package name"
         id="subPackage"
+        name="Package name"
         type="string"
-        visibility="useSubPackage"/>
+        default="blank"
+        visibility="useSubPackage"
+        help="Package name" />
 
     <parameter
-        name="Create layout XML?"
-        default="true"
-        help="Generate a layout XML for the activity"
         id="includeLayout"
-        type="boolean"/>
+        name="Create layout XML?"
+        type="boolean"
+        default="true"
+        help="Generate a layout XML for the activity" />
 
     <parameter
-        name="Create View?"
-        default="true"
-        help="Generate a view for the activity"
         id="includeView"
-        type="boolean"/>
+        name="Create View?"
+        type="boolean"
+        default="true"
+        help="Generate a view for the activity" />
 
     <parameter
-        name="Create Presenter?"
-        default="true"
-        help="Generate a presenter for the activity"
         id="includePresenter"
-        type="boolean"/>
+        name="Create Presenter?"
+        type="boolean"
+        default="true"
+        help="Generate a presenter for the activity" />
 
     <parameter
         id="createProvidesMethod"
@@ -73,47 +75,48 @@
     </parameter>
 
     <parameter
+        id="activityName"
         name="Activity Layout Name"
+        type="string"
         constraints="layout|nonempty|unique"
         default="activity_blank"
-        help="The name of the layout to create"
-        id="activityName"
+        visibility="includeLayout"
         suggest="activity_${classToResource(className)}"
-        type="string"
-        visibility="includeLayout"/>
+        help="The name of the layout to create" />
 
     <parameter
-        name="Include activity factory method?"
-        default="true"
-        help="Generate static activity factory method for easy instantiation"
         id="includeFactory"
-        type="boolean"/>
+        name="Include activity factory method?"
+        type="boolean"
+        default="true"
+        help="Generate static activity factory method for easy instantiation" />
 
     <parameter
+        id="viewName"
         name="View Name"
+        type="string"
         constraints="class|nonempty|unique"
         default="BlankView"
-        help="The name of the view interface to create"
-        id="viewName"
+        visibility="includeView"
         suggest="${underscoreToCamelCase(classToResource(className))}View"
-        type="string"
-        visibility="includeView"/>
+        help="The name of the view interface to create" />
 
     <parameter
+        id="presenterName"
         name="Presenter Name"
+        type="string"
         constraints="class|nonempty|unique"
         default="BlankPresenter"
-        help="The name of the presenter interface to create"
-        id="presenterName"
+        visibility="includePresenter"
         suggest="${underscoreToCamelCase(classToResource(className))}Presenter"
-        type="string"
-        visibility="includePresenter"/>
+        help="The name of the presenter interface to create" />
 
     <thumbs>
         <thumb>template_moxy_activity.png</thumb>
     </thumbs>
 
-    <globals file="globals.xml.ftl"/>
-    <execute file="recipe.xml.ftl"/>
+    <globals file="globals.xml.ftl" />
+
+    <execute file="recipe.xml.ftl" />
 
 </template>
