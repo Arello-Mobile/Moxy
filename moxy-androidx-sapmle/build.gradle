@@ -1,9 +1,9 @@
 buildscript {
     ext.kotlin_version = '1.2.51'
     repositories {
+        google()
         jcenter()
         mavenCentral()
-        google()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -16,39 +16,35 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     buildToolsVersion '27.0.3'
 
     defaultConfig {
-        applicationId "com.redmadrobot.sample_custom_strategy"
-        minSdkVersion 21
-        targetSdkVersion 27
+        applicationId "com.arellomobile.mvp.sample.androidx"
+        minSdkVersion 16
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
     }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-    }
 }
 
 dependencies {
-    def supportVersion = '27.1.1'
-    implementation "com.android.support:appcompat-v7:$supportVersion"
-    implementation "com.android.support:design:$supportVersion"
-
-    def moxyVersion = '1.5.5'
-    implementation "com.arello-mobile:moxy:$moxyVersion"
-    implementation "com.arello-mobile:moxy-app-compat:$moxyVersion"
-    kapt "com.arello-mobile:moxy-compiler:$moxyVersion"
-
+    implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
+    implementation project(':moxy')
+    implementation project(':moxy-androidx')
+    kapt project(':moxy-compiler')
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }

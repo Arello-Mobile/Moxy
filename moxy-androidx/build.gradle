@@ -1,0 +1,244 @@
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+apply plugin: 'maven'
+
+ext {
+    publishDir = 'artifacts'
+    publishMavenDir = 'artifacts-maven'
+    targetGroupId = 'com.arello-mobile'
+    targetArtefactId = 'moxy-androidx'
+    targetArtefactIdDev = 'moxy-androidx-dev'
+    versionFile = 'VERSION'
+}
+configurations {
+    javadocDeps
+}
+
+// This is important even if Android Studio claims it isn't
+// used. Android can't interpret Java 8 byte code.
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
+
+def logger = new com.android.build.gradle.internal.LoggerWrapper(project.logger)
+def sdkHandler = new com.android.build.gradle.internal.SdkHandler(project, logger)
+for (File file : sdkHandler.sdkLoader.repositories) {
+    project.repositories.maven {
+        url = file.toURI()
+    }
+}
+
+task clearPublishDir(type: Delete) {
+    delete publishDir
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task makeJavadocs(type: Javadoc) {
+    classpath += configurations.javadocDeps
+    source = sourceSets.main.allJava
+}
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task makeJar(type: Jar, dependsOn: classes) {
+    from('build/classes/java/main')
+}
+
+task copyVersion {
+    doLast {
+        def versionFile = new File(project.rootDir, versionFile)
+        versionFile.write(targetVersionName)
+
+        [publishDir, publishMavenDir].each { dest ->
+            copy {
+                from versionFile
+                into dest
+            }
+        }
+    }
+}
+
+def getBasePom(String libName) {
+
+    def basePom = pom {
+        //noinspection GroovyAssignabilityCheck
+        project {
+            groupId targetGroupId
+            artifactId targetArtefactId
+            version targetVersionName
+            name 'Moxy-androidx'
+            modelVersion = '4.0.0'
+            description = 'Arello-Mobile MVP library for Android'
+            url = 'https://www.arello-mobile.com/'
+            packaging = 'jar'
+
+            inceptionYear '2016'
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+
+            developers {
+                developer {
+                    name 'Blinov Alexander'
+                    email 'xanderblinov@gmail.com'
+                    organization = 'Arello Mobile'
+                    organizationUrl 'http://www.arello-mobile.com/'
+                }
+                developer {
+                    name 'Shmakov Yuri'
+                    email 'senneco@gmail.com'
+                    organization = 'Arello Mobile'
+                    organizationUrl 'http://www.arello-mobile.com/'
+                }
+            }
+
+            scm {
+                connection 'scm:git@github.com:Arello-Mobile/Moxy.git'
+                developerConnection 'scm:git@github.com:Arello-Mobile/Moxy.git'
+                url 'https://github.com/Arello-Mobile/Moxy'
+            }
+        }.withXml {
+            asNode().appendNode('packaging', 'jar')
+        }
+    }
+
+    return basePom.withXml {
+        asNode().dependencies.'*'.findAll {
+            it.artifactId.text().contains('moxy')
+        }.each {
+            it.groupId*.value = targetGroupId
+            it.version*.value = targetVersionName
+        }
+    }
+}
+
+task copyJars {
+    doLast {
+        def buildDir = 'build/libs/'
+        copy {
+            from buildDir
+            into publishMavenDir
+        }
+
+        copy {
+            from(buildDir)
+                    {
+                        rename targetArtefactId + '(.*)', targetArtefactIdDev + '$1'
+                    }
+            into publishDir
+        }
+    }
+}
+
+
+
+
+task createPomXml {
+    doLast {
+        // creating local pom
+
+        getBasePom('moxy-dev').withXml {
+            asNode().appendNode('build').appendNode('plugins').with {
+                appendNode('plugin').with {
+                    appendNode('groupId', 'org.apache.maven.plugins')
+                    appendNode('artifactId', 'maven-gpg-plugin')
+                    appendNode('version', '1.5')
+                    appendNode('executions').with {
+                        appendNode('execution').with {
+                            appendNode('id', 'sign-artifacts')
+                            appendNode('phase', 'verify')
+                            appendNode('goals').with {
+                                appendNode('goal', 'sign')
+                            }
+                        }
+                    }
+                    appendNode('configuration').appendNode('gpgArguments').appendNode('arg', '--no-tty')
+                }
+            }
+
+            asNode().artifactId*.value = targetArtefactIdDev
+
+            asNode().dependencies.'*'.findAll() {
+                it.version.text() == '4.0.+' && project.configurations.compile.allDependencies.find { dep ->
+                    dep.name == it.artifactId.text()
+                }
+            }.each() {
+                it.version*.value = '[4.0,)'
+            }
+
+
+        }.writeTo(publishDir + "/" + targetArtefactIdDev + ".pom")
+
+        //creating global pom
+
+        getBasePom('moxy').withXml {
+
+            asNode().appendNode('build')
+                    .appendNode('plugins')
+
+
+        }.writeTo(publishMavenDir + "/" + targetArtefactId + ".pom")
+
+        getBasePom('moxy').withXml {
+
+            asNode().appendNode('build')
+                    .appendNode('plugins')
+                    .appendNode('plugin')
+                    .with {
+                appendNode('groupId', 'org.sonatype.plugins')
+                appendNode('artifactId', 'nexus-staging-maven-plugin')
+                appendNode('version', '1.6.4')
+                appendNode('extensions', 'true')
+                appendNode('configuration').with {
+                    appendNode('serverId', 'ossrh')
+                    appendNode('nexusUrl', 'https://oss.sonatype.org/')
+                    appendNode('autoReleaseAfterClose', 'false')
+                }
+            }
+
+            asNode().appendNode('distributionManagement').with {
+                appendNode('snapshotRepository')
+                        .with {
+                    appendNode('id', 'ossrh')
+                    appendNode('url', 'https://oss.sonatype.org/content/repositories/snapshots')
+                }
+                appendNode('repository')
+                        .with {
+                    appendNode('id', 'ossrh')
+                    appendNode('url', 'https://oss.sonatype.org/service/local/staging/deploy/maven2/')
+                }
+            }
+
+        }.writeTo(publishMavenDir + "/pom.xml")
+
+    }
+}
+
+compileJava.dependsOn clearPublishDir
+copyJars.dependsOn makeJar
+copyJars.dependsOn sourcesJar
+javadocJar.dependsOn makeJavadocs
+copyJars.dependsOn javadocJar
+copyVersion.dependsOn copyJars
+copyVersion.dependsOn createPomXml
+assemble.dependsOn copyVersion
+
+dependencies {
+    compile project(':moxy')
+
+    compileOnly deps.android
+    compileOnly project(':stub-androidx')
+
+    javadocDeps project(':moxy')
+    javadocDeps deps.android
+    javadocDeps project(':stub-androidx')
+}
