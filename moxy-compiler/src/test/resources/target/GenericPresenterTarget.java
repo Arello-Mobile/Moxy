@@ -9,7 +9,7 @@ import view.GenericView;
 public class GenericPresenterTarget implements GenericView<String> {
 
 	@InjectPresenter
-	GenericPresenter<String> mPresenter;
+	GenericPresenter<String> presenter;
 
 	@ProvidePresenter
 	GenericPresenter<String> providePresenter() {

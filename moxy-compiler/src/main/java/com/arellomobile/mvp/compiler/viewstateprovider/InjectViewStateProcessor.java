@@ -126,10 +126,6 @@ public class InjectViewStateProcessor extends ElementProcessor<TypeElement, Pres
 
 		Map<String, String> parentTypes = Collections.emptyMap();
 
-		if (!typeElement.getTypeParameters().isEmpty()) {
-			MvpCompiler.getMessager().printMessage(Diagnostic.Kind.WARNING, "Your " + typeElement.getSimpleName() + " is typed. @InjectViewState may generate wrong code. Your can set view/view state class manually.");
-		}
-
 		while (superclass.getKind() != TypeKind.NONE) {
 			TypeElement superclassElement = (TypeElement) ((DeclaredType) superclass).asElement();
 

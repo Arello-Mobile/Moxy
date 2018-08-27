@@ -12,7 +12,7 @@ import presenter.GenericPresenter;
 
 public class GenericPresenterTarget$$PresentersBinder extends PresenterBinder<GenericPresenterTarget> {
 	public List<PresenterField<GenericPresenterTarget>> getPresenterFields() {
-		List<PresenterField<GenericPresenterTarget>> presenters = new ArrayList<>();
+		List<PresenterField<GenericPresenterTarget>> presenters = new ArrayList<>(1);
 
 		presenters.add(new presenterBinder());
 
