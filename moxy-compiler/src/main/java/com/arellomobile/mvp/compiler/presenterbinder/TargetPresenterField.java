@@ -2,12 +2,14 @@ package com.arellomobile.mvp.compiler.presenterbinder;
 
 import com.arellomobile.mvp.MvpProcessor;
 import com.arellomobile.mvp.presenter.PresenterType;
+import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 
 import javax.lang.model.type.TypeMirror;
 
 class TargetPresenterField {
 	private final TypeMirror clazz;
+	private final boolean isParametrized;
 	private final TypeName typeName;
 	private final String name;
 	private final PresenterType presenterType;
@@ -23,7 +25,8 @@ class TargetPresenterField {
 	                     String tag,
 	                     String presenterId) {
 		this.clazz = clazz;
-		this.typeName = TypeName.get(clazz);
+		this.isParametrized = TypeName.get(clazz) instanceof ParameterizedTypeName;
+		this.typeName = isParametrized ? ((ParameterizedTypeName) TypeName.get(clazz)).rawType : TypeName.get(clazz);
 		this.name = name;
 		this.tag = tag;
 

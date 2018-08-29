@@ -22,7 +22,7 @@ public abstract class MvpPresenter<View extends MvpView> {
 	private Set<View> mViews;
 	private View mViewStateAsView;
 	private MvpViewState<View> mViewState;
-	private Class<? extends MvpPresenter<?>> mPresenterClass;
+	private Class<? extends MvpPresenter> mPresenterClass;
 
 	public MvpPresenter() {
 		Binder.bind(this);
@@ -143,11 +143,11 @@ public abstract class MvpPresenter<View extends MvpView> {
 		mTag = tag;
 	}
 
-	void setPresenterClass(Class<? extends MvpPresenter<?>> presenterClass) {
+	void setPresenterClass(Class<? extends MvpPresenter> presenterClass) {
 		mPresenterClass = presenterClass;
 	}
 
-	Class<? extends MvpPresenter<?>> getPresenterClass() {
+	Class<? extends MvpPresenter> getPresenterClass() {
 		return mPresenterClass;
 	}
 

@@ -1,15 +1,15 @@
 package com.arellomobile.mvp.viewstate.strategy;
 
-import java.util.List;
-
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.ViewCommand;
+
+import java.util.List;
 
 /**
  * Cautions:
  * <ul>
  *     <li>Don't rearrange current state</li>
- *     <li>Don't insert commands inside existing current state – only put to end of it</li>
+ *     <li>Don't insert commands inside existing current state - only put to end of it</li>
  *     <li>Be careful if remove commands by another type. If you make it, be sure that inside your view method you fully override view changes</li>
  * </ul>
  *

@@ -39,7 +39,10 @@ class ViewInterfaceInfo {
 		if (typeVariables.isEmpty()) {
 			return name;
 		} else {
-			return ParameterizedTypeName.get(name, Iterables.toArray(typeVariables, TypeVariableName.class));
+			TypeVariableName[] names = new TypeVariableName[typeVariables.size()];
+			typeVariables.toArray(names);
+
+			return ParameterizedTypeName.get(name, names);
 		}
 	}
 
