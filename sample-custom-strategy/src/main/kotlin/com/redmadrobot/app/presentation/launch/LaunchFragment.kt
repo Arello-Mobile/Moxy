@@ -54,13 +54,13 @@ class LaunchFragment : MvpAppCompatFragment(), LaunchView {
 	}
 	
 	private fun initViews() {
-		fragment_launch_button_toggle_bread_type.setOnClickListener { presenter.onToggleBreadClicked() }
-		fragment_launch_button_toggle_cheese.setOnClickListener { presenter.onToggleCheeseClicked() }
+		toggleBreadType.setOnClickListener { presenter.onToggleBreadClicked() }
+		btToggleCheese.setOnClickListener { presenter.onToggleCheeseClicked() }
 		fragment_launch_button_burger_clear.setOnClickListener { presenter.onClearBurgerClicked() }
-		fragment_launch_button_toggle_lemon.setOnClickListener { presenter.onToggleLemonClicked() }
-		fragment_launch_button_apply_sugar.setOnClickListener {
+		bToggleLemon.setOnClickListener { presenter.onToggleLemonClicked() }
+		bApplySugar.setOnClickListener {
 			val count = try {
-				fragment_launch_edit_text_sugar.text.toString().toInt()
+				etSugar.text.toString().toInt()
 			} catch (e: NumberFormatException) {
 				0
 			}

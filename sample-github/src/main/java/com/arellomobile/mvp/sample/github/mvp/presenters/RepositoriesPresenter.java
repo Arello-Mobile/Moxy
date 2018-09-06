@@ -1,7 +1,5 @@
 package com.arellomobile.mvp.sample.github.mvp.presenters;
 
-import java.util.List;
-
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.sample.github.app.GithubApi;
 import com.arellomobile.mvp.sample.github.app.GithubApp;
@@ -9,6 +7,8 @@ import com.arellomobile.mvp.sample.github.common.Utils;
 import com.arellomobile.mvp.sample.github.mvp.GithubService;
 import com.arellomobile.mvp.sample.github.mvp.models.Repository;
 import com.arellomobile.mvp.sample.github.mvp.views.RepositoriesView;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -25,9 +25,9 @@ import rx.Subscription;
 public class RepositoriesPresenter extends BasePresenter<RepositoriesView> {
 
 	@Inject
-	GithubService mGithubService;
+	GithubService githubService;
 
-	private boolean mIsInLoading;
+	private boolean isInLoading;
 
 	public RepositoriesPresenter() {
 		GithubApp.getAppComponent().inject(this);
@@ -49,16 +49,17 @@ public class RepositoriesPresenter extends BasePresenter<RepositoriesView> {
 	}
 
 	private void loadData(int page, boolean isPageLoading, boolean isRefreshing) {
-		if (mIsInLoading) {
+		if (isInLoading) {
 			return;
 		}
-		mIsInLoading = true;
+		isInLoading = true;
 
 		getViewState().onStartLoading();
 
 		showProgress(isPageLoading, isRefreshing);
 
-		final Observable<List<Repository>> observable = mGithubService.getUserRepos("JakeWharton", page, GithubApi.PAGE_SIZE);
+		final Observable<List<Repository>> observable = githubService
+				.getUserRepos("JakeWharton", page, GithubApi.PAGE_SIZE);
 
 		Subscription subscription = observable
 				.compose(Utils.applySchedulers())
@@ -73,7 +74,7 @@ public class RepositoriesPresenter extends BasePresenter<RepositoriesView> {
 	}
 
 	private void onLoadingFinish(boolean isPageLoading, boolean isRefreshing) {
-		mIsInLoading = false;
+		isInLoading = false;
 
 		getViewState().onFinishLoading();
 

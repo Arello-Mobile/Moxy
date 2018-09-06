@@ -1,76 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:orientation="vertical">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
-	<android.support.v7.widget.Toolbar
-		android:id="@+id/activity_home_toolbar"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:background="@color/colorPrimary"
-		app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
-	<com.arellomobile.mvp.sample.github.ui.views.FrameSwipeRefreshLayout
-		android:id="@+id/activity_home_swipe_refresh_layout"
-		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_weight="1">
+    <com.arellomobile.mvp.sample.github.ui.views.FrameSwipeRefreshLayout
+        android:id="@+id/srlRepositories"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-		<ScrollView
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:fillViewport="true">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
-			<FrameLayout
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				tools:ignore="ScrollViewSize">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:ignore="ScrollViewSize">
 
-				<ListView
-					android:id="@+id/activity_home_list_view_repositories"
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					android:choiceMode="singleChoice"
-					android:dividerHeight="1dp"
-					tools:ignore="NestedScrolling" />
+                <ListView
+                    android:id="@+id/lvRepositories"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:choiceMode="singleChoice"
+                    android:dividerHeight="1dp"
+                    tools:ignore="NestedScrolling"/>
 
-				<TextView
-					android:id="@+id/activity_home_text_view_no_repositories"
-					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					android:gravity="center"
-					android:text="No repositories"
-					android:visibility="gone" />
+                <TextView
+                    android:id="@+id/tvNoRepositories"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="No repositories"
+                    android:visibility="gone"/>
 
-				<ProgressBar
-					android:id="@+id/activity_home_progress_bar_repositories"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_gravity="center"
-					android:visibility="gone" />
+                <ProgressBar
+                    android:id="@+id/pbRepositories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone"/>
 
-			</FrameLayout>
+            </FrameLayout>
 
-		</ScrollView>
+        </ScrollView>
 
-	</com.arellomobile.mvp.sample.github.ui.views.FrameSwipeRefreshLayout>
+    </com.arellomobile.mvp.sample.github.ui.views.FrameSwipeRefreshLayout>
 
-	<FrameLayout
-		android:id="@+id/activity_home_frame_layout_details"
-		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_weight="1"
-		android:visibility="gone">
+    <FrameLayout
+        android:id="@+id/flDetails"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone">
 
-		<View
-			android:layout_width="match_parent"
-			android:layout_height="1dp"
-			android:layout_gravity="top"
-			android:background="?android:attr/listDivider" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_gravity="top"
+            android:background="?android:attr/listDivider"/>
 
-	</FrameLayout>
+    </FrameLayout>
 
 </LinearLayout>

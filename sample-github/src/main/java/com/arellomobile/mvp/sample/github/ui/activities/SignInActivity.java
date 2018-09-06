@@ -24,16 +24,20 @@ public class SignInActivity extends MvpAppCompatActivity implements SignInView {
 	@InjectPresenter
 	SignInPresenter mSignInPresenter;
 
-	@BindView(R.id.email)
-	EditText mEmailView;
-	@BindView(R.id.password)
-	EditText mPasswordView;
-	@BindView(R.id.email_sign_in_button)
-	Button mSignInButton;
+	@BindView(R.id.edEmail)
+	EditText edEmail;
+
+	@BindView(R.id.edPassword)
+	EditText edPassword;
+
+	@BindView(R.id.bSignIn)
+	Button bSignIn;
+
 	@BindView(R.id.login_form)
-	View mLoginFormView;
-	@BindView(R.id.login_progress)
-	View mProgressView;
+	View loginFormView;
+
+	@BindView(R.id.progressView)
+	View progressView;
 
 	private AlertDialog mErrorDialog;
 
@@ -44,7 +48,7 @@ public class SignInActivity extends MvpAppCompatActivity implements SignInView {
 
 		ButterKnife.bind(this);
 
-		mPasswordView.setOnEditorActionListener((textView, id, keyEvent) -> {
+		edPassword.setOnEditorActionListener((textView, id, keyEvent) -> {
 			if (id == R.id.login || id == EditorInfo.IME_NULL) {
 				attemptLogin();
 				return true;
@@ -52,11 +56,11 @@ public class SignInActivity extends MvpAppCompatActivity implements SignInView {
 			return false;
 		});
 
-		mSignInButton.setOnClickListener(view -> attemptLogin());
+		bSignIn.setOnClickListener(view -> attemptLogin());
 	}
 
 	private void attemptLogin() {
-		mSignInPresenter.signIn(mEmailView.getText().toString(), mPasswordView.getText().toString());
+		mSignInPresenter.signIn(edEmail.getText().toString(), edPassword.getText().toString());
 	}
 
 	@Override
@@ -70,8 +74,8 @@ public class SignInActivity extends MvpAppCompatActivity implements SignInView {
 	}
 
 	private void toggleProgressVisibility(final boolean show) {
-		mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-		mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+		progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+		loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
 	}
 
 	@Override
@@ -92,14 +96,14 @@ public class SignInActivity extends MvpAppCompatActivity implements SignInView {
 
 	@Override
 	public void hideFormError() {
-		mEmailView.setError(null);
-		mPasswordView.setError(null);
+		edEmail.setError(null);
+		edPassword.setError(null);
 	}
 
 	@Override
 	public void showFormError(Integer emailError, Integer passwordError) {
-		mEmailView.setError(emailError == null ? null : getString(emailError));
-		mPasswordView.setError(passwordError == null ? null : getString(passwordError));
+		edEmail.setError(emailError == null ? null : getString(emailError));
+		edPassword.setError(passwordError == null ? null : getString(passwordError));
 	}
 
 	@Override

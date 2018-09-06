@@ -18,14 +18,14 @@
 
 
         <Button
-            android:id="@+id/fragment_launch_button_toggle_bread_type"
+            android:id="@+id/toggleBreadType"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/fragment_launch_toggle_bread_type" />
 
 
         <Button
-            android:id="@+id/fragment_launch_button_toggle_cheese"
+            android:id="@+id/btToggleCheese"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/fragment_launch_toggle_cheese" />
@@ -43,7 +43,7 @@
             android:text="@string/fragment_launch_text_beverage_section" />
 
         <Button
-            android:id="@+id/fragment_launch_button_toggle_lemon"
+            android:id="@+id/bToggleLemon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/fragment_launch_toggle_lemon" />
@@ -55,7 +55,7 @@
 
 
             <EditText
-                android:id="@+id/fragment_launch_edit_text_sugar"
+                android:id="@+id/etSugar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -63,7 +63,7 @@
                 android:inputType="number" />
 
             <Button
-                android:id="@+id/fragment_launch_button_apply_sugar"
+                android:id="@+id/bApplySugar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

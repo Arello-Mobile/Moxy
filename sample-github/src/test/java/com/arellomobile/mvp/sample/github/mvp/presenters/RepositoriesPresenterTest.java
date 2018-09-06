@@ -124,7 +124,7 @@ public class RepositoriesPresenterTest {
 		return new TestComponent() {
 			@Override
 			public void inject(RepositoriesPresenter presenter) {
-				presenter.mGithubService = githubService;
+				presenter.githubService = githubService;
 			}
 		};
 	}

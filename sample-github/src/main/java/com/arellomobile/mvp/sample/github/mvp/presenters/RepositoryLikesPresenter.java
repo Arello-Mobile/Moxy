@@ -1,11 +1,11 @@
 package com.arellomobile.mvp.sample.github.mvp.presenters;
 
+import com.arellomobile.mvp.InjectViewState;
+import com.arellomobile.mvp.sample.github.mvp.views.RepositoryLikesView;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.sample.github.mvp.views.RepositoryLikesView;
 
 import rx.Observable;
 import rx.Subscription;
@@ -22,17 +22,17 @@ import rx.schedulers.Schedulers;
 public class RepositoryLikesPresenter extends BasePresenter<RepositoryLikesView> {
 	public static final String TAG = "RepositoryLikesPresenter";
 
-	private List<Integer> mInProgress = new ArrayList<>();
-	private List<Integer> mLikedIds = new ArrayList<>();
+	private List<Integer> inProgress = new ArrayList<>();
+	private List<Integer> likedIds = new ArrayList<>();
 
 	public void toggleLike(int id) {
-		if (mInProgress.contains(id)) {
+		if (inProgress.contains(id)) {
 			return;
 		}
 
-		mInProgress.add(id);
+		inProgress.add(id);
 
-		getViewState().updateLikes(mInProgress, mLikedIds);
+		getViewState().updateLikes(inProgress, likedIds);
 
 		final Observable<Boolean> toggleObservable = Observable.create(subscriber -> {
 			try {
@@ -41,7 +41,7 @@ public class RepositoryLikesPresenter extends BasePresenter<RepositoryLikesView>
 				e.printStackTrace();
 			}
 
-			subscriber.onNext(!mLikedIds.contains(id));
+			subscriber.onNext(!likedIds.contains(id));
 		});
 
 	 	Subscription subscription = toggleObservable
@@ -56,26 +56,26 @@ public class RepositoryLikesPresenter extends BasePresenter<RepositoryLikesView>
 	}
 
 	private void onComplete(int id, Boolean isLiked) {
-		if (!mInProgress.contains(id)) {
+		if (!inProgress.contains(id)) {
 			return;
 		}
 
-		mInProgress.remove(Integer.valueOf(id));
+		inProgress.remove(Integer.valueOf(id));
 		if (isLiked) {
-			mLikedIds.add(id);
+			likedIds.add(id);
 		} else {
-			mLikedIds.remove(Integer.valueOf(id));
+			likedIds.remove(Integer.valueOf(id));
 		}
 
-		getViewState().updateLikes(mInProgress, mLikedIds);
+		getViewState().updateLikes(inProgress, likedIds);
 	}
 
 	private void onFail(int id) {
-		if (!mInProgress.contains(id)) {
+		if (!inProgress.contains(id)) {
 			return;
 		}
 
-		mInProgress.remove(Integer.valueOf(id));
-		getViewState().updateLikes(mInProgress, mLikedIds);
+		inProgress.remove(Integer.valueOf(id));
+		getViewState().updateLikes(inProgress, likedIds);
 	}
 }

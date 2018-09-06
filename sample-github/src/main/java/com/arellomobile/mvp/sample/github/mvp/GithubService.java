@@ -1,10 +1,10 @@
 package com.arellomobile.mvp.sample.github.mvp;
 
-import java.util.List;
-
 import com.arellomobile.mvp.sample.github.app.GithubApi;
 import com.arellomobile.mvp.sample.github.mvp.models.Repository;
 import com.arellomobile.mvp.sample.github.mvp.models.User;
+
+import java.util.List;
 
 import rx.Observable;
 
@@ -17,18 +17,18 @@ import rx.Observable;
 
 public class GithubService {
 
-	private GithubApi mGithubApi;
+	private GithubApi githubApi;
 
 	public GithubService(GithubApi githubApi) {
-		mGithubApi = githubApi;
+		this.githubApi = githubApi;
 	}
 
 
 	public Observable<User> signIn(String token) {
-		return mGithubApi.signIn(token);
+		return githubApi.signIn(token);
 	}
 
 	public Observable<List<Repository>> getUserRepos(String user, int page, Integer pageSize) {
-		return mGithubApi.getUserRepos(user, page, pageSize);
+		return githubApi.getUserRepos(user, page, pageSize);
 	}
 }

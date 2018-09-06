@@ -135,7 +135,7 @@ public final class SignInPresenterTest {
 
 			@Override
 			public void inject(SignInPresenter presenter) {
-				presenter.mGithubService = githubService;
+				presenter.githubService = githubService;
 			}
 		};
 	}

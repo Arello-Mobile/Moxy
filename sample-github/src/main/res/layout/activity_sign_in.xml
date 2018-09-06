@@ -13,7 +13,7 @@
 
 	<!-- Login progress -->
 	<ProgressBar
-		android:id="@+id/login_progress"
+		android:id="@+id/progressView"
 		style="?android:attr/progressBarStyleLarge"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
 			android:orientation="vertical">
 
 			<EditText
-				android:id="@+id/email"
+				android:id="@+id/edEmail"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:freezesText="true"
@@ -42,7 +42,7 @@
 				android:singleLine="true" />
 
 			<EditText
-				android:id="@+id/password"
+				android:id="@+id/edPassword"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:freezesText="true"
@@ -55,7 +55,7 @@
 				android:singleLine="true" />
 
 			<Button
-				android:id="@+id/email_sign_in_button"
+				android:id="@+id/bSignIn"
 				style="?android:textAppearanceSmall"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"

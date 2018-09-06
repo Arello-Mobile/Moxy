@@ -1,7 +1,5 @@
 package com.arellomobile.mvp.sample.github.ui.activities;
 
-import java.util.List;
-
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,29 +27,36 @@ import com.arellomobile.mvp.sample.github.ui.adapters.RepositoriesAdapter;
 import com.arellomobile.mvp.sample.github.ui.fragments.DetailsFragment;
 import com.arellomobile.mvp.sample.github.ui.views.FrameSwipeRefreshLayout;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class HomeActivity extends MvpAppCompatActivity implements SignOutView, RepositoriesView, HomeView, RepositoriesAdapter.OnScrollToBottomListener {
 	@InjectPresenter
-	SignOutPresenter mSignOutPresenter;
+	SignOutPresenter signOutPresenter;
 	@InjectPresenter
-	RepositoriesPresenter mRepositoriesPresenter;
+	RepositoriesPresenter repositoriesPresenter;
 	@InjectPresenter
-	HomePresenter mHomePresenter;
+	HomePresenter homePresenter;
 
-	@BindView(R.id.activity_home_toolbar)
+	@BindView(R.id.toolbar)
 	Toolbar mToolbar;
-	@BindView(R.id.activity_home_swipe_refresh_layout)
+
+	@BindView(R.id.srlRepositories)
 	FrameSwipeRefreshLayout mSwipeRefreshLayout;
-	@BindView(R.id.activity_home_progress_bar_repositories)
-	ProgressBar mRepositoriesProgressBar;
-	@BindView(R.id.activity_home_list_view_repositories)
+
+	@BindView(R.id.pbRepositories)
+	ProgressBar pbRepositories;
+
+	@BindView(R.id.lvRepositories)
 	ListView mRepositoriesListView;
-	@BindView(R.id.activity_home_text_view_no_repositories)
-	TextView mNoRepositoriesTextView;
-	@BindView(R.id.activity_home_frame_layout_details)
-	FrameLayout mDetailsFragmeLayout;
+
+	@BindView(R.id.tvNoRepositories)
+	TextView tvNoRepositories;
+
+	@BindView(R.id.flDetails)
+	FrameLayout flDetails;
 
 	private AlertDialog mErrorDialog;
 	private RepositoriesAdapter mRepositoriesAdapter;
@@ -66,7 +71,7 @@ public class HomeActivity extends MvpAppCompatActivity implements SignOutView, R
 		setSupportActionBar(mToolbar);
 
 		mSwipeRefreshLayout.setListViewChild(mRepositoriesListView);
-		mSwipeRefreshLayout.setOnRefreshListener(() -> mRepositoriesPresenter.loadRepositories(true));
+		mSwipeRefreshLayout.setOnRefreshListener(() -> repositoriesPresenter.loadRepositories(true));
 
 		mRepositoriesAdapter = new RepositoriesAdapter(getMvpDelegate(), this);
 		mRepositoriesListView.setAdapter(mRepositoriesAdapter);
@@ -75,7 +80,7 @@ public class HomeActivity extends MvpAppCompatActivity implements SignOutView, R
 				return;
 			}
 
-			mHomePresenter.onRepositorySelection(position, mRepositoriesAdapter.getItem(position));
+			homePresenter.onRepositorySelection(position, mRepositoriesAdapter.getItem(position));
 		});
 	}
 
@@ -89,7 +94,7 @@ public class HomeActivity extends MvpAppCompatActivity implements SignOutView, R
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.menu_home_sign_out) {
-			mSignOutPresenter.signOut();
+			signOutPresenter.signOut();
 			return true;
 		}
 
@@ -127,14 +132,14 @@ public class HomeActivity extends MvpAppCompatActivity implements SignOutView, R
 	@Override
 	public void showListProgress() {
 		mRepositoriesListView.setVisibility(View.GONE);
-		mNoRepositoriesTextView.setVisibility(View.GONE);
-		mRepositoriesProgressBar.setVisibility(View.VISIBLE);
+		tvNoRepositories.setVisibility(View.GONE);
+		pbRepositories.setVisibility(View.VISIBLE);
 	}
 
 	@Override
 	public void hideListProgress() {
 		mRepositoriesListView.setVisibility(View.VISIBLE);
-		mRepositoriesProgressBar.setVisibility(View.GONE);
+		pbRepositories.setVisibility(View.GONE);
 	}
 
 	@Override
@@ -142,7 +147,7 @@ public class HomeActivity extends MvpAppCompatActivity implements SignOutView, R
 		mErrorDialog = new AlertDialog.Builder(this)
 				.setTitle(R.string.app_name)
 				.setMessage(message)
-				.setOnCancelListener(dialog -> mRepositoriesPresenter.onErrorCancel())
+				.setOnCancelListener(dialog -> repositoriesPresenter.onErrorCancel())
 				.show();
 	}
 
@@ -156,20 +161,20 @@ public class HomeActivity extends MvpAppCompatActivity implements SignOutView, R
 
 	@Override
 	public void setRepositories(List<Repository> repositories, boolean maybeMore) {
-		mRepositoriesListView.setEmptyView(mNoRepositoriesTextView);
+		mRepositoriesListView.setEmptyView(tvNoRepositories);
 		mRepositoriesAdapter.setRepositories(repositories, maybeMore);
 	}
 
 	@Override
 	public void addRepositories(List<Repository> repositories, boolean maybeMore) {
-		mRepositoriesListView.setEmptyView(mNoRepositoriesTextView);
+		mRepositoriesListView.setEmptyView(tvNoRepositories);
 		mRepositoriesAdapter.addRepositories(repositories, maybeMore);
 	}
 
 	@Override
 	public void showDetailsContainer() {
-		if (mDetailsFragmeLayout.getVisibility() == View.GONE) {
-			mDetailsFragmeLayout.setVisibility(View.VISIBLE);
+		if (flDetails.getVisibility() == View.GONE) {
+			flDetails.setVisibility(View.VISIBLE);
 		}
 	}
 
@@ -182,13 +187,13 @@ public class HomeActivity extends MvpAppCompatActivity implements SignOutView, R
 	public void showDetails(int position, Repository repository) {
 		getSupportFragmentManager()
 				.beginTransaction()
-				.replace(R.id.activity_home_frame_layout_details, DetailsFragment.getInstance(repository))
+				.replace(R.id.flDetails, DetailsFragment.getInstance(repository))
 				.commit();
 	}
 
 	@Override
 	public void onScrollToBottom() {
-		mRepositoriesPresenter.loadNextRepositories(mRepositoriesAdapter.getRepositoriesCount());
+		repositoriesPresenter.loadNextRepositories(mRepositoriesAdapter.getRepositoriesCount());
 	}
 
 	@Override

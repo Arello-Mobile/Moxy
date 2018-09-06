@@ -15,25 +15,25 @@ import com.arellomobile.mvp.sample.github.di.modules.ContextModule;
  * @author Yuri Shmakov
  */
 public class GithubApp extends Application {
-	private static AppComponent sAppComponent;
+	private static AppComponent appComponent;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 
-		sAppComponent = DaggerAppComponent.builder()
+		appComponent = DaggerAppComponent.builder()
 				.contextModule(new ContextModule(this))
 				.build();
 
 	}
 
 	public static AppComponent getAppComponent() {
-		return sAppComponent;
+		return appComponent;
 	}
 
 
 	@VisibleForTesting
 	public static void setAppComponent(@NonNull AppComponent appComponent) {
-		sAppComponent = appComponent;
+		GithubApp.appComponent = appComponent;
 	}
 }

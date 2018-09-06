@@ -25,7 +25,7 @@ import rx.Subscription;
 public class SignInPresenter extends BasePresenter<SignInView> {
 
 	@Inject
-	GithubService mGithubService;
+	GithubService githubService;
 
 	public SignInPresenter() {
 		GithubApp.getAppComponent().inject(this);
@@ -57,7 +57,7 @@ public class SignInPresenter extends BasePresenter<SignInView> {
 
 		final String token = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
 
-		Subscription subscription = mGithubService.signIn(token)
+		Subscription subscription = githubService.signIn(token)
 				.doOnNext(user -> AuthUtils.setToken(token))
 				.compose(Utils.applySchedulers())
 				.subscribe(user -> {

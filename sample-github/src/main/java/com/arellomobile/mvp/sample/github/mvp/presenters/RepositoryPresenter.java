@@ -1,11 +1,11 @@
 package com.arellomobile.mvp.sample.github.mvp.presenters;
 
-import java.util.List;
-
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.arellomobile.mvp.sample.github.mvp.models.Repository;
 import com.arellomobile.mvp.sample.github.mvp.views.RepositoryView;
+
+import java.util.List;
 
 /**
  * Date: 27.01.2016
@@ -16,35 +16,35 @@ import com.arellomobile.mvp.sample.github.mvp.views.RepositoryView;
 @InjectViewState
 public class RepositoryPresenter extends MvpPresenter<RepositoryView> {
 
-	private Repository mRepository;
-	private List<Integer> mInProgress;
-	private List<Integer> mLikedIds;
+	private Repository repository;
+	private List<Integer> inProgress;
+	private List<Integer> likedIds;
 
 	public RepositoryPresenter(Repository repository) {
 		super();
 
-		mRepository = repository;
+		this.repository = repository;
 	}
 
 	@Override
 	protected void onFirstViewAttach() {
 		super.onFirstViewAttach();
 
-		getViewState().showRepository(mRepository);
+		getViewState().showRepository(repository);
 
-		updateLikes(mInProgress, mLikedIds);
+		updateLikes(inProgress, likedIds);
 	}
 
 	public void updateLikes(List<Integer> inProgress, List<Integer> likedIds) {
-		mInProgress = inProgress;
-		mLikedIds = likedIds;
+		this.inProgress = inProgress;
+		this.likedIds = likedIds;
 
-		if (mRepository == null || mInProgress == null || mLikedIds == null) {
+		if (repository == null || this.inProgress == null || this.likedIds == null) {
 			return;
 		}
 
-		boolean isInProgress = inProgress.contains(mRepository.getId());
-		boolean isLiked = likedIds.contains(mRepository.getId());
+		boolean isInProgress = inProgress.contains(repository.getId());
+		boolean isLiked = likedIds.contains(repository.getId());
 
 		getViewState().updateLike(isInProgress, isLiked);
 	}

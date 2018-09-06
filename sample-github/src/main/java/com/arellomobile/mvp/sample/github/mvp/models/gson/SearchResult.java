@@ -1,8 +1,8 @@
 package com.arellomobile.mvp.sample.github.mvp.models.gson;
 
-import java.util.List;
-
 import com.arellomobile.mvp.sample.github.mvp.models.Repository;
+
+import java.util.List;
 
 /**
  * Date: 18.01.2016
@@ -11,11 +11,11 @@ import com.arellomobile.mvp.sample.github.mvp.models.Repository;
  * @author Yuri Shmakov
  */
 public class SearchResult {
-	private int mTotalCount;
-	private boolean mIncompleteResults;
-	private List<Repository> mItems;
+	private int totalCount;
+	private boolean incompleteResults;
+	private List<Repository> repositories;
 
 	public List<Repository> getRepositories() {
-		return mItems;
+		return repositories;
 	}
 }

@@ -1,11 +1,11 @@
 package com.arellomobile.mvp.sample.github.di.modules;
 
-import java.lang.reflect.Field;
-
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import java.lang.reflect.Field;
 
 import javax.inject.Singleton;
 
@@ -25,6 +25,7 @@ import rx.schedulers.Schedulers;
  */
 @Module
 public class RetrofitModule {
+
 	@Provides
 	@Singleton
 	public Retrofit provideRetrofit(Retrofit.Builder builder) {
