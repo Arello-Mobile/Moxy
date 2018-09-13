@@ -1,8 +1,5 @@
 package com.arellomobile.mvp.sample.github.ui.adapters;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +18,9 @@ import com.arellomobile.mvp.sample.github.mvp.presenters.RepositoryPresenter;
 import com.arellomobile.mvp.sample.github.mvp.views.RepositoryLikesView;
 import com.arellomobile.mvp.sample.github.mvp.views.RepositoryView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -35,56 +35,56 @@ public class RepositoriesAdapter extends MvpBaseAdapter implements RepositoryLik
 	private static final int PROGRESS_VIEW_TYPE = 1;
 
 	@InjectPresenter(type = PresenterType.WEAK, tag = RepositoryLikesPresenter.TAG)
-	RepositoryLikesPresenter mRepositoryLikesPresenter;
+	RepositoryLikesPresenter repositoryLikesPresenter;
 
-	private int mSelection = -1;
-	private List<Repository> mRepositories;
-	private List<Integer> mLiked;
-	private List<Integer> mLikesInProgress;
-	private boolean mMaybeMore;
-	private OnScrollToBottomListener mScrollToBottomListener;
+	private int selection = -1;
+	private List<Repository> repositories;
+	private List<Integer> liked;
+	private List<Integer> likesInProgress;
+	private boolean maybeMore;
+	private OnScrollToBottomListener scrollToBottomListener;
 
 	public RepositoriesAdapter(MvpDelegate<?> parentDelegate, OnScrollToBottomListener scrollToBottomListener) {
 		super(parentDelegate, String.valueOf(0));
 
-		mScrollToBottomListener = scrollToBottomListener;
-		mRepositories = new ArrayList<>();
-		mLiked = new ArrayList<>();
-		mLikesInProgress = new ArrayList<>();
+		this.scrollToBottomListener = scrollToBottomListener;
+		repositories = new ArrayList<>();
+		liked = new ArrayList<>();
+		likesInProgress = new ArrayList<>();
 	}
 
 	public void setRepositories(List<Repository> repositories, boolean maybeMore) {
-		mRepositories = new ArrayList<>(repositories);
+		this.repositories = new ArrayList<>(repositories);
 		dataSetChanged(maybeMore);
 	}
 
 	public void addRepositories(List<Repository> repositories, boolean maybeMore) {
-		mRepositories.addAll(repositories);
+		this.repositories.addAll(repositories);
 		dataSetChanged(maybeMore);
 	}
 
 	public void updateLikes(List<Integer> inProgress, List<Integer> likedIds) {
-		mLikesInProgress = new ArrayList<>(inProgress);
-		mLiked = new ArrayList<>(likedIds);
+		likesInProgress = new ArrayList<>(inProgress);
+		liked = new ArrayList<>(likedIds);
 
 		notifyDataSetChanged();
 	}
 
 	public void setSelection(int selection) {
-		mSelection = selection;
+		this.selection = selection;
 
 		notifyDataSetChanged();
 	}
 
 	private void dataSetChanged(boolean maybeMore) {
-		mMaybeMore = maybeMore;
+		this.maybeMore = maybeMore;
 
 		notifyDataSetChanged();
 	}
 
 	@Override
 	public int getItemViewType(int position) {
-		return position == mRepositories.size() ? PROGRESS_VIEW_TYPE : REPOSITORY_VIEW_TYPE;
+		return position == repositories.size() ? PROGRESS_VIEW_TYPE : REPOSITORY_VIEW_TYPE;
 	}
 
 	@Override
@@ -93,17 +93,17 @@ public class RepositoriesAdapter extends MvpBaseAdapter implements RepositoryLik
 	}
 
 	public int getRepositoriesCount() {
-		return mRepositories.size();
+		return repositories.size();
 	}
 
 	@Override
 	public int getCount() {
-		return mRepositories.size() + (mMaybeMore ? 1 : 0);
+		return repositories.size() + (maybeMore ? 1 : 0);
 	}
 
 	@Override
 	public Repository getItem(int position) {
-		return mRepositories.get(position);
+		return repositories.get(position);
 	}
 
 	@Override
@@ -114,8 +114,8 @@ public class RepositoriesAdapter extends MvpBaseAdapter implements RepositoryLik
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if (getItemViewType(position) == PROGRESS_VIEW_TYPE) {
-			if (mScrollToBottomListener != null) {
-				mScrollToBottomListener.onScrollToBottom();
+			if (scrollToBottomListener != null) {
+				scrollToBottomListener.onScrollToBottom();
 			}
 
 			return new ProgressBar(parent.getContext());
@@ -140,7 +140,7 @@ public class RepositoriesAdapter extends MvpBaseAdapter implements RepositoryLik
 	public class RepositoryHolder implements RepositoryView {
 
 		@InjectPresenter
-		RepositoryPresenter mRepositoryPresenter;
+		RepositoryPresenter repositoryPresenter;
 
 		private Repository mRepository;
 
@@ -176,14 +176,14 @@ public class RepositoriesAdapter extends MvpBaseAdapter implements RepositoryLik
 			getMvpDelegate().onCreate();
 			getMvpDelegate().onAttach();
 
-			view.setBackgroundResource(position == mSelection ? R.color.colorAccent : android.R.color.transparent);
+			view.setBackgroundResource(position == selection ? R.color.colorAccent : android.R.color.transparent);
 
-			likeImageButton.setOnClickListener(v -> mRepositoryLikesPresenter.toggleLike(repository.getId()));
+			likeImageButton.setOnClickListener(v -> repositoryLikesPresenter.toggleLike(repository.getId()));
 
-			boolean isInProgress = mLikesInProgress.contains(repository.getId());
+			boolean isInProgress = likesInProgress.contains(repository.getId());
 
 			likeImageButton.setEnabled(!isInProgress);
-			likeImageButton.setSelected(mLiked.contains(repository.getId()));
+			likeImageButton.setSelected(liked.contains(repository.getId()));
 		}
 
 		@Override

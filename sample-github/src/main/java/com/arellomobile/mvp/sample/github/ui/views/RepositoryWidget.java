@@ -23,12 +23,12 @@ import com.arellomobile.mvp.sample.github.mvp.views.RepositoryView;
  * @author Yuri Shmakov
  */
 public class RepositoryWidget extends TextView implements RepositoryView {
-	private MvpDelegate mParentDelegate;
-	private MvpDelegate mMvpDelegate;
-	private Repository mRepository;
+	private MvpDelegate parentDelegate;
+	private MvpDelegate mvpDelegate;
+	private Repository repository;
 
 	@InjectPresenter
-	RepositoryPresenter mRepositoryPresenter;
+	RepositoryPresenter repositoryPresenter;
 
 	public RepositoryWidget(Context context) {
 		super(context);
@@ -49,23 +49,23 @@ public class RepositoryWidget extends TextView implements RepositoryView {
 
 	@ProvidePresenter
 	RepositoryPresenter provideRepositoryPresenter() {
-		return new RepositoryPresenter(mRepository);
+		return new RepositoryPresenter(repository);
 	}
 
 	public void initWidget(MvpDelegate parentDelegate, Repository repository) {
-		mParentDelegate = parentDelegate;
-		mRepository = repository;
+		this.parentDelegate = parentDelegate;
+		this.repository = repository;
 
 		getMvpDelegate().onCreate();
 		getMvpDelegate().onAttach();
 	}
 
 	public MvpDelegate getMvpDelegate() {
-		if (mMvpDelegate == null) {
-			mMvpDelegate = new MvpDelegate<>(this);
-			mMvpDelegate.setParentDelegate(mParentDelegate, String.valueOf(mRepository.getId()));
+		if (mvpDelegate == null) {
+			mvpDelegate = new MvpDelegate<>(this);
+			mvpDelegate.setParentDelegate(parentDelegate, String.valueOf(repository.getId()));
 		}
-		return mMvpDelegate;
+		return mvpDelegate;
 	}
 
 	@Override

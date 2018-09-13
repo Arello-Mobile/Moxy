@@ -11,23 +11,23 @@ import com.arellomobile.mvp.MvpDelegate;
  * @author Yuri Shmakov
  */
 public abstract class MvpBaseAdapter extends BaseAdapter {
-	private MvpDelegate<? extends MvpBaseAdapter> mMvpDelegate;
-	private MvpDelegate<?> mParentDelegate;
-	private String mChildId;
+	private MvpDelegate<? extends MvpBaseAdapter> mvpDelegate;
+	private MvpDelegate<?> parentDelegate;
+	private String childId;
 
 	public MvpBaseAdapter(MvpDelegate<?> parentDelegate, String childId) {
-		mParentDelegate = parentDelegate;
-		mChildId = childId;
+		this.parentDelegate = parentDelegate;
+		this.childId = childId;
 
 		getMvpDelegate().onCreate();
 	}
 
 	public MvpDelegate getMvpDelegate() {
-		if (mMvpDelegate == null) {
-			mMvpDelegate = new MvpDelegate<>(this);
-			mMvpDelegate.setParentDelegate(mParentDelegate, mChildId);
+		if (mvpDelegate == null) {
+			mvpDelegate = new MvpDelegate<>(this);
+			mvpDelegate.setParentDelegate(parentDelegate, childId);
 
 		}
-		return mMvpDelegate;
+		return mvpDelegate;
 	}
 }

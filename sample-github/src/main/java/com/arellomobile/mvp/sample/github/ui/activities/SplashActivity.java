@@ -11,7 +11,7 @@ import com.arellomobile.mvp.sample.github.mvp.views.SplashView;
 public class SplashActivity extends MvpAppCompatActivity implements SplashView {
 
     @InjectPresenter
-    SplashPresenter mSplashPresenter;
+    SplashPresenter splashPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

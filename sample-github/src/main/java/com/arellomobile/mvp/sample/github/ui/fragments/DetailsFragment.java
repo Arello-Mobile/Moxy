@@ -1,7 +1,5 @@
 package com.arellomobile.mvp.sample.github.ui.fragments;
 
-import java.util.List;
-
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -20,6 +18,8 @@ import com.arellomobile.mvp.sample.github.mvp.presenters.RepositoryPresenter;
 import com.arellomobile.mvp.sample.github.mvp.views.RepositoryLikesView;
 import com.arellomobile.mvp.sample.github.mvp.views.RepositoryView;
 import com.arellomobile.mvp.sample.github.ui.views.RepositoryWidget;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,10 +40,10 @@ public class DetailsFragment extends MvpAppCompatFragment implements RepositoryV
 
 	private Repository mRepository;
 
-	@BindView(R.id.fragment_repository_details_text_view_title)
-	RepositoryWidget mTitleTextView;
-	@BindView(R.id.fragment_repository_details_image_button_like)
-	ImageButton mLikeImageButton;
+	@BindView(R.id.rwTitle)
+	RepositoryWidget rwTitle;
+	@BindView(R.id.ivLike)
+	ImageButton ivLike;
 
 	@ProvidePresenter
 	RepositoryPresenter provideRepositoryPresenter() {
@@ -75,7 +75,7 @@ public class DetailsFragment extends MvpAppCompatFragment implements RepositoryV
 
 		ButterKnife.bind(this, view);
 
-		mLikeImageButton.setOnClickListener(likeImageButton -> mRepositoryLikesPresenter.toggleLike(mRepository.getId()));
+		ivLike.setOnClickListener(likeImageButton -> mRepositoryLikesPresenter.toggleLike(mRepository.getId()));
 	}
 
 	@Override
@@ -87,12 +87,12 @@ public class DetailsFragment extends MvpAppCompatFragment implements RepositoryV
 	public void showRepository(Repository repository) {
 		mRepository = repository;
 
-		mTitleTextView.initWidget(getMvpDelegate(), repository);
+		rwTitle.initWidget(getMvpDelegate(), repository);
 	}
 
 	@Override
 	public void updateLike(boolean isInProgress, boolean isLiked) {
-		mLikeImageButton.setEnabled(!isInProgress);
-		mLikeImageButton.setSelected(isLiked);
+		ivLike.setEnabled(!isInProgress);
+		ivLike.setSelected(isLiked);
 	}
 }

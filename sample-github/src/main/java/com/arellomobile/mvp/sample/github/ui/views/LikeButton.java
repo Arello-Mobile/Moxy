@@ -14,7 +14,7 @@ import android.widget.Checkable;
  * @author Yuri Shmakov
  */
 public class LikeButton extends Button implements Checkable {
-	private boolean mChecked;
+	private boolean checked;
 
 	public LikeButton(Context context) {
 		super(context);
@@ -35,16 +35,16 @@ public class LikeButton extends Button implements Checkable {
 
 	@Override
 	public void setChecked(boolean checked) {
-		mChecked = checked;
+		this.checked = checked;
 	}
 
 	@Override
 	public boolean isChecked() {
-		return mChecked;
+		return checked;
 	}
 
 	@Override
 	public void toggle() {
-		mChecked = !mChecked;
+		checked = !checked;
 	}
 }

@@ -5,14 +5,14 @@
 	xmlns:tools="http://schemas.android.com/tools">
 
 	<com.arellomobile.mvp.sample.github.ui.views.RepositoryWidget
-		android:id="@+id/fragment_repository_details_text_view_title"
+		android:id="@+id/rwTitle"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_centerHorizontal="true"
 		android:layout_margin="8dp"/>
 
 	<ImageButton
-		android:id="@+id/fragment_repository_details_image_button_like"
+		android:id="@+id/ivLike"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_centerInParent="true"
