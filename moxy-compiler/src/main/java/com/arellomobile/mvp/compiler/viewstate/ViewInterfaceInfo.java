@@ -1,6 +1,5 @@
 package com.arellomobile.mvp.compiler.viewstate;
 
-import com.google.common.collect.Iterables;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
@@ -18,17 +17,23 @@ import javax.lang.model.element.TypeElement;
  * @author Evgeny Kursakov
  */
 class ViewInterfaceInfo {
+	private final TypeElement element;
 	private final ClassName name;
 	private final List<TypeVariableName> typeVariables;
 	private final List<ViewMethod> methods;
 
-	ViewInterfaceInfo(TypeElement name, List<ViewMethod> methods) {
-		this.name = ClassName.get(name);
+	ViewInterfaceInfo(TypeElement element, List<ViewMethod> methods) {
+		this.element = element;
+		this.name = ClassName.get(element);
 		this.methods = methods;
 
-		this.typeVariables = name.getTypeParameters().stream()
+		this.typeVariables = element.getTypeParameters().stream()
 				.map(TypeVariableName::get)
 				.collect(Collectors.toList());
+	}
+
+	public TypeElement getElement() {
+		return element;
 	}
 
 	ClassName getName() {
