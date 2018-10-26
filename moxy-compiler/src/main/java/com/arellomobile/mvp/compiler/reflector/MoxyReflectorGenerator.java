@@ -90,13 +90,13 @@ public class MoxyReflectorGenerator {
 			classBuilder.addMethod(MethodSpec.methodBuilder("getViewStateProviders")
 					.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
 					.returns(MAP_CLASS_TO_OBJECT_TYPE_NAME)
-					.addStatement("return viewStateProvider.getViewState()")
+					.addStatement("return sViewStateProviders")
 					.build());
 
 			classBuilder.addMethod(MethodSpec.methodBuilder("getPresenterBinders")
 					.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
 					.returns(MAP_CLASS_TO_LIST_OF_OBJECT_TYPE_NAME)
-					.addStatement("return sViewStateProviders")
+					.addStatement("return sPresenterBinders")
 					.build());
 
 			classBuilder.addMethod(MethodSpec.methodBuilder("getStrategies")

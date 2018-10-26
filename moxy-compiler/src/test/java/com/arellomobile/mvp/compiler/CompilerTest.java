@@ -39,6 +39,13 @@ public abstract class CompilerTest {
 				.compile(sources);
 	}
 
+	protected Compilation compileLibSourcesWithProcessor(String moxyReflectorPackage, JavaFileObject... sources) {
+		return javac()
+				.withOptions("-implicit:none", "-AmoxyReflectorPackage=" + moxyReflectorPackage)
+				.withProcessors(new MvpCompiler())
+				.compile(sources);
+	}
+
 	/**
 	 * Asserts that all files from {@code exceptedGeneratedFiles} exists in {@code actualGeneratedFiles}
 	 * and have equivalent bytecode
