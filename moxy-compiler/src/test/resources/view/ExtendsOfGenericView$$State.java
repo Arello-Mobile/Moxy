@@ -1,14 +1,15 @@
 package view;
 
-import com.arellomobile.mvp.MvpView;
-
+import com.arellomobile.mvp.viewstate.MvpViewState;
+import com.arellomobile.mvp.viewstate.ViewCommand;
+import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy;
 import java.io.Serializable;
+import java.lang.Override;
 
-public interface ExtendsOfGenericView extends GenericWithExtendsView<Serializable> {
-
+public class ExtendsOfGenericView$$State extends MvpViewState<ExtendsOfGenericView> implements ExtendsOfGenericView {
     @Override
     public void testEvent(Serializable param) {
-        ExtendsOfGenericView$$State.TestEventCommand testEventCommand = new ExtendsOfGenericView$$State.TestEventCommand(param);
+        TestEventCommand testEventCommand = new TestEventCommand(param);
         mViewCommands.beforeApply(testEventCommand);
 
         if (mViews == null || mViews.isEmpty()) {
@@ -22,12 +23,12 @@ public interface ExtendsOfGenericView extends GenericWithExtendsView<Serializabl
         mViewCommands.afterApply(testEventCommand);
     }
 
-
     public class TestEventCommand extends ViewCommand<ExtendsOfGenericView> {
         public final Serializable param;
 
         TestEventCommand(Serializable param) {
             super("testEvent", AddToEndStrategy.class);
+
             this.param = param;
         }
 
@@ -36,5 +37,4 @@ public interface ExtendsOfGenericView extends GenericWithExtendsView<Serializabl
             mvpView.testEvent(param);
         }
     }
-
 }

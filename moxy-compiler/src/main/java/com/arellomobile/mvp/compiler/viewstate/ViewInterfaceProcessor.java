@@ -37,7 +37,8 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 	private static final String STATE_STRATEGY_TYPE_ANNOTATION = StateStrategyType.class.getName();
 	private static final TypeElement DEFAULT_STATE_STRATEGY = MvpCompiler.getElementUtils().getTypeElement(AddToEndStrategy.class.getCanonicalName());
 
-	private String viewClassName;
+	private TypeElement viewInterfaceElement;
+	private String viewInterfaceName;
 	private Set<TypeElement> usedStrategies = new HashSet<>();
 
 	public List<TypeElement> getUsedStrategies() {
@@ -46,7 +47,8 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 
 	@Override
 	public ViewInterfaceInfo process(TypeElement element) {
-		viewClassName = element.getSimpleName().toString();
+		this.viewInterfaceElement = element;
+		viewInterfaceName = element.getSimpleName().toString();
 
 		List<ViewMethod> methods = new ArrayList<>();
 
@@ -126,7 +128,9 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 			// add strategy to list
 			usedStrategies.add(strategyClass);
 
-			final ViewMethod method = new ViewMethod(methodElement, strategyClass, methodTag);
+			final ViewMethod method = new ViewMethod(
+					(DeclaredType) viewInterfaceElement.asType(), methodElement, strategyClass, methodTag
+			);
 
 			if (rootMethods.contains(method)) {
 				continue;
@@ -161,7 +165,7 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 					" and " + method.getEnclosedClassName() +
 					" has method " + method.getName() + "(" + arguments + ")" +
 					" with different " + parts + "." +
-					" Override this method in " + viewClassName + " or make " + parts + " equals");
+					" Override this method in " + viewInterfaceName + " or make " + parts + " equals");
 		}
 	}
 
