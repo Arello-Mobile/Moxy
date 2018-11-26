@@ -16,9 +16,9 @@ public class MvpActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
 		getMvpDelegate().onCreate(savedInstanceState);
+
+		super.onCreate(savedInstanceState);
 	}
 
 	@Override
