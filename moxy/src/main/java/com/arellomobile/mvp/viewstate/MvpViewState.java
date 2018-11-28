@@ -41,14 +41,6 @@ public abstract class MvpViewState<View extends MvpView> {
 		mViewCommands.reapply(view, currentState);
 	}
 
-
-	/**
-	 * @return true if view state has one or more views, false otherwise (if view state doesn't have any view)
-	 */
-    protected Boolean hasNotView() {
-        return (mViews == null) || mViews.isEmpty();
-    }
-
     /**
 	 * Attach view to view state and apply saves state
 	 *

@@ -228,11 +228,12 @@ dependencies {
     javadocDeps deps.android
     javadocDeps project(':stub-reflector')
 
-    testCompile deps.junit
-    testCompile deps.mockito
-    testCompile deps.truth
-    testCompile deps.android
-    testCompile deps.robolectric
-    testCompile deps.compiletesting
-    testCompile project(':moxy-compiler')
+    testImplementation deps.junit
+    testImplementation deps.mockito
+    testImplementation deps.truth
+    testImplementation deps.android
+    testImplementation deps.robolectric
+    testImplementation deps.compiletesting
+    testImplementation project(':moxy-compiler')
+    testImplementation deps.javapoet
 }

@@ -2,6 +2,7 @@ package com.arellomobile.mvp.compiler.viewstate;
 
 import com.arellomobile.mvp.MvpProcessor;
 import com.arellomobile.mvp.compiler.JavaFilesGenerator;
+import com.arellomobile.mvp.compiler.MvpCompiler;
 import com.arellomobile.mvp.viewstate.MvpViewState;
 import com.arellomobile.mvp.viewstate.ViewCommand;
 import com.squareup.javapoet.ClassName;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Random;
 
 import javax.lang.model.element.Modifier;
+import javax.lang.model.type.DeclaredType;
 
 import static com.arellomobile.mvp.compiler.Util.decapitalizeString;
 
@@ -32,6 +34,7 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<ViewInterf
 	public List<JavaFile> generate(ViewInterfaceInfo viewInterfaceInfo) {
 		ClassName viewName = viewInterfaceInfo.getName();
 		TypeName nameWithTypeVariables = viewInterfaceInfo.getNameWithTypeVariables();
+		DeclaredType viewInterfaceType = (DeclaredType) viewInterfaceInfo.getElement().asType();
 
 		TypeSpec.Builder classBuilder = TypeSpec.classBuilder(viewName.simpleName() + MvpProcessor.VIEW_STATE_SUFFIX)
 				.addModifiers(Modifier.PUBLIC)
@@ -42,7 +45,7 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<ViewInterf
 		for (ViewMethod method : viewInterfaceInfo.getMethods()) {
 			TypeSpec commandClass = generateCommandClass(method, nameWithTypeVariables);
 			classBuilder.addType(commandClass);
-			classBuilder.addMethod(generateMethod(method, nameWithTypeVariables, commandClass));
+			classBuilder.addMethod(generateMethod(viewInterfaceType, method, nameWithTypeVariables, commandClass));
 		}
 
 		JavaFile javaFile = JavaFile.builder(viewName.packageName(), classBuilder.build())
@@ -75,7 +78,8 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<ViewInterf
 		return classBuilder.build();
 	}
 
-	private MethodSpec generateMethod(ViewMethod method, TypeName viewTypeName, TypeSpec commandClass) {
+	private MethodSpec generateMethod(DeclaredType enclosingType, ViewMethod method,
+	                                  TypeName viewTypeName, TypeSpec commandClass) {
 		// TODO: String commandFieldName = "$cmd";
 		String commandFieldName = decapitalizeString(method.getCommandClassName());
 
@@ -85,11 +89,11 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<ViewInterf
 			commandFieldName += random.nextInt(10);
 		}
 
-		return MethodSpec.overriding(method.getElement())
+		return MethodSpec.overriding(method.getElement(), enclosingType, MvpCompiler.getTypeUtils())
 				.addStatement("$1N $2L = new $1N($3L)", commandClass, commandFieldName, method.getArgumentsString())
 				.addStatement("mViewCommands.beforeApply($L)", commandFieldName)
 				.addCode("\n")
-				.beginControlFlow("if (hasNotView())")
+                .beginControlFlow("if (mViews == null || mViews.isEmpty())")
 				.addStatement("return")
 				.endControlFlow()
 				.addCode("\n")
