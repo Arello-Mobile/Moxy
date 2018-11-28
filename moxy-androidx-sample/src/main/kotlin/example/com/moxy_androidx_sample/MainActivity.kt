@@ -1,8 +1,7 @@
-package example.com.moxy_androidx_sapmle
+package example.com.moxy_androidx_sample
 
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.presenter.InjectPresenter

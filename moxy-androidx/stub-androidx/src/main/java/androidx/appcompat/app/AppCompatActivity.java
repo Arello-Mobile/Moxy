@@ -35,7 +35,7 @@ public class AppCompatActivity {
         throw new RuntimeException("Stub!");
     }
 
-    public boolean isFinishing() {
+    protected boolean isFinishing() {
         throw new RuntimeException("Stub!");
     }
 }

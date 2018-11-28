@@ -42,8 +42,13 @@ android {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation project(':moxy')
-    implementation project(':moxy-androidx')
-    kapt project(':moxy-compiler')
+
+    def moxyVersion = '1.5.5'
+    implementation "com.arello-mobile:moxy:$moxyVersion"
+    kapt "com.arello-mobile:moxy-compiler:$moxyVersion"
+
+    //replate to implementation "com.arello-mobile:moxy-androidx:$moxyVersion" when android X module will be deploy to maven central
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
