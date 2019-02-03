@@ -5,8 +5,8 @@ apply plugin: 'maven'
 ext {
     publishDir = 'artifacts'
     publishMavenDir = 'artifacts-maven'
-    targetGroupId = 'com.arello-mobile'
-    targetArtefactId = 'moxy'
+    targetGroupId = 'tech.schoolhelper'
+    targetArtefactId = 'moxy-x'
     targetArtefactIdDev = 'moxy-dev'
     versionFile = 'VERSION'
 }
@@ -76,8 +76,8 @@ def getBasePom() {
             version targetVersionName
             name 'Moxy'
             modelVersion = '4.0.0'
-            description = 'Arello-Mobile MVP library for Android'
-            url = 'https://www.arello-mobile.com/'
+            description = 'MoxyX, we added X for make this library coolest'
+            url = 'https://schoolhelper.tech/'
             //   packaging = 'jar'  //doesn't work from box, implement it manualy
 
             inceptionYear '2016'
@@ -102,12 +102,18 @@ def getBasePom() {
                     organization = 'Arello Mobile'
                     organizationUrl 'http://www.arello-mobile.com/'
                 }
+                developer {
+                    name 'Vova Stelmashchuk'
+                    email 'vovochkastelmashchuk@gmail.com'
+                    organization = 'SchoolHelper'
+                    organizationUrl 'https://schoolhelper.tech/'
+                }
             }
 
             scm {
-                connection 'scm:git@github.com:Arello-Mobile/Moxy.git'
-                developerConnection 'scm:git@github.com:Arello-Mobile/Moxy.git'
-                url 'https://github.com/Arello-Mobile/Moxy'
+                connection 'scm:git@github.com:jordan1997/Moxy.git'
+                developerConnection 'scm:git@github.com:jordan1997/Moxy.git'
+                url 'https://github.com/jordan1997/Moxy'
             }
         }.withXml {
             asNode().appendNode('packaging', 'jar')
@@ -116,7 +122,7 @@ def getBasePom() {
 
     return basePom.withXml {
         asNode().dependencies.'*'.findAll {
-            it.artifactId.text().contains('moxy')
+            it.artifactId.text().contains('moxy-x')
         }.each {
             it.groupId*.value = targetGroupId
             it.version*.value = targetVersionName

@@ -1,7 +1,11 @@
-# Moxy
-[![Maven Central](https://img.shields.io/maven-central/v/com.arello-mobile/moxy.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.arello-mobile%22%20AND%20(a%3A%22moxy%22%20OR%20a%3A%22moxy-compiler%22%20OR%20a%3A%22moxy-android%22%20OR%20a%3A%22moxy-app-compat%22)) [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
+# MoxyX
+We added X to the Moxy for make this library coolest.
 
-Moxy is a library that helps to use MVP pattern when you do the Android Application. _Without problems of lifecycle and boilerplate code!_
+[![Maven Central](https://img.shields.io/maven-central/v/tech.schoolhelper/moxy-x.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22tech.schoolhelper%22%20AND%20a:%22moxy-x%22)
+
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
+
+Moxy is a library that helps to use MVP pattern when you do the Android Application. _Without problems of lifecycle and boilerplate code!
 
 The main idea of using Moxy:
 ![schematic_using](https://habrastorage.org/files/a2e/b51/8b4/a2eb518b465a4df9b47e68794519270d.gif)
@@ -55,7 +59,7 @@ public class HelloWorldActivity extends MvpAppCompatActivity implements HelloWor
 }
 ```
 
-[Here](https://github.com/Arello-Mobile/Moxy/tree/master/sample-github) you can see "Github" sample application.
+[Here](https://github.com/jordan1997/Moxy/tree/develop/sample-github) you can see "Github" sample application.
 
 ## Wiki
 For all information check [Moxy Wiki](https://github.com/Arello-Mobile/Moxy/wiki)
@@ -63,7 +67,7 @@ For all information check [Moxy Wiki](https://github.com/Arello-Mobile/Moxy/wiki
 ## Android studio templates
 In order to avoid boilerplate code creating for binding activity, fragments and its presentation part, we propose to use Android Studio templates for Moxy. 
 
-Templates located in [/moxy-templates](https://github.com/Arello-Mobile/Moxy/tree/master/moxy-templates)
+Templates located in [/moxy-templates](https://github.com/jordan1997/Moxy/tree/develop/moxy-templates)
 
 ## Links
 [Telegram channel (en)](https://telegram.me/moxy_mvp_library)<br />
@@ -76,24 +80,29 @@ Base modules integration:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy:1.5.6'
-  annotationProcessor 'com.arello-mobile:moxy-compiler:1.5.6'
+  implementation 'tech.schoolhelper:moxy-x:1.5.6'
+  annotationProcessor 'tech.schoolhelper:moxy-x-compiler:1.5.6'
 }
 ```
 For additional base view classes `MvpActivity` and `MvpFragment` add this:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy-android:1.5.6'
+  implementation 'tech.schoolhelper:moxy-x-android:1.5.6'
 }
 ```
 If you are planning to use AppCompat, then you can use `MvpAppCompatActivity` and `MvpAppCompatFragment`. Then add this:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy-app-compat:1.5.6'
-  compile 'com.android.support:appcompat-v7:$support_version'
+  implementation 'tech.schoolhelper:moxy-x-app-compat:1.5.6'
+  implementation 'com.android.support:appcompat-v7:$support_version'
 }
+```
+If you are planning to use AndroidX, then you can use `MvpAppCompatActivity` and `MvpAppCompatFragment`. Then add this:
+```groovy
+	...
+	implementation 'tech.schoolhelper:moxy-x-androidx:1.5.6'
 ```
 ### Kotlin
 If you are using kotlin, use `kapt` instead of `provided`/`apt` dependency type:
@@ -102,7 +111,7 @@ apply plugin: 'kotlin-kapt'
 
 dependencies {
   ...
-  kapt 'com.arello-mobile:moxy-compiler:1.5.6'
+  kapt 'tech.schoolhelper:moxy-x-compiler:1.5.6'
 }
 ```
 
