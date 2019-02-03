@@ -5,8 +5,8 @@ apply plugin: 'maven'
 ext {
     publishDir = 'artifacts'
     publishMavenDir = 'artifacts-maven'
-    targetGroupId = 'com.arello-mobile'
-    targetArtefactId = 'moxy-android'
+    targetGroupId = 'tech.schoolhelper'
+    targetArtefactId = 'moxy-x-android'
     targetArtefactIdDev = 'moxy-android-dev'
     versionFile = 'VERSION'
 }
@@ -73,8 +73,8 @@ def getBasePom(String libName) {
             version targetVersionName
             name 'Moxy-android'
             modelVersion = '4.0.0'
-            description = 'Arello-Mobile MVP library for Android'
-            url = 'https://www.arello-mobile.com/'
+            description = 'MoxyX, we added X for make this librayr coolest'
+            url = 'https://schoolhelper.tech/'
             packaging = 'jar'
 
             inceptionYear '2016'
@@ -99,12 +99,18 @@ def getBasePom(String libName) {
                     organization = 'Arello Mobile'
                     organizationUrl 'http://www.arello-mobile.com/'
                 }
+                developer {
+                    name 'Vova Stelmashchuk'
+                    email 'vovochkastelmashchuk@gmail.com'
+                    organization = 'SchoolHelper'
+                    organizationUrl 'https://schoolhelper.tech/'
+                }
             }
 
             scm {
-                connection 'scm:git@github.com:Arello-Mobile/Moxy.git'
-                developerConnection 'scm:git@github.com:Arello-Mobile/Moxy.git'
-                url 'https://github.com/Arello-Mobile/Moxy'
+                connection 'scm:git@github.com:jordan1997/Moxy.git'
+                developerConnection 'scm:git@github.com:jordan1997/Moxy.git'
+                url 'https://github.com/jordan1997/Moxy'
             }
         }.withXml {
             asNode().appendNode('packaging', 'jar')
@@ -140,8 +146,6 @@ task copyJars {
         }
     }
 }
-
-
 
 
 task createPomXml {
