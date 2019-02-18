@@ -1,9 +1,19 @@
-include ':moxy', ':stub-reflector', ':moxy-android', ':moxy-compiler', ':stub-android', ':moxy-app-compat', ':moxy-androidx', ':stub-appcompat', ':stub-androidx'
-include ':sample-github'
+include ':moxy-x', ':moxy-x-android', ':moxy-x-compiler', ':moxy-x-app-compat', ':moxy-x-androidx'
+
+include ':stub-reflector', ':stub-android', ':stub-appcompat', ':stub-androidx'
+
+/*include ':sample-github'*/
 include ':sample-kotlin'
 include ':sample-custom-strategy'
-include ':moxy-androidx-sapmle'
+include ':moxy-androidx-sample'
+
 project(':stub-reflector').projectDir = new File('moxy/stub-reflector')
 project(':stub-android').projectDir = new File('moxy-android/stub-android')
 project(':stub-appcompat').projectDir = new File('moxy-app-compat/stub-appcompat')
 project(':stub-androidx').projectDir = new File('moxy-androidx/stub-androidx')
+
+project(':moxy-x').projectDir = new File('moxy')
+project(':moxy-x-androidx').projectDir = new File('moxy-androidx')
+project(':moxy-x-app-compat').projectDir = new File('moxy-app-compat')
+project(':moxy-x-compiler').projectDir = new File('moxy-compiler')
+project(':moxy-x-android').projectDir = new File('moxy-android')

@@ -253,14 +253,14 @@ copyVersion.dependsOn createPomXml
 assemble.dependsOn copyVersion
 
 dependencies {
-    implementation project(':moxy')
+    implementation project(':moxy-x')
     implementation deps.javapoet
 
     compileOnly deps.autocommon
     compileOnly deps.autoservice
     compileOnly deps.guava
 
-    javadocDeps project(':moxy')
+    javadocDeps project(':moxy-x')
     javadocDeps deps.javapoet
     javadocDeps deps.autoservice
 

@@ -6,7 +6,7 @@ ext {
     publishDir = 'artifacts'
     publishMavenDir = 'artifacts-maven'
     targetGroupId = 'tech.schoolhelper'
-    targetArtefactId = 'moxy-x'
+    targetArtefactId = 'moxy'
     targetArtefactIdDev = 'moxy-dev'
     versionFile = 'VERSION'
 }
@@ -240,6 +240,6 @@ dependencies {
     testImplementation deps.android
     testImplementation deps.robolectric
     testImplementation deps.compiletesting
-    testImplementation project(':moxy-compiler')
+    testImplementation project(':moxy-x-compiler')
     testImplementation deps.javapoet
 }

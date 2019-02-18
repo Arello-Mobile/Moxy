@@ -65,8 +65,8 @@ dependencies {
     testImplementation "org.hamcrest:hamcrest-all:1.3"
     testImplementation "org.robolectric:robolectric:3.1-rc1"
     
-    implementation project(':moxy')
-    implementation project(':moxy-app-compat')
+    implementation project(':moxy-x')
+    implementation project(':moxy-x-app-compat')
 
-    annotationProcessor project(':moxy-compiler')
+    annotationProcessor project(':moxy-x-compiler')
 }
