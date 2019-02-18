@@ -101,8 +101,8 @@ dependencies {
 ```
 If you are planning to use AndroidX, then you can use `MvpAppCompatActivity` and `MvpAppCompatFragment`. Then add this:
 ```groovy
-	...
-	implementation 'tech.schoolhelper:moxy-x-androidx:1.5.6'
+   ...
+   implementation 'tech.schoolhelper:moxy-x-androidx:1.5.6'
 ```
 ### Kotlin
 If you are using kotlin, use `kapt` instead of `provided`/`apt` dependency type:
