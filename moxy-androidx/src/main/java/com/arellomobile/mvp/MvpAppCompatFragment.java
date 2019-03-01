@@ -1,6 +1,7 @@
 package com.arellomobile.mvp;
 
 import android.os.Bundle;
+
 import androidx.fragment.app.Fragment;
 
 /**
@@ -17,6 +18,7 @@ public class MvpAppCompatFragment extends Fragment {
 
     private MvpDelegate<? extends MvpAppCompatFragment> mMvpDelegate;
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 

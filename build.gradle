@@ -20,8 +20,8 @@ allprojects {
 }
 
 ext {
-    targetVersionCode = 46
-    targetVersionName = "1.5.6"
+    targetVersionCode = 47
+    targetVersionName = "1.5.7-SNAPSHOT"
 
     deps = [
             android       : 'com.google.android:android:1.6_r2',

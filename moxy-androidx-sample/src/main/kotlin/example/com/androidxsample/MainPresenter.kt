@@ -1,4 +1,4 @@
-package example.com.moxy_androidx_sample
+package example.com.androidxsample
 
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState

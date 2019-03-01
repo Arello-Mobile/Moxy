@@ -239,7 +239,7 @@ copyVersion.dependsOn createPomXml
 assemble.dependsOn copyVersion
 
 dependencies {
-    compile project(':moxy-x')
+    compileOnly project(':moxy-x')
 
     compileOnly deps.android
     compileOnly project(':stub-appcompat')

@@ -269,6 +269,6 @@ dependencies {
     testImplementation deps.compiletesting
     testImplementation deps.asm
 
-    // workaround to use test resources (https://stackoverflow.com/q/24870464)
+    //workaround to use test resources (https://stackoverflow.com/q/24870464)
     testRuntime files(sourceSets.test.output.resourcesDir)
 }

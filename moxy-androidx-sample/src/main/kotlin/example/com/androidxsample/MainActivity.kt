@@ -1,4 +1,4 @@
-package example.com.moxy_androidx_sample
+package example.com.androidxsample
 
 import android.os.Bundle
 import android.util.Log
@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.presenter.InjectPresenter
+import example.com.androidxsample.R
 
 interface MainView : MvpView {
 	fun printLog(msg: String)

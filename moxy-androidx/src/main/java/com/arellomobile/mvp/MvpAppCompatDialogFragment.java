@@ -1,11 +1,7 @@
-package com.alfaenzo.alfa.presentation.base;
+package com.arellomobile.mvp;
 
 
 import android.os.Bundle;
-
-import com.arellomobile.mvp.MvpDelegate;
-
-import org.jetbrains.annotations.NotNull;
 
 import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.fragment.app.Fragment;
@@ -15,19 +11,21 @@ import androidx.fragment.app.Fragment;
  *
  * @author Vova Usachov
  */
-@SuppressWarnings({"ConstantConditions", "unused"})
+@SuppressWarnings({"unused"})
 public class MvpAppCompatDialogFragment extends AppCompatDialogFragment {
 
     private boolean mIsStateSaved;
 
     private MvpDelegate<? extends MvpAppCompatDialogFragment> mMvpDelegate;
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         getMvpDelegate().onCreate(savedInstanceState);
     }
 
+    @Override
     public void onResume() {
         super.onResume();
 
@@ -36,7 +34,8 @@ public class MvpAppCompatDialogFragment extends AppCompatDialogFragment {
         getMvpDelegate().onAttach();
     }
 
-    public void onSaveInstanceState(@NotNull Bundle outState) {
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
         mIsStateSaved = true;
@@ -100,3 +99,4 @@ public class MvpAppCompatDialogFragment extends AppCompatDialogFragment {
 
         return mMvpDelegate;
     }
+}
