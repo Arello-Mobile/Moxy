@@ -1,6 +1,5 @@
 package com.arellomobile.mvp;
 
-
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatDialogFragment;
