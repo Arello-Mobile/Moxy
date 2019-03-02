@@ -1,6 +1,5 @@
 package com.arellomobile.mvp.compiler;
 
-import com.arellomobile.mvp.GenerateViewState;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.RegisterMoxyReflectorPackages;
 import com.arellomobile.mvp.compiler.presenterbinder.InjectPresenterProcessor;
@@ -91,8 +90,7 @@ public class MvpCompiler extends AbstractProcessor {
 		Collections.addAll(supportedAnnotationTypes,
 				InjectPresenter.class.getCanonicalName(),
 				InjectViewState.class.getCanonicalName(),
-				RegisterMoxyReflectorPackages.class.getCanonicalName(),
-				GenerateViewState.class.getCanonicalName());
+				RegisterMoxyReflectorPackages.class.getCanonicalName());
 		return supportedAnnotationTypes;
 	}
 

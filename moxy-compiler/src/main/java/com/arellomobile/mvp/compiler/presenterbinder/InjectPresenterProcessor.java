@@ -19,183 +19,175 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 
 public class InjectPresenterProcessor extends ElementProcessor<VariableElement, TargetClassInfo> {
-	private static final String PRESENTER_FIELD_ANNOTATION = InjectPresenter.class.getName();
-	private static final String PROVIDE_PRESENTER_ANNOTATION = ProvidePresenter.class.getName();
-	private static final String PROVIDE_PRESENTER_TAG_ANNOTATION = ProvidePresenterTag.class.getName();
+    private static final String PRESENTER_FIELD_ANNOTATION = InjectPresenter.class.getName();
 
-	private final List<TypeElement> presentersContainers = new ArrayList<>();
+    private static final String PROVIDE_PRESENTER_ANNOTATION = ProvidePresenter.class.getName();
 
-	public List<TypeElement> getPresentersContainers() {
-		return new ArrayList<>(presentersContainers);
-	}
+    private static final String PROVIDE_PRESENTER_TAG_ANNOTATION = ProvidePresenterTag.class.getName();
 
-	@Override
-	public TargetClassInfo process(VariableElement variableElement) {
-		final Element enclosingElement = variableElement.getEnclosingElement();
+    private final List<TypeElement> presentersContainers = new ArrayList<>();
 
-		if (!(enclosingElement instanceof TypeElement)) {
-			throw new RuntimeException("Only class fields could be annotated as @InjectPresenter: " +
-					variableElement + " at " + enclosingElement);
-		}
+    public List<TypeElement> getPresentersContainers() {
+        return new ArrayList<>(presentersContainers);
+    }
 
-		if (presentersContainers.contains(enclosingElement)) {
-			return null;
-		}
+    @Override
+    public TargetClassInfo process(VariableElement variableElement) {
+        final Element enclosingElement = variableElement.getEnclosingElement();
 
-		final TypeElement presentersContainer = (TypeElement) enclosingElement;
-		presentersContainers.add(presentersContainer);
+        if (!(enclosingElement instanceof TypeElement)) {
+            throw new RuntimeException("Only class fields could be annotated as @InjectPresenter: " +
+                    variableElement + " at " + enclosingElement);
+        }
 
-		// gather presenter fields info
-		List<TargetPresenterField> fields = collectFields(presentersContainer);
-		bindProvidersToFields(fields, collectPresenterProviders(presentersContainer));
-		bindTagProvidersToFields(fields, collectTagProviders(presentersContainer));
+        if (presentersContainers.contains(enclosingElement)) {
+            return null;
+        }
 
-		return new TargetClassInfo(presentersContainer, fields);
-	}
+        final TypeElement presentersContainer = (TypeElement) enclosingElement;
+        presentersContainers.add(presentersContainer);
 
-	private static List<TargetPresenterField> collectFields(TypeElement presentersContainer) {
-		List<TargetPresenterField> fields = new ArrayList<>();
+        // gather presenter fields info
+        List<TargetPresenterField> fields = collectFields(presentersContainer);
+        bindProvidersToFields(fields, collectPresenterProviders(presentersContainer));
+        bindTagProvidersToFields(fields, collectTagProviders(presentersContainer));
 
-		for (Element element : presentersContainer.getEnclosedElements()) {
-			if (element.getKind() != ElementKind.FIELD) {
-				continue;
-			}
+        return new TargetClassInfo(presentersContainer, fields);
+    }
 
-			AnnotationMirror annotation = Util.getAnnotation(element, PRESENTER_FIELD_ANNOTATION);
+    private static List<TargetPresenterField> collectFields(TypeElement presentersContainer) {
+        List<TargetPresenterField> fields = new ArrayList<>();
 
-			if (annotation == null) {
-				continue;
-			}
+        for (Element element : presentersContainer.getEnclosedElements()) {
+            if (element.getKind() != ElementKind.FIELD) {
+                continue;
+            }
 
-			// TODO: simplify?
-			TypeMirror clazz = ((DeclaredType) element.asType()).asElement().asType();
+            AnnotationMirror annotation = Util.getAnnotation(element, PRESENTER_FIELD_ANNOTATION);
 
-			String name = element.toString();
+            if (annotation == null) {
+                continue;
+            }
 
-			String type = Util.getAnnotationValueAsString(annotation, "type");
-			String tag = Util.getAnnotationValueAsString(annotation, "tag");
-			String presenterId = Util.getAnnotationValueAsString(annotation, "presenterId");
+            // TODO: simplify?
+            TypeMirror clazz = ((DeclaredType) element.asType()).asElement().asType();
 
-			TargetPresenterField field = new TargetPresenterField(clazz, name, type, tag, presenterId);
-			fields.add(field);
-		}
-		return fields;
-	}
+            String name = element.toString();
 
-	private static List<PresenterProviderMethod> collectPresenterProviders(TypeElement presentersContainer) {
-		List<PresenterProviderMethod> providers = new ArrayList<>();
+            String tag = Util.getAnnotationValueAsString(annotation, "tag");
+            String presenterId = Util.getAnnotationValueAsString(annotation, "presenterId");
 
-		for (Element element : presentersContainer.getEnclosedElements()) {
-			if (element.getKind() != ElementKind.METHOD) {
-				continue;
-			}
+            TargetPresenterField field = new TargetPresenterField(clazz, name, tag, presenterId);
+            fields.add(field);
+        }
+        return fields;
+    }
 
-			final ExecutableElement providerMethod = (ExecutableElement) element;
+    private static List<PresenterProviderMethod> collectPresenterProviders(TypeElement presentersContainer) {
+        List<PresenterProviderMethod> providers = new ArrayList<>();
 
-			final AnnotationMirror annotation = Util.getAnnotation(element, PROVIDE_PRESENTER_ANNOTATION);
+        for (Element element : presentersContainer.getEnclosedElements()) {
+            if (element.getKind() != ElementKind.METHOD) {
+                continue;
+            }
 
-			if (annotation == null) {
-				continue;
-			}
+            final ExecutableElement providerMethod = (ExecutableElement) element;
 
-			final String name = providerMethod.getSimpleName().toString();
-			final DeclaredType kind = ((DeclaredType) providerMethod.getReturnType());
+            final AnnotationMirror annotation = Util.getAnnotation(element, PROVIDE_PRESENTER_ANNOTATION);
 
-			String type = Util.getAnnotationValueAsString(annotation, "type");
-			String tag = Util.getAnnotationValueAsString(annotation, "tag");
-			String presenterId = Util.getAnnotationValueAsString(annotation, "presenterId");
+            if (annotation == null) {
+                continue;
+            }
 
-			providers.add(new PresenterProviderMethod(kind, name, type, tag, presenterId));
-		}
-		return providers;
-	}
+            final String name = providerMethod.getSimpleName().toString();
+            final DeclaredType kind = ((DeclaredType) providerMethod.getReturnType());
 
-	private static List<TagProviderMethod> collectTagProviders(TypeElement presentersContainer) {
-		List<TagProviderMethod> providers = new ArrayList<>();
+            String tag = Util.getAnnotationValueAsString(annotation, "tag");
+            String presenterId = Util.getAnnotationValueAsString(annotation, "presenterId");
 
-		for (Element element : presentersContainer.getEnclosedElements()) {
-			if (element.getKind() != ElementKind.METHOD) {
-				continue;
-			}
+            providers.add(new PresenterProviderMethod(kind, name, tag, presenterId));
+        }
+        return providers;
+    }
 
-			final ExecutableElement providerMethod = (ExecutableElement) element;
+    private static List<TagProviderMethod> collectTagProviders(TypeElement presentersContainer) {
+        List<TagProviderMethod> providers = new ArrayList<>();
 
-			final AnnotationMirror annotation = Util.getAnnotation(element, PROVIDE_PRESENTER_TAG_ANNOTATION);
+        for (Element element : presentersContainer.getEnclosedElements()) {
+            if (element.getKind() != ElementKind.METHOD) {
+                continue;
+            }
 
-			if (annotation == null) {
-				continue;
-			}
+            final ExecutableElement providerMethod = (ExecutableElement) element;
 
-			final String name = providerMethod.getSimpleName().toString();
+            final AnnotationMirror annotation = Util.getAnnotation(element, PROVIDE_PRESENTER_TAG_ANNOTATION);
 
-			TypeMirror presenterClass = Util.getAnnotationValueAsTypeMirror(annotation, "presenterClass");
-			String type = Util.getAnnotationValueAsString(annotation, "type");
-			String presenterId = Util.getAnnotationValueAsString(annotation, "presenterId");
+            if (annotation == null) {
+                continue;
+            }
 
-			providers.add(new TagProviderMethod(presenterClass, name, type, presenterId));
-		}
-		return providers;
-	}
+            final String name = providerMethod.getSimpleName().toString();
 
-	private static void bindProvidersToFields(List<TargetPresenterField> fields,
-	                                          List<PresenterProviderMethod> presenterProviders) {
-		if (fields.isEmpty() || presenterProviders.isEmpty()) {
-			return;
-		}
+            TypeMirror presenterClass = Util.getAnnotationValueAsTypeMirror(annotation, "presenterClass");
+            String type = Util.getAnnotationValueAsString(annotation, "type");
+            String presenterId = Util.getAnnotationValueAsString(annotation, "presenterId");
 
-		for (PresenterProviderMethod presenterProvider : presenterProviders) {
-			TypeMirror providerTypeMirror = presenterProvider.getClazz().asElement().asType();
+            providers.add(new TagProviderMethod(presenterClass, name, type, presenterId));
+        }
+        return providers;
+    }
 
-			for (TargetPresenterField field : fields) {
-				if ((field.getClazz()).equals(providerTypeMirror)) {
-					if (field.getPresenterType() != presenterProvider.getPresenterType()) {
-						continue;
-					}
+    private static void bindProvidersToFields(List<TargetPresenterField> fields,
+            List<PresenterProviderMethod> presenterProviders) {
+        if (fields.isEmpty() || presenterProviders.isEmpty()) {
+            return;
+        }
 
-					if (field.getTag() == null && presenterProvider.getTag() != null) {
-						continue;
-					}
-					if (field.getTag() != null && !field.getTag().equals(presenterProvider.getTag())) {
-						continue;
-					}
+        for (PresenterProviderMethod presenterProvider : presenterProviders) {
+            TypeMirror providerTypeMirror = presenterProvider.getClazz().asElement().asType();
 
-					if (field.getPresenterId() == null && presenterProvider.getPresenterId() != null) {
-						continue;
-					}
-					if (field.getPresenterId() != null && !field.getPresenterId().equals(presenterProvider.getPresenterId())) {
-						continue;
-					}
+            for (TargetPresenterField field : fields) {
+                if ((field.getClazz()).equals(providerTypeMirror)) {
+                    if (field.getTag() == null && presenterProvider.getTag() != null) {
+                        continue;
+                    }
+                    if (field.getTag() != null && !field.getTag().equals(presenterProvider.getTag())) {
+                        continue;
+                    }
 
-					field.setPresenterProviderMethodName(presenterProvider.getName());
-				}
-			}
+                    if (field.getPresenterId() == null && presenterProvider.getPresenterId() != null) {
+                        continue;
+                    }
+                    if (field.getPresenterId() != null && !field.getPresenterId().equals(presenterProvider.getPresenterId())) {
+                        continue;
+                    }
 
-		}
-	}
+                    field.setPresenterProviderMethodName(presenterProvider.getName());
+                }
+            }
 
-	private static void bindTagProvidersToFields(List<TargetPresenterField> fields,
-	                                             List<TagProviderMethod> tagProviders) {
-		if (fields.isEmpty() || tagProviders.isEmpty()) {
-			return;
-		}
+        }
+    }
 
-		for (TagProviderMethod tagProvider : tagProviders) {
-			for (TargetPresenterField field : fields) {
-				if ((field.getClazz()).equals(tagProvider.getPresenterClass())) {
-					if (field.getPresenterType() != tagProvider.getType()) {
-						continue;
-					}
+    private static void bindTagProvidersToFields(List<TargetPresenterField> fields,
+            List<TagProviderMethod> tagProviders) {
+        if (fields.isEmpty() || tagProviders.isEmpty()) {
+            return;
+        }
 
-					if (field.getPresenterId() == null && tagProvider.getPresenterId() != null) {
-						continue;
-					}
-					if (field.getPresenterId() != null && !field.getPresenterId().equals(tagProvider.getPresenterId())) {
-						continue;
-					}
+        for (TagProviderMethod tagProvider : tagProviders) {
+            for (TargetPresenterField field : fields) {
+                if ((field.getClazz()).equals(tagProvider.getPresenterClass())) {
+                    if (field.getPresenterId() == null && tagProvider.getPresenterId() != null) {
+                        continue;
+                    }
+                    if (field.getPresenterId() != null && !field.getPresenterId().equals(tagProvider.getPresenterId())) {
+                        continue;
+                    }
 
-					field.setPresenterTagProviderMethodName(tagProvider.getMethodName());
-				}
-			}
-		}
-	}
+                    field.setPresenterTagProviderMethodName(tagProvider.getMethodName());
+                }
+            }
+        }
+    }
 }

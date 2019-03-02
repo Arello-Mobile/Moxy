@@ -1,11 +1,10 @@
 package com.arellomobile.mvp;
 
+import com.arellomobile.mvp.presenter.PresenterField;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import com.arellomobile.mvp.presenter.PresenterField;
-import com.arellomobile.mvp.presenter.PresenterType;
 
 /**
  * Date: 18-Dec-15
@@ -34,13 +33,8 @@ public class MvpProcessor {
 		Class<? extends MvpPresenter> presenterClass = presenterField.getPresenterClass();
 		PresenterStore presenterStore = MvpFacade.getInstance().getPresenterStore();
 
-		PresenterType type = presenterField.getPresenterType();
-		String tag;
-		if (type == PresenterType.LOCAL) {
-			tag = delegateTag + "$" + presenterField.getTag(target);
-		} else {
-			tag = presenterField.getTag(target);
-		}
+		String tag = delegateTag + "$" + presenterField.getTag(target);
+
 
 		//noinspection unchecked
 		MvpPresenter<? super Delegated> presenter = presenterStore.get(tag);
@@ -55,7 +49,6 @@ public class MvpProcessor {
 			return null;
 		}
 
-		presenter.setPresenterType(type);
 		presenter.setTag(tag);
 		presenter.setPresenterClass(presenterClass);
 		presenterStore.add(tag, presenter);

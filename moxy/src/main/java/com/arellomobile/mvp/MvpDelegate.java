@@ -1,12 +1,10 @@
 package com.arellomobile.mvp;
 
+import android.os.Bundle;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import android.os.Bundle;
-
-import com.arellomobile.mvp.presenter.PresenterType;
 
 /**
  * Date: 18-Dec-15
@@ -212,7 +210,7 @@ public class MvpDelegate<Delegated> {
 		Set<MvpPresenter> allChildPresenters = presentersCounter.getAll(mDelegateTag);
 		for (MvpPresenter presenter : allChildPresenters) {
 			boolean isRejected = presentersCounter.rejectPresenter(presenter, mDelegateTag);
-			if (isRejected && presenter.getPresenterType() != PresenterType.GLOBAL) {
+			if (isRejected) {
 				presenterStore.remove(presenter.getTag());
 				presenter.onDestroy();
 			}

@@ -1,85 +1,77 @@
 package com.arellomobile.mvp.compiler.presenterbinder;
 
 import com.arellomobile.mvp.MvpProcessor;
-import com.arellomobile.mvp.presenter.PresenterType;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 
 import javax.lang.model.type.TypeMirror;
 
 class TargetPresenterField {
-	private final TypeMirror clazz;
-	private final boolean isParametrized;
-	private final TypeName typeName;
-	private final String name;
-	private final PresenterType presenterType;
-	private final String tag;
-	private final String presenterId;
+    private final TypeMirror clazz;
 
-	private String presenterProviderMethodName;
-	private String presenterTagProviderMethodName;
+    private final boolean isParametrized;
 
-	TargetPresenterField(TypeMirror clazz,
-	                     String name,
-	                     String presenterType,
-	                     String tag,
-	                     String presenterId) {
-		this.clazz = clazz;
-		this.isParametrized = TypeName.get(clazz) instanceof ParameterizedTypeName;
-		this.typeName = isParametrized ? ((ParameterizedTypeName) TypeName.get(clazz)).rawType : TypeName.get(clazz);
-		this.name = name;
-		this.tag = tag;
+    private final TypeName typeName;
 
-		if (presenterType == null) {
-			this.presenterType = PresenterType.LOCAL;
-		} else {
-			this.presenterType = PresenterType.valueOf(presenterType);
-		}
+    private final String name;
 
-		this.presenterId = presenterId;
-	}
+    private final String tag;
 
-	TypeMirror getClazz() {
-		return clazz;
-	}
+    private final String presenterId;
 
-	TypeName getTypeName() {
-		return typeName;
-	}
+    private String presenterProviderMethodName;
 
-	String getGeneratedClassName() {
-		return name + MvpProcessor.PRESENTER_BINDER_INNER_SUFFIX;
-	}
+    private String presenterTagProviderMethodName;
 
-	String getTag() {
-		return tag;
-	}
+    TargetPresenterField(TypeMirror clazz,
+            String name,
+            String tag,
+            String presenterId) {
+        this.clazz = clazz;
+        this.isParametrized = TypeName.get(clazz) instanceof ParameterizedTypeName;
+        this.typeName = isParametrized ? ((ParameterizedTypeName) TypeName.get(clazz)).rawType : TypeName.get(clazz);
+        this.name = name;
+        this.tag = tag;
+        this.presenterId = presenterId;
+    }
 
-	String getName() {
-		return name;
-	}
+    TypeMirror getClazz() {
+        return clazz;
+    }
 
-	PresenterType getPresenterType() {
-		return presenterType;
-	}
+    TypeName getTypeName() {
+        return typeName;
+    }
 
-	String getPresenterId() {
-		return presenterId;
-	}
+    String getGeneratedClassName() {
+        return name + MvpProcessor.PRESENTER_BINDER_INNER_SUFFIX;
+    }
 
-	String getPresenterProviderMethodName() {
-		return presenterProviderMethodName;
-	}
+    String getTag() {
+        return tag;
+    }
 
-	void setPresenterProviderMethodName(String presenterProviderMethodName) {
-		this.presenterProviderMethodName = presenterProviderMethodName;
-	}
+    String getName() {
+        return name;
+    }
 
-	String getPresenterTagProviderMethodName() {
-		return presenterTagProviderMethodName;
-	}
+    String getPresenterId() {
+        return presenterId;
+    }
 
-	void setPresenterTagProviderMethodName(String presenterTagProviderMethodName) {
-		this.presenterTagProviderMethodName = presenterTagProviderMethodName;
-	}
+    String getPresenterProviderMethodName() {
+        return presenterProviderMethodName;
+    }
+
+    void setPresenterProviderMethodName(String presenterProviderMethodName) {
+        this.presenterProviderMethodName = presenterProviderMethodName;
+    }
+
+    String getPresenterTagProviderMethodName() {
+        return presenterTagProviderMethodName;
+    }
+
+    void setPresenterTagProviderMethodName(String presenterTagProviderMethodName) {
+        this.presenterTagProviderMethodName = presenterTagProviderMethodName;
+    }
 }

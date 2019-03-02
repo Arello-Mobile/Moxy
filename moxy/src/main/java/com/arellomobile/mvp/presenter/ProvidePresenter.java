@@ -29,7 +29,5 @@ public @interface ProvidePresenter {
 
 	String tag() default EMPTY;
 
-	PresenterType type() default PresenterType.LOCAL;
-
 	String presenterId() default EMPTY;
 }

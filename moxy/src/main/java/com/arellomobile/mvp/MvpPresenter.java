@@ -1,11 +1,10 @@
 package com.arellomobile.mvp;
 
+import com.arellomobile.mvp.viewstate.MvpViewState;
+
 import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
-
-import com.arellomobile.mvp.presenter.PresenterType;
-import com.arellomobile.mvp.viewstate.MvpViewState;
 
 /**
  * Date: 15.12.2015
@@ -18,7 +17,6 @@ import com.arellomobile.mvp.viewstate.MvpViewState;
 public abstract class MvpPresenter<View extends MvpView> {
 	private boolean mFirstLaunch = true;
 	private String mTag;
-	private PresenterType mPresenterType;
 	private Set<View> mViews;
 	private View mViewStateAsView;
 	private MvpViewState<View> mViewState;
@@ -124,15 +122,7 @@ public abstract class MvpPresenter<View extends MvpView> {
 	@SuppressWarnings({"unchecked", "unused"})
 	public void setViewState(MvpViewState<View> viewState) {
 		mViewStateAsView = (View) viewState;
-		mViewState = (MvpViewState) viewState;
-	}
-
-	PresenterType getPresenterType() {
-		return mPresenterType;
-	}
-
-	void setPresenterType(PresenterType presenterType) {
-		mPresenterType = presenterType;
+		mViewState = viewState;
 	}
 
 	String getTag() {

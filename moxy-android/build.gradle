@@ -73,15 +73,15 @@ def getBasePom(String libName) {
             version targetVersionName
             name 'Moxy-android'
             modelVersion = '4.0.0'
-            description = 'MoxyX, we added X for make this librayr coolest'
+            description = 'POM_DESCRIPTION'
             url = 'https://schoolhelper.tech/'
             packaging = 'jar'
 
             inceptionYear '2016'
             licenses {
                 license {
-                    name 'The Apache Software License, Version 2.0'
-                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    name 'POM_LICENCE_NAME'
+                    url 'POM_LICENCE_URL'
                     distribution 'repo'
                 }
             }
@@ -108,9 +108,9 @@ def getBasePom(String libName) {
             }
 
             scm {
-                connection 'scm:git@github.com:jordan1997/Moxy.git'
-                developerConnection 'scm:git@github.com:jordan1997/Moxy.git'
-                url 'https://github.com/jordan1997/Moxy'
+                connection 'POM_SCM_CONNECTION'
+                developerConnection 'POM_SCM_CONNECTION'
+                url 'POM_URL'
             }
         }.withXml {
             asNode().appendNode('packaging', 'jar')
