@@ -6,7 +6,7 @@ ext {
     publishDir = 'artifacts'
     publishMavenDir = 'artifacts-maven'
     targetGroupId = 'tech.schoolhelper'
-    targetArtefactId = 'moxy'
+    targetArtefactId = 'moxy-x'
     targetArtefactIdDev = 'moxy-dev'
     versionFile = 'VERSION'
 }

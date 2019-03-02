@@ -40,21 +40,21 @@ View implementation
 public class HelloWorldActivity extends MvpAppCompatActivity implements HelloWorldView {
 
 	@InjectPresenter
-	HelloWorldPresenter mHelloWorldPresenter;
+	HelloWorldPresenter helloWorldPresenter;
 
-	private TextView mHelloWorldTextView;
+	private TextView helloWorldTextView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_hello_world);
 
-		mHelloWorldTextView = ((TextView) findViewById(R.id.activity_hello_world_text_view_message));
+		helloWorldTextView = ((TextView) findViewById(R.id.activity_hello_world_text_view_message));
 	}
 
 	@Override
 	public void showMessage(int message) {
-		mHelloWorldTextView.setText(message);
+		helloWorldTextView.setText(message);
 	}
 }
 ```
@@ -80,29 +80,29 @@ Base modules integration:
 ```groovy
 dependencies {
   ...
-  implementation 'tech.schoolhelper:moxy-x:1.5.6'
-  annotationProcessor 'tech.schoolhelper:moxy-x-compiler:1.5.6'
+  implementation 'tech.schoolhelper:moxy-x:1.5.7'
+  annotationProcessor 'tech.schoolhelper:moxy-x-compiler:1.5.7'
 }
 ```
 For additional base view classes `MvpActivity` and `MvpFragment` add this:
 ```groovy
 dependencies {
   ...
-  implementation 'tech.schoolhelper:moxy-x-android:1.5.6'
+  implementation 'tech.schoolhelper:moxy-x-android:1.5.7'
 }
 ```
 If you are planning to use AppCompat, then you can use `MvpAppCompatActivity` and `MvpAppCompatFragment`. Then add this:
 ```groovy
 dependencies {
   ...
-  implementation 'tech.schoolhelper:moxy-x-app-compat:1.5.6'
+  implementation 'tech.schoolhelper:moxy-x-app-compat:1.5.7'
   implementation 'com.android.support:appcompat-v7:$support_version'
 }
 ```
 If you are planning to use AndroidX, then you can use `MvpAppCompatActivity` and `MvpAppCompatFragment`. Then add this:
 ```groovy
    ...
-   implementation 'tech.schoolhelper:moxy-x-androidx:1.5.6'
+   implementation 'tech.schoolhelper:moxy-x-androidx:1.5.7'
 ```
 ### Kotlin
 If you are using kotlin, use `kapt` instead of `provided`/`apt` dependency type:
@@ -111,12 +111,12 @@ apply plugin: 'kotlin-kapt'
 
 dependencies {
   ...
-  kapt 'tech.schoolhelper:moxy-x-compiler:1.5.6'
+  kapt 'tech.schoolhelper:moxy-x-compiler:1.5.7'
 }
 ```
 
 ## ProGuard
-Moxy is completely without reflection! No special ProGuard rules required.
+MoxyX is completely without reflection! No special ProGuard rules required.
 
 ## License
 ```
