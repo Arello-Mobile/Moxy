@@ -69,11 +69,15 @@ In order to avoid boilerplate code creating for binding activity, fragments and 
 
 Templates located in [/moxy-templates](https://github.com/jordan1997/Moxy/tree/develop/moxy-templates)
 
-## Links
+## Links (Telegram channels from original moxy community)
 [Telegram channel (en)](https://telegram.me/moxy_mvp_library)<br />
 [Telegram channel (ru)](https://telegram.me/moxy_ru)<br />
 [References](https://github.com/Arello-Mobile/Moxy/wiki#references)<br />
 [FAQ](https://github.com/Arello-Mobile/Moxy/wiki/FAQ)
+
+## Twitter
+For connection with author of this repository use twitter
+[Twitter](https://twitter.com/jordan29041997)
 
 ## Integration
 Base modules integration:
