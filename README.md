@@ -3,6 +3,8 @@ We added X to the Moxy for make this library coolest.
 
 [![Maven Central](https://img.shields.io/maven-central/v/tech.schoolhelper/moxy-x.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22tech.schoolhelper%22%20AND%20a:%22moxy-x%22)
 
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-MoxyX-blue.svg?style=flat)](https://android-arsenal.com/details/1/7547)
+
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
 
 Moxy is a library that helps to use MVP pattern when you do the Android Application. _Without problems of lifecycle and boilerplate code!
