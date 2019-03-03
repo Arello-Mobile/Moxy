@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.arellomobile.mvp.presenter.PresenterField;
 import com.arellomobile.mvp.presenter.PresenterType;
+import com.arellomobile.mvp.reflector.MoxyReflector;
 
 /**
  * Date: 18-Dec-15
