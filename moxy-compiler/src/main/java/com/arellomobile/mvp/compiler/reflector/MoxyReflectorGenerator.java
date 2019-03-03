@@ -2,6 +2,7 @@ package com.arellomobile.mvp.compiler.reflector;
 
 import com.arellomobile.mvp.MvpProcessor;
 import com.arellomobile.mvp.ViewStateProvider;
+import com.arellomobile.mvp.reflector.ReflectorDelegate;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.JavaFile;
@@ -26,8 +27,6 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
-import static com.arellomobile.mvp.compiler.MvpCompiler.MOXY_REFLECTOR_DEFAULT_PACKAGE;
-
 /**
  * Date: 07.12.2016
  * Time: 19:05
@@ -50,61 +49,46 @@ public class MoxyReflectorGenerator {
 	public static JavaFile generate(String destinationPackage,
 	                                List<TypeElement> presenterClassNames,
 	                                List<TypeElement> presentersContainers,
-	                                List<TypeElement> strategyClasses,
-	                                List<String> additionalMoxyReflectorsPackages) {
-		TypeSpec.Builder classBuilder = TypeSpec.classBuilder("MoxyReflector")
-				.addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+	                                List<TypeElement> strategyClasses) {
+
+		TypeSpec.Builder classBuilder = TypeSpec.enumBuilder("MoxyReflectorDelegate")
+                .addEnumConstant("INSTANCE")
+				.addModifiers(Modifier.PUBLIC)
+				.addSuperinterface(TypeName.get(ReflectorDelegate.class))
 				.addField(MAP_CLASS_TO_OBJECT_TYPE_NAME, "sViewStateProviders", Modifier.PRIVATE, Modifier.STATIC)
 				.addField(MAP_CLASS_TO_LIST_OF_OBJECT_TYPE_NAME, "sPresenterBinders", Modifier.PRIVATE, Modifier.STATIC)
 				.addField(MAP_CLASS_TO_OBJECT_TYPE_NAME, "sStrategies", Modifier.PRIVATE, Modifier.STATIC);
 
-		classBuilder.addStaticBlock(generateStaticInitializer(presenterClassNames, presentersContainers, strategyClasses, additionalMoxyReflectorsPackages));
+		classBuilder.addStaticBlock(generateStaticInitializer(presenterClassNames, presentersContainers, strategyClasses));
 
-		if (destinationPackage.equals(MOXY_REFLECTOR_DEFAULT_PACKAGE)) {
-			classBuilder.addMethod(MethodSpec.methodBuilder("getViewState")
-					.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-					.returns(Object.class)
-					.addParameter(CLASS_WILDCARD_TYPE_NAME, "presenterClass")
-					.addStatement("$1T viewStateProvider = ($1T) sViewStateProviders.get(presenterClass)", ViewStateProvider.class)
-					.beginControlFlow("if (viewStateProvider == null)")
-					.addStatement("return null")
-					.endControlFlow()
-					.addCode("\n")
-					.addStatement("return viewStateProvider.getViewState()")
-					.build());
+		classBuilder.addMethod(MethodSpec.methodBuilder("getViewState")
+                .addAnnotation(Override.class)
+                .addModifiers(Modifier.PUBLIC)
+                .returns(Object.class)
+                .addParameter(CLASS_WILDCARD_TYPE_NAME, "presenterClass")
+                .addStatement("$1T viewStateProvider = ($1T) sViewStateProviders.get(presenterClass)", ViewStateProvider.class)
+                .beginControlFlow("if (viewStateProvider == null)")
+                .addStatement("return null")
+                .endControlFlow()
+                .addCode("\n")
+                .addStatement("return viewStateProvider.getViewState()")
+                .build());
 
-			classBuilder.addMethod(MethodSpec.methodBuilder("getPresenterBinders")
-					.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-					.returns(ParameterizedTypeName.get(List.class, Object.class))
-					.addParameter(CLASS_WILDCARD_TYPE_NAME, "delegated")
-					.addStatement("return sPresenterBinders.get(delegated)")
-					.build());
+		classBuilder.addMethod(MethodSpec.methodBuilder("getPresenterBinders")
+                .addAnnotation(Override.class)
+                .addModifiers(Modifier.PUBLIC)
+                .returns(ParameterizedTypeName.get(List.class, Object.class))
+                .addParameter(CLASS_WILDCARD_TYPE_NAME, "delegated")
+                .addStatement("return sPresenterBinders.get(delegated)")
+                .build());
 
-			classBuilder.addMethod(MethodSpec.methodBuilder("getStrategy")
-					.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-					.returns(Object.class)
-					.addParameter(CLASS_WILDCARD_TYPE_NAME, "strategyClass")
-					.addStatement("return sStrategies.get(strategyClass)")
-					.build());
-		} else {
-			classBuilder.addMethod(MethodSpec.methodBuilder("getViewStateProviders")
-					.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-					.returns(MAP_CLASS_TO_OBJECT_TYPE_NAME)
-					.addStatement("return sViewStateProviders")
-					.build());
-
-			classBuilder.addMethod(MethodSpec.methodBuilder("getPresenterBinders")
-					.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-					.returns(MAP_CLASS_TO_LIST_OF_OBJECT_TYPE_NAME)
-					.addStatement("return sPresenterBinders")
-					.build());
-
-			classBuilder.addMethod(MethodSpec.methodBuilder("getStrategies")
-					.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-					.returns(MAP_CLASS_TO_OBJECT_TYPE_NAME)
-					.addStatement("return sStrategies")
-					.build());
-		}
+		classBuilder.addMethod(MethodSpec.methodBuilder("getStrategy")
+                .addAnnotation(Override.class)
+                .addModifiers(Modifier.PUBLIC)
+                .returns(Object.class)
+                .addParameter(CLASS_WILDCARD_TYPE_NAME, "strategyClass")
+                .addStatement("return sStrategies.get(strategyClass)")
+                .build());
 
 
 		return JavaFile.builder(destinationPackage, classBuilder.build())
@@ -114,13 +98,11 @@ public class MoxyReflectorGenerator {
 
 	private static CodeBlock generateStaticInitializer(List<TypeElement> presenterClassNames,
 	                                                   List<TypeElement> presentersContainers,
-	                                                   List<TypeElement> strategyClasses,
-	                                                   List<String> additionalMoxyReflectorsPackages) {
+	                                                   List<TypeElement> strategyClasses) {
 		// sort to preserve order of statements between compilations
 		Map<TypeElement, List<TypeElement>> presenterBinders = getPresenterBinders(presentersContainers);
 		presenterClassNames.sort(TYPE_ELEMENT_COMPARATOR);
 		strategyClasses.sort(TYPE_ELEMENT_COMPARATOR);
-		additionalMoxyReflectorsPackages.sort(Comparator.naturalOrder());
 
 		CodeBlock.Builder builder = CodeBlock.builder();
 
@@ -159,15 +141,6 @@ public class MoxyReflectorGenerator {
 		builder.addStatement("sStrategies = new $T<>()", HashMap.class);
 		for (TypeElement strategyClass : strategyClasses) {
 			builder.addStatement("sStrategies.put($1T.class, new $1T())", strategyClass);
-		}
-
-		for (String pkg : additionalMoxyReflectorsPackages) {
-			ClassName moxyReflector = ClassName.get(pkg, "MoxyReflector");
-
-			builder.add("\n");
-			builder.addStatement("sViewStateProviders.putAll($T.getViewStateProviders())", moxyReflector);
-			builder.addStatement("sPresenterBinders.putAll($T.getPresenterBinders())", moxyReflector);
-			builder.addStatement("sStrategies.putAll($T.getStrategies())", moxyReflector);
 		}
 
 		return builder.build();

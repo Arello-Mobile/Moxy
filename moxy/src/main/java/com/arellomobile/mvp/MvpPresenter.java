@@ -1,10 +1,11 @@
 package com.arellomobile.mvp;
 
-import com.arellomobile.mvp.viewstate.MvpViewState;
-
 import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
+
+import com.arellomobile.mvp.reflector.MoxyReflector;
+import com.arellomobile.mvp.viewstate.MvpViewState;
 
 /**
  * Date: 15.12.2015
