@@ -74,7 +74,7 @@ def getBasePom(String libName) {
             name 'Moxy-androidx'
             modelVersion = '4.0.0'
             description = 'MoxyX, we added X for make this librayr coolest'
-            url = 'https://schoolhelper.tech/'
+            url = 'URL'
             packaging = 'jar'
 
             inceptionYear '2016'
@@ -88,22 +88,10 @@ def getBasePom(String libName) {
 
             developers {
                 developer {
-                    name 'Blinov Alexander'
-                    email 'xanderblinov@gmail.com'
-                    organization = 'Arello Mobile'
-                    organizationUrl 'http://www.arello-mobile.com/'
-                }
-                developer {
-                    name 'Shmakov Yuri'
-                    email 'senneco@gmail.com'
-                    organization = 'Arello Mobile'
-                    organizationUrl 'http://www.arello-mobile.com/'
-                }
-                developer {
                     name 'Vova Stelmashchuk'
                     email 'vovochkastelmashchuk@gmail.com'
                     organization = 'SchoolHelper'
-                    organizationUrl 'https://schoolhelper.tech/'
+                    organizationUrl 'URL'
                 }
             }
 

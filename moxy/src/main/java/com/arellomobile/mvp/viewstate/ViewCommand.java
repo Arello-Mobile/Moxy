@@ -10,21 +10,22 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategy;
  * @author Alexander Blinov
  */
 public abstract class ViewCommand<View extends MvpView> {
-	private final String mTag;
-	private final Class<? extends StateStrategy> mStateStrategyType;
+    private final String tag;
 
-	protected ViewCommand(String tag, Class<? extends StateStrategy> stateStrategyType) {
-		mTag = tag;
-		mStateStrategyType = stateStrategyType;
-	}
+    private final Class<? extends StateStrategy> stateStrategyType;
 
-	public abstract void apply(View view);
+    protected ViewCommand(String tag, Class<? extends StateStrategy> stateStrategyType) {
+        this.tag = tag;
+        this.stateStrategyType = stateStrategyType;
+    }
 
-	public String getTag() {
-		return mTag;
-	}
+    public abstract void apply(View view);
 
-	public Class<? extends StateStrategy> getStrategyType() {
-		return mStateStrategyType;
-	}
+    public String getTag() {
+        return tag;
+    }
+
+    public Class<? extends StateStrategy> getStrategyType() {
+        return stateStrategyType;
+    }
 }

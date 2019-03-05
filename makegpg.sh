@@ -1,16 +1,24 @@
 #!/usr/bin/env bash
 
+rm -rf moxy-material/artifacts-maven
+rm -rf moxy-compiler/artifacts-maven
+rm -rf moxy-app-compat/artifacts-maven
+rm -rf moxy-androidx/artifacts-maven
+rm -rf moxy-android/artifacts-maven
+rm -rf moxy/artifacts-maven
+
+echo "artifacts was clean"
+
 ./gradlew moxy-x:assemble
 ./gradlew moxy-x-android:assemble
 ./gradlew moxy-x-androidx:assemble
 ./gradlew moxy-x-app-compat:assemble
 ./gradlew moxy-x-compile:assemble
+./gradlew moxy-x-material:assemble
 
 echo "artifacts built"
 
 cd moxy/artifacts-maven
-
-pwd
 
 gpg2 -ab moxy-x-javadoc.jar
 gpg2 -ab moxy-x-sources.jar
@@ -62,3 +70,14 @@ gpg2 -ab moxy-x-compiler.jar
 gpg2 -ab moxy-x-compiler.pom
 
 echo "gpg for moxy-x-app-compiler built"
+
+cd .. && cd ..
+
+cd moxy-material/artifacts-maven
+
+gpg2 -ab moxy-x-material-javadoc.jar
+gpg2 -ab moxy-x-material-sources.jar
+gpg2 -ab moxy-x-material.jar
+gpg2 -ab moxy-x-material.pom
+
+echo "gpg for moxy-x-material built"

@@ -5,4 +5,5 @@ targetCompatibility = JavaVersion.VERSION_1_7
 
 dependencies {
     compileOnly deps.android
+    compileOnly project(':stub-androidx')
 }

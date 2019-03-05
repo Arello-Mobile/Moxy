@@ -74,7 +74,7 @@ def getBasePom(String libName) {
             name 'Moxy-app-compat'
             modelVersion = '4.0.0'
             description = 'POM_DESCRIPTION'
-            url = 'https://schoolhelper.tech/'
+            url = 'URL'
             packaging = 'jar'
 
             inceptionYear '2016'

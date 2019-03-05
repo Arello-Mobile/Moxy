@@ -64,7 +64,7 @@ def getBasePom(String libName) {
             name 'Moxy'
             modelVersion = '4.0.0'
             description = 'POM_DESCRIPTION'
-            url = 'https://schoolhelper.tech/'
+            url = 'URL'
             //   packaging = 'jar'  //doesn't work from box, implement it manualy
 
             inceptionYear '2016'
