@@ -13,6 +13,11 @@ The main idea of using Moxy:
 ![schematic_using](https://habrastorage.org/files/a2e/b51/8b4/a2eb518b465a4df9b47e68794519270d.gif)
 See what's happening here in the [wiki](https://github.com/Arello-Mobile/Moxy/wiki).
 
+## Diff beetween us and root project
+1. We support androidX
+2. We will remove GLOBAL and WEAK preseter type from the library
+3. Starategy which work by tag, will be added to main package. 
+
 ## Capabilities
 
 Moxy has a few killer features in other ways:
