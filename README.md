@@ -11,12 +11,14 @@ Moxy is a library that helps to use MVP pattern when you do the Android Applicat
 
 The main idea of using Moxy:
 ![schematic_using](https://habrastorage.org/files/a2e/b51/8b4/a2eb518b465a4df9b47e68794519270d.gif)
+
 See what's happening here in the [wiki](https://github.com/Arello-Mobile/Moxy/wiki).
 
-## Diff beetween us and root project
+## Diff between us and root project
 1. We support androidX
 2. We will remove GLOBAL and WEAK preseter type from the library
-3. Starategy which work by tag, will be added to main package. 
+3. Starategy which work by tag, will be added to main package.
+4. We will change the template for android studio (and intelij), the templates will create a view interface and activity or fragment into one file, and this file and presenter keep into one package. We will remove template for Java.
 
 ## Capabilities
 
@@ -72,7 +74,7 @@ public class HelloWorldActivity extends MvpAppCompatActivity implements HelloWor
 For all information check [Moxy Wiki](https://github.com/Arello-Mobile/Moxy/wiki)
 
 ## Android studio templates
-In order to avoid boilerplate code creating for binding activity, fragments and its presentation part, we propose to use Android Studio templates for Moxy. 
+In order to avoid boilerplate code creating for binding activity, fragments and its presentation part, we propose to use Android Studio templates for Moxy.
 
 Templates located in [/moxy-templates](https://github.com/jordan1997/Moxy/tree/develop/moxy-templates)
 
