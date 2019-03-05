@@ -3,13 +3,22 @@ We added X to the Moxy for make this library coolest.
 
 [![Maven Central](https://img.shields.io/maven-central/v/tech.schoolhelper/moxy-x.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22tech.schoolhelper%22%20AND%20a:%22moxy-x%22)
 
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-MoxyX-blue.svg?style=flat)](https://android-arsenal.com/details/1/7547)
+
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
 
 Moxy is a library that helps to use MVP pattern when you do the Android Application. _Without problems of lifecycle and boilerplate code!
 
 The main idea of using Moxy:
 ![schematic_using](https://habrastorage.org/files/a2e/b51/8b4/a2eb518b465a4df9b47e68794519270d.gif)
+
 See what's happening here in the [wiki](https://github.com/Arello-Mobile/Moxy/wiki).
+
+## Diff between us and root project
+1. We support androidX
+2. We will remove GLOBAL and WEAK preseter type from the library
+3. Starategy which work by tag, will be added to main package.
+4. We will change the template for android studio (and intelij), the templates will create a view interface and activity or fragment into one file, and this file and presenter keep into one package. We will remove template for Java.
 
 ## Capabilities
 
@@ -65,7 +74,7 @@ public class HelloWorldActivity extends MvpAppCompatActivity implements HelloWor
 For all information check [Moxy Wiki](https://github.com/Arello-Mobile/Moxy/wiki)
 
 ## Android studio templates
-In order to avoid boilerplate code creating for binding activity, fragments and its presentation part, we propose to use Android Studio templates for Moxy. 
+In order to avoid boilerplate code creating for binding activity, fragments and its presentation part, we propose to use Android Studio templates for Moxy.
 
 Templates located in [/moxy-templates](https://github.com/jordan1997/Moxy/tree/develop/moxy-templates)
 
