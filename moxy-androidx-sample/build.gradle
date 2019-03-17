@@ -38,15 +38,17 @@ android {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation "com.google.android.material:material:1.0.0"
 
     //uncomment for test module
     /*implementation project(':moxy-x')
     implementation project(':moxy-x-androidx')
     kapt project(':moxy-x-compiler')*/
 
-    implementation 'tech.schoolhelper:moxy-x:1.5.7'
-    implementation 'tech.schoolhelper:moxy-x-androidx:1.5.7'
-    kapt 'tech.schoolhelper:moxy-x-compiler:1.5.7'
+    def moxyVersion = '1.6.0-beta'
+    implementation "tech.schoolhelper:moxy-x:$moxyVersion"
+    implementation "tech.schoolhelper:moxy-x-androidx:$moxyVersion"
+    kapt "tech.schoolhelper:moxy-x-compiler:$moxyVersion"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }

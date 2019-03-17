@@ -73,15 +73,15 @@ def getBasePom(String libName) {
             version targetVersionName
             name 'Moxy-androidx'
             modelVersion = '4.0.0'
-            description = 'MoxyX, we added X for make this library coolest'
-            url = 'URL'
+            description = POM_DESCRIPTION
+            url = URL
             packaging = 'jar'
 
             inceptionYear '2016'
             licenses {
                 license {
-                    name 'POM_LICENCE_NAME'
-                    url 'POM_LICENCE_URL'
+                    name POM_LICENCE_NAME
+                    url POM_LICENCE_URL
                     distribution 'repo'
                 }
             }
@@ -91,14 +91,14 @@ def getBasePom(String libName) {
                     name 'Vova Stelmashchuk'
                     email 'vovochkastelmashchuk@gmail.com'
                     organization = 'SchoolHelper'
-                    organizationUrl 'URL'
+                    organizationUrl URL
                 }
             }
 
             scm {
-                connection 'POM_SCM_CONNECTION'
-                developerConnection 'POM_SCM_CONNECTION'
-                url 'POM_URL'
+                connection POM_SCM_CONNECTION
+                developerConnection POM_SCM_CONNECTION
+                url POM_URL
             }
         }.withXml {
             asNode().appendNode('packaging', 'jar')
