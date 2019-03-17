@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * Command will be added to end of commands queue. If commands queue contains same tag, then existing command will be removed.
  *
- * @author Vova Stelmashchuk
  */
 public class AddToEndSingleTagStrategy implements StateStrategy {
     @Override

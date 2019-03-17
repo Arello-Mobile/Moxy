@@ -12,8 +12,6 @@ interface MainView : MvpView {
 	fun printLog(msg: String)
 }
 
-class Frag : com.google.android.material.bottomsheet.BottomSheetDialog
-
 class MainActivity : MvpAppCompatActivity(), MainView {
 	
 	@InjectPresenter
