@@ -68,6 +68,21 @@ class MainPresenter : MvpPresenter<MainView>() {
 }
 ```
 
+## Inject with Dagger2
+
+**We have plan for implement move easies way for connect moxy with dagger, but we need to implement specific compiler for this case**
+ 
+```kotlin
+	@Inject
+	lateinit var daggerPresenter: Lazy<MainPresenter>
+	
+	@InjectPresenter
+	lateinit var presenter: MainPresenter
+	
+	@ProvidePresenter
+	fun providePresenter(): MainPresenter = daggerPresenter.get()
+```
+
 [Here](https://github.com/jordan1997/Moxy/tree/develop/sample-github) you can see "Github" sample application.
 
 ## Wiki

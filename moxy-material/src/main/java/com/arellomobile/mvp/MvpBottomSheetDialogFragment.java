@@ -10,7 +10,7 @@ public class MvpBottomSheetDialogFragment extends BottomSheetDialogFragment {
 
     private boolean mIsStateSaved;
 
-    private MvpDelegate<? extends MvpBottomSheetDialogFragment> mMvpDelegate;
+    private MvpDelegate<? extends MvpBottomSheetDialogFragment> mvpDelegate;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -87,10 +87,10 @@ public class MvpBottomSheetDialogFragment extends BottomSheetDialogFragment {
      * @return The {@link MvpDelegate} being used by this Fragment.
      */
     public MvpDelegate getMvpDelegate() {
-        if (mMvpDelegate == null) {
-            mMvpDelegate = new MvpDelegate<>(this);
+        if (mvpDelegate == null) {
+            mvpDelegate = new MvpDelegate<>(this);
         }
 
-        return mMvpDelegate;
+        return mvpDelegate;
     }
 }

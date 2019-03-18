@@ -12,7 +12,7 @@ import android.os.Bundle;
  * @author Konstantin Tckhovrebov
  */
 public class MvpActivity extends Activity {
-	private MvpDelegate<? extends MvpActivity> mMvpDelegate;
+	private MvpDelegate<? extends MvpActivity> mvpDelegate;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +65,9 @@ public class MvpActivity extends Activity {
 	 * @return The {@link MvpDelegate} being used by this Activity.
 	 */
 	public MvpDelegate getMvpDelegate() {
-		if (mMvpDelegate == null) {
-			mMvpDelegate = new MvpDelegate<>(this);
+		if (mvpDelegate == null) {
+			mvpDelegate = new MvpDelegate<>(this);
 		}
-		return mMvpDelegate;
+		return mvpDelegate;
 	}
 }

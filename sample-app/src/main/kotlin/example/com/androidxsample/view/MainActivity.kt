@@ -7,6 +7,7 @@ import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import dagger.Lazy
+import dagger.android.AndroidInjection
 import example.com.androidxsample.R
 import javax.inject.Inject
 
@@ -26,8 +27,12 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 	fun providePresenter(): MainPresenter = daggerPresenter.get()
 	
 	override fun onCreate(savedInstanceState: Bundle?) {
+		AndroidInjection.inject(this)
+		
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_main)
+		
+		presenter.printLog()
 	}
 	
 	override fun printLog(msg: String) {

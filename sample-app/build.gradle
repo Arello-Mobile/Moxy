@@ -18,7 +18,7 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "example.com.moxy_androidx_sapmle"
+        applicationId "com.example.sapmleapp"
         minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
@@ -32,7 +32,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    buildToolsVersion '28.0.3'
 
     sourceSets {
         main {
@@ -43,9 +42,8 @@ android {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'com.google.android.material:material:1.0.0'
-    //uncomment for test library from local sources
 
+    //uncomment for test library from local sources
     implementation project(':moxy-x')
     implementation project(':moxy-x-androidx')
     kapt project(':moxy-x-compiler')

@@ -6,154 +6,151 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-/**
- * Date: 15.12.2015
- * Time: 19:31
- *
- * @author Yuri Shmakov
- * @author Alexander Blinov
- * @author Konstantin Tckhovrebov
- */
 public abstract class MvpPresenter<View extends MvpView> {
-	private boolean mFirstLaunch = true;
-	private String mTag;
-	private Set<View> mViews;
-	private View mViewStateAsView;
-	private MvpViewState<View> mViewState;
-	private Class<? extends MvpPresenter> mPresenterClass;
+    private boolean isFirstLaunch = true;
 
-	public MvpPresenter() {
-		Binder.bind(this);
+    private String tag;
 
-		mViews = Collections.newSetFromMap(new WeakHashMap<View, Boolean>());
-	}
+    private Set<View> views;
 
-	/**
-	 * <p>Attach view to view state or to presenter(if view state not exists).</p>
-	 * <p>If you use {@link MvpDelegate}, you should not call this method directly.
-	 * It will be called on {@link MvpDelegate#onAttach()}, if view does not attached.</p>
-	 *
-	 * @param view to attachment
-	 */
-	public void attachView(View view) {
-		if (mViewState != null) {
-			mViewState.attachView(view);
-		} else {
-			mViews.add(view);
-		}
-		if (mFirstLaunch) {
-			mFirstLaunch = false;
+    private View viewStateAsView;
 
-			onFirstViewAttach();
-		}
-	}
+    private MvpViewState<View> viewState;
 
-	/**
-	 * <p>Callback after first presenter init and view binding. If this
-	 * presenter instance will have to attach some view in future, this method
-	 * will not be called.</p>
-	 * <p>There you can to interact with {@link #mViewState}.</p>
-	 */
-	protected void onFirstViewAttach() {
-	}
+    private Class<? extends MvpPresenter> presenterClass;
 
-	/**
-	 * <p>Detach view from view state or from presenter(if view state not exists).</p>
-	 * <p>If you use {@link MvpDelegate}, you should not call this method directly.
-	 * It will be called on {@link MvpDelegate#onDetach()}.</p>
-	 *
-	 * @param view view to detach
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public void detachView(View view) {
-		if (mViewState != null) {
-			mViewState.detachView(view);
-		} else {
-			mViews.remove(view);
-		}
-	}
+    public MvpPresenter() {
+        Binder.bind(this);
 
-	public void destroyView(View view) {
-		if (mViewState != null) {
-			mViewState.destroyView(view);
-		}
-	}
+        views = Collections.newSetFromMap(new WeakHashMap<View, Boolean>());
+    }
 
-	/**
-	 * @return views attached to view state, or attached to presenter(if view state not exists)
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public Set<View> getAttachedViews() {
-		if (mViewState != null) {
-			return mViewState.getViews();
-		}
+    /**
+     * <p>Attach view to view state or to presenter(if view state not exists).</p>
+     * <p>If you use {@link MvpDelegate}, you should not call this method directly.
+     * It will be called on {@link MvpDelegate#onAttach()}, if view does not attached.</p>
+     *
+     * @param view to attachment
+     */
+    public void attachView(View view) {
+        if (viewState != null) {
+            viewState.attachView(view);
+        } else {
+            views.add(view);
+        }
+        if (isFirstLaunch) {
+            isFirstLaunch = false;
 
-		return mViews;
-	}
+            onFirstViewAttach();
+        }
+    }
 
-	/**
-	 * @return view state, casted to view interface for simplify
-	 */
-	@SuppressWarnings("WeakerAccess")
-	public View getViewState() {
-		return mViewStateAsView;
-	}
+    /**
+     * <p>Callback after first presenter init and view binding. If this
+     * presenter instance will have to attach some view in future, this method
+     * will not be called.</p>
+     * <p>There you can to interact with {@link #viewState}.</p>
+     */
+    protected void onFirstViewAttach() {
+    }
 
-	/**
-	 * Check if view is in restore state or not
-	 *
-	 * @param view view for check
-	 * @return true if view state restore state to incoming view. false otherwise.
-	 */
-	@SuppressWarnings("unused")
-	public boolean isInRestoreState(View view) {
-		//noinspection SimplifiableIfStatement
-		if (mViewState != null) {
-			return mViewState.isInRestoreState(view);
-		}
-		return false;
-	}
+    /**
+     * <p>Detach view from view state or from presenter(if view state not exists).</p>
+     * <p>If you use {@link MvpDelegate}, you should not call this method directly.
+     * It will be called on {@link MvpDelegate#onDetach()}.</p>
+     *
+     * @param view view to detach
+     */
+    @SuppressWarnings("WeakerAccess")
+    public void detachView(View view) {
+        if (viewState != null) {
+            viewState.detachView(view);
+        } else {
+            views.remove(view);
+        }
+    }
 
-	/**
-	 * Set view state to presenter
-	 *
-	 * @param viewState that implements type, setted as View generic param
-	 */
-	@SuppressWarnings({"unchecked", "unused"})
-	public void setViewState(MvpViewState<View> viewState) {
-		mViewStateAsView = (View) viewState;
-		mViewState = viewState;
-	}
+    public void destroyView(View view) {
+        if (viewState != null) {
+            viewState.destroyView(view);
+        }
+    }
 
-	String getTag() {
-		return mTag;
-	}
+    /**
+     * @return views attached to view state, or attached to presenter(if view state not exists)
+     */
+    @SuppressWarnings("WeakerAccess")
+    public Set<View> getAttachedViews() {
+        if (viewState != null) {
+            return viewState.getViews();
+        }
 
-	void setTag(String tag) {
-		mTag = tag;
-	}
+        return views;
+    }
 
-	void setPresenterClass(Class<? extends MvpPresenter> presenterClass) {
-		mPresenterClass = presenterClass;
-	}
+    /**
+     * @return view state, casted to view interface for simplify
+     */
+    @SuppressWarnings("WeakerAccess")
+    public View getViewState() {
+        return viewStateAsView;
+    }
 
-	Class<? extends MvpPresenter> getPresenterClass() {
-		return mPresenterClass;
-	}
+    /**
+     * Check if view is in restore state or not
+     *
+     * @param view view for check
+     * @return true if view state restore state to incoming view. false otherwise.
+     */
+    @SuppressWarnings("unused")
+    public boolean isInRestoreState(View view) {
+        //noinspection SimplifiableIfStatement
+        if (viewState != null) {
+            return viewState.isInRestoreState(view);
+        }
+        return false;
+    }
 
-	/**
-	 * <p>Called before reference on this presenter will be cleared and instance of presenter
-	 * will be never used.</p>
-	 */
-	public void onDestroy() {
-	}
+    /**
+     * Set view state to presenter
+     *
+     * @param viewState that implements type, setted as View generic param
+     */
+    @SuppressWarnings({"unchecked", "unused"})
+    public void setViewState(MvpViewState<View> viewState) {
+        viewStateAsView = (View) viewState;
+        this.viewState = viewState;
+    }
 
-	private static class Binder {
-		static void bind(MvpPresenter presenter) {
-			MvpView viewState = (MvpView) MoxyReflector.getViewState(presenter.getClass());
+    String getTag() {
+        return tag;
+    }
 
-			presenter.mViewStateAsView = viewState;
-			presenter.mViewState = (MvpViewState) viewState;
-		}
-	}
+    void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    void setPresenterClass(Class<? extends MvpPresenter> presenterClass) {
+        this.presenterClass = presenterClass;
+    }
+
+    Class<? extends MvpPresenter> getPresenterClass() {
+        return presenterClass;
+    }
+
+    /**
+     * <p>Called before reference on this presenter will be cleared and instance of presenter
+     * will be never used.</p>
+     */
+    public void onDestroy() {
+    }
+
+    private static class Binder {
+        static void bind(MvpPresenter presenter) {
+            MvpView viewState = (MvpView) MoxyReflector.getViewState(presenter.getClass());
+
+            presenter.viewStateAsView = viewState;
+            presenter.viewState = (MvpViewState) viewState;
+        }
+    }
 }
