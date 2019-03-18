@@ -2,9 +2,7 @@ include ':moxy-x', ':moxy-x-android', ':moxy-x-compiler', ':moxy-x-app-compat', 
 
 include ':stub-reflector', ':stub-android', ':stub-appcompat', ':stub-androidx', ':stub-material'
 
-include ':sample-kotlin'
-include ':sample-custom-strategy'
-include ':moxy-androidx-sample'
+include ':sample-app'
 
 project(':stub-reflector').projectDir = new File('moxy/stub-reflector')
 project(':stub-android').projectDir = new File('moxy-android/stub-android')

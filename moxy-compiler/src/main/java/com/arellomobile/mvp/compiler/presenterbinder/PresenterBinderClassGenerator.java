@@ -83,8 +83,7 @@ public final class PresenterBinderClassGenerator extends JavaFilesGenerator<Targ
                                 ClassName.get(PresenterField.class), containerClassName)));
 
         builder.addStatement("$T<$T<$T>> presenters = new $T<>($L)",
-                List.class, PresenterField.class, containerClassName,
-                ArrayList.class, fields.size());
+                List.class, PresenterField.class, containerClassName, ArrayList.class, fields.size());
 
         for (TargetPresenterField field : fields) {
             builder.addStatement("presenters.add(new $L())", field.getGeneratedClassName());
@@ -95,8 +94,7 @@ public final class PresenterBinderClassGenerator extends JavaFilesGenerator<Targ
         return builder.build();
     }
 
-    private static TypeSpec generatePresenterBinderClass(TargetPresenterField field,
-            ClassName targetClassName) {
+    private static TypeSpec generatePresenterBinderClass(TargetPresenterField field, ClassName targetClassName) {
         String tag = field.getTag();
         if (tag == null) {
             tag = field.getName();
@@ -127,8 +125,7 @@ public final class PresenterBinderClassGenerator extends JavaFilesGenerator<Targ
                 .build();
     }
 
-    private static MethodSpec generateBindMethod(TargetPresenterField field,
-            ClassName targetClassName) {
+    private static MethodSpec generateBindMethod(TargetPresenterField field, ClassName targetClassName) {
         return MethodSpec.methodBuilder("bind")
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
@@ -138,13 +135,11 @@ public final class PresenterBinderClassGenerator extends JavaFilesGenerator<Targ
                 .build();
     }
 
-    private static MethodSpec generateProvidePresenterMethod(TargetPresenterField field,
-            ClassName targetClassName) {
+    private static MethodSpec generateProvidePresenterMethod(TargetPresenterField field, ClassName targetClassName) {
         MethodSpec.Builder builder = MethodSpec.methodBuilder("providePresenter")
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
-                .returns(ParameterizedTypeName.get(
-                        ClassName.get(MvpPresenter.class), WildcardTypeName.subtypeOf(Object.class)))
+                .returns(ParameterizedTypeName.get(ClassName.get(MvpPresenter.class), WildcardTypeName.subtypeOf(Object.class)))
                 .addParameter(targetClassName, "delegated");
 
         if (field.getPresenterProviderMethodName() != null) {

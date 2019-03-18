@@ -44,7 +44,7 @@ class TargetPresenterField {
     }
 
     String getGeneratedClassName() {
-        return name + MvpProcessor.PRESENTER_BINDER_INNER_SUFFIX;
+        return name.substring(0, 1).toUpperCase() + name.substring(1) + MvpProcessor.PRESENTER_BINDER_INNER_SUFFIX;
     }
 
     String getTag() {
