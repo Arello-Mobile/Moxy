@@ -19,8 +19,9 @@ See what's happening here in the [wiki](https://github.com/Arello-Mobile/Moxy/wi
 2. We don't support GLOBAL and WEAK presenter type
 3. We have one more strategy than core project, [AddToEndSingleTagStrategy](https://github.com/jordan1997/Moxy/blob/master/moxy/src/main/java/com/arellomobile/mvp/viewstate/strategy/AddToEndSingleTagStrategy.java)
 
-RoadMap
+## RoadMap
 - [ ] We will change the template for android studio (and Intellij), the templates will create a view interface and activity or fragment into one file, and this file and presenter keep into one package. We will remove template for Java.
+- [ ] Implement compiler which use presenter from Dagger DI, by one annotation 
 
 ## Capabilities
 
