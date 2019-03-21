@@ -1,9 +1,6 @@
 package presenter;
 
-import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.MvpPresenter;
-
-import view.PositiveViewStateView;
+import com.omegar.mvp.InjectViewState;
 
 /**
  * Date: 26.02.2016

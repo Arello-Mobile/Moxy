@@ -13,7 +13,7 @@
 		android:background="@color/colorPrimary"
 		app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-	<com.arellomobile.mvp.sample.github.ui.views.FrameSwipeRefreshLayout
+	<com.omegar.mvp.sample.github.ui.views.FrameSwipeRefreshLayout
 		android:id="@+id/activity_home_swipe_refresh_layout"
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
@@ -56,7 +56,7 @@
 
 		</ScrollView>
 
-	</com.arellomobile.mvp.sample.github.ui.views.FrameSwipeRefreshLayout>
+	</com.omegar.mvp.sample.github.ui.views.FrameSwipeRefreshLayout>
 
 	<FrameLayout
 		android:id="@+id/activity_home_frame_layout_details"

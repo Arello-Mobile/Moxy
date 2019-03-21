@@ -1,8 +1,8 @@
 package example.com.moxy_androidx_sapmle
 
 import android.util.Log
-import com.arellomobile.mvp.InjectViewState
-import com.arellomobile.mvp.MvpPresenter
+import com.omegar.mvp.InjectViewState
+import com.omegar.mvp.MvpPresenter
 
 @InjectViewState
 class MainPresenter : MvpPresenter<MainView>() {

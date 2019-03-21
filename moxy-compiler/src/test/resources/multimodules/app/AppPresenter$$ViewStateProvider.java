@@ -1,8 +1,8 @@
 package multimodules.app;
 
-import com.arellomobile.mvp.MvpView;
-import com.arellomobile.mvp.ViewStateProvider;
-import com.arellomobile.mvp.viewstate.MvpViewState;
+import com.omegar.mvp.MvpView;
+import com.omegar.mvp.ViewStateProvider;
+import com.omegar.mvp.viewstate.MvpViewState;
 
 public class AppPresenter$$ViewStateProvider extends ViewStateProvider {
 	@Override

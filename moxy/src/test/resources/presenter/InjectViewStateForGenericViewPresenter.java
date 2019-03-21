@@ -1,9 +1,7 @@
 package view;
 
-import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.MvpPresenter;
-
-import view.ViewStateForGenericView;
+import com.omegar.mvp.InjectViewState;
+import com.omegar.mvp.MvpPresenter;
 
 /**
  * Date: 15.03.2016

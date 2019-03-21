@@ -1,5 +1,7 @@
 package com.arellomobile.mvp;
 
+import com.omegar.mvp.ViewStateProvider;
+
 import java.lang.Class;
 import java.lang.Object;
 import java.util.HashMap;

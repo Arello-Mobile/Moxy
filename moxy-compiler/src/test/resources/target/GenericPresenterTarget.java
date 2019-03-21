@@ -1,7 +1,7 @@
 package target;
 
-import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.presenter.ProvidePresenter;
+import com.omegar.mvp.presenter.InjectPresenter;
+import com.omegar.mvp.presenter.ProvidePresenter;
 
 import presenter.GenericPresenter;
 import view.GenericView;

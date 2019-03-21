@@ -1,6 +1,6 @@
 package view;
 
-import com.arellomobile.mvp.MvpView;
+import com.omegar.mvp.MvpView;
 
 public interface EmptyView extends MvpView {
 }

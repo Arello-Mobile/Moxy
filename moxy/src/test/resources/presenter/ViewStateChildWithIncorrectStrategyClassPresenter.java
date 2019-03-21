@@ -1,7 +1,7 @@
 package presenter;
 
-import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.MvpPresenter;
+import com.omegar.mvp.InjectViewState;
+import com.omegar.mvp.MvpPresenter;
 
 import view.ViewStateChildWithIncorrectStrategyClassView;
 

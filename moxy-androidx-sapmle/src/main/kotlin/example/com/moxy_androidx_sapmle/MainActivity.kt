@@ -2,10 +2,9 @@ package example.com.moxy_androidx_sapmle
 
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
-import com.arellomobile.mvp.MvpAppCompatActivity
-import com.arellomobile.mvp.MvpView
-import com.arellomobile.mvp.presenter.InjectPresenter
+import com.omegar.mvp.MvpAppCompatActivity
+import com.omegar.mvp.MvpView
+import com.omegar.mvp.presenter.InjectPresenter
 
 interface MainView : MvpView {
 	fun printLog(msg: String)
