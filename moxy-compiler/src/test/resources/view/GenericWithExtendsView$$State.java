@@ -1,8 +1,8 @@
 package view;
 
-import com.arellomobile.mvp.viewstate.MvpViewState;
-import com.arellomobile.mvp.viewstate.ViewCommand;
-import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy;
+import com.omegar.mvp.viewstate.MvpViewState;
+import com.omegar.mvp.viewstate.ViewCommand;
+import com.omegar.mvp.viewstate.strategy.AddToEndStrategy;
 
 import java.io.Serializable;
 

@@ -1,7 +1,6 @@
 package view;
 
-import com.arellomobile.mvp.GenerateViewState;
-import com.arellomobile.mvp.MvpView;
+import com.omegar.mvp.MvpView;
 
 /**
  * Date: 26.02.2016

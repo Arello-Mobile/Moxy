@@ -1,6 +1,6 @@
 package view;
 
-import com.arellomobile.mvp.MvpView;
+import com.omegar.mvp.MvpView;
 
 import java.io.Serializable;
 

@@ -1,7 +1,6 @@
 package view;
 
-import com.arellomobile.mvp.GenerateViewState;
-import com.arellomobile.mvp.MvpView;
+import com.omegar.mvp.MvpView;
 
 public interface GenericView<T> extends MvpView {
 	void testEvent(T param);

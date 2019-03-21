@@ -1,7 +1,7 @@
 package view;
 
-import com.arellomobile.mvp.MvpView;
-import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.omegar.mvp.MvpView;
+import com.omegar.mvp.presenter.InjectPresenter;
 
 import presenter.PresenterWithoutEmptyConstructor;
 

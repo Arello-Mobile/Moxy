@@ -1,13 +1,12 @@
 package view;
 
-import com.arellomobile.mvp.MvpView;
+import com.omegar.mvp.MvpView;
 import com.arellomobile.mvp.factory.MockPresenterFactory;
-import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.presenter.InjectViewStatePresenter;
-import com.arellomobile.mvp.presenter.PresenterType;
+import com.omegar.mvp.presenter.InjectPresenter;
+import com.omegar.mvp.presenter.InjectViewStatePresenter;
+import com.omegar.mvp.presenter.PresenterType;
 
 import params.IncorrectCountOfParametersParams;
-import params.IncorrectParametersParams;
 
 /**
  * Date: 24.02.2016

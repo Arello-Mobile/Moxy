@@ -76,22 +76,22 @@ Base modules integration:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy:1.5.5'
-  annotationProcessor 'com.arello-mobile:moxy-compiler:1.5.5'
+  compile 'com.arello-mobile:moxy:1.5.6'
+  annotationProcessor 'com.arello-mobile:moxy-compiler:1.5.6'
 }
 ```
 For additional base view classes `MvpActivity` and `MvpFragment` add this:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy-android:1.5.5'
+  compile 'com.arello-mobile:moxy-android:1.5.6'
 }
 ```
 If you are planning to use AppCompat, then you can use `MvpAppCompatActivity` and `MvpAppCompatFragment`. Then add this:
 ```groovy
 dependencies {
   ...
-  compile 'com.arello-mobile:moxy-app-compat:1.5.5'
+  compile 'com.arello-mobile:moxy-app-compat:1.5.6'
   compile 'com.android.support:appcompat-v7:$support_version'
 }
 ```
@@ -102,7 +102,7 @@ apply plugin: 'kotlin-kapt'
 
 dependencies {
   ...
-  kapt 'com.arello-mobile:moxy-compiler:1.5.5'
+  kapt 'com.arello-mobile:moxy-compiler:1.5.6'
 }
 ```
 

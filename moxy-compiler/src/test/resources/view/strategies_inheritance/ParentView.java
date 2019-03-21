@@ -1,7 +1,7 @@
 package view.strategies_inheritance;
 
-import com.arellomobile.mvp.MvpView;
-import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
+import com.omegar.mvp.MvpView;
+import com.omegar.mvp.viewstate.strategy.StateStrategyType;
 
 import view.strategies_inheritance.strategies.ParentDefaultStrategy;
 import view.strategies_inheritance.strategies.Strategy1;

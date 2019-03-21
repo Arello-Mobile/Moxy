@@ -4,7 +4,7 @@
 	android:layout_height="match_parent"
 	xmlns:tools="http://schemas.android.com/tools">
 
-	<com.arellomobile.mvp.sample.github.ui.views.RepositoryWidget
+	<com.omegar.mvp.sample.github.ui.views.RepositoryWidget
 		android:id="@+id/fragment_repository_details_text_view_title"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
