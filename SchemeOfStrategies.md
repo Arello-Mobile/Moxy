@@ -1,6 +1,6 @@
 # Scheme of strategies
 
-This pase show how works MoxyX strategies.
+This page shows how MoxyX strategies work.
 
 # AddToEndSingleStrategy
 ![AddToEndSingleStrategy](https://raw.githubusercontent.com/jordan1997/blog/master/images/AddToEndSingleStrategy.png)
