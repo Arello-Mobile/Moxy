@@ -1,6 +1,5 @@
 package com.omegar.mvp.presenter;
 
-import com.arellomobile.mvp.*;
 import com.omegar.mvp.MvpPresenter;
 
 /**
