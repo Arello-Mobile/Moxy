@@ -3,10 +3,10 @@ package com.omegar.mvp;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.fragment.app.DialogFragment;
+import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.fragment.app.Fragment;
 
-public class MvpAppCompatDialogFragment extends DialogFragment {
+public class MvpAppCompatDialogFragment extends AppCompatDialogFragment {
 
     private boolean mIsStateSaved;
     private MvpDelegate<? extends MvpAppCompatDialogFragment> mMvpDelegate;

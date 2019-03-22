@@ -1,6 +1,6 @@
 package androidx.appcompat.app;
 
-import androidx.fragment.app.Fragment;
+import androidx.fragment.app.DialogFragment;
 
 /**
  * Date: 22-March-19
@@ -8,6 +8,6 @@ import androidx.fragment.app.Fragment;
  *
  * @author R12rus
  */
-public class AppCompatDialogFragment extends Fragment {
+public class AppCompatDialogFragment extends DialogFragment {
 
 }
