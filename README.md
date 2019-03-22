@@ -17,7 +17,7 @@ See what's happening here in the [wiki](https://github.com/Arello-Mobile/Moxy/wi
 ## Diff between us and root project
 1. We support androidX
 2. We don't support GLOBAL and WEAK presenter type
-3. We have one more strategy than core project, [AddToEndSingleTagStrategy](https://github.com/jordan1997/Moxy/blob/master/moxy/src/main/java/com/arellomobile/mvp/viewstate/strategy/AddToEndSingleTagStrategy.java)
+3. We have one more strategy to the library, [AddToEndSingleTagStrategy](https://github.com/jordan1997/Moxy/blob/master/moxy/src/main/java/com/arellomobile/mvp/viewstate/strategy/AddToEndSingleTagStrategy.java)
 
 ## RoadMap
 - [ ] We will change the template for android studio (and Intellij), the templates will create a view interface and activity or fragment into one file, and this file and presenter keep into one package. We will remove template for Java.
@@ -84,6 +84,8 @@ class MainPresenter : MvpPresenter<MainView>() {
 **We have plan for implement move easies way for connect moxy with dagger, but we need to implement specific compiler for this case**
 
 ## Wiki
+[Scheme of MoxyX strategies](https://github.com/jordan1997/MoxyX/blob/develop/SchemeOfStrategies.md)
+
 For all information check [Moxy Wiki](https://github.com/Arello-Mobile/Moxy/wiki)
 
 ## Android studio and Intellij templates 
