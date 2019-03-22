@@ -1,6 +1,6 @@
 apply plugin: 'java'
-apply plugin: 'com.github.dcendents.android-maven'
-group = 'com.github.Omega-R'
+apply plugin: 'maven-publish'
+apply plugin: 'maven'
 
 ext {
     publishDir = 'artifacts'
