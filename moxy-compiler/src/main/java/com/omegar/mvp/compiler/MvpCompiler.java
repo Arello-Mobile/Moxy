@@ -49,7 +49,7 @@ import static javax.lang.model.SourceVersion.latestSupported;
 @SuppressWarnings("unused")
 @AutoService(Processor.class)
 public class MvpCompiler extends AbstractProcessor {
-	public static final String MOXY_REFLECTOR_DEFAULT_PACKAGE = "com.arellomobile.mvp";
+	public static final String MOXY_REFLECTOR_DEFAULT_PACKAGE = "com.omegar.mvp";
 
 	private static final String OPTION_MOXY_REFLECTOR_PACKAGE = "moxyReflectorPackage";
 

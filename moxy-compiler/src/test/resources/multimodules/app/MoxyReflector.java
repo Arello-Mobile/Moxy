@@ -1,4 +1,4 @@
-package com.arellomobile.mvp;
+package com.omegar.mvp;
 
 import com.omegar.mvp.ViewStateProvider;
 

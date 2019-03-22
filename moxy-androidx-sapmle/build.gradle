@@ -18,7 +18,7 @@ android {
     compileSdkVersion 28
 
     defaultConfig {
-        applicationId "com.arellomobile.mvp.sample.androidx"
+        applicationId "com.omegar.mvp.sample.androidx"
         minSdkVersion 16
         targetSdkVersion 28
         versionCode 1

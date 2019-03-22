@@ -77,15 +77,15 @@ Base modules integration:
 ```groovy
 dependencies {
   ...
-  implementation 'com.github.Omega-R.OmegaMoxy:moxy:1.5.6'
-  annotationProcessor 'com.github.Omega-R.OmegaMoxy:moxy-compiler:1.5.6'  
+  implementation 'com.github.Omega-R.OmegaMoxy:moxy:1.5.7'
+  annotationProcessor 'com.github.Omega-R.OmegaMoxy:moxy-compiler:1.5.7'
 }
 ```
 For additional base view classes `MvpActivity` and `MvpFragment` add this:
 ```groovy
 dependencies {
   ...
-  implementation 'com.github.Omega-R.OmegaMoxy:moxy-android:1.5.6'
+  implementation 'com.github.Omega-R.OmegaMoxy:moxy-android:1.5.7'
 }
 ```
 
@@ -93,14 +93,14 @@ If you are planning to use AndroidX, then you can use `MvpAppCompatActivity` and
 ```groovy
 dependencies {
   ...
-  implementation 'com.github.Omega-R.OmegaMoxy:moxy-androidx:1.5.6'
+  implementation 'com.github.Omega-R.OmegaMoxy:moxy-androidx:1.5.7'
 }
 ```
 If you are planning to use AppCompat, then you can use `MvpAppCompatActivity` and `MvpAppCompatFragment`. Then add this:
 ```groovy
 dependencies {
   ...
-  implementation 'com.arello-mobile:moxy-app-compat:1.5.6'
+  implementation 'com.github.Omega-R.OmegaMoxy:moxy-app-compat:1.5.7'
   implementation 'com.android.support:appcompat-v7:$support_version'
 }
 ```
@@ -111,7 +111,7 @@ apply plugin: 'kotlin-kapt'
 
 dependencies {
   ...
-  kapt 'com.github.Omega-R.OmegaMoxy:moxy-compiler:1.5.6'
+  kapt 'com.github.Omega-R.OmegaMoxy:moxy-compiler:1.5.7'
 }
 ```
 

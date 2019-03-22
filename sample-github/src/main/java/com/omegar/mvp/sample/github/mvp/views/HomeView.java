@@ -1,10 +1,10 @@
 package com.omegar.mvp.sample.github.mvp.views;
 
-import com.arellomobile.mvp.MvpView;
+import com.omegar.mvp.MvpView;
 import com.omegar.mvp.sample.github.mvp.models.Repository;
-import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
-import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy;
-import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
+import com.omegar.mvp.viewstate.strategy.AddToEndSingleStrategy;
+import com.omegar.mvp.viewstate.strategy.OneExecutionStateStrategy;
+import com.omegar.mvp.viewstate.strategy.StateStrategyType;
 
 /**
  * Date: 27.01.2016

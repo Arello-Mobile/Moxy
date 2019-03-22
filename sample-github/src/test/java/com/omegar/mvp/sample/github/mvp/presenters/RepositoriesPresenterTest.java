@@ -6,7 +6,7 @@ import java.util.List;
 import com.omegar.mvp.sample.github.di.AppComponent;
 import com.omegar.mvp.sample.github.mvp.GithubService;
 import com.omegar.mvp.sample.github.mvp.models.Repository;
-import com.arellomobile.mvp.sample.github.mvp.views.RepositoriesView$$State;
+import com.omegar.mvp.sample.github.mvp.views.RepositoriesView$$State;
 import com.omegar.mvp.sample.github.test.GithubSampleTestRunner;
 import com.omegar.mvp.sample.github.test.TestComponent;
 import com.omegar.mvp.sample.github.test.TestComponentRule;

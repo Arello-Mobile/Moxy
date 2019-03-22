@@ -1,9 +1,9 @@
 package com.redmadrobot.app.presentation.launch
 
-import com.arellomobile.mvp.MvpView
-import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
-import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy
-import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
+import com.omegar.mvp.MvpView
+import com.omegar.mvp.viewstate.strategy.AddToEndSingleStrategy
+import com.omegar.mvp.viewstate.strategy.OneExecutionStateStrategy
+import com.omegar.mvp.viewstate.strategy.StateStrategyType
 
 interface LaunchView : MvpView {
     @StateStrategyType(AddToEndSingleStrategy::class, tag = BURGER_TAG)

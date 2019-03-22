@@ -8,9 +8,9 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.arellomobile.mvp.MvpAppCompatActivity;
-import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.sample.github.R;
+import com.omegar.mvp.MvpAppCompatActivity;
+import com.omegar.mvp.presenter.InjectPresenter;
+import com.omegar.mvp.sample.github.R;
 import com.omegar.mvp.sample.github.mvp.presenters.SignInPresenter;
 import com.omegar.mvp.sample.github.mvp.views.SignInView;
 

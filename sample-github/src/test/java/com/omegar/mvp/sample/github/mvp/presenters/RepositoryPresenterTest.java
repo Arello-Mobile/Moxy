@@ -3,7 +3,7 @@ package com.omegar.mvp.sample.github.mvp.presenters;
 import java.util.Collections;
 
 import com.omegar.mvp.sample.github.mvp.models.Repository;
-import com.arellomobile.mvp.sample.github.mvp.views.RepositoryView$$State;
+import com.omegar.mvp.sample.github.mvp.views.RepositoryView$$State;
 import com.omegar.mvp.sample.github.test.GithubSampleTestRunner;
 import com.omegar.mvp.sample.github.test.TestComponentRule;
 

@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 
-import com.arellomobile.mvp.presenter.InjectPresenter
+import com.omegar.mvp.presenter.InjectPresenter
 import ${packageName}.R
 import ${packageName}.presentation.view${dotSubpackage}.${viewName}
 import ${packageName}.presentation.presenter${dotSubpackage}.${presenterName}
@@ -12,7 +12,7 @@ import ${packageName}.presentation.presenter${dotSubpackage}.${presenterName}
 import ${superClassFqcn};
 
 <#if createProvidesMethod>
-import com.arellomobile.mvp.presenter.ProvidePresenter;
+import com.omegar.mvp.presenter.ProvidePresenter;
 </#if>
 
 

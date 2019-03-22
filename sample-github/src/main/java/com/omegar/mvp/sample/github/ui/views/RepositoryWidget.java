@@ -6,9 +6,9 @@ import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-import com.arellomobile.mvp.MvpDelegate;
-import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.presenter.ProvidePresenter;
+import com.omegar.mvp.MvpDelegate;
+import com.omegar.mvp.presenter.InjectPresenter;
+import com.omegar.mvp.presenter.ProvidePresenter;
 import com.omegar.mvp.sample.github.mvp.models.Repository;
 import com.omegar.mvp.sample.github.mvp.presenters.RepositoryPresenter;
 import com.omegar.mvp.sample.github.mvp.views.RepositoryView;

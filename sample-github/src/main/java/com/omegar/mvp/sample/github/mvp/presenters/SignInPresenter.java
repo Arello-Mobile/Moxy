@@ -3,8 +3,8 @@ package com.omegar.mvp.sample.github.mvp.presenters;
 import android.text.TextUtils;
 import android.util.Base64;
 
-import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.sample.github.R;
+import com.omegar.mvp.InjectViewState;
+import com.omegar.mvp.sample.github.R;
 import com.omegar.mvp.sample.github.app.GithubApp;
 import com.omegar.mvp.sample.github.common.Utils;
 import com.omegar.mvp.sample.github.mvp.GithubService;
