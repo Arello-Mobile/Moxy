@@ -29,7 +29,7 @@ ext {
             junit         : 'junit:junit:4.12',
             mockito       : 'org.mockito:mockito-core:1.10.19',
             truth         : 'com.google.truth:truth:0.34',
-            robolectric   : 'org.robolectric:robolectric:3.0',
+            robolectric   : 'org.robolectric:robolectric:4.2.1',
             compiletesting: 'com.google.testing.compile:compile-testing:0.15',
             asm           : ['org.ow2.asm:asm:6.0', 'org.ow2.asm:asm-util:6.0'],
             autoservice   : 'com.google.auto.service:auto-service:1.0-rc4',
