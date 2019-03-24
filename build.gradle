@@ -34,7 +34,7 @@ ext {
             asm           : ['org.ow2.asm:asm:7.1', 'org.ow2.asm:asm-util:7.1'],
             autoservice   : 'com.google.auto.service:auto-service:1.0-rc4',
             autocommon    : 'com.google.auto:auto-common:0.10',
-            guava         : 'com.google.guava:guava:21.0',
+            guava         : 'com.google.guava:guava:23.0',
     ]
 }
 
