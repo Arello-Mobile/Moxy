@@ -263,7 +263,7 @@ public class MvpDelegate<Delegated> {
 	 */
 	private String generateTag() {
 		String tag = mParentDelegate != null ? mParentDelegate.mDelegateTag  + " " : "";
-		tag += mDelegated.getClass().getSimpleName() + "$" + getClass().getSimpleName() + toString().replace(getClass().getName(), "");
+		tag += mDelegated.getClass().getCanonicalName() + "$" + getClass().getSimpleName() + toString().replace(getClass().getName(), "");
 		return tag;
 	}
 }
