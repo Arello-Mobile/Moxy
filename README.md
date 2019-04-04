@@ -73,6 +73,17 @@ Templates located in [/moxy-templates](https://github.com/Arello-Mobile/Moxy/tre
 [FAQ](https://github.com/Arello-Mobile/Moxy/wiki/FAQ)
 
 ## Integration
+
+Add the JitPack repository to your build file:
+```groovy
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
 Base modules integration:
 ```groovy
 dependencies {
