@@ -27,7 +27,7 @@ ext {
             android       : 'com.google.android:android:1.6_r2',
             javapoet      : 'com.squareup:javapoet:1.11.1',
             junit         : 'junit:junit:4.12',
-            mockito       : 'org.mockito:mockito-core:2.25.1',
+            mockito       : 'org.mockito:mockito-core:2.26.0',
             truth         : 'com.google.truth:truth:0.43',
             robolectric   : 'org.robolectric:robolectric:4.2.1',
             compiletesting: 'com.google.testing.compile:compile-testing:0.15',
