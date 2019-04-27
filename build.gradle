@@ -30,7 +30,7 @@ ext {
             mockito       : 'org.mockito:mockito-core:2.27.0',
             truth         : 'com.google.truth:truth:0.44',
             robolectric   : 'org.robolectric:robolectric:4.2.1',
-            compiletesting: 'com.google.testing.compile:compile-testing:0.15',
+            compiletesting: 'com.google.testing.compile:compile-testing:0.16',
             asm           : ['org.ow2.asm:asm:7.1', 'org.ow2.asm:asm-util:7.1'],
             autoservice   : 'com.google.auto.service:auto-service:1.0-rc5',
             autocommon    : 'com.google.auto:auto-common:0.10',
