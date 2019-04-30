@@ -15,9 +15,9 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.arellomobile.mvp.MvpAppCompatActivity;
-import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.sample.github.R;
+import com.omegar.mvp.MvpAppCompatActivity;
+import com.omegar.mvp.presenter.InjectPresenter;
+import com.omegar.mvp.sample.github.R;
 import com.omegar.mvp.sample.github.mvp.models.Repository;
 import com.omegar.mvp.sample.github.mvp.presenters.HomePresenter;
 import com.omegar.mvp.sample.github.mvp.presenters.RepositoriesPresenter;

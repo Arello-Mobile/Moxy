@@ -8,8 +8,8 @@ import ${packageName}.R
 import ${packageName}.presentation.view${dotSubpackage}.${viewName}
 import ${packageName}.presentation.presenter${dotSubpackage}.${presenterName}
 
-import com.arellomobile.mvp.MvpFragment
-import com.arellomobile.mvp.presenter.InjectPresenter
+import com.omegar.mvp.MvpFragment
+import com.omegar.mvp.presenter.InjectPresenter
 
 class ${className} : MvpFragment(), ${viewName} {
     companion object {

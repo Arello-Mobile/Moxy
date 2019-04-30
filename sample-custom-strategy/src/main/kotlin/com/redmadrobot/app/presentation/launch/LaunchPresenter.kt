@@ -1,8 +1,8 @@
 package com.redmadrobot.app.presentation.launch
 
 
-import com.arellomobile.mvp.InjectViewState
-import com.arellomobile.mvp.MvpPresenter
+import com.omegar.mvp.InjectViewState
+import com.omegar.mvp.MvpPresenter
 
 @InjectViewState
 class LaunchPresenter : MvpPresenter<LaunchView>() {

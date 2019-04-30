@@ -11,9 +11,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.arellomobile.mvp.MvpAppCompatFragment
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import com.omegar.mvp.MvpAppCompatFragment
+import com.omegar.mvp.presenter.InjectPresenter
+import com.omegar.mvp.presenter.ProvidePresenter
 import com.redmadrobot.sample_custom_strategy.R
 import kotlinx.android.synthetic.main.fragment_launch.*
 

@@ -1,6 +1,6 @@
 package com.omegar.mvp.sample.github.mvp.views;
 
-import com.arellomobile.mvp.MvpView;
+import com.omegar.mvp.MvpView;
 
 /**
  * Date: 18.01.2016

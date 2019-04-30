@@ -1,7 +1,7 @@
 package view;
 
 import com.omegar.mvp.MvpView;
-import com.arellomobile.mvp.factory.MockPresenterFactory;
+import com.omegar.mvp.factory.MockPresenterFactory;
 import com.omegar.mvp.presenter.InjectPresenter;
 import com.omegar.mvp.presenter.PresenterType;
 

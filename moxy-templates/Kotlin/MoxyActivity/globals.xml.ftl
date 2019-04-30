@@ -9,8 +9,8 @@
 
         <global id="superClassFqcn" type="string" value="
                 <#if superClass == 'baseActivity'>${packageName}.ui.activity.BaseActivity
-                <#elseif superClass == 'appCompat'>com.arellomobile.mvp.MvpAppCompatActivity
-                <#else>com.arellomobile.mvp.MvpActivity</#if>
+                <#elseif superClass == 'appCompat'>com.omegar.mvp.MvpAppCompatActivity
+                <#else>com.omegar.mvp.MvpActivity</#if>
             " />
 
         <global id="manifestOut" value="${manifestDir}" />

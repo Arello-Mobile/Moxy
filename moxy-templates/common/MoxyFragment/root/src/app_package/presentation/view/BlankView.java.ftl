@@ -1,6 +1,6 @@
 package ${packageName}.presentation.view${dotSubpackage};
 
-import com.arellomobile.mvp.MvpView;
+import com.omegar.mvp.MvpView;
 
 public interface ${viewName} extends MvpView {
 
