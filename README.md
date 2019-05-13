@@ -106,7 +106,7 @@ If you use google material, use `MvpBottomSheetDialogFragment` add this (thanks 
 implementation 'tech.schoolhelper:moxy-x-material:1.7.0'
 ```
 
-Note: [@jordan1997](https://github.com/jordan1997) creates [fork](https://github.com/schoolhelper/MoxyX) of Moxy which you can use fully (instead of use only this module dependency).
+Note: [@jordan1997](https://github.com/jordan1997) creates [fork](https://github.com/schoolhelper/MoxyX) of Moxy — feel free to use it fully (instead of use only this module dependency) on your opinion.
 
 ### Kotlin
 If you are using kotlin, use `kapt` instead of `provided`/`apt` dependency type:
