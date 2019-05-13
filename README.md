@@ -95,6 +95,19 @@ dependencies {
   compile 'com.android.support:appcompat-v7:$support_version'
 }
 ```
+### AndroidX module integration
+If you use AndroidX, use `MvpAppCompatActivity` and `MvpAppCompatFragment` add this (thanks to [@jordan1997](https://github.com/jordan1997)):
+```groovy
+implementation 'tech.schoolhelper:moxy-x-androidx:1.7.0'
+```
+### AndroidX(Google material) module integration
+If you use google material, use `MvpBottomSheetDialogFragment` add this (thanks to [@jordan1997](https://github.com/jordan1997)):
+```groovy
+implementation 'tech.schoolhelper:moxy-x-material:1.7.0'
+```
+
+Note: [@jordan1997](https://github.com/jordan1997) creates [fork](https://github.com/schoolhelper/MoxyX) of Moxy which you can use fully (instead of use only this module dependency).
+
 ### Kotlin
 If you are using kotlin, use `kapt` instead of `provided`/`apt` dependency type:
 ```groovy
