@@ -2,7 +2,6 @@ package com.arellomobile.mvp.compiler;
 
 import com.arellomobile.mvp.GenerateViewState;
 import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.RegisterMoxyReflectorPackages;
 import com.arellomobile.mvp.compiler.presenterbinder.InjectPresenterProcessor;
 import com.arellomobile.mvp.compiler.presenterbinder.PresenterBinderClassGenerator;
 import com.arellomobile.mvp.compiler.reflector.MoxyReflectorGenerator;
@@ -16,10 +15,8 @@ import com.squareup.javapoet.JavaFile;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,9 +46,6 @@ import static javax.lang.model.SourceVersion.latestSupported;
 @SuppressWarnings("unused")
 @AutoService(Processor.class)
 public class MvpCompiler extends AbstractProcessor {
-	public static final String MOXY_REFLECTOR_DEFAULT_PACKAGE = "com.arellomobile.mvp";
-
-	private static final String OPTION_MOXY_REFLECTOR_PACKAGE = "moxyReflectorPackage";
 
 	private static Messager sMessager;
 	private static Types sTypeUtils;
@@ -81,17 +75,11 @@ public class MvpCompiler extends AbstractProcessor {
 	}
 
 	@Override
-	public Set<String> getSupportedOptions() {
-		return Collections.singleton(OPTION_MOXY_REFLECTOR_PACKAGE);
-	}
-
-	@Override
 	public Set<String> getSupportedAnnotationTypes() {
 		Set<String> supportedAnnotationTypes = new HashSet<>();
 		Collections.addAll(supportedAnnotationTypes,
 				InjectPresenter.class.getCanonicalName(),
 				InjectViewState.class.getCanonicalName(),
-				RegisterMoxyReflectorPackages.class.getCanonicalName(),
 				GenerateViewState.class.getCanonicalName());
 		return supportedAnnotationTypes;
 	}
@@ -140,43 +128,33 @@ public class MvpCompiler extends AbstractProcessor {
 					viewInterfaceProcessor, viewStateClassGenerator);
 		}
 
-		String moxyReflectorPackage = sOptions.get(OPTION_MOXY_REFLECTOR_PACKAGE);
+		String moxyReflectorDelegatePackage = getMoxyReflectorDelegatePackage(roundEnv);
 
-		if (moxyReflectorPackage == null) {
-			moxyReflectorPackage = MOXY_REFLECTOR_DEFAULT_PACKAGE;
-		}
-
-		List<String> additionalMoxyReflectorPackages = getAdditionalMoxyReflectorPackages(roundEnv);
-
-		JavaFile moxyReflector = MoxyReflectorGenerator.generate(
-				moxyReflectorPackage,
+		JavaFile moxyReflectorDelegate = MoxyReflectorGenerator.generate(
+                moxyReflectorDelegatePackage,
 				injectViewStateProcessor.getPresenterClassNames(),
 				injectPresenterProcessor.getPresentersContainers(),
-				viewInterfaceProcessor.getUsedStrategies(),
-				additionalMoxyReflectorPackages
+				viewInterfaceProcessor.getUsedStrategies()
 		);
 
-		createSourceFile(moxyReflector);
+		createSourceFile(moxyReflectorDelegate);
 
 		return true;
 	}
 
-	private List<String> getAdditionalMoxyReflectorPackages(RoundEnvironment roundEnv) {
-		List<String> result = new ArrayList<>();
-
-		for (Element element : roundEnv.getElementsAnnotatedWith(RegisterMoxyReflectorPackages.class)) {
-			if (element.getKind() != ElementKind.CLASS) {
-				getMessager().printMessage(Diagnostic.Kind.ERROR, element + " must be " + ElementKind.CLASS.name() + ", or not mark it as @" + RegisterMoxyReflectorPackages.class.getSimpleName());
-			}
-
-			String[] packages = element.getAnnotation(RegisterMoxyReflectorPackages.class).value();
-
-			Collections.addAll(result, packages);
-		}
-
-		return result;
-	}
-
+	/**
+	 * @return first package associated with this module.
+	 * Probably should return module's top-level package
+	 */
+	private String getMoxyReflectorDelegatePackage(
+	        final RoundEnvironment roundEnv
+    ) {
+		return processingEnv
+				.getElementUtils()
+				.getPackageOf(roundEnv.getElementsAnnotatedWith(InjectPresenter.class).iterator().next())
+				.getQualifiedName()
+				.toString();
+    }
 
 	private void checkInjectors(final RoundEnvironment roundEnv, Class<? extends Annotation> clazz, AnnotationRule annotationRule) {
 		for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(clazz)) {

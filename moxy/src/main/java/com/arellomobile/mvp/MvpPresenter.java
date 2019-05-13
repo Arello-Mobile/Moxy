@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import com.arellomobile.mvp.presenter.PresenterType;
+import com.arellomobile.mvp.reflector.MoxyReflector;
 import com.arellomobile.mvp.viewstate.MvpViewState;
 
 /**

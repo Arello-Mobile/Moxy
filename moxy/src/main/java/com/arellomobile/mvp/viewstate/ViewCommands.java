@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.arellomobile.mvp.MoxyReflector;
+import com.arellomobile.mvp.reflector.MoxyReflector;
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategy;
 
