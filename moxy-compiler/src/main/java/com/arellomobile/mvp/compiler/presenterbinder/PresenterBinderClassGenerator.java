@@ -59,7 +59,8 @@ public final class PresenterBinderClassGenerator extends JavaFilesGenerator<Targ
 
 		TypeSpec.Builder classBuilder = TypeSpec.classBuilder(containerSimpleName + MvpProcessor.PRESENTER_BINDER_SUFFIX)
 				.addModifiers(Modifier.PUBLIC)
-				.superclass(ParameterizedTypeName.get(ClassName.get(PresenterBinder.class), targetClassName));
+				.superclass(ParameterizedTypeName.get(ClassName.get(PresenterBinder.class), targetClassName))
+				.addOriginatingElement(targetClassInfo.getElement());
 
 		for (TargetPresenterField field : fields) {
 			classBuilder.addType(generatePresenterBinderClass(field, targetClassName));

@@ -37,6 +37,7 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<ViewInterf
 		DeclaredType viewInterfaceType = (DeclaredType) viewInterfaceInfo.getElement().asType();
 
 		TypeSpec.Builder classBuilder = TypeSpec.classBuilder(viewName.simpleName() + MvpProcessor.VIEW_STATE_SUFFIX)
+				.addOriginatingElement(viewInterfaceInfo.getElement())
 				.addModifiers(Modifier.PUBLIC)
 				.superclass(ParameterizedTypeName.get(ClassName.get(MvpViewState.class), nameWithTypeVariables))
 				.addSuperinterface(nameWithTypeVariables)
