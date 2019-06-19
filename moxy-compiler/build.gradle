@@ -254,6 +254,8 @@ dependencies {
     compileOnly deps.autoserviceAnnotations
     annotationProcessor deps.autoserviceProcessor
     compileOnly deps.guava
+    compileOnly deps.gradleIncapHelperAnnotations
+    annotationProcessor deps.gradleIncapHelperProcessor
 
     javadocDeps project(':moxy')
     javadocDeps deps.javapoet

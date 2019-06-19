@@ -14,6 +14,9 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.JavaFile;
 
+import net.ltgt.gradle.incap.IncrementalAnnotationProcessor;
+import net.ltgt.gradle.incap.IncrementalAnnotationProcessorType;
+
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -48,6 +51,7 @@ import static javax.lang.model.SourceVersion.latestSupported;
 
 @SuppressWarnings("unused")
 @AutoService(Processor.class)
+@IncrementalAnnotationProcessor(IncrementalAnnotationProcessorType.ISOLATING)
 public class MvpCompiler extends AbstractProcessor {
 	public static final String MOXY_REFLECTOR_DEFAULT_PACKAGE = "com.arellomobile.mvp";
 
