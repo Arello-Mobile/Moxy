@@ -11,6 +11,11 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.WildcardTypeName;
 
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -20,13 +25,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import javax.lang.model.element.Modifier;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-
-import static com.arellomobile.mvp.compiler.MvpCompiler.MOXY_REFLECTOR_DEFAULT_PACKAGE;
+import static com.arellomobile.mvp.compiler.MoxyReflectorCompiler.MOXY_REFLECTOR_DEFAULT_PACKAGE;
 
 /**
  * Date: 07.12.2016
@@ -57,6 +56,8 @@ public class MoxyReflectorGenerator {
 				.addField(MAP_CLASS_TO_OBJECT_TYPE_NAME, "sViewStateProviders", Modifier.PRIVATE, Modifier.STATIC)
 				.addField(MAP_CLASS_TO_LIST_OF_OBJECT_TYPE_NAME, "sPresenterBinders", Modifier.PRIVATE, Modifier.STATIC)
 				.addField(MAP_CLASS_TO_OBJECT_TYPE_NAME, "sStrategies", Modifier.PRIVATE, Modifier.STATIC);
+
+		addOriginatingElements(classBuilder, Arrays.asList(presenterClassNames, presentersContainers, strategyClasses));
 
 		classBuilder.addStaticBlock(generateStaticInitializer(presenterClassNames, presentersContainers, strategyClasses, additionalMoxyReflectorsPackages));
 
@@ -106,10 +107,21 @@ public class MoxyReflectorGenerator {
 					.build());
 		}
 
-
 		return JavaFile.builder(destinationPackage, classBuilder.build())
 				.indent("\t")
 				.build();
+	}
+
+	private static void addOriginatingElements(TypeSpec.Builder builder, Iterable<Iterable<TypeElement>> typeElements) {
+		if (builder != null && typeElements != null) {
+			for (final Iterable<TypeElement> elements : typeElements) {
+				if (elements != null) {
+					for (final TypeElement element : elements) {
+						builder.addOriginatingElement(element);
+					}
+				}
+			}
+		}
 	}
 
 	private static CodeBlock generateStaticInitializer(List<TypeElement> presenterClassNames,

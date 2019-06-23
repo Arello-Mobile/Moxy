@@ -251,12 +251,15 @@ dependencies {
     implementation deps.javapoet
 
     compileOnly deps.autocommon
-    compileOnly deps.autoservice
+    compileOnly deps.autoserviceAnnotations
+    annotationProcessor deps.autoserviceProcessor
     compileOnly deps.guava
+    compileOnly deps.gradleIncapHelperAnnotations
+    annotationProcessor deps.gradleIncapHelperProcessor
 
     javadocDeps project(':moxy')
     javadocDeps deps.javapoet
-    javadocDeps deps.autoservice
+    javadocDeps deps.autoserviceAnnotations
 
     testImplementation deps.junit
     testImplementation deps.truth

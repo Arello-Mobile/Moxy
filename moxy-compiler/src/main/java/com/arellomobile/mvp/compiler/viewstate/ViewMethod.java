@@ -1,6 +1,6 @@
 package com.arellomobile.mvp.compiler.viewstate;
 
-import com.arellomobile.mvp.compiler.MvpCompiler;
+import com.arellomobile.mvp.compiler.ProcessingEnvironmentHolder;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeVariableName;
@@ -46,7 +46,7 @@ class ViewMethod {
 
 		this.parameterSpecs = new ArrayList<>();
 
-		Types typeUtils = MvpCompiler.getTypeUtils();
+        Types typeUtils = ProcessingEnvironmentHolder.getTypeUtils();
 		ExecutableType executableType = (ExecutableType) typeUtils.asMemberOf(targetInterfaceElement, methodElement);
 		List<? extends VariableElement> parameters = methodElement.getParameters();
 		List<? extends TypeMirror> resolvedParameterTypes = executableType.getParameterTypes();

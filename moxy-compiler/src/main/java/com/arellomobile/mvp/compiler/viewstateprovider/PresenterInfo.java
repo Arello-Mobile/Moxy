@@ -11,19 +11,23 @@ import javax.lang.model.element.TypeElement;
  * @author Evgeny Kursakov
  */
 class PresenterInfo {
-	private final ClassName name;
+	private final TypeElement name;
 	private final ClassName viewStateName;
 
 	PresenterInfo(TypeElement name, String viewStateName) {
-		this.name = ClassName.get(name);
+		this.name = name;
 		this.viewStateName = ClassName.bestGuess(viewStateName);
 	}
 
 	ClassName getName() {
-		return name;
+		return ClassName.get(name);
 	}
 
 	ClassName getViewStateName() {
 		return viewStateName;
+	}
+
+	TypeElement getElement() {
+		return name;
 	}
 }

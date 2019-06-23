@@ -2,10 +2,8 @@ package com.arellomobile.mvp.compiler;
 
 import com.arellomobile.mvp.GenerateViewState;
 import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.RegisterMoxyReflectorPackages;
 import com.arellomobile.mvp.compiler.presenterbinder.InjectPresenterProcessor;
 import com.arellomobile.mvp.compiler.presenterbinder.PresenterBinderClassGenerator;
-import com.arellomobile.mvp.compiler.reflector.MoxyReflectorGenerator;
 import com.arellomobile.mvp.compiler.viewstate.ViewInterfaceProcessor;
 import com.arellomobile.mvp.compiler.viewstate.ViewStateClassGenerator;
 import com.arellomobile.mvp.compiler.viewstateprovider.InjectViewStateProcessor;
@@ -13,31 +11,21 @@ import com.arellomobile.mvp.compiler.viewstateprovider.ViewStateProviderClassGen
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.JavaFile;
+import net.ltgt.gradle.incap.IncrementalAnnotationProcessor;
+import net.ltgt.gradle.incap.IncrementalAnnotationProcessorType;
 
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.Messager;
-import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
-
-import static javax.lang.model.SourceVersion.latestSupported;
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Date: 12.12.2015
@@ -48,42 +36,8 @@ import static javax.lang.model.SourceVersion.latestSupported;
 
 @SuppressWarnings("unused")
 @AutoService(Processor.class)
-public class MvpCompiler extends AbstractProcessor {
-	public static final String MOXY_REFLECTOR_DEFAULT_PACKAGE = "com.arellomobile.mvp";
-
-	private static final String OPTION_MOXY_REFLECTOR_PACKAGE = "moxyReflectorPackage";
-
-	private static Messager sMessager;
-	private static Types sTypeUtils;
-	private static Elements sElementUtils;
-	private static Map<String, String> sOptions;
-
-	public static Messager getMessager() {
-		return sMessager;
-	}
-
-	public static Types getTypeUtils() {
-		return sTypeUtils;
-	}
-
-	public static Elements getElementUtils() {
-		return sElementUtils;
-	}
-
-	@Override
-	public synchronized void init(ProcessingEnvironment processingEnv) {
-		super.init(processingEnv);
-
-		sMessager = processingEnv.getMessager();
-		sTypeUtils = processingEnv.getTypeUtils();
-		sElementUtils = processingEnv.getElementUtils();
-		sOptions = processingEnv.getOptions();
-	}
-
-	@Override
-	public Set<String> getSupportedOptions() {
-		return Collections.singleton(OPTION_MOXY_REFLECTOR_PACKAGE);
-	}
+@IncrementalAnnotationProcessor(IncrementalAnnotationProcessorType.ISOLATING)
+public class MvpCompiler extends MoxyBaseCompiler {
 
 	@Override
 	public Set<String> getSupportedAnnotationTypes() {
@@ -91,34 +45,12 @@ public class MvpCompiler extends AbstractProcessor {
 		Collections.addAll(supportedAnnotationTypes,
 				InjectPresenter.class.getCanonicalName(),
 				InjectViewState.class.getCanonicalName(),
-				RegisterMoxyReflectorPackages.class.getCanonicalName(),
 				GenerateViewState.class.getCanonicalName());
 		return supportedAnnotationTypes;
 	}
 
 	@Override
-	public SourceVersion getSupportedSourceVersion() {
-		return latestSupported();
-	}
-
-	@Override
-	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-		if (annotations.isEmpty()) {
-			return false;
-		}
-
-		try {
-			return throwableProcess(roundEnv);
-		} catch (RuntimeException e) {
-			getMessager().printMessage(Diagnostic.Kind.OTHER, "Moxy compilation failed. Could you copy stack trace above and write us (or make issue on Github)?");
-			e.printStackTrace();
-			getMessager().printMessage(Diagnostic.Kind.ERROR, "Moxy compilation failed; see the compiler error output for details (" + e + ")");
-		}
-
-		return true;
-	}
-
-	private boolean throwableProcess(RoundEnvironment roundEnv) {
+	protected void throwableProcess(RoundEnvironment roundEnv) {
 		checkInjectors(roundEnv, InjectPresenter.class, new PresenterInjectorRules(ElementKind.FIELD, Modifier.PUBLIC, Modifier.DEFAULT));
 
 		InjectViewStateProcessor injectViewStateProcessor = new InjectViewStateProcessor();
@@ -136,47 +68,9 @@ public class MvpCompiler extends AbstractProcessor {
 				injectPresenterProcessor, presenterBinderClassGenerator);
 
 		for (TypeElement usedView : injectViewStateProcessor.getUsedViews()) {
-			generateCode(usedView, ElementKind.INTERFACE,
-					viewInterfaceProcessor, viewStateClassGenerator);
+			generateCode(usedView, ElementKind.INTERFACE, viewInterfaceProcessor, viewStateClassGenerator);
 		}
-
-		String moxyReflectorPackage = sOptions.get(OPTION_MOXY_REFLECTOR_PACKAGE);
-
-		if (moxyReflectorPackage == null) {
-			moxyReflectorPackage = MOXY_REFLECTOR_DEFAULT_PACKAGE;
-		}
-
-		List<String> additionalMoxyReflectorPackages = getAdditionalMoxyReflectorPackages(roundEnv);
-
-		JavaFile moxyReflector = MoxyReflectorGenerator.generate(
-				moxyReflectorPackage,
-				injectViewStateProcessor.getPresenterClassNames(),
-				injectPresenterProcessor.getPresentersContainers(),
-				viewInterfaceProcessor.getUsedStrategies(),
-				additionalMoxyReflectorPackages
-		);
-
-		createSourceFile(moxyReflector);
-
-		return true;
 	}
-
-	private List<String> getAdditionalMoxyReflectorPackages(RoundEnvironment roundEnv) {
-		List<String> result = new ArrayList<>();
-
-		for (Element element : roundEnv.getElementsAnnotatedWith(RegisterMoxyReflectorPackages.class)) {
-			if (element.getKind() != ElementKind.CLASS) {
-				getMessager().printMessage(Diagnostic.Kind.ERROR, element + " must be " + ElementKind.CLASS.name() + ", or not mark it as @" + RegisterMoxyReflectorPackages.class.getSimpleName());
-			}
-
-			String[] packages = element.getAnnotation(RegisterMoxyReflectorPackages.class).value();
-
-			Collections.addAll(result, packages);
-		}
-
-		return result;
-	}
-
 
 	private void checkInjectors(final RoundEnvironment roundEnv, Class<? extends Annotation> clazz, AnnotationRule annotationRule) {
 		for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(clazz)) {
@@ -185,7 +79,7 @@ public class MvpCompiler extends AbstractProcessor {
 
 		String errorStack = annotationRule.getErrorStack();
 		if (errorStack != null && errorStack.length() > 0) {
-			getMessager().printMessage(Diagnostic.Kind.ERROR, errorStack);
+			processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, errorStack);
 		}
 	}
 
@@ -196,7 +90,7 @@ public class MvpCompiler extends AbstractProcessor {
 	                                                     JavaFilesGenerator<R> classGenerator) {
 		for (Element element : roundEnv.getElementsAnnotatedWith(clazz)) {
 			if (element.getKind() != kind) {
-				getMessager().printMessage(Diagnostic.Kind.ERROR,
+				processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
 						element + " must be " + kind.name() + ", or not mark it as @" + clazz.getSimpleName());
 			}
 
@@ -209,7 +103,7 @@ public class MvpCompiler extends AbstractProcessor {
 	                                                 ElementProcessor<E, R> processor,
 	                                                 JavaFilesGenerator<R> classGenerator) {
 		if (element.getKind() != kind) {
-			getMessager().printMessage(Diagnostic.Kind.ERROR, element + " must be " + kind.name());
+			processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, element + " must be " + kind.name());
 		}
 
 		//noinspection unchecked

@@ -6,7 +6,7 @@ import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.arellomobile.mvp.MvpProcessor;
 import com.arellomobile.mvp.compiler.ElementProcessor;
-import com.arellomobile.mvp.compiler.MvpCompiler;
+import com.arellomobile.mvp.compiler.ProcessingEnvironmentHolder;
 import com.arellomobile.mvp.compiler.Util;
 
 import java.util.ArrayList;
@@ -23,7 +23,6 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.tools.Diagnostic;
 
 import static com.arellomobile.mvp.compiler.Util.fillGenerics;
 
@@ -61,7 +60,7 @@ public class InjectViewStateProcessor extends ElementProcessor<TypeElement, Pres
 					view = view.substring(0, view.indexOf("<"));
 				}
 
-				TypeElement viewTypeElement = MvpCompiler.getElementUtils().getTypeElement(view);
+				TypeElement viewTypeElement = ProcessingEnvironmentHolder.getElementUtils().getTypeElement(view);
 				if (viewTypeElement == null) {
 					throw new IllegalArgumentException("View \"" + view + "\" for " + typeElement + " cannot be found");
 				}

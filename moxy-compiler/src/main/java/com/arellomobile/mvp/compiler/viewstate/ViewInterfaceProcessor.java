@@ -1,7 +1,7 @@
 package com.arellomobile.mvp.compiler.viewstate;
 
 import com.arellomobile.mvp.compiler.ElementProcessor;
-import com.arellomobile.mvp.compiler.MvpCompiler;
+import com.arellomobile.mvp.compiler.ProcessingEnvironmentHolder;
 import com.arellomobile.mvp.compiler.Util;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
@@ -35,7 +35,7 @@ import javax.tools.Diagnostic;
  */
 public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewInterfaceInfo> {
 	private static final String STATE_STRATEGY_TYPE_ANNOTATION = StateStrategyType.class.getName();
-	private static final TypeElement DEFAULT_STATE_STRATEGY = MvpCompiler.getElementUtils().getTypeElement(AddToEndStrategy.class.getCanonicalName());
+	private static final TypeElement DEFAULT_STATE_STRATEGY = ProcessingEnvironmentHolder.getElementUtils().getTypeElement(AddToEndStrategy.class.getCanonicalName());
 
 	private TypeElement viewInterfaceElement;
 	private String viewInterfaceName;
@@ -100,7 +100,7 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 						methodElement.getSimpleName(),
 						methodElement.getReturnType()
 				);
-				MvpCompiler.getMessager().printMessage(Diagnostic.Kind.ERROR, message);
+				ProcessingEnvironmentHolder.getMessager().printMessage(Diagnostic.Kind.ERROR, message);
 			}
 
 			AnnotationMirror annotation = Util.getAnnotation(methodElement, STATE_STRATEGY_TYPE_ANNOTATION);

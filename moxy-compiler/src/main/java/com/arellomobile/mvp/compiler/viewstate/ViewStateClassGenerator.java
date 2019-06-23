@@ -2,7 +2,7 @@ package com.arellomobile.mvp.compiler.viewstate;
 
 import com.arellomobile.mvp.MvpProcessor;
 import com.arellomobile.mvp.compiler.JavaFilesGenerator;
-import com.arellomobile.mvp.compiler.MvpCompiler;
+import com.arellomobile.mvp.compiler.ProcessingEnvironmentHolder;
 import com.arellomobile.mvp.viewstate.MvpViewState;
 import com.arellomobile.mvp.viewstate.ViewCommand;
 import com.squareup.javapoet.ClassName;
@@ -37,6 +37,7 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<ViewInterf
 		DeclaredType viewInterfaceType = (DeclaredType) viewInterfaceInfo.getElement().asType();
 
 		TypeSpec.Builder classBuilder = TypeSpec.classBuilder(viewName.simpleName() + MvpProcessor.VIEW_STATE_SUFFIX)
+				.addOriginatingElement(viewInterfaceInfo.getElement())
 				.addModifiers(Modifier.PUBLIC)
 				.superclass(ParameterizedTypeName.get(ClassName.get(MvpViewState.class), nameWithTypeVariables))
 				.addSuperinterface(nameWithTypeVariables)
@@ -89,7 +90,7 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<ViewInterf
 			commandFieldName += random.nextInt(10);
 		}
 
-		return MethodSpec.overriding(method.getElement(), enclosingType, MvpCompiler.getTypeUtils())
+		return MethodSpec.overriding(method.getElement(), enclosingType, ProcessingEnvironmentHolder.getTypeUtils())
 				.addStatement("$1N $2L = new $1N($3L)", commandClass, commandFieldName, method.getArgumentsString())
 				.addStatement("mViewCommands.beforeApply($L)", commandFieldName)
 				.addCode("\n")

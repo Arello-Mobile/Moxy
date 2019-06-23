@@ -110,7 +110,7 @@ public final class Util {
 	}
 
 	public static String getFullClassName(TypeElement typeElement) {
-		String packageName = MvpCompiler.getElementUtils().getPackageOf(typeElement).getQualifiedName().toString();
+        String packageName = ProcessingEnvironmentHolder.getElementUtils().getPackageOf(typeElement).getQualifiedName().toString();
 		if (packageName.length() > 0) {
 			packageName += ".";
 		}
