@@ -83,7 +83,7 @@ public class PresenterInjectorRules extends AnnotationRule {
 			}
 		}
 		if (!result) {
-			MvpCompiler.getMessager().printMessage(Diagnostic.Kind.ERROR, "You can not use @InjectPresenter in classes that are not View, which is typified target Presenter", annotatedField);
+            ProcessingEnvironmentHolder.getMessager().printMessage(Diagnostic.Kind.ERROR, "You can not use @InjectPresenter in classes that are not View, which is typified target Presenter", annotatedField);
 		}
 	}
 

@@ -13,9 +13,11 @@ import org.objectweb.asm.util.TraceClassVisitor;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import javax.annotation.processing.Processor;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
 
@@ -35,15 +37,19 @@ public abstract class CompilerTest {
 	protected Compilation compileSourcesWithProcessor(JavaFileObject... sources) {
 		return javac()
 				.withOptions("-implicit:none") // TODO: enable lint (-Xlint:processing)
-				.withProcessors(new MvpCompiler())
+				.withProcessors(getProcessors())
 				.compile(sources);
 	}
 
 	protected Compilation compileLibSourcesWithProcessor(String moxyReflectorPackage, JavaFileObject... sources) {
 		return javac()
 				.withOptions("-implicit:none", "-AmoxyReflectorPackage=" + moxyReflectorPackage)
-				.withProcessors(new MvpCompiler())
+				.withProcessors(getProcessors())
 				.compile(sources);
+	}
+
+	private Iterable<Processor> getProcessors() {
+		return Arrays.asList(new MvpCompiler(), new MoxyReflectorCompiler());
 	}
 
 	/**
