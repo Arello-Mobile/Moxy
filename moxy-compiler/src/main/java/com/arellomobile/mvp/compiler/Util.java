@@ -16,6 +16,8 @@
  */
 package com.arellomobile.mvp.compiler;
 
+import com.google.common.base.Preconditions;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -200,6 +202,7 @@ public final class Util {
 			Collection<T> second,
 			BiFunction<T, T, Boolean> predicate) {
 
+		Preconditions.checkArgument(predicate != null, "Require non null predicate!");
 		if (first != null && second != null) {
 			if (first.size() != second.size()) {
 				return false;

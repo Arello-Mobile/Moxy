@@ -147,7 +147,7 @@ class ViewMethod {
 		int result = name != null ? name.hashCode() : 1;
 		result = 31 * result;
 		for (ParameterSpec spec : parameterSpecs) {
-			result = 31 * result + Objects.hashCode(spec.type);
+			result = 31 * result + (spec != null ? Objects.hashCode(spec.type) : 0);
 		}
 		return result;
 	}
