@@ -89,6 +89,22 @@ public class ParentView$$State extends MvpViewState<ParentView> implements Paren
 	}
 
 	@Override
+	public void parentMethodWithArg3(String i) {
+		ParentMethodWithArg3Command parentMethodWithArg3Command = new ParentMethodWithArg3Command(i);
+		mViewCommands.beforeApply(parentMethodWithArg3Command);
+
+		if (mViews == null || mViews.isEmpty()) {
+			return;
+		}
+
+		for (ParentView view : mViews) {
+			view.parentMethodWithArg3(i);
+		}
+
+		mViewCommands.afterApply(parentMethodWithArg3Command);
+	}
+
+	@Override
 	public void parentMethodWithStrategy() {
 		ParentMethodWithStrategyCommand parentMethodWithStrategyCommand = new ParentMethodWithStrategyCommand();
 		mViewCommands.beforeApply(parentMethodWithStrategyCommand);
@@ -164,6 +180,21 @@ public class ParentView$$State extends MvpViewState<ParentView> implements Paren
 		@Override
 		public void apply(ParentView mvpView) {
 			mvpView.parentMethodWithArg2(i);
+		}
+	}
+
+	public class ParentMethodWithArg3Command extends ViewCommand<ParentView> {
+		public final String i;
+
+		ParentMethodWithArg3Command(String i) {
+			super("parentMethodWithArg3", ParentDefaultStrategy.class);
+
+			this.i = i;
+		}
+
+		@Override
+		public void apply(ParentView mvpView) {
+			mvpView.parentMethodWithArg3(i);
 		}
 	}
 

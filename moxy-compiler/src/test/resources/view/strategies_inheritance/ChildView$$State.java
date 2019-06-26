@@ -90,6 +90,22 @@ public class ChildView$$State extends MvpViewState<ChildView> implements ChildVi
 	}
 
 	@Override
+	public void parentMethodWithArg3(String a) {
+		ParentMethodWithArg3Command parentMethodWithArg3Command = new ParentMethodWithArg3Command(a);
+		mViewCommands.beforeApply(parentMethodWithArg3Command);
+
+		if (mViews == null || mViews.isEmpty()) {
+			return;
+		}
+
+		for (ChildView view : mViews) {
+			view.parentMethodWithArg3(a);
+		}
+
+		mViewCommands.afterApply(parentMethodWithArg3Command);
+	}
+
+	@Override
 	public void childMethodWithStrategy() {
 		ChildMethodWithStrategyCommand childMethodWithStrategyCommand = new ChildMethodWithStrategyCommand();
 		mViewCommands.beforeApply(childMethodWithStrategyCommand);
@@ -197,6 +213,21 @@ public class ChildView$$State extends MvpViewState<ChildView> implements ChildVi
 		@Override
 		public void apply(ChildView mvpView) {
 			mvpView.parentMethodWithArg2(i);
+		}
+	}
+
+	public class ParentMethodWithArg3Command extends ViewCommand<ChildView> {
+		public final String a;
+
+		ParentMethodWithArg3Command(String a) {
+			super("parentMethodWithArg3", ChildDefaultStrategy.class);
+
+			this.a = a;
+		}
+
+		@Override
+		public void apply(ChildView mvpView) {
+			mvpView.parentMethodWithArg3(a);
 		}
 	}
 
