@@ -1,13 +1,10 @@
 package com.arellomobile.mvp.compiler.viewstate;
 
 import com.arellomobile.mvp.compiler.MvpCompiler;
+import com.arellomobile.mvp.compiler.Util;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeVariableName;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
@@ -16,6 +13,10 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.ExecutableType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Date: 27-Jul-2017
@@ -134,13 +135,21 @@ class ViewMethod {
 
 		ViewMethod that = (ViewMethod) o;
 
-		return name.equals(that.name) && parameterSpecs.equals(that.parameterSpecs);
+		return Objects.equals(name, that.name) && Util.areContentEquals(parameterSpecs, that.parameterSpecs,
+				(first, second) -> Objects.equals(first.name, second.name) && Objects.equals(first.type, second.type));
 	}
 
 	@Override
 	public int hashCode() {
-		int result = name.hashCode();
-		result = 31 * result + parameterSpecs.hashCode();
+		if (name == null && parameterSpecs == null) {
+			return 0;
+		}
+		int result = name != null ? name.hashCode() : 1;
+		result = 31 * result;
+		for (ParameterSpec spec : parameterSpecs) {
+			result = 31 * result + Objects.hashCode(spec.name);
+			result = 31 * result + Objects.hashCode(spec.type);
+		}
 		return result;
 	}
 }

@@ -2,12 +2,12 @@ package view.strategies_inheritance;
 
 import com.arellomobile.mvp.viewstate.MvpViewState;
 import com.arellomobile.mvp.viewstate.ViewCommand;
-
+import java.lang.Override;
+import java.lang.String;
 import view.strategies_inheritance.strategies.ParentDefaultStrategy;
 import view.strategies_inheritance.strategies.Strategy1;
 
 public class ParentView$$State extends MvpViewState<ParentView> implements ParentView {
-
 	@Override
 	public void parentMethod1() {
 		ParentMethod1Command parentMethod1Command = new ParentMethod1Command();
@@ -57,6 +57,38 @@ public class ParentView$$State extends MvpViewState<ParentView> implements Paren
 	}
 
 	@Override
+	public void parentMethodWithArg(String i) {
+		ParentMethodWithArgCommand parentMethodWithArgCommand = new ParentMethodWithArgCommand(i);
+		mViewCommands.beforeApply(parentMethodWithArgCommand);
+
+		if (mViews == null || mViews.isEmpty()) {
+			return;
+		}
+
+		for (ParentView view : mViews) {
+			view.parentMethodWithArg(i);
+		}
+
+		mViewCommands.afterApply(parentMethodWithArgCommand);
+	}
+
+	@Override
+	public void parentMethodWithArg2(String i) {
+		ParentMethodWithArg2Command parentMethodWithArg2Command = new ParentMethodWithArg2Command(i);
+		mViewCommands.beforeApply(parentMethodWithArg2Command);
+
+		if (mViews == null || mViews.isEmpty()) {
+			return;
+		}
+
+		for (ParentView view : mViews) {
+			view.parentMethodWithArg2(i);
+		}
+
+		mViewCommands.afterApply(parentMethodWithArg2Command);
+	}
+
+	@Override
 	public void parentMethodWithStrategy() {
 		ParentMethodWithStrategyCommand parentMethodWithStrategyCommand = new ParentMethodWithStrategyCommand();
 		mViewCommands.beforeApply(parentMethodWithStrategyCommand);
@@ -71,7 +103,6 @@ public class ParentView$$State extends MvpViewState<ParentView> implements Paren
 
 		mViewCommands.afterApply(parentMethodWithStrategyCommand);
 	}
-
 
 	public class ParentMethod1Command extends ViewCommand<ParentView> {
 		ParentMethod1Command() {
@@ -103,6 +134,36 @@ public class ParentView$$State extends MvpViewState<ParentView> implements Paren
 		@Override
 		public void apply(ParentView mvpView) {
 			mvpView.parentMethod3();
+		}
+	}
+
+	public class ParentMethodWithArgCommand extends ViewCommand<ParentView> {
+		public final String i;
+
+		ParentMethodWithArgCommand(String i) {
+			super("parentMethodWithArg", ParentDefaultStrategy.class);
+
+			this.i = i;
+		}
+
+		@Override
+		public void apply(ParentView mvpView) {
+			mvpView.parentMethodWithArg(i);
+		}
+	}
+
+	public class ParentMethodWithArg2Command extends ViewCommand<ParentView> {
+		public final String i;
+
+		ParentMethodWithArg2Command(String i) {
+			super("parentMethodWithArg2", ParentDefaultStrategy.class);
+
+			this.i = i;
+		}
+
+		@Override
+		public void apply(ParentView mvpView) {
+			mvpView.parentMethodWithArg2(i);
 		}
 	}
 

@@ -16,10 +16,14 @@
  */
 package com.arellomobile.mvp.compiler;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.BiFunction;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
@@ -189,5 +193,29 @@ public final class Util {
 
 	public static String decapitalizeString(String string) {
 		return string == null || string.isEmpty() ? "" : string.length() == 1 ? string.toLowerCase() : Character.toLowerCase(string.charAt(0)) + string.substring(1);
+	}
+
+	public static <T> boolean areContentEquals(
+			Collection<T> first,
+			Collection<T> second,
+			BiFunction<T, T, Boolean> predicate) {
+
+		if (first != null && second != null) {
+			if (first.size() != second.size()) {
+				return false;
+			}
+			final Iterator<T> firstIterator = first.iterator();
+			final Iterator<T> secondIterator = first.iterator();
+			while (firstIterator.hasNext()) {
+				final T firstItem = firstIterator.next();
+				final T secondItem = secondIterator.next();
+				if (!Objects.equals(firstItem, secondItem)) {
+					return false;
+				}
+			}
+			return true;
+		} else {
+			return first != second;
+		}
 	}
 }
