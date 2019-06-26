@@ -195,7 +195,7 @@ public final class Util {
 		return string == null || string.isEmpty() ? "" : string.length() == 1 ? string.toLowerCase() : Character.toLowerCase(string.charAt(0)) + string.substring(1);
 	}
 
-	public static <T> boolean areContentEquals(
+	public static <T> boolean equalsBy(
 			Collection<T> first,
 			Collection<T> second,
 			BiFunction<T, T, Boolean> predicate) {
@@ -205,11 +205,11 @@ public final class Util {
 				return false;
 			}
 			final Iterator<T> firstIterator = first.iterator();
-			final Iterator<T> secondIterator = first.iterator();
+			final Iterator<T> secondIterator = second.iterator();
 			while (firstIterator.hasNext()) {
 				final T firstItem = firstIterator.next();
 				final T secondItem = secondIterator.next();
-				if (!Objects.equals(firstItem, secondItem)) {
+				if (!predicate.apply(firstItem, secondItem)) {
 					return false;
 				}
 			}

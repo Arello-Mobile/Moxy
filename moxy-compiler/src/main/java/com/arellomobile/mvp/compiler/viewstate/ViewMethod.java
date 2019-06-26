@@ -135,7 +135,7 @@ class ViewMethod {
 
 		ViewMethod that = (ViewMethod) o;
 
-		return Objects.equals(name, that.name) && Util.areContentEquals(parameterSpecs, that.parameterSpecs,
+		return Objects.equals(name, that.name) && Util.equalsBy(parameterSpecs, that.parameterSpecs,
 				(first, second) -> Objects.equals(first.name, second.name) && Objects.equals(first.type, second.type));
 	}
 
