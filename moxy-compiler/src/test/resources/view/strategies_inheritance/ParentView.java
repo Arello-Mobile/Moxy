@@ -14,6 +14,12 @@ public interface ParentView extends MvpView {
 
 	void parentMethod3(); // ParentDefaultStrategy
 
+	void parentMethodWithArg(String i); // ParentDefaultStrategy
+
+	void parentMethodWithArg2(String i); // ParentDefaultStrategy
+
+	void parentMethodWithArg3(String i); // ParentDefaultStrategy
+
 	@StateStrategyType(Strategy1.class)
 	void parentMethodWithStrategy(); // Strategy1
 }
