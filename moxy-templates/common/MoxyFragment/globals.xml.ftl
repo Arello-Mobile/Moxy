@@ -9,8 +9,8 @@
 
     <global id="superClassFqcn" type="string" value="
             <#if superClass == 'baseFragment'>${packageName}.ui.fragment.BaseFragment
-            <#elseif superClass == 'appCompat'>com.arellomobile.mvp.MvpAppCompatFragment
-            <#else>com.arellomobile.mvp.MvpFragment</#if>
+            <#elseif superClass == 'appCompat'>com.omegar.mvp.MvpAppCompatFragment
+            <#else>com.omegar.mvp.MvpFragment</#if>
         " />
 
     <global id="useSupport" type="boolean" value="${(minApiLevel lt 11)?string}" />

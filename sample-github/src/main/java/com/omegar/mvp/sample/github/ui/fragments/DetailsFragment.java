@@ -9,11 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
-import com.arellomobile.mvp.MvpAppCompatFragment;
-import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.presenter.PresenterType;
-import com.arellomobile.mvp.presenter.ProvidePresenter;
-import com.arellomobile.mvp.sample.github.R;
+import com.omegar.mvp.MvpAppCompatFragment;
+import com.omegar.mvp.presenter.InjectPresenter;
+import com.omegar.mvp.presenter.PresenterType;
+import com.omegar.mvp.presenter.ProvidePresenter;
+import com.omegar.mvp.sample.github.R;
 import com.omegar.mvp.sample.github.mvp.models.Repository;
 import com.omegar.mvp.sample.github.mvp.presenters.RepositoryLikesPresenter;
 import com.omegar.mvp.sample.github.mvp.presenters.RepositoryPresenter;

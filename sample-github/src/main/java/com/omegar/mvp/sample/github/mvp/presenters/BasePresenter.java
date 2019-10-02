@@ -2,8 +2,8 @@ package com.omegar.mvp.sample.github.mvp.presenters;
 
 import android.support.annotation.NonNull;
 
-import com.arellomobile.mvp.MvpPresenter;
-import com.arellomobile.mvp.MvpView;
+import com.omegar.mvp.MvpPresenter;
+import com.omegar.mvp.MvpView;
 
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;

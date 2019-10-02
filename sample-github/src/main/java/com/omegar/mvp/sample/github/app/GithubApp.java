@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
 import com.omegar.mvp.sample.github.di.AppComponent;
+
 import com.omegar.mvp.sample.github.di.DaggerAppComponent;
 import com.omegar.mvp.sample.github.di.modules.ContextModule;
 

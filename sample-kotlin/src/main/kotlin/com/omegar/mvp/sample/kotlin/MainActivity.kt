@@ -2,12 +2,12 @@ package com.omegar.mvp.sample.kotlin
 
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
-import com.arellomobile.mvp.MvpAppCompatActivity
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.PresenterType
-import com.arellomobile.mvp.presenter.ProvidePresenter
-import com.arellomobile.mvp.presenter.ProvidePresenterTag
-import com.arellomobile.mvp.sample.kotlin.R
+import com.omegar.mvp.MvpAppCompatActivity
+import com.omegar.mvp.presenter.InjectPresenter
+import com.omegar.mvp.presenter.PresenterType
+import com.omegar.mvp.presenter.ProvidePresenter
+import com.omegar.mvp.presenter.ProvidePresenterTag
+import com.omegar.mvp.sample.kotlin.R
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : MvpAppCompatActivity(), DialogView {

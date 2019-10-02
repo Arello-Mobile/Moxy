@@ -3,8 +3,8 @@ package com.omegar.mvp.sample.github.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.arellomobile.mvp.MvpAppCompatActivity;
-import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.omegar.mvp.MvpAppCompatActivity;
+import com.omegar.mvp.presenter.InjectPresenter;
 import com.omegar.mvp.sample.github.mvp.presenters.SplashPresenter;
 import com.omegar.mvp.sample.github.mvp.views.SplashView;
 

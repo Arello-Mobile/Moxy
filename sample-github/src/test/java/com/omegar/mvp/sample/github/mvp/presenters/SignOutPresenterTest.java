@@ -1,7 +1,7 @@
 package com.omegar.mvp.sample.github.mvp.presenters;
 
 import com.omegar.mvp.sample.github.mvp.common.AuthUtils;
-import com.arellomobile.mvp.sample.github.mvp.views.SignOutView$$State;
+import com.omegar.mvp.sample.github.mvp.views.SignOutView$$State;
 import com.omegar.mvp.sample.github.test.GithubSampleTestRunner;
 import com.omegar.mvp.sample.github.test.TestComponentRule;
 

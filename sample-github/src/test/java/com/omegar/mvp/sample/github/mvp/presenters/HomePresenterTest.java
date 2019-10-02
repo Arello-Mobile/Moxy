@@ -2,7 +2,7 @@ package com.omegar.mvp.sample.github.mvp.presenters;
 
 import com.omegar.mvp.sample.github.mvp.models.Repository;
 import com.omegar.mvp.sample.github.mvp.views.HomeView;
-import com.arellomobile.mvp.sample.github.mvp.views.HomeView$$State;
+import com.omegar.mvp.sample.github.mvp.views.HomeView$$State;
 
 import org.junit.Before;
 import org.junit.Test;

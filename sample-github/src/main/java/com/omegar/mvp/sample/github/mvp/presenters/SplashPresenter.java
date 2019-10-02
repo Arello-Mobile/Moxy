@@ -2,7 +2,7 @@ package com.omegar.mvp.sample.github.mvp.presenters;
 
 import android.text.TextUtils;
 
-import com.arellomobile.mvp.MvpPresenter;
+import com.omegar.mvp.MvpPresenter;
 import com.omegar.mvp.sample.github.mvp.common.AuthUtils;
 import com.omegar.mvp.sample.github.mvp.views.SplashView;
 
