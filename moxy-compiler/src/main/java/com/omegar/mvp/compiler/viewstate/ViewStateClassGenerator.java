@@ -12,13 +12,17 @@ import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.TypeVariableName;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import javax.annotation.Nullable;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.type.DeclaredType;
+import javax.tools.Diagnostic;
 
 import static com.omegar.mvp.compiler.Util.decapitalizeString;
 
@@ -28,19 +32,53 @@ import static com.omegar.mvp.compiler.Util.decapitalizeString;
  *
  * @author Yuri Shmakov
  */
-public final class ViewStateClassGenerator extends JavaFilesGenerator<ViewInterfaceInfo> {
+public final class ViewStateClassGenerator extends JavaFilesGenerator<List<ViewInterfaceInfo>> {
+
+	private static final String T = "T";
+	private static final TypeVariableName GENERIC_TYPE_VARIABLE_NAME = TypeVariableName.get(T);
+	private static final ClassName MVP_VIEW_STATE_CLASS_NAME = ClassName.get(MvpViewState.class);
+	private static final ClassName VIEW_COMMAND_CLASS_NAME = ClassName.get(ViewCommand.class);
+	private static final ParameterizedTypeName VIEW_COMMAND_TYPE_NAME
+			= ParameterizedTypeName.get(VIEW_COMMAND_CLASS_NAME, GENERIC_TYPE_VARIABLE_NAME);
+	private static final ParameterizedTypeName MVP_VIEW_STATE_TYPE_NAME
+			= ParameterizedTypeName.get(MVP_VIEW_STATE_CLASS_NAME, GENERIC_TYPE_VARIABLE_NAME);
 
 	@Override
-	public List<JavaFile> generate(ViewInterfaceInfo viewInterfaceInfo) {
+	public List<JavaFile> generate(List<ViewInterfaceInfo> list) {
+		if (list.isEmpty()) return Collections.emptyList();
+
+		MvpCompiler.getMessager().printMessage(Diagnostic.Kind.WARNING, "Size " + list.size());
+
+		List<JavaFile> fileList = new ArrayList<>();
+		fileList.add(generate(list.get(0)));
+
+		for (int i = 1; i < list.size(); i++) {
+			ViewInterfaceInfo info = list.get(i);
+
+			JavaFile parentClassFile = fileList.get(fileList.size() - 1);
+			ClassName parentClassName = ClassName.get(parentClassFile.packageName, parentClassFile.typeSpec.name);
+
+			fileList.add(generate(info, parentClassName));
+		}
+		return fileList;
+	}
+
+	private JavaFile generate(ViewInterfaceInfo viewInterfaceInfo) {
+		return generate(viewInterfaceInfo, null);
+	}
+
+	private JavaFile generate(ViewInterfaceInfo viewInterfaceInfo, @Nullable ClassName parentClassName) {
 		ClassName viewName = viewInterfaceInfo.getName();
 		TypeName nameWithTypeVariables = viewInterfaceInfo.getNameWithTypeVariables();
 		DeclaredType viewInterfaceType = (DeclaredType) viewInterfaceInfo.getElement().asType();
+		TypeVariableName variableName = TypeVariableName.get(T, nameWithTypeVariables);
 
 		TypeSpec.Builder classBuilder = TypeSpec.classBuilder(viewName.simpleName() + MvpProcessor.VIEW_STATE_SUFFIX)
 				.addModifiers(Modifier.PUBLIC)
-				.superclass(ParameterizedTypeName.get(ClassName.get(MvpViewState.class), nameWithTypeVariables))
-				.addSuperinterface(nameWithTypeVariables)
-				.addTypeVariables(viewInterfaceInfo.getTypeVariables());
+				.superclass(parentClassName == null ? MVP_VIEW_STATE_TYPE_NAME :
+						ParameterizedTypeName.get(parentClassName, variableName))
+				.addTypeVariable(variableName)
+				.addSuperinterface(nameWithTypeVariables);
 
 		for (ViewMethod method : viewInterfaceInfo.getMethods()) {
 			TypeSpec commandClass = generateCommandClass(method, nameWithTypeVariables);
@@ -48,10 +86,9 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<ViewInterf
 			classBuilder.addMethod(generateMethod(viewInterfaceType, method, nameWithTypeVariables, commandClass));
 		}
 
-		JavaFile javaFile = JavaFile.builder(viewName.packageName(), classBuilder.build())
+		return JavaFile.builder(viewName.packageName(), classBuilder.build())
 				.indent("\t")
 				.build();
-		return Collections.singletonList(javaFile);
 	}
 
 	private TypeSpec generateCommandClass(ViewMethod method, TypeName viewTypeName) {
@@ -66,7 +103,7 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<ViewInterf
 		TypeSpec.Builder classBuilder = TypeSpec.classBuilder(method.getCommandClassName())
 				.addModifiers(Modifier.PUBLIC) // TODO: private and static
 				.addTypeVariables(method.getTypeVariables())
-				.superclass(ParameterizedTypeName.get(ClassName.get(ViewCommand.class), viewTypeName))
+				.superclass(VIEW_COMMAND_TYPE_NAME)
 				.addMethod(generateCommandConstructor(method))
 				.addMethod(applyMethod);
 

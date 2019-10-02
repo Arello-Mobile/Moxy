@@ -1,10 +1,12 @@
 package com.omegar.mvp.compiler.viewstate;
 
+import com.omegar.mvp.MvpView;
 import com.omegar.mvp.compiler.ElementProcessor;
 import com.omegar.mvp.compiler.MvpCompiler;
 import com.omegar.mvp.compiler.Util;
 import com.omegar.mvp.viewstate.strategy.AddToEndStrategy;
 import com.omegar.mvp.viewstate.strategy.StateStrategyType;
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.ParameterSpec;
 
 import java.util.ArrayList;
@@ -33,9 +35,10 @@ import javax.tools.Diagnostic;
  *
  * @author Evgeny Kursakov
  */
-public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewInterfaceInfo> {
+public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<ViewInterfaceInfo>> {
 	private static final String STATE_STRATEGY_TYPE_ANNOTATION = StateStrategyType.class.getName();
 	private static final TypeElement DEFAULT_STATE_STRATEGY = MvpCompiler.getElementUtils().getTypeElement(AddToEndStrategy.class.getCanonicalName());
+	private static final ClassName MVP_VIEW_CLASS_NAME = ClassName.get(MvpView.class);
 
 	private TypeElement viewInterfaceElement;
 	private String viewInterfaceName;
@@ -46,7 +49,9 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 	}
 
 	@Override
-	public ViewInterfaceInfo process(TypeElement element) {
+	public List<ViewInterfaceInfo> process(TypeElement element) {
+		List<ViewInterfaceInfo> list = new ArrayList<>();
+
 		this.viewInterfaceElement = element;
 		viewInterfaceName = element.getSimpleName().toString();
 
@@ -58,7 +63,10 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 		getMethods(element, interfaceStateStrategyType, new ArrayList<>(), methods);
 
 		// Add methods from super interfaces
-		methods.addAll(iterateInterfaces(0, element, interfaceStateStrategyType, methods, new ArrayList<>()));
+		for (TypeMirror typeMirror : element.getInterfaces()) {
+			final TypeElement anInterface = (TypeElement) ((DeclaredType) typeMirror).asElement();
+			list.addAll(process(anInterface));
+		}
 
 		// Allow methods be with same names
 		Map<String, Integer> methodsCounter = new HashMap<>();
@@ -75,7 +83,10 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 			methodsCounter.put(method.getName(), counter);
 		}
 
-		return new ViewInterfaceInfo(element, methods);
+		ViewInterfaceInfo info = new ViewInterfaceInfo(element, methods);
+		if (!info.getName().equals(MVP_VIEW_CLASS_NAME)) list.add(info);
+
+		return list;
 	}
 
 

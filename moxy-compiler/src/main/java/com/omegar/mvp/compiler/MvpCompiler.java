@@ -49,7 +49,7 @@ import static javax.lang.model.SourceVersion.latestSupported;
 @SuppressWarnings("unused")
 @AutoService(Processor.class)
 public class MvpCompiler extends AbstractProcessor {
-	public static final String MOXY_REFLECTOR_DEFAULT_PACKAGE = "com.arellomobile.mvp";
+	public static final String MOXY_REFLECTOR_DEFAULT_PACKAGE = "com.omegar.mvp";
 
 	private static final String OPTION_MOXY_REFLECTOR_PACKAGE = "moxyReflectorPackage";
 
@@ -136,7 +136,7 @@ public class MvpCompiler extends AbstractProcessor {
 				injectPresenterProcessor, presenterBinderClassGenerator);
 
 		for (TypeElement usedView : injectViewStateProcessor.getUsedViews()) {
-			generateCode(usedView, ElementKind.INTERFACE,
+			generateListCode(usedView, ElementKind.INTERFACE,
 					viewInterfaceProcessor, viewStateClassGenerator);
 		}
 
@@ -203,6 +203,24 @@ public class MvpCompiler extends AbstractProcessor {
 			generateCode(element, kind, processor, classGenerator);
 		}
 	}
+
+    private <E extends Element, R> void generateListCode(Element element,
+                                                     ElementKind kind,
+                                                     ElementProcessor<E, List<R>> processor,
+                                                     JavaFilesGenerator<List<R>> classGenerator) {
+        if (element.getKind() != kind) {
+            getMessager().printMessage(Diagnostic.Kind.ERROR, element + " must be " + kind.name());
+        }
+
+        //noinspection unchecked
+        List<R> resultList = processor.process((E) element);
+        if (resultList == null || resultList.isEmpty()) return;
+
+		List<JavaFile> fileList = classGenerator.generate(new ArrayList<>(new HashSet<>(resultList)));
+		if (fileList == null || fileList.isEmpty()) return;
+
+		for (JavaFile file : fileList) createSourceFile(file);
+    }
 
 	private <E extends Element, R> void generateCode(Element element,
 	                                                 ElementKind kind,
