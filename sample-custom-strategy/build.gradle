@@ -43,10 +43,9 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$supportVersion"
     implementation "com.android.support:design:$supportVersion"
 
-    def moxyVersion = '1.5.6'
-    implementation "com.arello-mobile:moxy:$moxyVersion"
-    implementation "com.arello-mobile:moxy-app-compat:$moxyVersion"
-    kapt "com.arello-mobile:moxy-compiler:$moxyVersion"
+    implementation project(':moxy')
+    implementation project(':moxy-android')
+    kapt project(':moxy-compiler')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }

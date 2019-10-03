@@ -19,6 +19,7 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -216,7 +217,7 @@ public class MvpCompiler extends AbstractProcessor {
         List<R> resultList = processor.process((E) element);
         if (resultList == null || resultList.isEmpty()) return;
 
-		List<JavaFile> fileList = classGenerator.generate(new ArrayList<>(new HashSet<>(resultList)));
+		List<JavaFile> fileList = classGenerator.generate(new ArrayList<>(new LinkedHashSet<>(resultList)));
 		if (fileList == null || fileList.isEmpty()) return;
 
 		for (JavaFile file : fileList) createSourceFile(file);

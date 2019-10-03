@@ -10,7 +10,7 @@ class MainPresenter : MvpPresenter<MainView>() {
 	override fun onFirstViewAttach() {
 		super.onFirstViewAttach()
 		Log.e(MainActivity.TAG, "presenter hash code : ${hashCode()}")
-		viewState.printLog("TEST")
+		viewState.printLog(10.0)
 	}
 	
 }

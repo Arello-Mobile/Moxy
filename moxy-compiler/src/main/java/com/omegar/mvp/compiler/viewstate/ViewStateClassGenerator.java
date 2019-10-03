@@ -22,7 +22,7 @@ import java.util.Random;
 import javax.annotation.Nullable;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.type.DeclaredType;
-import javax.tools.Diagnostic;
+import javax.lang.model.type.TypeMirror;
 
 import static com.omegar.mvp.compiler.Util.decapitalizeString;
 
@@ -34,8 +34,8 @@ import static com.omegar.mvp.compiler.Util.decapitalizeString;
  */
 public final class ViewStateClassGenerator extends JavaFilesGenerator<List<ViewInterfaceInfo>> {
 
-	private static final String T = "T";
-	private static final TypeVariableName GENERIC_TYPE_VARIABLE_NAME = TypeVariableName.get(T);
+	private static final String VIEW = "Omega$$View";
+	private static final TypeVariableName GENERIC_TYPE_VARIABLE_NAME = TypeVariableName.get(VIEW);
 	private static final ClassName MVP_VIEW_STATE_CLASS_NAME = ClassName.get(MvpViewState.class);
 	private static final ClassName VIEW_COMMAND_CLASS_NAME = ClassName.get(ViewCommand.class);
 	private static final ParameterizedTypeName VIEW_COMMAND_TYPE_NAME
@@ -46,8 +46,6 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<List<ViewI
 	@Override
 	public List<JavaFile> generate(List<ViewInterfaceInfo> list) {
 		if (list.isEmpty()) return Collections.emptyList();
-
-		MvpCompiler.getMessager().printMessage(Diagnostic.Kind.WARNING, "Size " + list.size());
 
 		List<JavaFile> fileList = new ArrayList<>();
 		fileList.add(generate(list.get(0)));
@@ -67,18 +65,20 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<List<ViewI
 		return generate(viewInterfaceInfo, null);
 	}
 
-	private JavaFile generate(ViewInterfaceInfo viewInterfaceInfo, @Nullable ClassName parentClassName) {
+	private JavaFile generate(ViewInterfaceInfo viewInterfaceInfo, @Nullable ClassName superClassName) {
 		ClassName viewName = viewInterfaceInfo.getName();
 		TypeName nameWithTypeVariables = viewInterfaceInfo.getNameWithTypeVariables();
 		DeclaredType viewInterfaceType = (DeclaredType) viewInterfaceInfo.getElement().asType();
-		TypeVariableName variableName = TypeVariableName.get(T, nameWithTypeVariables);
+		TypeVariableName variableName = TypeVariableName.get(VIEW, nameWithTypeVariables);
 
 		TypeSpec.Builder classBuilder = TypeSpec.classBuilder(viewName.simpleName() + MvpProcessor.VIEW_STATE_SUFFIX)
-				.addModifiers(Modifier.PUBLIC)
-				.superclass(parentClassName == null ? MVP_VIEW_STATE_TYPE_NAME :
-						ParameterizedTypeName.get(parentClassName, variableName))
-				.addTypeVariable(variableName)
-				.addSuperinterface(nameWithTypeVariables);
+                .addModifiers(Modifier.PUBLIC)
+                .addSuperinterface(nameWithTypeVariables)
+                .addTypeVariables(new ArrayList<TypeVariableName>(viewInterfaceInfo.getTypeVariables()) {{
+                	add(0, variableName);
+                }})
+				.superclass(superClassName == null ? MVP_VIEW_STATE_TYPE_NAME :
+						ParameterizedTypeName.get(superClassName, generateSuperClassTypeVariables(viewInterfaceInfo, variableName)));
 
 		for (ViewMethod method : viewInterfaceInfo.getMethods()) {
 			TypeSpec commandClass = generateCommandClass(method, nameWithTypeVariables);
@@ -91,11 +91,26 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<List<ViewI
 				.build();
 	}
 
+	private TypeVariableName[] generateSuperClassTypeVariables(ViewInterfaceInfo viewInterfaceInfo, TypeVariableName variableName) {
+		List<TypeVariableName> parentClassTypeVariables = new ArrayList<>();
+		parentClassTypeVariables.add(variableName);
+		for (TypeMirror mirror : viewInterfaceInfo.getElement().getInterfaces()) {
+			List<? extends TypeMirror> typeArguments = ((DeclaredType) mirror).getTypeArguments();
+			for (TypeMirror typeMirror : typeArguments) {
+				TypeName typeName = ClassName.get(typeMirror);
+				TypeVariableName name = TypeVariableName.get(typeMirror.toString(), typeName);
+				parentClassTypeVariables.add(name);
+			}
+		}
+		//noinspection ToArrayCallWithZeroLengthArrayArgument
+		return parentClassTypeVariables.toArray(new TypeVariableName[parentClassTypeVariables.size()]);
+	}
+
 	private TypeSpec generateCommandClass(ViewMethod method, TypeName viewTypeName) {
 		MethodSpec applyMethod = MethodSpec.methodBuilder("apply")
 				.addAnnotation(Override.class)
 				.addModifiers(Modifier.PUBLIC)
-				.addParameter(viewTypeName, "mvpView")
+				.addParameter(GENERIC_TYPE_VARIABLE_NAME, "mvpView")
 				.addExceptions(method.getExceptions())
 				.addStatement("mvpView.$L($L)", method.getName(), method.getArgumentsString())
 				.build();

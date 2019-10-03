@@ -51,6 +51,7 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<V
 	@Override
 	public List<ViewInterfaceInfo> process(TypeElement element) {
 		List<ViewInterfaceInfo> list = new ArrayList<>();
+		MvpCompiler.getMessager().printMessage(Diagnostic.Kind.WARNING, "TypeElement " + element);
 
 		this.viewInterfaceElement = element;
 		viewInterfaceName = element.getSimpleName().toString();
@@ -64,8 +65,10 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<V
 
 		// Add methods from super interfaces
 		for (TypeMirror typeMirror : element.getInterfaces()) {
-			final TypeElement anInterface = (TypeElement) ((DeclaredType) typeMirror).asElement();
-			list.addAll(process(anInterface));
+			final TypeElement interfaceElement = (TypeElement) ((DeclaredType) typeMirror).asElement();
+			if (isMvpElement(interfaceElement)) {
+			    list.addAll(process(interfaceElement));
+            }
 		}
 
 		// Allow methods be with same names
@@ -89,6 +92,18 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<V
 		return list;
 	}
 
+	private boolean isMvpElement(TypeElement element) {
+		if (element == null) return false;
+
+		ClassName className = ClassName.get(element);
+		if (className.equals(MVP_VIEW_CLASS_NAME)) return true;
+
+		for (TypeMirror typeMirror : element.getInterfaces()) {
+			TypeElement interfaceElement = (TypeElement) ((DeclaredType) typeMirror).asElement();
+			if (isMvpElement(interfaceElement)) return true;
+		}
+		return false;
+	}
 
 	private void getMethods(TypeElement typeElement,
 	                        TypeElement defaultStrategy,
@@ -180,8 +195,7 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<V
 		}
 	}
 
-	private List<ViewMethod> iterateInterfaces(int level,
-	                                           TypeElement parentElement,
+	private List<ViewMethod> iterateInterfaces(TypeElement parentElement,
 	                                           TypeElement parentDefaultStrategy,
 	                                           List<ViewMethod> rootMethods,
 	                                           List<ViewMethod> superinterfacesMethods) {
@@ -199,7 +213,7 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<V
 
 			getMethods(anInterface, defaultStrategy, rootMethods, superinterfacesMethods);
 
-			iterateInterfaces(level + 1, anInterface, defaultStrategy, rootMethods, superinterfacesMethods);
+			iterateInterfaces(anInterface, defaultStrategy, rootMethods, superinterfacesMethods);
 		}
 
 		return superinterfacesMethods;
