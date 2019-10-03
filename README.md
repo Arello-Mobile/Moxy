@@ -1,4 +1,9 @@
 # MoxyX
+
+**This Moxy repository is deprecated and no longer supported.**
+
+**Please migrate to the actual version of the Moxy framework at [Moxy communuty](https://github.com/moxy-community/Moxy) repo.**
+
 We added X to the Moxy for make this library coolest.
 
 [![Maven Central](https://img.shields.io/maven-central/v/tech.schoolhelper/moxy-x.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22tech.schoolhelper%22%20AND%20a:%22moxy-x%22)
