@@ -19,7 +19,6 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -136,10 +135,8 @@ public class MvpCompiler extends AbstractProcessor {
 		processInjectors(roundEnv, InjectPresenter.class, ElementKind.FIELD,
 				injectPresenterProcessor, presenterBinderClassGenerator);
 
-		for (TypeElement usedView : injectViewStateProcessor.getUsedViews()) {
-			generateListCode(usedView, ElementKind.INTERFACE,
-					viewInterfaceProcessor, viewStateClassGenerator);
-		}
+		generateCode(injectViewStateProcessor.getUsedViews(), ElementKind.INTERFACE,
+				viewInterfaceProcessor, viewStateClassGenerator);
 
 		String moxyReflectorPackage = sOptions.get(OPTION_MOXY_REFLECTOR_PACKAGE);
 
@@ -205,40 +202,41 @@ public class MvpCompiler extends AbstractProcessor {
 		}
 	}
 
-    private <E extends Element, R> void generateListCode(Element element,
+    private <E extends Element, R> void generateCode(Set<TypeElement> elementSet,
                                                      ElementKind kind,
                                                      ElementProcessor<E, List<R>> processor,
                                                      JavaFilesGenerator<List<R>> classGenerator) {
-        if (element.getKind() != kind) {
-            getMessager().printMessage(Diagnostic.Kind.ERROR, element + " must be " + kind.name());
+        Set<JavaFile> fileSet = new HashSet<>();
+        for (Element element : elementSet) {
+            List<R> list = generateCode(element, kind, processor);
+            if (list != null) {
+				fileSet.addAll(classGenerator.generate(list));
+			}
         }
-
-        //noinspection unchecked
-        List<R> resultList = processor.process((E) element);
-        if (resultList == null || resultList.isEmpty()) return;
-
-		List<JavaFile> fileList = classGenerator.generate(new ArrayList<>(new LinkedHashSet<>(resultList)));
-		if (fileList == null || fileList.isEmpty()) return;
-
-		for (JavaFile file : fileList) createSourceFile(file);
+        for (JavaFile file : fileSet) {
+            createSourceFile(file);
+        }
     }
 
 	private <E extends Element, R> void generateCode(Element element,
-	                                                 ElementKind kind,
-	                                                 ElementProcessor<E, R> processor,
-	                                                 JavaFilesGenerator<R> classGenerator) {
-		if (element.getKind() != kind) {
-			getMessager().printMessage(Diagnostic.Kind.ERROR, element + " must be " + kind.name());
-		}
-
-		//noinspection unchecked
-		R result = processor.process((E) element);
-
+													 ElementKind kind,
+													 ElementProcessor<E, R> processor,
+													 JavaFilesGenerator<R> classGenerator) {
+		R result = generateCode(element, kind, processor);
 		if (result == null) return;
-
 		for (JavaFile file : classGenerator.generate(result)) {
 			createSourceFile(file);
 		}
+	}
+
+	private <E extends Element, R> R generateCode(Element element,
+                                                  ElementKind kind,
+                                                  ElementProcessor<E, R> processor) {
+		if (element.getKind() != kind) {
+			getMessager().printMessage(Diagnostic.Kind.ERROR, element + " must be " + kind.name());
+		}
+		//noinspection unchecked
+		return processor.process((E) element);
 	}
 
 	private void createSourceFile(JavaFile file) {

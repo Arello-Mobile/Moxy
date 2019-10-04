@@ -51,8 +51,6 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<V
 	@Override
 	public List<ViewInterfaceInfo> process(TypeElement element) {
 		List<ViewInterfaceInfo> list = new ArrayList<>();
-		MvpCompiler.getMessager().printMessage(Diagnostic.Kind.WARNING, "TypeElement " + element);
-
 		this.viewInterfaceElement = element;
 		viewInterfaceName = element.getSimpleName().toString();
 
