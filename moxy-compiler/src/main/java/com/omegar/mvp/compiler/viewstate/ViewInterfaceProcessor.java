@@ -64,8 +64,7 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<V
 
 			if (info.getSuperTypeMvpElements().size() > 1) {
 				List<ViewMethod> inheredMethods = getInheredMethods(info);
-				Set<ViewMethod> notInheredMethods = getNotInheredMethods(info, list);
-				for (ViewMethod method : notInheredMethods) {
+				for (ViewMethod method : getNotInheredMethods(info, list)) {
 					if (!inheredMethods.contains(method)) infoMethods.add(method);
 				}
 			}
@@ -82,18 +81,19 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<V
 	}
 
 	private Set<ViewMethod> getNotInheredMethods(ViewInterfaceInfo info, List<ViewInterfaceInfo> infoList) {
-		if (info.getSuperTypeMvpElements().size() <= 1) return Collections.emptySet();
+		List<TypeElement> elements = info.getSuperTypeMvpElements();
+		if (elements.size() <= 1) return Collections.emptySet();
 
 		assert info.getSuperInterfaceInfo() != null;
 		TypeElement superClassElement = info.getSuperInterfaceInfo().getElement();
 
 		Set<ViewMethod> methodSet = new LinkedHashSet<>();
-		for (TypeElement element : info.getSuperTypeMvpElements()) {
+		for (TypeElement element : elements) {
 			if (!element.equals(superClassElement)) {
-				ViewInterfaceInfo infoByTypeElement = getViewInterfaceInfoByTypeElement(infoList, element);
-				if (infoByTypeElement != null) {
-					methodSet.addAll(getInheredMethods(infoByTypeElement));
-					methodSet.addAll(getNotInheredMethods(infoByTypeElement, infoList));
+				ViewInterfaceInfo infoByType = getViewInterfaceInfoByTypeElement(infoList, element);
+				if (infoByType != null) {
+					methodSet.addAll(getInheredMethods(infoByType));
+					methodSet.addAll(getNotInheredMethods(infoByType, infoList));
 				}
 			}
 		}

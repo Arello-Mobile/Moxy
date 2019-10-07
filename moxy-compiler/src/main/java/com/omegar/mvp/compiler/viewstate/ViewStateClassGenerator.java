@@ -78,11 +78,11 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<List<ViewI
                 }});
 
 		ViewInterfaceInfo info = viewInterfaceInfo.getSuperInterfaceInfo();
-		if (info == null || filesMap.get(info) == null) {
+		JavaFile file = filesMap.get(info);
+		if (file == null) {
 			classBuilder.superclass(MVP_VIEW_STATE_TYPE_NAME);
 		} else {
-			JavaFile file = filesMap.get(info);
-			ClassName superClassName = ClassName.get(file.packageName, file.typeSpec.name);;
+			ClassName superClassName = ClassName.get(file.packageName, file.typeSpec.name);
 			classBuilder.superclass(
 					ParameterizedTypeName.get(superClassName, generateSuperClassTypeVariables(viewInterfaceInfo, variableName))
 			);
