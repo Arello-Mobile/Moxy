@@ -98,7 +98,7 @@ public abstract class CompilerTest {
 		javac.getTask(compilerOut, fileManager, diagnosticCollector, options, null, null);
 		// This doesn't compile anything but communicates the paths to the JavaFileManager.
 
-		// Convert the strings containing the source code of the test classes into files that we
+		// Convert the strings containing the source code of the generateInfos classes into files that we
 		// can feed to the compiler.
 		List<String> classNames = Lists.newArrayList();
 		List<JavaFileObject> sourceFiles = Lists.newArrayList();

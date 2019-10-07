@@ -22,6 +22,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Messager;
@@ -112,7 +114,11 @@ public class MvpCompiler extends AbstractProcessor {
 		} catch (RuntimeException e) {
 			getMessager().printMessage(Diagnostic.Kind.OTHER, "Moxy compilation failed. Could you copy stack trace above and write us (or make issue on Github)?");
 			e.printStackTrace();
-			getMessager().printMessage(Diagnostic.Kind.ERROR, "Moxy compilation failed; see the compiler error output for details (" + e + ")");
+			String s = Stream
+					.of(e.getStackTrace())
+					.map(StackTraceElement::toString)
+					.collect(Collectors.joining("\n"));
+			getMessager().printMessage(Diagnostic.Kind.ERROR, "Moxy compilation failed; see the compiler error output for details (" + s + ")");
 		}
 
 		return true;
@@ -209,9 +215,7 @@ public class MvpCompiler extends AbstractProcessor {
         Set<JavaFile> fileSet = new HashSet<>();
         for (Element element : elementSet) {
             List<R> list = generateCode(element, kind, processor);
-            if (list != null) {
-				fileSet.addAll(classGenerator.generate(list));
-			}
+            if (list != null) fileSet.addAll(classGenerator.generate(list));
         }
         for (JavaFile file : fileSet) {
             createSourceFile(file);

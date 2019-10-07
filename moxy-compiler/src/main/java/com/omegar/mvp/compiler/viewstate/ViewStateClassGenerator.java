@@ -16,10 +16,11 @@ import com.squareup.javapoet.TypeVariableName;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
-import javax.annotation.Nullable;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
@@ -43,29 +44,27 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<List<ViewI
 	private static final ParameterizedTypeName MVP_VIEW_STATE_TYPE_NAME
 			= ParameterizedTypeName.get(MVP_VIEW_STATE_CLASS_NAME, GENERIC_TYPE_VARIABLE_NAME);
 
+	private Map<ViewInterfaceInfo, JavaFile> filesMap = new HashMap<>();
+
 	@Override
 	public List<JavaFile> generate(List<ViewInterfaceInfo> list) {
 		if (list.isEmpty()) return Collections.emptyList();
-
 		List<JavaFile> fileList = new ArrayList<>();
-		fileList.add(generate(list.get(0)));
-
-		for (int i = 1; i < list.size(); i++) {
+		for (int i = 0; i < list.size(); i++) {
 			ViewInterfaceInfo info = list.get(i);
 
-			JavaFile parentClassFile = fileList.get(fileList.size() - 1);
-			ClassName parentClassName = ClassName.get(parentClassFile.packageName, parentClassFile.typeSpec.name);
-
-			fileList.add(generate(info, parentClassName));
+			JavaFile javaFile = filesMap.get(info);
+			if (javaFile == null) {
+				javaFile = generate(info);
+				fileList.add(javaFile);
+				filesMap.put(info, javaFile);
+			}
+			fileList.add(javaFile);
 		}
 		return fileList;
 	}
 
 	private JavaFile generate(ViewInterfaceInfo viewInterfaceInfo) {
-		return generate(viewInterfaceInfo, null);
-	}
-
-	private JavaFile generate(ViewInterfaceInfo viewInterfaceInfo, @Nullable ClassName superClassName) {
 		ClassName viewName = viewInterfaceInfo.getName();
 		TypeName nameWithTypeVariables = viewInterfaceInfo.getNameWithTypeVariables();
 		DeclaredType viewInterfaceType = (DeclaredType) viewInterfaceInfo.getElement().asType();
@@ -76,9 +75,18 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<List<ViewI
                 .addSuperinterface(nameWithTypeVariables)
                 .addTypeVariables(new ArrayList<TypeVariableName>(viewInterfaceInfo.getTypeVariables()) {{
                 	add(0, variableName);
-                }})
-				.superclass(superClassName == null ? MVP_VIEW_STATE_TYPE_NAME :
-						ParameterizedTypeName.get(superClassName, generateSuperClassTypeVariables(viewInterfaceInfo, variableName)));
+                }});
+
+		ViewInterfaceInfo info = viewInterfaceInfo.getSuperInterfaceInfo();
+		if (info == null || filesMap.get(info) == null) {
+			classBuilder.superclass(MVP_VIEW_STATE_TYPE_NAME);
+		} else {
+			JavaFile file = filesMap.get(info);
+			ClassName superClassName = ClassName.get(file.packageName, file.typeSpec.name);;
+			classBuilder.superclass(
+					ParameterizedTypeName.get(superClassName, generateSuperClassTypeVariables(viewInterfaceInfo, variableName))
+			);
+		}
 
 		for (ViewMethod method : viewInterfaceInfo.getMethods()) {
 			TypeSpec commandClass = generateCommandClass(method, nameWithTypeVariables);

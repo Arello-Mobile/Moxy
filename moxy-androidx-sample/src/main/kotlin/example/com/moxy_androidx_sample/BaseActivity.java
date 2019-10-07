@@ -1,4 +1,4 @@
-package example.com.moxy_androidx_sapmle;
+package example.com.moxy_androidx_sample;
 
 import com.omegar.mvp.MvpAppCompatActivity;
 

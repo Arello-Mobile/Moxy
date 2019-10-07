@@ -115,7 +115,7 @@ public class LocalPresenterTest {
 		mTestViewMvpDelegate.onCreate(bundle);
 		mTestViewMvpDelegate.onAttach();
 
-		//TODO: should be passed! Or change test
+		//TODO: should be passed! Or change generateInfos
 		//assertTrue("Local presenter has different hashCode after recreate", hashCode == mDelegateLocalPresenterTestView.mInjectViewStatePresenter.hashCode());
 
 		mTestViewMvpDelegate.onDetach();

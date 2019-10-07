@@ -16,11 +16,17 @@
  */
 package com.omegar.mvp.compiler;
 
+import com.omegar.mvp.MvpView;
+import com.squareup.javapoet.ClassName;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
@@ -41,6 +47,9 @@ import javax.lang.model.type.WildcardType;
  */
 @SuppressWarnings("WeakerAccess")
 public final class Util {
+
+	public static final ClassName MVP_VIEW_CLASS_NAME = ClassName.get(MvpView.class);
+
 	public static String fillGenerics(Map<String, String> types, TypeMirror param) {
 		return fillGenerics(types, Collections.singletonList(param));
 	}
@@ -190,4 +199,32 @@ public final class Util {
 	public static String decapitalizeString(String string) {
 		return string == null || string.isEmpty() ? "" : string.length() == 1 ? string.toLowerCase() : Character.toLowerCase(string.charAt(0)) + string.substring(1);
 	}
+
+	public static boolean isMvpElement(TypeElement element) {
+		if (element == null) return false;
+
+		ClassName className = ClassName.get(element);
+		if (className.equals(MVP_VIEW_CLASS_NAME)) return true;
+
+		for (TypeMirror typeMirror : element.getInterfaces()) {
+			TypeElement interfaceElement = (TypeElement) ((DeclaredType) typeMirror).asElement();
+			if (isMvpElement(interfaceElement)) return true;
+		}
+		return false;
+	}
+
+	public static <E> E lastOrNull(@Nullable Set<E> set) {
+		if (set == null || set.isEmpty()) return null;
+		return lastOrNull(new ArrayList<>(set));
+	}
+
+	public static <E> E lastOrNull(@Nullable List<E> list) {
+		if (list == null || list.isEmpty()) return null;
+		return list.get(list.size() - 1);
+	}
+
+	public static TypeElement asElement(TypeMirror mirror) {
+		return (TypeElement) ((DeclaredType) mirror).asElement();
+	}
+
 }

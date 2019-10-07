@@ -134,13 +134,27 @@ class ViewMethod {
 
 		ViewMethod that = (ViewMethod) o;
 
-		return name.equals(that.name) && parameterSpecs.equals(that.parameterSpecs);
+		if (methodElement != null ? !methodElement.equals(that.methodElement) : that.methodElement != null) return false;
+		if (name != null ? !name.equals(that.name) : that.name != null) return false;
+		if (tag != null ? !tag.equals(that.tag) : that.tag != null) return false;
+		if (argumentsString != null ? !argumentsString.equals(that.argumentsString) : that.argumentsString != null) return false;
+		return uniqueSuffix != null ? uniqueSuffix.equals(that.uniqueSuffix) : that.uniqueSuffix == null;
 	}
 
 	@Override
 	public int hashCode() {
-		int result = name.hashCode();
-		result = 31 * result + parameterSpecs.hashCode();
+		int result = methodElement != null ? methodElement.hashCode() : 0;
+		result = 31 * result + (name != null ? name.hashCode() : 0);
+		result = 31 * result + (tag != null ? tag.hashCode() : 0);
+		result = 31 * result + (argumentsString != null ? argumentsString.hashCode() : 0);
+		result = 31 * result + (uniqueSuffix != null ? uniqueSuffix.hashCode() : 0);
 		return result;
+	}
+
+	@Override
+	public String toString() {
+		return "ViewMethod{" +
+				"name='" + name + '\'' +
+				'}';
 	}
 }

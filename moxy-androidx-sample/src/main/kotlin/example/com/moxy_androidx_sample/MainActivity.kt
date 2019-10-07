@@ -1,11 +1,18 @@
-package example.com.moxy_androidx_sapmle
+package example.com.moxy_androidx_sample
 
 import android.os.Bundle
 import android.util.Log
 import com.omegar.mvp.presenter.InjectPresenter
-import example.com.moxy_androidx_sapmle.packagee.Item
+import example.com.moxy_androidx_sample.packagee.Item
 
 class MainActivity : BaseActivity(), MainView, SecondInterface {
+	override fun thirdMethod() {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun secondMethod() {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
 
 	override fun firstMethod(item: List<Item>) {
 		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.

@@ -1,17 +1,17 @@
 package com.omegar.mvp.compiler.viewstate;
 
-import com.omegar.mvp.MvpView;
 import com.omegar.mvp.compiler.ElementProcessor;
 import com.omegar.mvp.compiler.MvpCompiler;
 import com.omegar.mvp.compiler.Util;
 import com.omegar.mvp.viewstate.strategy.AddToEndStrategy;
 import com.omegar.mvp.viewstate.strategy.StateStrategyType;
-import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.ParameterSpec;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,6 +29,10 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 
+import static com.omegar.mvp.compiler.Util.MVP_VIEW_CLASS_NAME;
+import static com.omegar.mvp.compiler.Util.asElement;
+import static com.omegar.mvp.compiler.Util.isMvpElement;
+
 /**
  * Date: 27-Jul-2017
  * Time: 13:09
@@ -38,7 +42,6 @@ import javax.tools.Diagnostic;
 public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<ViewInterfaceInfo>> {
 	private static final String STATE_STRATEGY_TYPE_ANNOTATION = StateStrategyType.class.getName();
 	private static final TypeElement DEFAULT_STATE_STRATEGY = MvpCompiler.getElementUtils().getTypeElement(AddToEndStrategy.class.getCanonicalName());
-	private static final ClassName MVP_VIEW_CLASS_NAME = ClassName.get(MvpView.class);
 
 	private TypeElement viewInterfaceElement;
 	private String viewInterfaceName;
@@ -50,7 +53,62 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<V
 
 	@Override
 	public List<ViewInterfaceInfo> process(TypeElement element) {
-		List<ViewInterfaceInfo> list = new ArrayList<>();
+		List<ViewInterfaceInfo> list = new ArrayList<>(generateInfos(element));
+		fillWithNotInheredMethods(list);
+		return list;
+	}
+
+	private void fillWithNotInheredMethods(List<ViewInterfaceInfo> list) {
+		for (ViewInterfaceInfo info : list) {
+			List<ViewMethod> infoMethods = info.getMethods();
+
+			if (info.getSuperTypeMvpElements().size() > 1) {
+				List<ViewMethod> inheredMethods = getInheredMethods(info);
+				Set<ViewMethod> notInheredMethods = getNotInheredMethods(info, list);
+				for (ViewMethod method : notInheredMethods) {
+					if (!inheredMethods.contains(method)) infoMethods.add(method);
+				}
+			}
+		}
+	}
+
+	private List<ViewMethod> getInheredMethods(ViewInterfaceInfo info) {
+		List<ViewMethod> methods = new ArrayList<>(info.getMethods());
+
+		ViewInterfaceInfo superInterfaceInfo = info.getSuperInterfaceInfo();
+		if (superInterfaceInfo != null) methods.addAll(getInheredMethods(superInterfaceInfo));
+
+		return methods;
+	}
+
+	private Set<ViewMethod> getNotInheredMethods(ViewInterfaceInfo info, List<ViewInterfaceInfo> infoList) {
+		if (info.getSuperTypeMvpElements().size() <= 1) return Collections.emptySet();
+
+		assert info.getSuperInterfaceInfo() != null;
+		TypeElement superClassElement = info.getSuperInterfaceInfo().getElement();
+
+		Set<ViewMethod> methodSet = new LinkedHashSet<>();
+		for (TypeElement element : info.getSuperTypeMvpElements()) {
+			if (!element.equals(superClassElement)) {
+				ViewInterfaceInfo infoByTypeElement = getViewInterfaceInfoByTypeElement(infoList, element);
+				if (infoByTypeElement != null) {
+					methodSet.addAll(getInheredMethods(infoByTypeElement));
+					methodSet.addAll(getNotInheredMethods(infoByTypeElement, infoList));
+				}
+			}
+		}
+		return methodSet;
+	}
+
+	private ViewInterfaceInfo getViewInterfaceInfoByTypeElement(List<ViewInterfaceInfo> list, TypeElement element) {
+		for (ViewInterfaceInfo info : list) {
+			if (info.getElement().equals(element)) return info;
+		}
+		return null;
+	}
+
+	private Set<ViewInterfaceInfo> generateInfos(TypeElement element) {
+		Set<ViewInterfaceInfo> interfaceInfos = new LinkedHashSet<>();
 		this.viewInterfaceElement = element;
 		viewInterfaceName = element.getSimpleName().toString();
 
@@ -61,11 +119,16 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<V
 		// Get methods for input class
 		getMethods(element, interfaceStateStrategyType, new ArrayList<>(), methods);
 
-		// Add methods from super interfaces
+        // Add methods from super interfaces
+		ViewInterfaceInfo superInterfaceInfo = null;
 		for (TypeMirror typeMirror : element.getInterfaces()) {
-			final TypeElement interfaceElement = (TypeElement) ((DeclaredType) typeMirror).asElement();
+			final TypeElement interfaceElement = asElement(typeMirror);
 			if (isMvpElement(interfaceElement)) {
-			    list.addAll(process(interfaceElement));
+				Set<ViewInterfaceInfo> parentInfos = generateInfos(interfaceElement);
+				if (superInterfaceInfo == null) {
+					superInterfaceInfo = Util.lastOrNull(parentInfos);
+				}
+				interfaceInfos.addAll(parentInfos);
             }
 		}
 
@@ -84,23 +147,10 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<V
 			methodsCounter.put(method.getName(), counter);
 		}
 
-		ViewInterfaceInfo info = new ViewInterfaceInfo(element, methods);
-		if (!info.getName().equals(MVP_VIEW_CLASS_NAME)) list.add(info);
+		ViewInterfaceInfo info = new ViewInterfaceInfo(superInterfaceInfo, element, methods);
+		if (!info.getName().equals(MVP_VIEW_CLASS_NAME)) interfaceInfos.add(info);
 
-		return list;
-	}
-
-	private boolean isMvpElement(TypeElement element) {
-		if (element == null) return false;
-
-		ClassName className = ClassName.get(element);
-		if (className.equals(MVP_VIEW_CLASS_NAME)) return true;
-
-		for (TypeMirror typeMirror : element.getInterfaces()) {
-			TypeElement interfaceElement = (TypeElement) ((DeclaredType) typeMirror).asElement();
-			if (isMvpElement(interfaceElement)) return true;
-		}
-		return false;
+		return interfaceInfos;
 	}
 
 	private void getMethods(TypeElement typeElement,
