@@ -3,6 +3,7 @@ package com.omegar.mvp.compiler.viewstate;
 import com.omegar.mvp.MvpProcessor;
 import com.omegar.mvp.compiler.JavaFilesGenerator;
 import com.omegar.mvp.compiler.MvpCompiler;
+import com.omegar.mvp.compiler.Util;
 import com.omegar.mvp.viewstate.MvpViewState;
 import com.omegar.mvp.viewstate.ViewCommand;
 import com.squareup.javapoet.ClassName;
@@ -89,7 +90,7 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<List<ViewI
 		}
 
 		for (ViewMethod method : viewInterfaceInfo.getMethods()) {
-			TypeSpec commandClass = generateCommandClass(method, nameWithTypeVariables);
+			TypeSpec commandClass = generateCommandClass(method);
 			classBuilder.addType(commandClass);
 			classBuilder.addMethod(generateMethod(viewInterfaceType, method, nameWithTypeVariables, commandClass));
 		}
@@ -102,7 +103,9 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<List<ViewI
 	private TypeVariableName[] generateSuperClassTypeVariables(ViewInterfaceInfo viewInterfaceInfo, TypeVariableName variableName) {
 		List<TypeVariableName> parentClassTypeVariables = new ArrayList<>();
 		parentClassTypeVariables.add(variableName);
-		for (TypeMirror mirror : viewInterfaceInfo.getElement().getInterfaces()) {
+
+		TypeMirror mirror = Util.firstOrNull(viewInterfaceInfo.getElement().getInterfaces());
+		if (mirror != null) {
 			List<? extends TypeMirror> typeArguments = ((DeclaredType) mirror).getTypeArguments();
 			for (TypeMirror typeMirror : typeArguments) {
 				TypeName typeName = ClassName.get(typeMirror);
@@ -114,7 +117,7 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<List<ViewI
 		return parentClassTypeVariables.toArray(new TypeVariableName[parentClassTypeVariables.size()]);
 	}
 
-	private TypeSpec generateCommandClass(ViewMethod method, TypeName viewTypeName) {
+	private TypeSpec generateCommandClass(ViewMethod method) {
 		MethodSpec applyMethod = MethodSpec.methodBuilder("apply")
 				.addAnnotation(Override.class)
 				.addModifiers(Modifier.PUBLIC)
