@@ -3,7 +3,6 @@ package com.omegar.mvp.compiler.viewstate;
 import com.omegar.mvp.compiler.ElementProcessor;
 import com.omegar.mvp.compiler.MvpCompiler;
 import com.omegar.mvp.compiler.Util;
-import com.omegar.mvp.viewstate.strategy.AddToEndStrategy;
 import com.omegar.mvp.viewstate.strategy.StateStrategyType;
 import com.squareup.javapoet.ParameterSpec;
 
@@ -41,7 +40,6 @@ import static com.omegar.mvp.compiler.Util.isMvpElement;
  */
 public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<ViewInterfaceInfo>> {
 	private static final String STATE_STRATEGY_TYPE_ANNOTATION = StateStrategyType.class.getName();
-	private static final TypeElement DEFAULT_STATE_STRATEGY = MvpCompiler.getElementUtils().getTypeElement(AddToEndStrategy.class.getCanonicalName());
 
 	private TypeElement viewInterfaceElement;
 	private String viewInterfaceName;
@@ -157,7 +155,7 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<V
 	}
 
 	private void getMethods(TypeElement typeElement,
-	                        TypeElement defaultStrategy,
+	                        TypeElement parentStrategy,
 	                        List<ViewMethod> rootMethods,
 	                        List<ViewMethod> superinterfacesMethods) {
 		for (Element element : typeElement.getEnclosedElements()) {
@@ -189,7 +187,22 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<V
 			if (strategyClassFromAnnotation != null) {
 				strategyClass = (TypeElement) ((DeclaredType) strategyClassFromAnnotation).asElement();
 			} else {
-				strategyClass = defaultStrategy != null ? defaultStrategy : DEFAULT_STATE_STRATEGY;
+				if (parentStrategy != null) {
+					strategyClass = parentStrategy;
+				} else {
+					String message = String.format("You are trying generate ViewState for %s. " +
+									"But %s interface and \"%s\" method don't provide Strategy type. " +
+									"Please annotate your %s interface or method with Strategy." + "\n\n" +
+									"@StateStrategyType(AddToEndSingleStrategy::class)" + "\n" + "fun %s",
+							typeElement.getSimpleName(),
+							typeElement.getSimpleName(),
+							methodElement.getSimpleName(),
+							typeElement.getSimpleName(),
+							methodElement.getSimpleName()
+					);
+					MvpCompiler.getMessager().printMessage(Diagnostic.Kind.ERROR, message);
+					return;
+				}
 			}
 
 			// get tag from annotation
