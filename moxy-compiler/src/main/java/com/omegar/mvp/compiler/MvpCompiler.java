@@ -18,10 +18,12 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -125,6 +127,7 @@ public class MvpCompiler extends AbstractProcessor {
 	}
 
 	private boolean throwableProcess(RoundEnvironment roundEnv) {
+		long startGeneration = new Date().getTime();
 		checkInjectors(roundEnv, InjectPresenter.class, new PresenterInjectorRules(ElementKind.FIELD, Modifier.PUBLIC, Modifier.DEFAULT));
 
 		InjectViewStateProcessor injectViewStateProcessor = new InjectViewStateProcessor();
@@ -138,11 +141,18 @@ public class MvpCompiler extends AbstractProcessor {
 
 		processInjectors(roundEnv, InjectViewState.class, ElementKind.CLASS,
 				injectViewStateProcessor, viewStateProviderClassGenerator);
+		long generateInjectViewState = new Date().getTime();
+		getMessager().printMessage(Diagnostic.Kind.WARNING, "generateInjectViewState " + (generateInjectViewState - startGeneration));
+
 		processInjectors(roundEnv, InjectPresenter.class, ElementKind.FIELD,
 				injectPresenterProcessor, presenterBinderClassGenerator);
+		long generateInjectPresenter = new Date().getTime();
+		getMessager().printMessage(Diagnostic.Kind.WARNING, "generateInjectPresenter " + (generateInjectPresenter - generateInjectViewState));
 
 		generateCode(injectViewStateProcessor.getUsedViews(), ElementKind.INTERFACE,
 				viewInterfaceProcessor, viewStateClassGenerator);
+		long generateCode = new Date().getTime();
+		getMessager().printMessage(Diagnostic.Kind.WARNING, "generateCode " + (generateCode - generateInjectPresenter));
 
 		String moxyReflectorPackage = sOptions.get(OPTION_MOXY_REFLECTOR_PACKAGE);
 
@@ -161,6 +171,9 @@ public class MvpCompiler extends AbstractProcessor {
 		);
 
 		createSourceFile(moxyReflector);
+
+		long createSourceFile = new Date().getTime();
+		getMessager().printMessage(Diagnostic.Kind.WARNING, "createSourceFile " + (createSourceFile - generateCode));
 
 		return true;
 	}
