@@ -193,7 +193,7 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<V
 					String message = String.format("You are trying generate ViewState for %s. " +
 									"But %s interface and \"%s\" method don't provide Strategy type. " +
 									"Please annotate your %s interface or method with Strategy." + "\n\n" +
-									"@StateStrategyType(AddToEndSingleStrategy::class)" + "\n" + "fun %s",
+									"For example:\n@StateStrategyType(AddToEndSingleStrategy::class)" + "\n" + "fun %s",
 							typeElement.getSimpleName(),
 							typeElement.getSimpleName(),
 							methodElement.getSimpleName(),
