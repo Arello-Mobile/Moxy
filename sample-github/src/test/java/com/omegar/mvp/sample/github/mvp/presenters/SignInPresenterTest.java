@@ -5,12 +5,12 @@ import java.util.concurrent.TimeUnit;
 import android.content.Context;
 import android.util.Base64;
 
-import com.arellomobile.mvp.sample.github.R;
+import com.omegar.mvp.sample.github.R;
 import com.omegar.mvp.sample.github.di.AppComponent;
 import com.omegar.mvp.sample.github.mvp.GithubService;
 import com.omegar.mvp.sample.github.mvp.common.AuthUtils;
 import com.omegar.mvp.sample.github.mvp.models.User;
-import com.arellomobile.mvp.sample.github.mvp.views.SignInView$$State;
+import com.omegar.mvp.sample.github.mvp.views.SignInView$$State;
 import com.omegar.mvp.sample.github.test.GithubSampleTestRunner;
 import com.omegar.mvp.sample.github.test.TestComponent;
 import com.omegar.mvp.sample.github.test.TestComponentRule;

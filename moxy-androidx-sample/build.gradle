@@ -1,5 +1,4 @@
 buildscript {
-    ext.kotlin_version = '1.3.10'
     repositories {
         google()
         jcenter()
@@ -19,13 +18,13 @@ android {
     compileSdkVersion 28
 
     defaultConfig {
-        applicationId "com.arellomobile.mvp.sample.androidx"
+        applicationId "com.omegar.mvp.sample.androidx"
         minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "android.support.generateInfos.runner.AndroidJUnitRunner"
     }
 
     sourceSets {

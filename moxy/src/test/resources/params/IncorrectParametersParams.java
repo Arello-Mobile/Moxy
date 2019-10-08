@@ -1,7 +1,7 @@
 package params;
 
-import com.arellomobile.mvp.ParamsProvider;
-import com.arellomobile.mvp.factory.MockPresenterFactory;
+import com.omegar.mvp.ParamsProvider;
+import com.omegar.mvp.factory.MockPresenterFactory;
 
 /**
  * Date: 24.02.2016

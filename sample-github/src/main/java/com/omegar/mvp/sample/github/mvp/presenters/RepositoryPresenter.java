@@ -2,8 +2,8 @@ package com.omegar.mvp.sample.github.mvp.presenters;
 
 import java.util.List;
 
-import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.MvpPresenter;
+import com.omegar.mvp.InjectViewState;
+import com.omegar.mvp.MvpPresenter;
 import com.omegar.mvp.sample.github.mvp.models.Repository;
 import com.omegar.mvp.sample.github.mvp.views.RepositoryView;
 

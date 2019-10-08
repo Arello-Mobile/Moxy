@@ -2,8 +2,8 @@ package com.omegar.mvp.sample.github.mvp.presenters;
 
 import com.omegar.mvp.sample.github.mvp.models.Repository;
 import com.omegar.mvp.sample.github.mvp.views.HomeView;
-import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.MvpPresenter;
+import com.omegar.mvp.InjectViewState;
+import com.omegar.mvp.MvpPresenter;
 
 /**
  * Date: 27.01.2016

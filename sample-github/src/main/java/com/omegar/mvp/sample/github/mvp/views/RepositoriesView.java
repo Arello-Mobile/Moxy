@@ -3,10 +3,10 @@ package com.omegar.mvp.sample.github.mvp.views;
 import java.util.List;
 
 import com.omegar.mvp.sample.github.mvp.models.Repository;
-import com.arellomobile.mvp.MvpView;
-import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
-import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy;
-import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
+import com.omegar.mvp.MvpView;
+import com.omegar.mvp.viewstate.strategy.AddToEndSingleStrategy;
+import com.omegar.mvp.viewstate.strategy.AddToEndStrategy;
+import com.omegar.mvp.viewstate.strategy.StateStrategyType;
 
 /**
  * Date: 22.01.2016

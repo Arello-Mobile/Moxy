@@ -2,7 +2,7 @@ package com.omegar.mvp.sample.github.ui.adapters;
 
 import android.widget.BaseAdapter;
 
-import com.arellomobile.mvp.MvpDelegate;
+import com.omegar.mvp.MvpDelegate;
 
 /**
  * Date: 26.01.2016

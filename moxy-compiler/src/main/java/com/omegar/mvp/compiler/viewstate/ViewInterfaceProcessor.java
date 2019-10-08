@@ -8,8 +8,10 @@ import com.omegar.mvp.viewstate.strategy.StateStrategyType;
 import com.squareup.javapoet.ParameterSpec;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,13 +29,17 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 
+import static com.omegar.mvp.compiler.Util.MVP_VIEW_CLASS_NAME;
+import static com.omegar.mvp.compiler.Util.asElement;
+import static com.omegar.mvp.compiler.Util.isMvpElement;
+
 /**
  * Date: 27-Jul-2017
  * Time: 13:09
  *
  * @author Evgeny Kursakov
  */
-public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewInterfaceInfo> {
+public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<ViewInterfaceInfo>> {
 	private static final String STATE_STRATEGY_TYPE_ANNOTATION = StateStrategyType.class.getName();
 	private static final TypeElement DEFAULT_STATE_STRATEGY = MvpCompiler.getElementUtils().getTypeElement(AddToEndStrategy.class.getCanonicalName());
 
@@ -46,7 +52,66 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 	}
 
 	@Override
-	public ViewInterfaceInfo process(TypeElement element) {
+	public List<ViewInterfaceInfo> process(TypeElement element) {
+		List<ViewInterfaceInfo> list = new ArrayList<>(generateInfos(element));
+		fillWithNotInheredMethods(list);
+		return list;
+	}
+
+	private void fillWithNotInheredMethods(List<ViewInterfaceInfo> list) {
+		for (ViewInterfaceInfo info : list) {
+			TypeElement element = info.getElement();
+			List<ViewMethod> infoMethods = info.getMethods();
+
+			if (info.getSuperTypeMvpElements().size() > 1) {
+				List<ViewMethod> inheredMethods = getInheredMethods(info);
+				for (ViewMethod method : getNotInheredMethods(info, list)) {
+					if (!inheredMethods.contains(method)) {
+						infoMethods.add(new ViewMethod((DeclaredType) element.asType(), method));
+					}
+				}
+			}
+		}
+	}
+
+	private List<ViewMethod> getInheredMethods(ViewInterfaceInfo info) {
+		List<ViewMethod> methods = new ArrayList<>(info.getMethods());
+
+		ViewInterfaceInfo superInterfaceInfo = info.getSuperInterfaceInfo();
+		if (superInterfaceInfo != null) methods.addAll(getInheredMethods(superInterfaceInfo));
+
+		return methods;
+	}
+
+	private Set<ViewMethod> getNotInheredMethods(ViewInterfaceInfo info, List<ViewInterfaceInfo> infoList) {
+		List<TypeElement> elements = info.getSuperTypeMvpElements();
+		if (elements.size() <= 1) return Collections.emptySet();
+
+		assert info.getSuperInterfaceInfo() != null;
+		TypeElement superClassElement = info.getSuperInterfaceInfo().getElement();
+
+		Set<ViewMethod> methodSet = new LinkedHashSet<>();
+		for (TypeElement element : elements) {
+			if (!element.equals(superClassElement)) {
+				ViewInterfaceInfo infoByType = getViewInterfaceInfoByTypeElement(infoList, element);
+				if (infoByType != null) {
+					methodSet.addAll(getInheredMethods(infoByType));
+					methodSet.addAll(getNotInheredMethods(infoByType, infoList));
+				}
+			}
+		}
+		return methodSet;
+	}
+
+	private ViewInterfaceInfo getViewInterfaceInfoByTypeElement(List<ViewInterfaceInfo> list, TypeElement element) {
+		for (ViewInterfaceInfo info : list) {
+			if (info.getElement().equals(element)) return info;
+		}
+		return null;
+	}
+
+	private Set<ViewInterfaceInfo> generateInfos(TypeElement element) {
+		Set<ViewInterfaceInfo> interfaceInfos = new LinkedHashSet<>();
 		this.viewInterfaceElement = element;
 		viewInterfaceName = element.getSimpleName().toString();
 
@@ -57,8 +122,18 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 		// Get methods for input class
 		getMethods(element, interfaceStateStrategyType, new ArrayList<>(), methods);
 
-		// Add methods from super interfaces
-		methods.addAll(iterateInterfaces(0, element, interfaceStateStrategyType, methods, new ArrayList<>()));
+        // Add methods from super interfaces
+		ViewInterfaceInfo superInterfaceInfo = null;
+		for (TypeMirror typeMirror : element.getInterfaces()) {
+			final TypeElement interfaceElement = asElement(typeMirror);
+			if (isMvpElement(interfaceElement)) {
+				Set<ViewInterfaceInfo> parentInfos = generateInfos(interfaceElement);
+				if (superInterfaceInfo == null) {
+					superInterfaceInfo = Util.lastOrNull(parentInfos);
+				}
+				interfaceInfos.addAll(parentInfos);
+            }
+		}
 
 		// Allow methods be with same names
 		Map<String, Integer> methodsCounter = new HashMap<>();
@@ -75,9 +150,11 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 			methodsCounter.put(method.getName(), counter);
 		}
 
-		return new ViewInterfaceInfo(element, methods);
-	}
+		ViewInterfaceInfo info = new ViewInterfaceInfo(superInterfaceInfo, element, methods);
+		if (!info.getName().equals(MVP_VIEW_CLASS_NAME)) interfaceInfos.add(info);
 
+		return interfaceInfos;
+	}
 
 	private void getMethods(TypeElement typeElement,
 	                        TypeElement defaultStrategy,
@@ -169,8 +246,7 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 		}
 	}
 
-	private List<ViewMethod> iterateInterfaces(int level,
-	                                           TypeElement parentElement,
+	private List<ViewMethod> iterateInterfaces(TypeElement parentElement,
 	                                           TypeElement parentDefaultStrategy,
 	                                           List<ViewMethod> rootMethods,
 	                                           List<ViewMethod> superinterfacesMethods) {
@@ -188,7 +264,7 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, ViewIn
 
 			getMethods(anInterface, defaultStrategy, rootMethods, superinterfacesMethods);
 
-			iterateInterfaces(level + 1, anInterface, defaultStrategy, rootMethods, superinterfacesMethods);
+			iterateInterfaces(anInterface, defaultStrategy, rootMethods, superinterfacesMethods);
 		}
 
 		return superinterfacesMethods;

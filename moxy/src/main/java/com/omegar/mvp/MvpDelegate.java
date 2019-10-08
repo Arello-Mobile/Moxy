@@ -259,7 +259,7 @@ public class MvpDelegate<Delegated> {
 	/**
 	 * @return generated tag in format: &lt;parent_delegate_tag&gt; &lt;delegated_class_full_name&gt;$MvpDelegate@&lt;hashCode&gt;
 	 * <p>
-	 * example: com.arellomobile.mvp.sample.SampleFragment$MvpDelegate@32649b0
+	 * example: com.omegar.mvp.sample.SampleFragment$MvpDelegate@32649b0
 	 */
 	private String generateTag() {
 		String tag = mParentDelegate != null ? mParentDelegate.mDelegateTag  + " " : "";

@@ -1,5 +1,6 @@
 package com.omegar.mvp.compiler;
 
+import com.google.auto.service.AutoService;
 import com.omegar.mvp.GenerateViewState;
 import com.omegar.mvp.InjectViewState;
 import com.omegar.mvp.RegisterMoxyReflectorPackages;
@@ -11,7 +12,6 @@ import com.omegar.mvp.compiler.viewstate.ViewStateClassGenerator;
 import com.omegar.mvp.compiler.viewstateprovider.InjectViewStateProcessor;
 import com.omegar.mvp.compiler.viewstateprovider.ViewStateProviderClassGenerator;
 import com.omegar.mvp.presenter.InjectPresenter;
-import com.google.auto.service.AutoService;
 import com.squareup.javapoet.JavaFile;
 
 import java.io.IOException;
@@ -22,6 +22,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Messager;
@@ -49,7 +51,7 @@ import static javax.lang.model.SourceVersion.latestSupported;
 @SuppressWarnings("unused")
 @AutoService(Processor.class)
 public class MvpCompiler extends AbstractProcessor {
-	public static final String MOXY_REFLECTOR_DEFAULT_PACKAGE = "com.arellomobile.mvp";
+	public static final String MOXY_REFLECTOR_DEFAULT_PACKAGE = "com.omegar.mvp";
 
 	private static final String OPTION_MOXY_REFLECTOR_PACKAGE = "moxyReflectorPackage";
 
@@ -112,7 +114,11 @@ public class MvpCompiler extends AbstractProcessor {
 		} catch (RuntimeException e) {
 			getMessager().printMessage(Diagnostic.Kind.OTHER, "Moxy compilation failed. Could you copy stack trace above and write us (or make issue on Github)?");
 			e.printStackTrace();
-			getMessager().printMessage(Diagnostic.Kind.ERROR, "Moxy compilation failed; see the compiler error output for details (" + e + ")");
+			String s = Stream
+					.of(e.getStackTrace())
+					.map(StackTraceElement::toString)
+					.collect(Collectors.joining("\n"));
+			getMessager().printMessage(Diagnostic.Kind.ERROR, "Moxy compilation failed; see the compiler error output for details (" + s + ")");
 		}
 
 		return true;
@@ -135,10 +141,8 @@ public class MvpCompiler extends AbstractProcessor {
 		processInjectors(roundEnv, InjectPresenter.class, ElementKind.FIELD,
 				injectPresenterProcessor, presenterBinderClassGenerator);
 
-		for (TypeElement usedView : injectViewStateProcessor.getUsedViews()) {
-			generateCode(usedView, ElementKind.INTERFACE,
-					viewInterfaceProcessor, viewStateClassGenerator);
-		}
+		generateCode(injectViewStateProcessor.getUsedViews(), ElementKind.INTERFACE,
+				viewInterfaceProcessor, viewStateClassGenerator);
 
 		String moxyReflectorPackage = sOptions.get(OPTION_MOXY_REFLECTOR_PACKAGE);
 
@@ -204,22 +208,39 @@ public class MvpCompiler extends AbstractProcessor {
 		}
 	}
 
+    private <E extends Element, R> void generateCode(Set<TypeElement> elementSet,
+                                                     ElementKind kind,
+                                                     ElementProcessor<E, List<R>> processor,
+                                                     JavaFilesGenerator<List<R>> classGenerator) {
+        Set<JavaFile> fileSet = new HashSet<>();
+        for (Element element : elementSet) {
+            List<R> list = generateCode(element, kind, processor);
+            if (list != null) fileSet.addAll(classGenerator.generate(list));
+        }
+        for (JavaFile file : fileSet) {
+            createSourceFile(file);
+        }
+    }
+
 	private <E extends Element, R> void generateCode(Element element,
-	                                                 ElementKind kind,
-	                                                 ElementProcessor<E, R> processor,
-	                                                 JavaFilesGenerator<R> classGenerator) {
-		if (element.getKind() != kind) {
-			getMessager().printMessage(Diagnostic.Kind.ERROR, element + " must be " + kind.name());
-		}
-
-		//noinspection unchecked
-		R result = processor.process((E) element);
-
+													 ElementKind kind,
+													 ElementProcessor<E, R> processor,
+													 JavaFilesGenerator<R> classGenerator) {
+		R result = generateCode(element, kind, processor);
 		if (result == null) return;
-
 		for (JavaFile file : classGenerator.generate(result)) {
 			createSourceFile(file);
 		}
+	}
+
+	private <E extends Element, R> R generateCode(Element element,
+                                                  ElementKind kind,
+                                                  ElementProcessor<E, R> processor) {
+		if (element.getKind() != kind) {
+			getMessager().printMessage(Diagnostic.Kind.ERROR, element + " must be " + kind.name());
+		}
+		//noinspection unchecked
+		return processor.process((E) element);
 	}
 
 	private void createSourceFile(JavaFile file) {

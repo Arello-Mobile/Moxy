@@ -10,11 +10,11 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.arellomobile.mvp.MvpDelegate;
-import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.presenter.PresenterType;
-import com.arellomobile.mvp.presenter.ProvidePresenter;
-import com.arellomobile.mvp.sample.github.R;
+import com.omegar.mvp.MvpDelegate;
+import com.omegar.mvp.presenter.InjectPresenter;
+import com.omegar.mvp.presenter.PresenterType;
+import com.omegar.mvp.presenter.ProvidePresenter;
+import com.omegar.mvp.sample.github.R;
 import com.omegar.mvp.sample.github.mvp.models.Repository;
 import com.omegar.mvp.sample.github.mvp.presenters.RepositoryLikesPresenter;
 import com.omegar.mvp.sample.github.mvp.presenters.RepositoryPresenter;

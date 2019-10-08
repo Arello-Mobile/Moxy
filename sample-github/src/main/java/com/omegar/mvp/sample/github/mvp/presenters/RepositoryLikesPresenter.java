@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.arellomobile.mvp.InjectViewState;
+import com.omegar.mvp.InjectViewState;
 import com.omegar.mvp.sample.github.mvp.views.RepositoryLikesView;
 
 import rx.Observable;

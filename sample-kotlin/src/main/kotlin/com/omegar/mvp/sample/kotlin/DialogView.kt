@@ -1,8 +1,8 @@
 package com.omegar.mvp.sample.kotlin
 
-import com.arellomobile.mvp.MvpView
-import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
-import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
+import com.omegar.mvp.MvpView
+import com.omegar.mvp.viewstate.strategy.AddToEndSingleStrategy
+import com.omegar.mvp.viewstate.strategy.StateStrategyType
 
 /**
  * Date: 03.03.2016
