@@ -3,9 +3,10 @@ package example.com.moxy_androidx_sample
 import android.util.Log
 import com.omegar.mvp.InjectViewState
 import com.omegar.mvp.MvpPresenter
+import example.com.moxy_androidx_sample.contract.Contract
 
 @InjectViewState
-class MainPresenter : MvpPresenter<MainView>() {
+class MainPresenter : MvpPresenter<Contract.MainView>() {
 	
 	override fun onFirstViewAttach() {
 		super.onFirstViewAttach()
