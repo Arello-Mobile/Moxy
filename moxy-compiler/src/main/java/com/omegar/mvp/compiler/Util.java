@@ -213,6 +213,11 @@ public final class Util {
 		return false;
 	}
 
+	public static <E> E firstOrNull(@Nullable List<E> list) {
+		if (list == null || list.isEmpty()) return null;
+		return list.get(0);
+	}
+
 	public static <E> E lastOrNull(@Nullable Set<E> set) {
 		if (set == null || set.isEmpty()) return null;
 		return lastOrNull(new ArrayList<>(set));

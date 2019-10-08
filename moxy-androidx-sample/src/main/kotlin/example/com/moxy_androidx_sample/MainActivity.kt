@@ -1,11 +1,25 @@
 package example.com.moxy_androidx_sample
 
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import com.omegar.mvp.presenter.InjectPresenter
+import example.com.moxy_androidx_sample.first.FirstView
 import example.com.moxy_androidx_sample.packagee.Item
 
 class MainActivity : BaseActivity(), MainView, SecondInterface {
+	override fun fourth(item: String?) {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun firstLog(m: Item?) {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
+	override fun firstCopyMethod(item: MutableList<Location>?) {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
+
 	override fun thirdMethod() {
 		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 	}
@@ -26,7 +40,7 @@ class MainActivity : BaseActivity(), MainView, SecondInterface {
 //		setContentView(R.layout.activity_main)
 	}
 	
-	override fun printLog(msg: Double?) {
+	override fun printLog(msg: Double?, log: String?) {
 		Log.e(TAG, "printLog : msg : $msg activity hash code : ${hashCode()}")
 	}
 

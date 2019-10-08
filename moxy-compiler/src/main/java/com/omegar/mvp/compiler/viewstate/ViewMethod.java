@@ -35,6 +35,18 @@ class ViewMethod {
 
 	private String uniqueSuffix;
 
+	ViewMethod(DeclaredType targetInterfaceElement, ViewMethod method) {
+        this.methodElement = method.getElement();
+        this.name = method.name;
+        this.strategy = method.strategy;
+        this.tag = method.tag;
+        this.parameterSpecs = formatParameters(targetInterfaceElement, method.methodElement, method.parameterSpecs);
+        this.exceptions = method.exceptions;
+        this.typeVariables = method.typeVariables;
+        this.argumentsString = method.argumentsString;
+        this.uniqueSuffix = method.uniqueSuffix;
+    }
+
 	ViewMethod(DeclaredType targetInterfaceElement,
 	           ExecutableElement methodElement,
 	           TypeElement strategy,
@@ -76,6 +88,22 @@ class ViewMethod {
 				.collect(Collectors.joining(", "));
 
 		this.uniqueSuffix = "";
+	}
+
+	private List<ParameterSpec> formatParameters(DeclaredType enclosingType, ExecutableElement element,
+												 List<ParameterSpec> parameterSpecs) {
+		List<ParameterSpec> list = new ArrayList<>();
+
+		ExecutableType executableType = (ExecutableType) MvpCompiler.getTypeUtils().asMemberOf(enclosingType, element);
+		List<? extends TypeMirror> resolvedParameterTypes = executableType.getParameterTypes();
+
+		for (int i = 0; i < parameterSpecs.size(); i++) {
+			ParameterSpec parameter = parameterSpecs.get(i);
+			TypeName type = TypeName.get(resolvedParameterTypes.get(i));
+			list.add(ParameterSpec.builder(type, parameter.name).build());
+		}
+
+		return list;
 	}
 
 	ExecutableElement getElement() {

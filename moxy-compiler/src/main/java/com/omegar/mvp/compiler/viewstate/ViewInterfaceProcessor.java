@@ -60,12 +60,15 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<V
 
 	private void fillWithNotInheredMethods(List<ViewInterfaceInfo> list) {
 		for (ViewInterfaceInfo info : list) {
+			TypeElement element = info.getElement();
 			List<ViewMethod> infoMethods = info.getMethods();
 
 			if (info.getSuperTypeMvpElements().size() > 1) {
 				List<ViewMethod> inheredMethods = getInheredMethods(info);
 				for (ViewMethod method : getNotInheredMethods(info, list)) {
-					if (!inheredMethods.contains(method)) infoMethods.add(method);
+					if (!inheredMethods.contains(method)) {
+						infoMethods.add(new ViewMethod((DeclaredType) element.asType(), method));
+					}
 				}
 			}
 		}
