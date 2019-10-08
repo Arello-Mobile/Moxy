@@ -39,6 +39,7 @@ import javax.lang.model.type.IntersectionType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVariable;
 import javax.lang.model.type.WildcardType;
+import javax.tools.Diagnostic;
 
 /**
  * Utilities for handling types in annotation processors
@@ -127,6 +128,16 @@ public final class Util {
 		String className = typeElement.toString().substring(packageName.length());
 		return packageName + className.replaceAll("\\.", "\\$");
 	}
+
+    public static String getSimpleClassName(TypeElement typeElement) {
+        String packageName = MvpCompiler.getElementUtils().getPackageOf(typeElement).getQualifiedName().toString();
+        if (packageName.length() > 0) {
+            packageName += ".";
+        }
+
+        String className = typeElement.toString().substring(packageName.length());
+        return className.replaceAll("\\.", "\\$");
+    }
 
 	public static AnnotationMirror getAnnotation(Element element, String annotationClass) {
 		for (AnnotationMirror annotationMirror : element.getAnnotationMirrors()) {

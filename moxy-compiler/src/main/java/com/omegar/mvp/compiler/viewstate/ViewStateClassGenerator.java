@@ -71,7 +71,7 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<List<ViewI
 		DeclaredType viewInterfaceType = (DeclaredType) viewInterfaceInfo.getElement().asType();
 		TypeVariableName variableName = TypeVariableName.get(VIEW, nameWithTypeVariables);
 
-		TypeSpec.Builder classBuilder = TypeSpec.classBuilder(viewName.simpleName() + MvpProcessor.VIEW_STATE_SUFFIX)
+		TypeSpec.Builder classBuilder = TypeSpec.classBuilder(Util.getSimpleClassName(viewInterfaceInfo.getElement()) + MvpProcessor.VIEW_STATE_SUFFIX)
                 .addModifiers(Modifier.PUBLIC)
                 .addSuperinterface(nameWithTypeVariables)
                 .addTypeVariables(new ArrayList<TypeVariableName>(viewInterfaceInfo.getTypeVariables()) {{
@@ -160,8 +160,8 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<List<ViewI
 				.addStatement("return")
 				.endControlFlow()
 				.addCode("\n")
-				.beginControlFlow("for ($T view : mViews)", viewTypeName)
-				.addStatement("view.$L($L)", method.getName(), method.getArgumentsString())
+				.beginControlFlow("for ($T view$$ : mViews)", viewTypeName)
+				.addStatement("view$$.$L($L)", method.getName(), method.getArgumentsString())
 				.endControlFlow()
 				.addCode("\n")
 				.addStatement("mViewCommands.afterApply($L)", commandFieldName)
