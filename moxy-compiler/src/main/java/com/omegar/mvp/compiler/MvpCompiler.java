@@ -14,6 +14,9 @@ import com.omegar.mvp.compiler.viewstateprovider.ViewStateProviderClassGenerator
 import com.omegar.mvp.presenter.InjectPresenter;
 import com.squareup.javapoet.JavaFile;
 
+import net.ltgt.gradle.incap.IncrementalAnnotationProcessor;
+import net.ltgt.gradle.incap.IncrementalAnnotationProcessorType;
+
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -22,8 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Messager;
@@ -50,6 +51,7 @@ import static javax.lang.model.SourceVersion.latestSupported;
 
 @SuppressWarnings("unused")
 @AutoService(Processor.class)
+@IncrementalAnnotationProcessor(IncrementalAnnotationProcessorType.AGGREGATING)
 public class MvpCompiler extends AbstractProcessor {
 	public static final String MOXY_REFLECTOR_DEFAULT_PACKAGE = "com.omegar.mvp";
 

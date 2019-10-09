@@ -40,7 +40,7 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation project(':moxy')
     implementation project(':moxy-androidx')
     kapt project(':moxy-compiler')
