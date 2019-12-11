@@ -1,6 +1,5 @@
 package view;
 
-import com.omegar.mvp.GenerateViewState;
 
 /**
  * Date: 26.02.2016
@@ -8,7 +7,6 @@ import com.omegar.mvp.GenerateViewState;
  *
  * @author Savin Mikhail
  */
-@GenerateViewState
 public interface ViewStateChildWithIncorrectStrategyTagView extends ViewStateParentView, ViewStateParentStrategyTagView {
 
 }

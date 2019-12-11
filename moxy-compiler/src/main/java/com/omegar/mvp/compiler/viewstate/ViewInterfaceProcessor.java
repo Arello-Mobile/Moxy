@@ -22,7 +22,6 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
@@ -115,10 +114,8 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<V
 
 		List<ViewMethod> methods = new ArrayList<>();
 
-		TypeElement interfaceStateStrategyType = getInterfaceStateStrategyType(element);
-
 		// Get methods for input class
-		getMethods(element, interfaceStateStrategyType, new ArrayList<>(), methods);
+		getMethods(element, new ArrayList<>(), methods);
 
         // Add methods from super interfaces
 		ViewInterfaceInfo superInterfaceInfo = null;
@@ -155,7 +152,6 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<V
 	}
 
 	private void getMethods(TypeElement typeElement,
-	                        TypeElement parentStrategy,
 	                        List<ViewMethod> rootMethods,
 	                        List<ViewMethod> superinterfacesMethods) {
 		for (Element element : typeElement.getEnclosedElements()) {
@@ -187,22 +183,19 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<V
 			if (strategyClassFromAnnotation != null) {
 				strategyClass = (TypeElement) ((DeclaredType) strategyClassFromAnnotation).asElement();
 			} else {
-				if (parentStrategy != null) {
-					strategyClass = parentStrategy;
-				} else {
-					String message = String.format("You are trying generate ViewState for %s. " +
-									"But %s interface and \"%s\" method don't provide Strategy type. " +
-									"Please annotate your %s interface or method with Strategy." + "\n\n" +
-									"For example:\n@StateStrategyType(AddToEndSingleStrategy::class)" + "\n" + "fun %s",
-							typeElement.getSimpleName(),
-							typeElement.getSimpleName(),
-							methodElement.getSimpleName(),
-							typeElement.getSimpleName(),
-							methodElement.getSimpleName()
-					);
-					MvpCompiler.getMessager().printMessage(Diagnostic.Kind.ERROR, message);
-					return;
-				}
+				String message = String.format("You are trying generate ViewState for %s. " +
+								"But %s interface and \"%s\" method don't provide Strategy type. " +
+								"Please annotate your %s interface or method with Strategy." + "\n\n" +
+								"For example:\n@StateStrategyType(AddToEndSingleStrategy::class)" + "\n" + "fun %s",
+						typeElement.getSimpleName(),
+						typeElement.getSimpleName(),
+						methodElement.getSimpleName(),
+						typeElement.getSimpleName(),
+						methodElement.getSimpleName()
+				);
+				MvpCompiler.getMessager().printMessage(Diagnostic.Kind.ERROR, message);
+				return;
+
 			}
 
 			// get tag from annotation
@@ -259,37 +252,6 @@ public class ViewInterfaceProcessor extends ElementProcessor<TypeElement, List<V
 		}
 	}
 
-	private List<ViewMethod> iterateInterfaces(TypeElement parentElement,
-	                                           TypeElement parentDefaultStrategy,
-	                                           List<ViewMethod> rootMethods,
-	                                           List<ViewMethod> superinterfacesMethods) {
-		for (TypeMirror typeMirror : parentElement.getInterfaces()) {
-			final TypeElement anInterface = (TypeElement) ((DeclaredType) typeMirror).asElement();
 
-			final List<? extends TypeMirror> typeArguments = ((DeclaredType) typeMirror).getTypeArguments();
-			final List<? extends TypeParameterElement> typeParameters = anInterface.getTypeParameters();
 
-			if (typeArguments.size() > typeParameters.size()) {
-				throw new IllegalArgumentException("Code generation for interface " + anInterface.getSimpleName() + " failed. Simplify your generics.");
-			}
-
-			TypeElement defaultStrategy = parentDefaultStrategy != null ? parentDefaultStrategy : getInterfaceStateStrategyType(anInterface);
-
-			getMethods(anInterface, defaultStrategy, rootMethods, superinterfacesMethods);
-
-			iterateInterfaces(anInterface, defaultStrategy, rootMethods, superinterfacesMethods);
-		}
-
-		return superinterfacesMethods;
-	}
-
-	private TypeElement getInterfaceStateStrategyType(TypeElement typeElement) {
-		AnnotationMirror annotation = Util.getAnnotation(typeElement, STATE_STRATEGY_TYPE_ANNOTATION);
-		TypeMirror value = Util.getAnnotationValueAsTypeMirror(annotation, "value");
-		if (value != null && value.getKind() == TypeKind.DECLARED) {
-			return (TypeElement) ((DeclaredType) value).asElement();
-		} else {
-			return null;
-		}
-	}
 }

@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * @author Yuri Shmakov
  * @author Alexander Blinov
  */
-@Target(value = {ElementType.TYPE, ElementType.METHOD})
+@Target(value = {ElementType.METHOD})
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface StateStrategyType {
 	Class<? extends StateStrategy> value();

@@ -1,6 +1,5 @@
 package com.omegar.mvp.view;
 
-import com.omegar.mvp.GenerateViewState;
 import com.omegar.mvp.viewstate.strategy.SkipStrategy;
 import com.omegar.mvp.viewstate.strategy.StateStrategyType;
 
@@ -10,7 +9,6 @@ import com.omegar.mvp.viewstate.strategy.StateStrategyType;
  *
  * @author Savin Mikhail
  */
-@GenerateViewState
 @StateStrategyType(SkipStrategy.class)
 public interface ChildView extends ParentView, SimpleInterface {
 	@Override

@@ -1,6 +1,5 @@
 package com.omegar.mvp.view;
 
-import com.omegar.mvp.GenerateViewState;
 import com.omegar.mvp.MvpView;
 import com.omegar.mvp.viewstate.strategy.AddToEndSingleStrategy;
 import com.omegar.mvp.viewstate.strategy.StateStrategyType;
@@ -11,7 +10,6 @@ import com.omegar.mvp.viewstate.strategy.StateStrategyType;
  *
  * @author Savin Mikhail
  */
-@GenerateViewState
 public interface ParentView extends MvpView {
 	void withoutStrategyMethod();
 

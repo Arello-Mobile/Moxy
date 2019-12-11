@@ -7,7 +7,6 @@ import example.com.moxy_androidx_sample.fourth.FourthView;
 
 public interface Contract {
 
-    @StateStrategyType(AddToEndSingleStrategy.class)
     interface FifthView extends FourthView<String> {
 
     }

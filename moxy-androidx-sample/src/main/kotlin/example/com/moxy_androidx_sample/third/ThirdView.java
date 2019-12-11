@@ -5,9 +5,9 @@ import com.omegar.mvp.viewstate.strategy.StateStrategyType;
 
 import example.com.moxy_androidx_sample.BaseView;
 
-@StateStrategyType(AddToEndSingleStrategy.class)
 public interface ThirdView extends BaseView {
 
+    @StateStrategyType(AddToEndSingleStrategy.class)
     void thirdMethod();
 
 }

@@ -1,6 +1,5 @@
 package view;
 
-import com.omegar.mvp.GenerateViewState;
 import com.omegar.mvp.MvpView;
 
 /**
@@ -9,7 +8,6 @@ import com.omegar.mvp.MvpView;
  *
  * @author Savin Mikhail
  */
-@GenerateViewState
 public class ViewStateForClassView implements MvpView {
 	public void showProgress() {
 

@@ -9,9 +9,9 @@ import example.com.moxy_androidx_sample.second.SecondView
 
 interface Contract {
 
-    @StateStrategyType(AddToEndSingleStrategy::class)
     interface MainView : FirstView<Item>, SecondView, Contract.FifthView {
 
+        @StateStrategyType(AddToEndSingleStrategy::class)
         fun printLog(msg: Double?, log: String?)
 
     }

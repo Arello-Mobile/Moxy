@@ -1,7 +1,6 @@
 package com.omegar.mvp.compiler;
 
 import com.google.auto.service.AutoService;
-import com.omegar.mvp.GenerateViewState;
 import com.omegar.mvp.InjectViewState;
 import com.omegar.mvp.RegisterMoxyReflectorPackages;
 import com.omegar.mvp.compiler.presenterbinder.InjectPresenterProcessor;
@@ -95,8 +94,7 @@ public class MvpCompiler extends AbstractProcessor {
 		Collections.addAll(supportedAnnotationTypes,
 				InjectPresenter.class.getCanonicalName(),
 				InjectViewState.class.getCanonicalName(),
-				RegisterMoxyReflectorPackages.class.getCanonicalName(),
-				GenerateViewState.class.getCanonicalName());
+				RegisterMoxyReflectorPackages.class.getCanonicalName());
 		return supportedAnnotationTypes;
 	}
 
