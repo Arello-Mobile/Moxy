@@ -24,18 +24,18 @@ import org.robolectric.annotation.Config;
 @Config(manifest = Config.NONE)
 public class MvpDelegateTest {
 	private DelegateLocalPresenterTestView mTestView = new DelegateLocalPresenterTestView();
-	private MvpDelegate<? extends TestView> mMvpDelegate = new MvpDelegate<>(mTestView);
+	private MvpDelegate<? extends TestView> mvpDelegate = new MvpDelegate<>(mTestView);
 
 	@Before
 	public void init() {
-		mMvpDelegate.onCreate(Mockito.mock(Bundle.class));
-		mMvpDelegate.onAttach();
+		mvpDelegate.onCreate(Mockito.mock(Bundle.class));
+		mvpDelegate.onAttach();
 	}
 
 	@After
 	public void reset() {
-		mMvpDelegate.onDetach();
-		mMvpDelegate.onDestroy();
+		mvpDelegate.onDetach();
+		mvpDelegate.onDestroy();
 	}
 
 	@Test

@@ -1,6 +1,7 @@
 package com.arellomobile.mvp;
 
 import android.os.Bundle;
+
 import androidx.fragment.app.Fragment;
 
 /**
@@ -15,8 +16,9 @@ public class MvpAppCompatFragment extends Fragment {
 
     private boolean mIsStateSaved;
 
-    private MvpDelegate<? extends MvpAppCompatFragment> mMvpDelegate;
+    private MvpDelegate<? extends MvpAppCompatFragment> mvpDelegate;
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -98,10 +100,10 @@ public class MvpAppCompatFragment extends Fragment {
      * @return The {@link MvpDelegate} being used by this Fragment.
      */
     public MvpDelegate getMvpDelegate() {
-        if (mMvpDelegate == null) {
-            mMvpDelegate = new MvpDelegate<>(this);
+        if (mvpDelegate == null) {
+            mvpDelegate = new MvpDelegate<>(this);
         }
 
-        return mMvpDelegate;
+        return mvpDelegate;
     }
 }

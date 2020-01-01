@@ -5,8 +5,6 @@ import android.os.Bundle;
 import com.arellomobile.mvp.MvpDelegate;
 import com.arellomobile.mvp.provide_methods_test.resources.LocalProvidedView;
 import com.arellomobile.mvp.provide_methods_test.resources.TwoLocalProvidedView;
-import com.arellomobile.mvp.provide_methods_test.resources.TwoWeakWithSamePresenterIdView;
-import com.arellomobile.mvp.provide_methods_test.resources.WeakProvidedView;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -24,48 +22,24 @@ import org.robolectric.annotation.Config;
 @Config(manifest = Config.NONE)
 public class ProvideMethodsTest {
 
-	@Test
-	public void testLocalIsProvided() {
-		LocalProvidedView view = new LocalProvidedView();
+    @Test
+    public void testLocalIsProvided() {
+        LocalProvidedView view = new LocalProvidedView();
 
-		view.delegate = new MvpDelegate<>(view);
-		view.delegate.onCreate(new Bundle());
+        view.delegate = new MvpDelegate<>(view);
+        view.delegate.onCreate(new Bundle());
 
-		Assert.assertNotNull(view.oneLocalPresenter);
-		Assert.assertSame(view.oneLocalPresenter, view.oneLocalProvidedPresenter);
-	}
+        Assert.assertNotNull(view.oneLocalPresenter);
+        Assert.assertSame(view.oneLocalPresenter, view.oneLocalProvidedPresenter);
+    }
 
-	@Test
-	public void testTwoLocalUseDifferentProvided() {
-		TwoLocalProvidedView view = new TwoLocalProvidedView();
+    @Test
+    public void testTwoLocalUseDifferentProvided() {
+        TwoLocalProvidedView view = new TwoLocalProvidedView();
 
-		view.delegate = new MvpDelegate<>(view);
-		view.delegate.onCreate(new Bundle());
+        view.delegate = new MvpDelegate<>(view);
+        view.delegate.onCreate(new Bundle());
 
-		Assert.assertNotSame(view.oneLocalPresenter, view.secondLocalPresenter);
-	}
-
-	@Test
-	public void testWeakPresenterWithHardcodedTag() {
-		WeakProvidedView view = new WeakProvidedView();
-
-		view.delegate = new MvpDelegate<>(view);
-		view.delegate.onCreate(new Bundle());
-
-		Assert.assertNotNull(view.weakPresenter);
-		Assert.assertSame(view.weakPresenter, view.weakProvidedPresenter);
-	}
-
-	@Test
-	public void testTwoWeakPresenterWithSamePresenterIdTest() {
-		TwoWeakWithSamePresenterIdView view = new TwoWeakWithSamePresenterIdView();
-
-		view.delegate = new MvpDelegate<>(view);
-		view.delegate.onCreate(new Bundle());
-
-		Assert.assertNotNull(view.oneWeakPresenter);
-		Assert.assertNotNull(view.secondWeakPresenter);
-
-		Assert.assertSame(view.oneWeakPresenter, view.secondWeakPresenter);
-	}
+        Assert.assertNotSame(view.oneLocalPresenter, view.secondLocalPresenter);
+    }
 }

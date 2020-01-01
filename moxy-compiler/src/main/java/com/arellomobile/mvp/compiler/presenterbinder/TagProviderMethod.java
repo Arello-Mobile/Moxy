@@ -1,39 +1,29 @@
 package com.arellomobile.mvp.compiler.presenterbinder;
 
-import com.arellomobile.mvp.presenter.PresenterType;
-
 import javax.lang.model.type.TypeMirror;
 
 class TagProviderMethod {
-	private final TypeMirror presenterClass;
-	private final String methodName;
-	private final PresenterType type;
-	private final String presenterId;
+    private final TypeMirror presenterClass;
 
-	TagProviderMethod(TypeMirror presenterClass, String methodName, String type, String presenterId) {
-		this.presenterClass = presenterClass;
-		this.methodName = methodName;
-		if (type == null) {
-			this.type = PresenterType.LOCAL;
-		} else {
-			this.type = PresenterType.valueOf(type);
-		}
-		this.presenterId = presenterId;
-	}
+    private final String methodName;
 
-	TypeMirror getPresenterClass() {
-		return presenterClass;
-	}
+    private final String presenterId;
 
-	String getMethodName() {
-		return methodName;
-	}
+    TagProviderMethod(TypeMirror presenterClass, String methodName, String type, String presenterId) {
+        this.presenterClass = presenterClass;
+        this.methodName = methodName;
+        this.presenterId = presenterId;
+    }
 
-	PresenterType getType() {
-		return type;
-	}
+    TypeMirror getPresenterClass() {
+        return presenterClass;
+    }
 
-	String getPresenterId() {
-		return presenterId;
-	}
+    String getMethodName() {
+        return methodName;
+    }
+
+    String getPresenterId() {
+        return presenterId;
+    }
 }

@@ -5,8 +5,8 @@ apply plugin: 'maven'
 ext {
     publishDir = 'artifacts'
     publishMavenDir = 'artifacts-maven'
-    targetGroupId = 'com.arello-mobile'
-    targetArtefactId = 'moxy-android'
+    targetGroupId = 'tech.schoolhelper'
+    targetArtefactId = 'moxy-x-android'
     targetArtefactIdDev = 'moxy-android-dev'
     versionFile = 'VERSION'
 }
@@ -73,15 +73,15 @@ def getBasePom(String libName) {
             version targetVersionName
             name 'Moxy-android'
             modelVersion = '4.0.0'
-            description = 'Arello-Mobile MVP library for Android'
-            url = 'https://www.arello-mobile.com/'
+            description = POM_DESCRIPTION
+            url = 'URL'
             packaging = 'jar'
 
             inceptionYear '2016'
             licenses {
                 license {
-                    name 'The Apache Software License, Version 2.0'
-                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    name POM_LICENCE_NAME
+                    url POM_LICENCE_URL
                     distribution 'repo'
                 }
             }
@@ -99,12 +99,18 @@ def getBasePom(String libName) {
                     organization = 'Arello Mobile'
                     organizationUrl 'http://www.arello-mobile.com/'
                 }
+                developer {
+                    name 'Vova Stelmashchuk'
+                    email 'vovochkastelmashchuk@gmail.com'
+                    organization = 'SchoolHelper'
+                    organizationUrl URL
+                }
             }
 
             scm {
-                connection 'scm:git@github.com:Arello-Mobile/Moxy.git'
-                developerConnection 'scm:git@github.com:Arello-Mobile/Moxy.git'
-                url 'https://github.com/Arello-Mobile/Moxy'
+                connection POM_SCM_CONNECTION
+                developerConnection POM_SCM_CONNECTION
+                url POM_URL
             }
         }.withXml {
             asNode().appendNode('packaging', 'jar')
@@ -140,8 +146,6 @@ task copyJars {
         }
     }
 }
-
-
 
 
 task createPomXml {
@@ -235,12 +239,12 @@ copyVersion.dependsOn createPomXml
 assemble.dependsOn copyVersion
 
 dependencies {
-    compile project(':moxy')
+    implementation project(':moxy-x')
 
     compileOnly deps.android
     compileOnly project(':stub-android')
 
-    javadocDeps project(':moxy')
+    javadocDeps project(':moxy-x')
     javadocDeps deps.android
     javadocDeps project(':stub-android')
 }

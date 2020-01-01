@@ -5,9 +5,9 @@ apply plugin: 'maven'
 ext {
     publishDir = 'artifacts'
     publishMavenDir = 'artifacts-maven'
-    targetGroupId = 'com.arello-mobile'
-    targetArtefactId = 'moxy-compiler'
-    targetArtefactIdDev = 'moxy-compiler-dev'
+    targetGroupId = 'tech.schoolhelper'
+    targetArtefactId = 'moxy-x-compiler'
+    targetArtefactIdDev = 'moxy-x-compiler-dev'
     versionFile = 'VERSION'
 }
 configurations {
@@ -61,17 +61,17 @@ def getBasePom(String libName) {
             groupId targetGroupId
             artifactId targetArtefactId
             version targetVersionName
-            name 'Moxy-compiler'
+            name 'Moxy'
             modelVersion = '4.0.0'
-            description = 'Arello-Mobile MVP library for Android'
-            url = 'https://www.arello-mobile.com/'
-            packaging = 'jar'
+            description = POM_DESCRIPTION
+            url = URL
+            //   packaging = 'jar'  //doesn't work from box, implement it manualy
 
             inceptionYear '2016'
             licenses {
                 license {
-                    name 'The Apache Software License, Version 2.0'
-                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    name POM_LICENCE_NAME
+                    url POM_LICENCE_URL
                     distribution 'repo'
                 }
             }
@@ -89,12 +89,18 @@ def getBasePom(String libName) {
                     organization = 'Arello Mobile'
                     organizationUrl 'http://www.arello-mobile.com/'
                 }
+                developer {
+                    name 'Vova Stelmashchuk'
+                    email 'vovochkastelmashchuk@gmail.com'
+                    organization = 'SchoolHelper'
+                    organizationUrl URL
+                }
             }
 
             scm {
-                connection 'scm:git@github.com:Arello-Mobile/Moxy.git'
-                developerConnection 'scm:git@github.com:Arello-Mobile/Moxy.git'
-                url 'https://github.com/Arello-Mobile/Moxy'
+                connection POM_SCM_CONNECTION
+                developerConnection POM_SCM_CONNECTION
+                url POM_URL
             }
         }.withXml {
             asNode().appendNode('packaging', 'jar')
@@ -247,14 +253,14 @@ copyVersion.dependsOn createPomXml
 assemble.dependsOn copyVersion
 
 dependencies {
-    implementation project(':moxy')
+    implementation project(':moxy-x')
     implementation deps.javapoet
 
     compileOnly deps.autocommon
     compileOnly deps.autoservice
     compileOnly deps.guava
 
-    javadocDeps project(':moxy')
+    javadocDeps project(':moxy-x')
     javadocDeps deps.javapoet
     javadocDeps deps.autoservice
 
@@ -263,6 +269,6 @@ dependencies {
     testImplementation deps.compiletesting
     testImplementation deps.asm
 
-    // workaround to use test resources (https://stackoverflow.com/q/24870464)
+    //workaround to use test resources (https://stackoverflow.com/q/24870464)
     testRuntime files(sourceSets.test.output.resourcesDir)
 }

@@ -13,7 +13,7 @@ import android.support.v7.app.AppCompatActivity;
  */
 @SuppressWarnings("unused")
 public class MvpAppCompatActivity extends AppCompatActivity {
-	private MvpDelegate<? extends MvpAppCompatActivity> mMvpDelegate;
+	private MvpDelegate<? extends MvpAppCompatActivity> mvpDelegate;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,9 +66,9 @@ public class MvpAppCompatActivity extends AppCompatActivity {
 	 * @return The {@link MvpDelegate} being used by this Activity.
 	 */
 	public MvpDelegate getMvpDelegate() {
-		if (mMvpDelegate == null) {
-			mMvpDelegate = new MvpDelegate<>(this);
+		if (mvpDelegate == null) {
+			mvpDelegate = new MvpDelegate<>(this);
 		}
-		return mMvpDelegate;
+		return mvpDelegate;
 	}
 }

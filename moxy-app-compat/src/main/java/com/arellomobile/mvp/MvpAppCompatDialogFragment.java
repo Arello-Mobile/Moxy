@@ -14,7 +14,7 @@ import android.support.v7.app.AppCompatDialogFragment;
 public class MvpAppCompatDialogFragment extends AppCompatDialogFragment {
 
 	private boolean mIsStateSaved;
-	private MvpDelegate<? extends MvpAppCompatDialogFragment> mMvpDelegate;
+	private MvpDelegate<? extends MvpAppCompatDialogFragment> mvpDelegate;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -88,10 +88,10 @@ public class MvpAppCompatDialogFragment extends AppCompatDialogFragment {
 	 * @return The {@link MvpDelegate} being used by this Fragment.
 	 */
 	public MvpDelegate getMvpDelegate() {
-		if (mMvpDelegate == null) {
-			mMvpDelegate = new MvpDelegate<>(this);
+		if (mvpDelegate == null) {
+			mvpDelegate = new MvpDelegate<>(this);
 		}
 
-		return mMvpDelegate;
+		return mvpDelegate;
 	}
 }

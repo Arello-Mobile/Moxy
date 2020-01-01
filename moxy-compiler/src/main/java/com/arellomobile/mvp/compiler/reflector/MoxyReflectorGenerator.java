@@ -116,7 +116,7 @@ public class MoxyReflectorGenerator {
 	                                                   List<TypeElement> presentersContainers,
 	                                                   List<TypeElement> strategyClasses,
 	                                                   List<String> additionalMoxyReflectorsPackages) {
-		// sort to preserve order of statements between compilations
+		//sort to preserve order of statements between compilations
 		Map<TypeElement, List<TypeElement>> presenterBinders = getPresenterBinders(presentersContainers);
 		presenterClassNames.sort(TYPE_ELEMENT_COMPARATOR);
 		strategyClasses.sort(TYPE_ELEMENT_COMPARATOR);

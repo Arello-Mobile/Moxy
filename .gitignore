@@ -39,3 +39,6 @@ captures/
 VERSION
 artifacts/
 artifacts-maven/
+
+# Mac OS
+*.icloud

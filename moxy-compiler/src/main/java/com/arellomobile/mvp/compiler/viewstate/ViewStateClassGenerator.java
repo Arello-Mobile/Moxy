@@ -93,7 +93,7 @@ public final class ViewStateClassGenerator extends JavaFilesGenerator<ViewInterf
 				.addStatement("$1N $2L = new $1N($3L)", commandClass, commandFieldName, method.getArgumentsString())
 				.addStatement("mViewCommands.beforeApply($L)", commandFieldName)
 				.addCode("\n")
-				.beginControlFlow("if (mViews == null || mViews.isEmpty())")
+				.beginControlFlow("if (hasNotView())")
 				.addStatement("return")
 				.endControlFlow()
 				.addCode("\n")

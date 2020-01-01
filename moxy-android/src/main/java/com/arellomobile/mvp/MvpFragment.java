@@ -16,7 +16,7 @@ import android.os.Bundle;
 public class MvpFragment extends Fragment {
 
 	private boolean mIsStateSaved;
-	private MvpDelegate<? extends MvpFragment> mMvpDelegate;
+	private MvpDelegate<? extends MvpFragment> mvpDelegate;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -102,10 +102,10 @@ public class MvpFragment extends Fragment {
 	 * @return The {@link MvpDelegate} being used by this Fragment.
 	 */
 	public MvpDelegate getMvpDelegate() {
-		if (mMvpDelegate == null) {
-			mMvpDelegate = new MvpDelegate<>(this);
+		if (mvpDelegate == null) {
+			mvpDelegate = new MvpDelegate<>(this);
 		}
 
-		return mMvpDelegate;
+		return mvpDelegate;
 	}
 }

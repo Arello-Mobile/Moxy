@@ -15,7 +15,7 @@ import android.os.Bundle;
 public class MvpDialogFragment extends DialogFragment {
 
 	private boolean mIsStateSaved;
-	private MvpDelegate<? extends MvpDialogFragment> mMvpDelegate;
+	private MvpDelegate<? extends MvpDialogFragment> mvpDelegate;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -92,10 +92,10 @@ public class MvpDialogFragment extends DialogFragment {
 	 * @return The {@link MvpDelegate} being used by this Fragment.
 	 */
 	public MvpDelegate getMvpDelegate() {
-		if (mMvpDelegate == null) {
-			mMvpDelegate = new MvpDelegate<>(this);
+		if (mvpDelegate == null) {
+			mvpDelegate = new MvpDelegate<>(this);
 		}
 
-		return mMvpDelegate;
+		return mvpDelegate;
 	}
 }

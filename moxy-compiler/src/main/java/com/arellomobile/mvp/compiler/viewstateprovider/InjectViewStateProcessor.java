@@ -23,134 +23,130 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.tools.Diagnostic;
 
 import static com.arellomobile.mvp.compiler.Util.fillGenerics;
 
 public class InjectViewStateProcessor extends ElementProcessor<TypeElement, PresenterInfo> {
-	private static final String MVP_PRESENTER_CLASS = MvpPresenter.class.getCanonicalName();
+    private static final String MVP_PRESENTER_CLASS = MvpPresenter.class.getCanonicalName();
 
-	private final Set<TypeElement> usedViews = new HashSet<>();
-	private final List<TypeElement> presenterClassNames = new ArrayList<>();
+    private final Set<TypeElement> usedViews = new HashSet<>();
 
-	public Set<TypeElement> getUsedViews() {
-		return usedViews;
-	}
+    private final List<TypeElement> presenterClassNames = new ArrayList<>();
 
-	public List<TypeElement> getPresenterClassNames() {
-		return presenterClassNames;
-	}
+    public Set<TypeElement> getUsedViews() {
+        return usedViews;
+    }
 
-	@Override
-	public PresenterInfo process(TypeElement element) {
-		presenterClassNames.add(element);
-		return new PresenterInfo(element, getViewStateClassName(element));
-	}
+    public List<TypeElement> getPresenterClassNames() {
+        return presenterClassNames;
+    }
 
-	private String getViewStateClassName(TypeElement typeElement) {
-		String viewState = getViewStateClassFromAnnotationParams(typeElement);
-		if (viewState == null) {
-			String view = getViewClassFromAnnotationParams(typeElement);
-			if (view == null) {
-				view = getViewClassFromGeneric(typeElement);
-			}
+    @Override
+    public PresenterInfo process(TypeElement element) {
+        presenterClassNames.add(element);
+        return new PresenterInfo(element, getViewStateClassName(element));
+    }
 
-			if (view != null) {
-				// Remove generic from view class name
-				if (view.contains("<")) {
-					view = view.substring(0, view.indexOf("<"));
-				}
+    private String getViewStateClassName(TypeElement typeElement) {
+        String viewState = getViewStateClassFromAnnotationParams(typeElement);
+        if (viewState == null) {
+            String view = getViewClassFromAnnotationParams(typeElement);
+            if (view == null) {
+                view = getViewClassFromGeneric(typeElement);
+            }
 
-				TypeElement viewTypeElement = MvpCompiler.getElementUtils().getTypeElement(view);
-				if (viewTypeElement == null) {
-					throw new IllegalArgumentException("View \"" + view + "\" for " + typeElement + " cannot be found");
-				}
+            if (view != null) {
+                // Remove generic from view class name
+                if (view.contains("<")) {
+                    view = view.substring(0, view.indexOf("<"));
+                }
 
-				usedViews.add(viewTypeElement);
-				viewState = Util.getFullClassName(viewTypeElement) + MvpProcessor.VIEW_STATE_SUFFIX;
-			}
-		}
+                TypeElement viewTypeElement = MvpCompiler.getElementUtils().getTypeElement(view);
+                if (viewTypeElement == null) {
+                    throw new IllegalArgumentException("View \"" + view + "\" for " + typeElement + " cannot be found");
+                }
 
-		if (viewState != null) {
-			return viewState;
-		} else {
-			return null;
-		}
-	}
+                usedViews.add(viewTypeElement);
+                viewState = Util.getFullClassName(viewTypeElement) + MvpProcessor.VIEW_STATE_SUFFIX;
+            }
+        }
 
-	private String getViewClassFromAnnotationParams(TypeElement typeElement) {
-		InjectViewState annotation = typeElement.getAnnotation(InjectViewState.class);
-		String mvpViewClassName = "";
+        return viewState;
+    }
 
-		if (annotation != null) {
-			TypeMirror value = null;
-			try {
-				annotation.view();
-			} catch (MirroredTypeException mte) {
-				value = mte.getTypeMirror();
-			}
+    private String getViewClassFromAnnotationParams(TypeElement typeElement) {
+        InjectViewState annotation = typeElement.getAnnotation(InjectViewState.class);
+        String mvpViewClassName = "";
 
-			mvpViewClassName = Util.getFullClassName(value);
-		}
+        if (annotation != null) {
+            TypeMirror value = null;
+            try {
+                annotation.view();
+            } catch (MirroredTypeException mte) {
+                value = mte.getTypeMirror();
+            }
 
-		if (mvpViewClassName.isEmpty() || DefaultView.class.getName().equals(mvpViewClassName)) {
-			return null;
-		}
+            mvpViewClassName = Util.getFullClassName(value);
+        }
 
-		return mvpViewClassName;
-	}
+        if (mvpViewClassName.isEmpty() || DefaultView.class.getName().equals(mvpViewClassName)) {
+            return null;
+        }
 
-	private String getViewStateClassFromAnnotationParams(TypeElement typeElement) {
-		InjectViewState annotation = typeElement.getAnnotation(InjectViewState.class);
-		String mvpViewStateClassName = "";
+        return mvpViewClassName;
+    }
 
-		if (annotation != null) {
-			TypeMirror value;
-			try {
-				annotation.value();
-			} catch (MirroredTypeException mte) {
-				value = mte.getTypeMirror();
-				mvpViewStateClassName = value.toString();
-			}
-		}
+    private String getViewStateClassFromAnnotationParams(TypeElement typeElement) {
+        InjectViewState annotation = typeElement.getAnnotation(InjectViewState.class);
+        String mvpViewStateClassName = "";
 
-		if (mvpViewStateClassName.isEmpty() || DefaultViewState.class.getName().equals(mvpViewStateClassName)) {
-			return null;
-		}
+        if (annotation != null) {
+            TypeMirror value;
+            try {
+                annotation.value();
+            } catch (MirroredTypeException mte) {
+                value = mte.getTypeMirror();
+                mvpViewStateClassName = value.toString();
+            }
+        }
 
-		return mvpViewStateClassName;
-	}
+        if (mvpViewStateClassName.isEmpty() || DefaultViewState.class.getName().equals(mvpViewStateClassName)) {
+            return null;
+        }
 
-	private String getViewClassFromGeneric(TypeElement typeElement) {
-		TypeMirror superclass = typeElement.asType();
+        return mvpViewStateClassName;
+    }
 
-		Map<String, String> parentTypes = Collections.emptyMap();
+    private String getViewClassFromGeneric(TypeElement typeElement) {
+        TypeMirror superclass = typeElement.asType();
 
-		while (superclass.getKind() != TypeKind.NONE) {
-			TypeElement superclassElement = (TypeElement) ((DeclaredType) superclass).asElement();
+        Map<String, String> parentTypes = Collections.emptyMap();
 
-			final List<? extends TypeMirror> typeArguments = ((DeclaredType) superclass).getTypeArguments();
-			final List<? extends TypeParameterElement> typeParameters = superclassElement.getTypeParameters();
+        while (superclass.getKind() != TypeKind.NONE) {
+            TypeElement superclassElement = (TypeElement) ((DeclaredType) superclass).asElement();
 
-			if (typeArguments.size() > typeParameters.size()) {
-				throw new IllegalArgumentException("Code generation for interface " + typeElement.getSimpleName() + " failed. Simplify your generics. (" + typeArguments + " vs " + typeParameters + ")");
-			}
+            final List<? extends TypeMirror> typeArguments = ((DeclaredType) superclass).getTypeArguments();
+            final List<? extends TypeParameterElement> typeParameters = superclassElement.getTypeParameters();
 
-			Map<String, String> types = new HashMap<>();
-			for (int i = 0; i < typeArguments.size(); i++) {
-				types.put(typeParameters.get(i).toString(), fillGenerics(parentTypes, typeArguments.get(i)));
-			}
+            if (typeArguments.size() > typeParameters.size()) {
+                throw new IllegalArgumentException("Code generation for interface " + typeElement.getSimpleName() + " failed. Simplify your generics. (" + typeArguments + " vs " + typeParameters + ")");
+            }
 
-			if (superclassElement.toString().equals(MVP_PRESENTER_CLASS)) {
-				// MvpPresenter is typed only on View class
-				return fillGenerics(parentTypes, typeArguments);
-			}
+            Map<String, String> types = new HashMap<>();
+            for (int i = 0; i < typeArguments.size(); i++) {
+                types.put(typeParameters.get(i).toString(), fillGenerics(parentTypes, typeArguments.get(i)));
+            }
 
-			parentTypes = types;
+            if (superclassElement.toString().equals(MVP_PRESENTER_CLASS)) {
+                // MvpPresenter is typed only on View class
+                return fillGenerics(parentTypes, typeArguments);
+            }
 
-			superclass = superclassElement.getSuperclass();
-		}
+            parentTypes = types;
 
-		return "";
-	}
+            superclass = superclassElement.getSuperclass();
+        }
+
+        return "";
+    }
 }
