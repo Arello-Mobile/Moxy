@@ -1,6 +1,6 @@
 # MoxyX
 
-**This Moxy repository is deprecated and no longer supported. **
+**This Moxy repository is deprecated and no longer supported.**
 
 **Please migrate to the actual version of the Moxy framework at [Moxy communuty](https://github.com/moxy-community/Moxy) repo.**
 
