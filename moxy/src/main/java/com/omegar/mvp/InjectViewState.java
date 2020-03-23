@@ -1,5 +1,6 @@
 package com.omegar.mvp;
 
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Target;
 
 import com.omegar.mvp.viewstate.MvpViewState;
@@ -15,6 +16,7 @@ import static java.lang.annotation.ElementType.TYPE;
  * code, that broke your app.
  */
 @Target(value = TYPE)
+@Inherited
 public @interface InjectViewState {
 	Class<? extends MvpViewState> value() default DefaultViewState.class;
 
