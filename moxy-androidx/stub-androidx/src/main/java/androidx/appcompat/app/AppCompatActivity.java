@@ -3,6 +3,8 @@ package androidx.appcompat.app;
 import android.os.Bundle;
 
 import androidx.fragment.app.FragmentActivity;
+import com.omegar.mvp.annotation.ContentView;
+import com.omegar.mvp.annotation.LayoutRes;
 
 /**
  * Date: 25-July-18
@@ -12,6 +14,15 @@ import androidx.fragment.app.FragmentActivity;
  */
 
 public class AppCompatActivity extends FragmentActivity {
+
+    public AppCompatActivity() {
+        super();
+    }
+
+    @ContentView
+    public AppCompatActivity(@LayoutRes int contentLayoutId) {
+        super(contentLayoutId);
+    }
 
     protected void onCreate(Bundle savedInstanceState) {
         throw new RuntimeException("Stub!");
