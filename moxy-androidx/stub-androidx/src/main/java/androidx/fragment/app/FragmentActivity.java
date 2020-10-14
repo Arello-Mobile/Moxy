@@ -1,6 +1,6 @@
 package androidx.fragment.app;
 
-import com.omegar.mvp.annotation.LayoutRes;
+import androidx.annotation.LayoutRes;
 
 /**
  * Date: 25-July-18

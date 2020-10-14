@@ -2,9 +2,10 @@ package com.omegar.mvp;
 
 import android.os.Bundle;
 
+import androidx.annotation.ContentView;
+import androidx.annotation.LayoutRes;
 import androidx.appcompat.app.AppCompatActivity;
-import com.omegar.mvp.annotation.ContentView;
-import com.omegar.mvp.annotation.LayoutRes;
+
 
 /**
  * Date: 25-July-18

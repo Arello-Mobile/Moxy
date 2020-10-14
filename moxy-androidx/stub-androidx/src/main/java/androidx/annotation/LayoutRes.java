@@ -1,4 +1,4 @@
-package com.omegar.mvp.annotation;
+package androidx.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
