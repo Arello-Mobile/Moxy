@@ -13,10 +13,6 @@ public class MvpBottomSheetDialogFragment extends BottomSheetDialogFragment {
     private boolean mIsStateSaved;
     private MvpDelegate<? extends MvpBottomSheetDialogFragment> mMvpDelegate;
 
-    public MvpBottomSheetDialogFragment() { super(); }
-
-    public MvpBottomSheetDialogFragment(@LayoutRes int contentLayoutId) { super(); }
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 

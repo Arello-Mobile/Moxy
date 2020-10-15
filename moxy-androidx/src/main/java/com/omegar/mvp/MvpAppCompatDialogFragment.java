@@ -13,14 +13,6 @@ public class MvpAppCompatDialogFragment extends AppCompatDialogFragment {
     private boolean mIsStateSaved;
     private MvpDelegate<? extends MvpAppCompatDialogFragment> mMvpDelegate;
 
-    public MvpAppCompatDialogFragment() { super(); }
-
-    @ContentView
-    public MvpAppCompatDialogFragment(@LayoutRes int contentLayoutId) {
-        super(contentLayoutId);
-    }
-
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 

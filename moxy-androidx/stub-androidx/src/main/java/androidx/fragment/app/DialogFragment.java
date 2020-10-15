@@ -10,8 +10,5 @@ import androidx.annotation.LayoutRes;
  * @author R12rus
  */
 public class DialogFragment extends Fragment {
-    public DialogFragment() { super(); }
 
-    @ContentView
-    public DialogFragment(@LayoutRes int contentLayoutId) { super(contentLayoutId); }
 }

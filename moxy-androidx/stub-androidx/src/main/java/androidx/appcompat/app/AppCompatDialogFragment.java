@@ -11,10 +11,5 @@ import androidx.fragment.app.DialogFragment;
  * @author R12rus
  */
 public class AppCompatDialogFragment extends DialogFragment {
-    public AppCompatDialogFragment() { super(); }
 
-    @ContentView
-    public AppCompatDialogFragment(@LayoutRes int contentLayoutId) {
-        super(contentLayoutId);
-    }
 }
