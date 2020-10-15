@@ -1,9 +1,5 @@
 package view;
 
-import com.arellomobile.mvp.GenerateViewState;
-import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
-import com.arellomobile.mvp.viewstate.strategy.SingleStateStrategy;
-import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 
 /**
  * Date: 26.02.2016
@@ -11,7 +7,6 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
  *
  * @author Savin Mikhail
  */
-@GenerateViewState
 public interface ViewStateChildWithIncorrectStrategyTagView extends ViewStateParentView, ViewStateParentStrategyTagView {
 
 }

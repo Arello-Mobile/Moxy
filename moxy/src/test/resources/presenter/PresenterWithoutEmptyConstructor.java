@@ -1,7 +1,7 @@
 package presenter;
 
-import com.arellomobile.mvp.MvpPresenter;
-import com.arellomobile.mvp.MvpView;
+import com.omegar.mvp.MvpPresenter;
+import com.omegar.mvp.MvpView;
 
 /**
  * Date: 25.02.2016

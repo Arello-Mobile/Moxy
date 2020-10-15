@@ -1,6 +1,6 @@
 package view;
 
-import com.arellomobile.mvp.MvpView;
+import com.omegar.mvp.MvpView;
 
 public interface OverloadingView extends MvpView {
 	void method(String string);

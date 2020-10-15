@@ -1,8 +1,8 @@
 package com.redmadrobot.app.presentation.launch
 
-import com.arellomobile.mvp.MvpView
-import com.arellomobile.mvp.viewstate.ViewCommand
-import com.arellomobile.mvp.viewstate.strategy.StateStrategy
+import com.omegar.mvp.MvpView
+import com.omegar.mvp.viewstate.ViewCommand
+import com.omegar.mvp.viewstate.strategy.StateStrategy
 
 class AddToEndSingleTagStrategy : StateStrategy {
 

@@ -1,9 +1,9 @@
 package target;
 
-import com.arellomobile.mvp.MvpPresenter;
-import com.arellomobile.mvp.PresenterBinder;
-import com.arellomobile.mvp.presenter.PresenterField;
-import com.arellomobile.mvp.presenter.PresenterType;
+import com.omegar.mvp.MvpPresenter;
+import com.omegar.mvp.PresenterBinder;
+import com.omegar.mvp.presenter.PresenterField;
+import com.omegar.mvp.presenter.PresenterType;
 
 import java.util.ArrayList;
 import java.util.List;

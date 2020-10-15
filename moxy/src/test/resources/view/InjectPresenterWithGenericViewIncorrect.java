@@ -1,9 +1,9 @@
 package view;
 
-import com.arellomobile.mvp.MvpView;
-import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.view.CounterTestView;
-import com.arellomobile.mvp.view.TestViewChild2;
+import com.omegar.mvp.MvpView;
+import com.omegar.mvp.presenter.InjectPresenter;
+import com.omegar.mvp.view.CounterTestView;
+import com.omegar.mvp.view.TestViewChild2;
 
 import presenter.WithViewGenericPresenter;
 

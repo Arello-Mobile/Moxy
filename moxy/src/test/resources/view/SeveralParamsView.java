@@ -1,8 +1,8 @@
 package view;
 
-import com.arellomobile.mvp.MvpView;
-import com.arellomobile.mvp.params.MockParams;
-import com.arellomobile.mvp.params.MockParams2;
+import com.omegar.mvp.MvpView;
+import com.omegar.mvp.params.MockParams;
+import com.omegar.mvp.params.MockParams2;
 
 import params.Params1;
 import params.Params2;

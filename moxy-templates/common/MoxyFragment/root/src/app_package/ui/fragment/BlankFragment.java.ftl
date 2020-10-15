@@ -14,9 +14,9 @@ import ${superClassFqcn};
 import ${packageName}.R;
 </#if>
 
-import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.omegar.mvp.presenter.InjectPresenter;
 <#if createProvidesMethod>
-import com.arellomobile.mvp.presenter.ProvidePresenter;
+import com.omegar.mvp.presenter.ProvidePresenter;
 </#if>
 
 public class ${className} extends ${superClassName} implements ${viewName} {

@@ -7,7 +7,8 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:3.4.1'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
     }
 }
 
@@ -16,25 +17,32 @@ allprojects {
         jcenter()
         mavenCentral()
         google()
+        maven { url 'https://jitpack.io' }
     }
 }
 
 ext {
-    targetVersionCode = 45
-    targetVersionName = "1.5.5"
+    targetVersionCode = 46
+    targetVersionName = "1.5.6"
+    kotlin_version = '1.3.50'
+    def autoServiceVersion = '1.0-rc5'
+    def gradleIncapHelperVersion = '0.2'
 
     deps = [
-            android       : 'com.google.android:android:1.6_r2',
-            javapoet      : 'com.squareup:javapoet:1.10.0',
-            junit         : 'junit:junit:4.12',
-            mockito       : 'org.mockito:mockito-core:1.10.19',
-            truth         : 'com.google.truth:truth:0.34',
-            robolectric   : 'org.robolectric:robolectric:3.0',
-            compiletesting: 'com.google.testing.compile:compile-testing:0.15',
-            asm           : ['org.ow2.asm:asm:6.0', 'org.ow2.asm:asm-util:6.0'],
-            autoservice   : 'com.google.auto.service:auto-service:1.0-rc4',
-            autocommon    : 'com.google.auto:auto-common:0.10',
-            guava         : 'com.google.guava:guava:21.0',
+            android                     : 'com.google.android:android:1.6_r2',
+            javapoet                    : 'com.squareup:javapoet:1.10.0',
+            junit                       : 'junit:junit:4.12',
+            mockito                     : 'org.mockito:mockito-core:1.10.19',
+            truth                       : 'com.google.truth:truth:0.34',
+            robolectric                 : 'org.robolectric:robolectric:3.0',
+            compiletesting              : 'com.google.testing.compile:compile-testing:0.15',
+            asm                         : ['org.ow2.asm:asm:6.0', 'org.ow2.asm:asm-util:6.0'],
+            autoservice                 : "com.google.auto.service:auto-service:$autoServiceVersion",
+            autoserviceAnnotations      : "com.google.auto.service:auto-service-annotations:$autoServiceVersion",
+            autocommon                  : 'com.google.auto:auto-common:0.10',
+            guava                       : 'com.google.guava:guava:21.0',
+            gradleIncapHelperAnnotations: "net.ltgt.gradle.incap:incap:$gradleIncapHelperVersion",
+            gradleIncapHelperProcessor  : "net.ltgt.gradle.incap:incap-processor:$gradleIncapHelperVersion"
     ]
 }
 

@@ -1,7 +1,6 @@
 package view;
 
-import com.arellomobile.mvp.GenerateViewState;
-import com.arellomobile.mvp.MvpView;
+import com.omegar.mvp.MvpView;
 
 /**
  * Date: 26.02.2016
@@ -9,7 +8,6 @@ import com.arellomobile.mvp.MvpView;
  *
  * @author Savin Mikhail
  */
-@GenerateViewState
 public class ViewStateForClassView implements MvpView {
 	public void showProgress() {
 

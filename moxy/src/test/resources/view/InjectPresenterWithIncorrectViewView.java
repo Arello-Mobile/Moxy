@@ -1,8 +1,8 @@
 package view;
 
-import com.arellomobile.mvp.MvpView;
-import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.presenter.TestViewPresenter;
+import com.omegar.mvp.MvpView;
+import com.omegar.mvp.presenter.InjectPresenter;
+import com.omegar.mvp.presenter.TestViewPresenter;
 
 /**
  * Date: 25.02.2016
