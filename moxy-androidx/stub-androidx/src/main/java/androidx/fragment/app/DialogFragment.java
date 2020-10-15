@@ -1,8 +1,5 @@
 package androidx.fragment.app;
 
-import androidx.annotation.ContentView;
-import androidx.annotation.LayoutRes;
-
 /**
  * Date: 22-March-19
  * Time: 08:58

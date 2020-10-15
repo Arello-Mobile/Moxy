@@ -3,7 +3,6 @@ package com.omegar.mvp;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.LayoutRes;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;

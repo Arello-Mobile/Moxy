@@ -3,8 +3,6 @@ package com.omegar.mvp;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.ContentView;
-import androidx.annotation.LayoutRes;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.fragment.app.Fragment;
 

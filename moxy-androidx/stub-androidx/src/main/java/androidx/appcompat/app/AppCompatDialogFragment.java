@@ -1,7 +1,5 @@
 package androidx.appcompat.app;
 
-import androidx.annotation.ContentView;
-import androidx.annotation.LayoutRes;
 import androidx.fragment.app.DialogFragment;
 
 /**
