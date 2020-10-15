@@ -17,14 +17,10 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MvpAppCompatActivity extends AppCompatActivity {
     private MvpDelegate<? extends MvpAppCompatActivity> mMvpDelegate;
 
-    public MvpAppCompatActivity() {
-        super();
-    }
+    public MvpAppCompatActivity() { super(); }
 
     @ContentView
-    public MvpAppCompatActivity(@LayoutRes int contentLayoutId) {
-        super(contentLayoutId);
-    }
+    public MvpAppCompatActivity(@LayoutRes int contentLayoutId) { super(contentLayoutId); }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

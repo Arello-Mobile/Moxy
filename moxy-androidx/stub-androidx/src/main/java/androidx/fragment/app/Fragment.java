@@ -2,6 +2,8 @@ package androidx.fragment.app;
 
 import android.os.Bundle;
 
+import androidx.annotation.LayoutRes;
+
 /**
  * Date: 25-July-18
  * Time: 4:38
@@ -10,6 +12,10 @@ import android.os.Bundle;
  */
 
 public class Fragment {
+    public Fragment() { super(); }
+
+    public Fragment(@LayoutRes int contentLayoutId) { super(); }
+
     public void onCreate(Bundle savedInstanceState) {
         throw new RuntimeException("Stub!");
     }
