@@ -2,6 +2,7 @@ package com.omegar.mvp;
 
 import android.os.Bundle;
 
+import androidx.annotation.ContentView;
 import androidx.annotation.LayoutRes;
 import androidx.fragment.app.Fragment;
 
@@ -21,6 +22,7 @@ public class MvpAppCompatFragment extends Fragment {
 
     public MvpAppCompatFragment() { super(); }
 
+    @ContentView
     public MvpAppCompatFragment(@LayoutRes int contentLayoutId) { super(contentLayoutId); }
 
     public void onCreate(Bundle savedInstanceState) {
