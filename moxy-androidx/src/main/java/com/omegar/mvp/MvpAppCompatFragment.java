@@ -21,7 +21,7 @@ public class MvpAppCompatFragment extends Fragment {
 
     public MvpAppCompatFragment() { super(); }
 
-    public MvpAppCompatFragment(@LayoutRes int contentLayoutId) { super(); }
+    public MvpAppCompatFragment(@LayoutRes int contentLayoutId) { super(contentLayoutId); }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
